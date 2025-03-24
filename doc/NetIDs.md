@@ -7,4 +7,4 @@
 - Reyan Shariff rts34
 - Jack Regan jfr29
 - Logan Dracos lsd25
-- Hsuan-Kai Liao hl475
+- Hsuan-Kai (Aaron) Liao hl475
