@@ -4,12 +4,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The GameScene class is the base class for all game scenes. It manages the game objects and
+ * components within the scene. It is responsible for updating the game objects and components every
+ * frame.
+ */
+
 public abstract class GameScene {
   private final Map<Class<GameComponent>, List<GameComponent>> allComponents = new HashMap<>();
   private final Map<String, GameObject> allObjects = new HashMap<>();
 
   /**
    * This will be called every frame.
+   * 
    * @param deltaTime the elapsed time between two frames
    */
   public void step(double deltaTime) {
@@ -18,12 +25,14 @@ public abstract class GameScene {
 
   /**
    * Register the component from the gameObject onto the scene
+   * 
    * @param gameComponent the component to be registered
    */
   public void registerComponent(GameComponent gameComponent) {}
 
   /**
    * Unregister the component from the scene.
+   * 
    * @param gameObject the gameObject to be unregistered
    */
   public void unregisterComponent(GameComponent gameObject) {
@@ -32,6 +41,7 @@ public abstract class GameScene {
 
   /**
    * Instantiate the gameObject based on the specified gameObject subclass.
+   * 
    * @param gameObjectClass the gameObject class
    * @return the instantiated gameObject
    */
@@ -41,6 +51,7 @@ public abstract class GameScene {
 
   /**
    * Register the existing gameObject to the scene.
+   * 
    * @param gameObject the gameObject to be registered.
    */
   public void registerObject(GameObject gameObject) {
@@ -49,6 +60,7 @@ public abstract class GameScene {
 
   /**
    * Destroy the gameObject specified.
+   * 
    * @param gameObject the gameObject to be destroyed
    */
   public void destroyObject(GameObject gameObject) {
