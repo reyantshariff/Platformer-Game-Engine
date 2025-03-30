@@ -1,4 +1,4 @@
-package oogasalad.engine;
+package oogasalad.engine.base;
 
 import java.util.HashMap;
 import java.util.List;

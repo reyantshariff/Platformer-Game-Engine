@@ -1,4 +1,4 @@
-package oogasalad.engine;
+package oogasalad.engine.base;
 
 /**
  * The GameComponent class is the base class for all game components. It is used to define the
