@@ -11,7 +11,8 @@ import java.util.*;
 public class GameObject {
   private final UUID id;
   private final Map<Class<? extends GameComponent>, GameComponent> allComponents;
-  private final List<Runnable> awakeMethods;
+  private final List<Runnable> componentAwakeInitializer;
+  private final List<Runnable> componentStartInitializer;
 
   private GameScene parentScene;
   private String name;
@@ -20,11 +21,18 @@ public class GameObject {
     this.id = UUID.randomUUID();
     this.name = name == null ? "" : this.getClass().getSimpleName() + "_" + this.id;
     this.allComponents = new HashMap<>();
-    this.awakeMethods = new ArrayList<>();
+    this.componentAwakeInitializer = new ArrayList<>();
+    this.componentStartInitializer = new ArrayList<>();
   }
 
   void wakeUp() {
-    awakeMethods.forEach(Runnable::run);
+    componentAwakeInitializer.forEach(Runnable::run);
+    componentAwakeInitializer.clear();
+  }
+
+  void startUp() {
+    componentStartInitializer.forEach(Runnable::run);
+    componentStartInitializer.clear();
   }
 
   void setParentScene(GameScene parentScene) {
@@ -45,7 +53,21 @@ public class GameObject {
     try {
       T component = componentClass.getDeclaredConstructor().newInstance();
       component.setParent(this);
-      awakeMethods.add(component::awake);
+
+      // Awake method subscription
+      if (parentScene == null) {
+        componentAwakeInitializer.add(component::awake);
+      } else {
+        component.awake();
+      }
+
+      // Start method subscription
+      if (parentScene == null) {
+        componentStartInitializer.add(component::start);
+      } else {
+        parentScene.subscribeEvent(component::start);
+      }
+
       allComponents.put(componentClass, component);
       parentScene.registerComponent(component);
       return component;

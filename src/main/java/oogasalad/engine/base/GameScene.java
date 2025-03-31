@@ -15,6 +15,7 @@ public abstract class GameScene {
   private final Map<UUID, GameObject> allObjects;
   private final Map<ComponentTag, List<GameComponent>> allComponents;
   private final Queue<KeyCode> inputKeys;
+  private final List<Runnable> subscribedEvents;
 
   private String name;
 
@@ -28,6 +29,7 @@ public abstract class GameScene {
       allComponents.put(tag, new ArrayList<>());
     }
     this.inputKeys = new LinkedList<>();
+    this.subscribedEvents = new ArrayList<>();
   }
 
   public String getName() {
@@ -48,18 +50,27 @@ public abstract class GameScene {
 
   /**
    * This will be called every frame.
-   * 
    * @param deltaTime the elapsed time between two frames
    */
   public void step(double deltaTime) {
     // Update with the following sequence
-    // 1. Handle input events
+    // 1. Handle all the subscribed events
+    if (!subscribedEvents.isEmpty()) {
+      Iterator<Runnable> iterator = subscribedEvents.iterator();
+      while (iterator.hasNext()) {
+        Runnable event = iterator.next();
+        event.run();
+        iterator.remove();
+      }
+    }
+
+    // 2. Handle input events
     while (!inputKeys.isEmpty()) {
       KeyCode code = inputKeys.poll();
       inputMapping.trigger(code);
     }
 
-    // 2. Update the components based on the order
+    // 3. Update the components based on the order
     for (ComponentTag order : ComponentTag.values()) {
       if (order == ComponentTag.NONE) continue;
       for (GameComponent component : allComponents.get(order)) {
@@ -67,18 +78,27 @@ public abstract class GameScene {
       }
     }
 
-    // 3. Update the scene actions
+    // 4. Update the scene actions
     // TODO: Handle Change Scene Action Here
   }
 
   /**
    * Subscribe the input key for the next frame to execute.
    * Inputs will be handled once and then removed. So make sure to add key events every frame until released.
+   * @param key the key to be subscribed
    */
   public void subscribeInputKey(KeyCode key) {
     inputKeys.add(key);
   }
 
+  /**
+   * Subscribe the runnable event to the next frame to execute.
+   * Events will only be called once and then removed from the subscribed list.
+   * @param event the event to be subscribed
+   */
+  public void subscribeEvent(Runnable event) {
+    subscribedEvents.add(event);
+  }
 
   /**
    * Register the component from the gameObject onto the scene
