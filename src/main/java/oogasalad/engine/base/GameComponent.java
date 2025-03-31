@@ -20,6 +20,13 @@ public abstract class GameComponent {
   public void start() {}
 
   /**
+   * This method is called after all objects have been created and initialized. It is used to set up
+   * references to other objects and componets. If an object is made mid-game, this method is called
+   * right after the constructor.
+   */
+  public void awake() {}
+
+  /**
    * This method is called every frame. It is used to update the object and perform any necessary
    * game logic.
    *
