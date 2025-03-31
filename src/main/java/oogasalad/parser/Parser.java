@@ -1,0 +1,31 @@
+package oogasalad.parser;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import java.io.IOException;
+import java.io.OutputStream;
+
+/**
+ * A generic parser class for a JSON node, converting to an object of type T
+ * @param <T> - the type of object produced by the parser
+ */
+public interface Parser<T> {
+
+  /**
+   * Parse a JsonNode into a desired output
+   *
+   * @param node - the JSON node given to parse
+   * @return - an instance of type T based on the parsed data
+   * @throws ParsingException - a specific exception designed to catch errors with parsing
+   */
+  T parse(JsonNode node) throws ParsingException;
+
+  /**
+   * Creates the given output to an output stream
+   *
+   * @param data - the data object to serialize
+   * @param output - the output stream to write data to
+   * @throws IOException - the exception if writing fails
+   */
+  void write(T data, OutputStream output) throws IOException;
+
+}
