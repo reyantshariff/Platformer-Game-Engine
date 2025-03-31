@@ -2,9 +2,11 @@ package oogasalad.engine.gameComponent;
 
 import oogasalad.engine.base.ComponentTag;
 import oogasalad.engine.base.GameComponent;
+import oogasalad.engine.base.GameObject;
 
 public class Transform extends GameComponent {
     public static final ComponentTag TAG = ComponentTag.TRANSFORM;
+
     private double x;
     private double y;
     private double rotation;
@@ -12,7 +14,7 @@ public class Transform extends GameComponent {
     private double scaleY;
 
     public Transform() {
-        super(ComponentTag.TRANSFORM);
+        super(TAG);
         this.x = 0;
         this.y = 0;
         this.rotation = 0;

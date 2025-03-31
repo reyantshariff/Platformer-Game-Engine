@@ -7,24 +7,27 @@ package oogasalad.engine.base;
  */
 
 public abstract class GameComponent {
+  private final ComponentTag componentTag;
+
   private GameObject parent;
-  private ComponentTag componentTag;
 
   protected GameComponent(ComponentTag componentTag) {
     this.componentTag = componentTag;
+
   }
 
   /**
-   * This method is called before the object calls its update method for the first time
-   */
-  public void start() {}
-
-  /**
    * This method is called after all objects have been created and initialized. It is used to set up
-   * references to other objects and componets. If an object is made mid-game, this method is called
+   * references to other objects and components. If an object is made mid-game, this method is called
    * right after the constructor.
    */
   public void awake() {}
+
+  /**
+   * This method is called before the object calls its update method for the first time
+   * This should be over
+   */
+  public void start() {}
 
   /**
    * This method is called every frame. It is used to update the object and perform any necessary
@@ -45,5 +48,9 @@ public abstract class GameComponent {
 
   protected GameObject getParent() {
     return parent;
+  }
+
+  void setParent(GameObject parent) {
+    this.parent = parent;
   }
 }

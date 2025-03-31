@@ -1,11 +1,7 @@
 package oogasalad.engine.base;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.beans.EventHandler;
+import java.util.*;
 
 /**
  * The GameScene class is the base class for all game scenes. It manages the game objects and
@@ -18,6 +14,7 @@ public abstract class GameScene {
   private final InputMapping inputMapping;
   private final Map<UUID, GameObject> allObjects;
   private final Map<ComponentTag, List<GameComponent>> allComponents;
+  private final Queue<KeyCode> inputKeys;
 
   private String name;
 
@@ -30,6 +27,7 @@ public abstract class GameScene {
     for (ComponentTag tag : ComponentTag.values()) {
       allComponents.put(tag, new ArrayList<>());
     }
+    this.inputKeys = new LinkedList<>();
   }
 
   public String getName() {
@@ -55,8 +53,11 @@ public abstract class GameScene {
    */
   public void step(double deltaTime) {
     // Update with the following sequence
-    // 1. Update the input handler
-    // TODO: Implement the input handler (UI)
+    // 1. Handle input events
+    while (!inputKeys.isEmpty()) {
+      KeyCode code = inputKeys.poll();
+      inputMapping.trigger(code);
+    }
 
     // 2. Update the components based on the order
     for (ComponentTag order : ComponentTag.values()) {
@@ -69,6 +70,15 @@ public abstract class GameScene {
     // 3. Update the scene actions
     // TODO: Handle Change Scene Action Here
   }
+
+  /**
+   * Subscribe the input key for the next frame to execute.
+   * Inputs will be handled once and then removed. So make sure to add key events every frame until released.
+   */
+  public void subscribeInputKey(KeyCode key) {
+    inputKeys.add(key);
+  }
+
 
   /**
    * Register the component from the gameObject onto the scene
@@ -100,7 +110,7 @@ public abstract class GameScene {
       String className = gameObjectClass.getSimpleName();
       String defaultName = className + "_" + id;
       T object = gameObjectClass.getDeclaredConstructor(String.class, UUID.class, GameScene.class).newInstance(defaultName, id, this);
-
+      object.wakeUp();
       allObjects.put(id, object);
       return object;
     } catch (Exception e) {
@@ -119,6 +129,7 @@ public abstract class GameScene {
       throw new IllegalArgumentException("gameObject already added!");
     }
 
+    gameObject.wakeUp();
     allObjects.put(gameObject.getId(), gameObject);
   }
 
