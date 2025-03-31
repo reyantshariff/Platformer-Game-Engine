@@ -17,7 +17,7 @@ public abstract class GameComponent {
   /**
    * This method is called before the object calls its update method for the first time
    */
-  public abstract void start();
+  public void start() {}
 
   /**
    * This method is called every frame. It is used to update the object and perform any necessary
@@ -29,6 +29,7 @@ public abstract class GameComponent {
 
   /**
    * Gets the component tag
+   * 
    * @return the component tag
    */
   public ComponentTag getComponentTag() {

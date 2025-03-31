@@ -17,10 +17,6 @@ public class PlayerController extends GameComponent {
         actions = new ArrayList<>();
     }
 
-    @Override
-    public void start() {
-    }
-
     public <T extends GameAction> void addAction(Class<T> actionClass) {
         try {
             actions.add(actionClass.getDeclaredConstructor().newInstance());

@@ -1,4 +1,5 @@
 package oogasalad.engine.gameComponent;
+
 import oogasalad.engine.base.ComponentTag;
 import oogasalad.engine.base.GameComponent;
 import oogasalad.engine.base.GameAction;
@@ -9,10 +10,6 @@ public class InputHandler extends GameComponent {
 
     public InputHandler() {
         super(TAG);
-    }
-
-    @Override
-    public void start() {
     }
 
     public void registerAction(KeyCode input, GameAction action) {
