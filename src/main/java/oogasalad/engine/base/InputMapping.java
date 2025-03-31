@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Mapping {
+public class InputMapping {
     private Map<String, List<GameAction>> inputActionMap;
 
-    public Mapping() {
+    public InputMapping() {
         inputActionMap = new HashMap<>();
     }
 
