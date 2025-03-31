@@ -57,7 +57,7 @@ public enum KeyCode {
     private final int keyCode;
         
     /**
-    * @brief Constructor for KeyCode enum.
+    * Constructor for KeyCode enum.
     * @param keyCode The corresponding key code.
     */
     KeyCode(int keyCode) {
@@ -65,7 +65,7 @@ public enum KeyCode {
     }
     
     /**
-    * @brief Finds a KeyCode by its integer value.
+    * Finds a KeyCode by its integer value.
     * @param keyCode The integer key code.
     * @return The matching KeyCode, or null if not found.
     */
