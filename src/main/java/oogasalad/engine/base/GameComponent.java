@@ -7,14 +7,7 @@ package oogasalad.engine.base;
  */
 
 public abstract class GameComponent {
-  private final ComponentTag componentTag;
-
   private GameObject parent;
-
-  protected GameComponent(ComponentTag componentTag) {
-    this.componentTag = componentTag;
-
-  }
 
   /**
    * This method is called after all objects have been created and initialized. It is used to set up
@@ -38,14 +31,14 @@ public abstract class GameComponent {
   public void update(double deltaTime) {}
 
   /**
-   * Gets the component tag
-   * 
-   * @return the component tag
+   * This is the actual updating order of the component.
+   * @return the specified component tag
    */
-  public ComponentTag getComponentTag() {
-    return componentTag;
-  }
+  public abstract ComponentTag componentTag();
 
+  /**
+   * Get the parent gameObject of the component
+   */
   protected GameObject getParent() {
     return parent;
   }

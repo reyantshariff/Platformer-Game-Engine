@@ -8,13 +8,9 @@ import java.util.List;
  * This is the class that handle all the event and binds them to the specified keybindings
  */
 public class InputHandler extends GameComponent {
-    public static final ComponentTag TAG = ComponentTag.NONE;
-
+    @Override
+    public ComponentTag componentTag() { return ComponentTag.NONE; }
     private List<GameAction> actions;
-
-    public InputHandler() {
-        super(TAG);
-    }
 
     /**
      * Register the game action to the specific keyCode
