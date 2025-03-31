@@ -1,5 +1,6 @@
 package oogasalad.engine.base;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,16 +11,16 @@ import java.util.List;
 
 public abstract class GameAction {
 
-    private GameObject parent;
-    private List<GameActionConstraint> constraints;
+    private final GameObject parent;
+    private final List<GameActionConstraint> constraints;
 
     public GameAction(GameObject parent) {
         this.parent = parent;
+        this.constraints = new ArrayList<>();
     }
 
     /**
      * Trigger the action
-     * 
      * Implementations of this method should call checkConstraints before executing the body
      */
     public abstract void dispatch();

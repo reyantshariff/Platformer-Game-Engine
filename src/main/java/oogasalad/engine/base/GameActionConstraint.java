@@ -7,8 +7,8 @@ package oogasalad.engine.base;
  */
 
 public abstract class GameActionConstraint {
-    private GameAction parentAction;
-    private GameObject parentObject;
+    private final GameAction parentAction;
+    private final GameObject parentObject;
 
     GameActionConstraint(GameAction parentAction) {
         this.parentAction = parentAction;
@@ -17,7 +17,6 @@ public abstract class GameActionConstraint {
 
     /**
      * checks if the constraint is met
-     * 
      * @return true if the constraint is met, false otherwise
      */
     public abstract boolean check();
