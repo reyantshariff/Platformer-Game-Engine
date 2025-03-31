@@ -15,12 +15,18 @@ public abstract class GameComponent {
   public abstract void start();
 
   /**
+   * The order of the update of this component.
+   * This method MUST be declared for frame update use.
+   */
+  public abstract ComponentTag COMPONENT_UPDATE_TAG();
+
+  /**
    * This method is called every frame. It is used to update the object and perform any necessary
    * game logic.
-   * 
+   *
    * @param deltaTime The time since the last frame, in seconds.
    */
-  public abstract void update(double deltaTime);
+  public void update(double deltaTime) {}
 
   protected GameObject getParent() {
     return parent;
