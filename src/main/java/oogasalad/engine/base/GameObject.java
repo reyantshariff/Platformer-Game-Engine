@@ -1,6 +1,8 @@
 package oogasalad.engine.base;
 
 import java.util.Map;
+import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * The GameObject class is the base class for all game objects. It is used to define the behavior of
@@ -8,10 +10,22 @@ import java.util.Map;
  * logic and behavior.
  */
 
-public abstract class GameObject {
+public class GameObject {
   private GameScene parentScene;
   private String name;
+  private UUID id;
   private Map<Class<? extends GameComponent>, GameComponent> allComponents;
+
+  private GameObject() {
+    allComponents = new HashMap<>();
+  }
+
+  public GameObject(String name, UUID id, GameScene parentScene) {
+    this();
+    this.name = name;
+    this.id = id;
+    this.parentScene = parentScene;
+  }
 
   /**
    * Add the component to the gameObject based on its class.
@@ -21,7 +35,16 @@ public abstract class GameObject {
    * @return the added component instance
    */
   public <T extends GameComponent> T addComponent(Class<T> componentClass) {
-    return null;
+    if (allComponents.containsKey(componentClass)) {
+      throw new IllegalArgumentException("Component already exists");
+    }
+    try {
+      T component = componentClass.getDeclaredConstructor().newInstance();
+      allComponents.put(componentClass, component);
+      return component;
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to add component", e);
+    }
   }
 
   /**
@@ -31,7 +54,10 @@ public abstract class GameObject {
    * @return the component instance
    */
   public <T extends GameComponent> T getComponent(Class<T> componentClass) {
-    return null;
+    if (!allComponents.containsKey(componentClass)) {
+      throw new IllegalArgumentException("Component does not exist");
+    }
+    return (T) allComponents.get(componentClass);
   }
 
   /**
@@ -40,7 +66,10 @@ public abstract class GameObject {
    * @param componentClass the component class specified
    */
   public <T extends GameComponent> void removeComponent(Class<T> componentClass) {
-
+    if (!allComponents.containsKey(componentClass)) {
+      throw new IllegalArgumentException("Component does not exist");
+    }
+    allComponents.remove(componentClass);
   }
 
   /**
@@ -53,12 +82,30 @@ public abstract class GameObject {
   }
 
   /**
+   * Returns the ID of the object.
+   * 
+   * @return the ID of the object
+   */
+  public UUID getId() {
+    return id;
+  }
+
+  /**
    * Returns the parent scene of the object.
    * 
    * @return the parent scene of the object
    */
   public GameScene getScene() {
     return parentScene;
+  }
+
+  /**
+   * Sets the name of the object.
+   * 
+   * @param name the name of the object
+   */
+  public void setName(String name) {
+    this.name = name;
   }
 
 }
