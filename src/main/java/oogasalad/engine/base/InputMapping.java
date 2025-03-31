@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 public class InputMapping {
-    private Map<String, List<GameAction>> inputActionMap;
+    private Map<KeyCode, List<GameAction>> inputActionMap;
 
     public InputMapping() {
         inputActionMap = new HashMap<>();
@@ -17,7 +17,7 @@ public class InputMapping {
      * @param input the input to map
      * @param actions the list of actions to associate with the input
      */
-    public void addMapping(String input, GameAction action) {
+    public void addMapping(KeyCode input, GameAction action) {
         inputActionMap.computeIfAbsent(input, k -> new java.util.ArrayList<>()).add(action);
     }
 
@@ -26,7 +26,7 @@ public class InputMapping {
      *
      * @param input the input to trigger
      */
-    public void trigger(String input) {
+    public void trigger(KeyCode input) {
         List<GameAction> actions = inputActionMap.get(input);
         if (actions != null) {
             for (GameAction action : actions) {
