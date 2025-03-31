@@ -7,6 +7,7 @@ package oogasalad.engine.base;
  * @author Hsuan-Kai Liao
  */
 public enum ComponentTag {
+  NONE,
   TRANSFORM,
   PHYSICS,
   COLLISION,

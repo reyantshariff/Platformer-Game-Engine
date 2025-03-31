@@ -8,17 +8,16 @@ package oogasalad.engine.base;
 
 public abstract class GameComponent {
   private GameObject parent;
+  private ComponentTag componentTag;
+
+  protected GameComponent(ComponentTag componentTag) {
+    this.componentTag = componentTag;
+  }
 
   /**
    * This method is called before the object calls its update method for the first time
    */
   public abstract void start();
-
-  /**
-   * The order of the update of this component.
-   * This method MUST be declared for frame update use.
-   */
-  public abstract ComponentTag COMPONENT_UPDATE_TAG();
 
   /**
    * This method is called every frame. It is used to update the object and perform any necessary
@@ -27,6 +26,14 @@ public abstract class GameComponent {
    * @param deltaTime The time since the last frame, in seconds.
    */
   public void update(double deltaTime) {}
+
+  /**
+   * Gets the component tag
+   * @return the component tag
+   */
+  public ComponentTag getComponentTag() {
+    return componentTag;
+  }
 
   protected GameObject getParent() {
     return parent;
