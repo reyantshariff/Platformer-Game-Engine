@@ -15,7 +15,7 @@ public class InputMapping {
      * Associates an action to an input.
      *
      * @param input the input to map
-     * @param actions the list of actions to associate with the input
+     * @param action the list of actions to associate with the input
      */
     public void addMapping(String input, GameAction action) {
         inputActionMap.computeIfAbsent(input, k -> new java.util.ArrayList<>()).add(action);

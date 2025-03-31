@@ -11,20 +11,17 @@ import java.util.UUID;
  */
 
 public class GameObject {
-  private GameScene parentScene;
-  private String name;
-  private UUID id;
-  private Map<Class<? extends GameComponent>, GameComponent> allComponents;
+  private final GameScene parentScene;
+  private final UUID id;
+  private final Map<Class<? extends GameComponent>, GameComponent> allComponents;
 
-  private GameObject() {
-    allComponents = new HashMap<>();
-  }
+  private String name;
 
   public GameObject(String name, UUID id, GameScene parentScene) {
-    this();
     this.name = name;
     this.id = id;
     this.parentScene = parentScene;
+    this.allComponents = new HashMap<>();
   }
 
   /**
@@ -41,6 +38,7 @@ public class GameObject {
     try {
       T component = componentClass.getDeclaredConstructor().newInstance();
       allComponents.put(componentClass, component);
+      parentScene.registerComponent(component);
       return component;
     } catch (Exception e) {
       throw new RuntimeException("Failed to add component", e);
@@ -69,6 +67,8 @@ public class GameObject {
     if (!allComponents.containsKey(componentClass)) {
       throw new IllegalArgumentException("Component does not exist");
     }
+
+    parentScene.unregisterComponent(allComponents.get(componentClass));
     allComponents.remove(componentClass);
   }
 
