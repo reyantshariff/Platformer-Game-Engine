@@ -10,6 +10,7 @@ import java.util.List;
 public class InputHandler extends GameComponent {
     @Override
     public ComponentTag componentTag() { return ComponentTag.NONE; }
+
     private List<GameAction> actions;
 
     /**

@@ -1,12 +1,16 @@
 package oogasalad.engine.base;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The GameComponent class is the base class for all game components. It is used to define the
  * behavior of game objects. Each game object can have multiple components, and each component can
  * have its own logic and behavior.
  */
-
-public abstract class GameComponent {
+public abstract class GameComponent implements Serializable {
   private GameObject parent;
 
   /**

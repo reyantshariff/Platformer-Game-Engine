@@ -3,15 +3,25 @@ package oogasalad.engine.gameComponent;
 import oogasalad.engine.base.ComponentTag;
 import oogasalad.engine.base.GameComponent;
 import oogasalad.engine.base.GameObject;
+import oogasalad.engine.base.SerializableField;
 
 public class Transform extends GameComponent {
     @Override
-    public oogasalad.engine.base.ComponentTag componentTag() { return null; }
+    public ComponentTag componentTag() { return null; }
 
+    Transform() {
+        getSerializedFields();
+    }
+
+    @SerializableField
     private double x;
+    @SerializableField
     private double y;
+    @SerializableField
     private double rotation;
+    @SerializableField
     private double scaleX;
+    @SerializableField
     private double scaleY;
 
     public double getX() {
@@ -53,6 +63,4 @@ public class Transform extends GameComponent {
     public void setScaleY(double scaleY) {
         this.scaleY = scaleY;
     }
-
-
 }
