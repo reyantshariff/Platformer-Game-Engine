@@ -63,9 +63,8 @@ public class Game {
 
     // Instantiate scene instance
     try {
-      UUID id = UUID.randomUUID();
-      T scene = sceneClass.getDeclaredConstructor(String.class, UUID.class).newInstance(name, id);
-      loadedScenes.put(id, scene);
+      T scene = sceneClass.getDeclaredConstructor(String.class).newInstance(name);
+      loadedScenes.put(scene.getId(), scene);
 
       if (currentScene == null) {
         currentScene = scene;

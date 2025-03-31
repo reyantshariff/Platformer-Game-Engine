@@ -9,23 +9,26 @@ import java.util.*;
  */
 
 public class GameObject {
-  private final GameScene parentScene;
   private final UUID id;
   private final Map<Class<? extends GameComponent>, GameComponent> allComponents;
   private final List<Runnable> awakeMethods;
 
+  private GameScene parentScene;
   private String name;
 
-  public GameObject(String name, UUID id, GameScene parentScene) {
-    this.name = name;
-    this.id = id;
-    this.parentScene = parentScene;
+  public GameObject(String name) {
+    this.id = UUID.randomUUID();
+    this.name = name == null ? "" : this.getClass().getSimpleName() + "_" + this.id;
     this.allComponents = new HashMap<>();
     this.awakeMethods = new ArrayList<>();
   }
 
   void wakeUp() {
     awakeMethods.forEach(Runnable::run);
+  }
+
+  void setParentScene(GameScene parentScene) {
+    this.parentScene = parentScene;
   }
 
   /**

@@ -18,8 +18,8 @@ public abstract class GameScene {
 
   private String name;
 
-  public GameScene(String name, UUID id) {
-    this.id = id;
+  public GameScene(String name) {
+    this.id = UUID.randomUUID();
     this.name = name;
     this.inputMapping = new InputMapping();
     this.allObjects = new HashMap<>();
@@ -86,7 +86,7 @@ public abstract class GameScene {
    * @param gameComponent the component to be registered
    */
   public void registerComponent(GameComponent gameComponent) {
-    allComponents.get(gameComponent.getComponentTag()).add(gameComponent);
+    allComponents.get(gameComponent.componentTag()).add(gameComponent);
   }
 
   /**
@@ -95,7 +95,7 @@ public abstract class GameScene {
    * @param gameComponent the gameComponent to be unregistered
    */
   public void unregisterComponent(GameComponent gameComponent) {
-    allComponents.get(gameComponent.getComponentTag()).remove(gameComponent);
+    allComponents.get(gameComponent.componentTag()).remove(gameComponent);
   }
 
   /**
@@ -106,12 +106,10 @@ public abstract class GameScene {
    */
   public <T extends GameObject> T instantiateObject(Class<T> gameObjectClass) {
     try {
-      UUID id = UUID.randomUUID();
       String className = gameObjectClass.getSimpleName();
-      String defaultName = className + "_" + id;
-      T object = gameObjectClass.getDeclaredConstructor(String.class, UUID.class, GameScene.class).newInstance(defaultName, id, this);
+      T object = gameObjectClass.getDeclaredConstructor(String.class).newInstance((Object) null);
       object.wakeUp();
-      allObjects.put(id, object);
+      allObjects.put(object.getId(), object);
       return object;
     } catch (Exception e) {
       throw new RuntimeException("Failed to add component", e);
