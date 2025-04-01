@@ -1,10 +1,10 @@
-package oogasalad.games.dinosaur.components;
+package oogasalad.games.dinosaur.components.game_physics;
 
 import oogasalad.engine.base.architecture.GameComponent;
 import oogasalad.engine.base.enumerate.ComponentTag;
 
 public class VelocityComponent extends GameComponent {
-   private double vx=0;
+   private double vx=50;
    private double vy=0;
 
    public void setVx(double v)
