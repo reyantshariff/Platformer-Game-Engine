@@ -1,4 +1,4 @@
-package oogasalad.engine.base;
+package oogasalad.engine.base.enumerate;
 
 public enum KeyCode {
     A(65),

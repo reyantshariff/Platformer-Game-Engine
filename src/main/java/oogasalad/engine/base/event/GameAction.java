@@ -1,7 +1,8 @@
-package oogasalad.engine.base;
+package oogasalad.engine.base.event;
 
 import java.util.ArrayList;
 import java.util.List;
+import oogasalad.engine.base.architecture.GameObject;
 
 /**
  * The GameAction class is the base class for all game actions. Actions are event that are called
@@ -30,11 +31,11 @@ public abstract class GameAction {
      * 
      * @return the parent of the action
      */
-    public GameObject getParent() {
+    public final GameObject getParent() {
         return parent;
     }
 
-    public void registerConstraint(Class<? extends GameActionConstraint> constraintClass) {
+    public final void registerConstraint(Class<? extends GameActionConstraint> constraintClass) {
         try {
             constraints
                     .add(constraintClass.getDeclaredConstructor(this.getClass()).newInstance(this));
@@ -43,7 +44,7 @@ public abstract class GameAction {
         }
     }
 
-    public void unregisterConstraint(Class<? extends GameActionConstraint> constraintClass) {
+    public final void unregisterConstraint(Class<? extends GameActionConstraint> constraintClass) {
         for (GameActionConstraint constraint : constraints) {
             if (constraint.getClass().equals(constraintClass)) {
                 constraints.remove(constraint);
@@ -58,7 +59,7 @@ public abstract class GameAction {
      * 
      * @return true if all constraints are met, false otherwise
      */
-    protected boolean checkConstraints() {
+    public final boolean checkConstraints() {
         for (GameActionConstraint constraint : constraints) {
             if (!constraint.check()) {
                 return false;

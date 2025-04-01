@@ -1,7 +1,9 @@
-package oogasalad.engine.base;
+package oogasalad.engine.base.architecture;
 
-import java.beans.EventHandler;
 import java.util.*;
+import oogasalad.engine.base.enumerate.ComponentTag;
+import oogasalad.engine.base.enumerate.KeyCode;
+import oogasalad.engine.base.event.InputMapping;
 
 /**
  * The GameScene class is the base class for all game scenes. It manages the game objects and
@@ -32,19 +34,31 @@ public abstract class GameScene {
     this.subscribedEvents = new ArrayList<>();
   }
 
-  public String getName() {
+  /**
+   * Get the name of the scene
+   */
+  public final String getName() {
     return name;
   }
 
-  public void setName(String name) {
+  /**
+   * Set the name of the scene
+   */
+  public final void setName(String name) {
     this.name = name;
   }
 
-  public UUID getId() {
+  /**
+   * Get the UUID of the scene
+   */
+  public final UUID getId() {
     return id;
   }
 
-  public InputMapping getInputMapping() {
+  /**
+   * Get the input mapping of the scene
+   */
+  public final InputMapping getInputMapping() {
     return inputMapping;
   }
 
@@ -52,7 +66,7 @@ public abstract class GameScene {
    * This will be called every frame.
    * @param deltaTime the elapsed time between two frames
    */
-  public void step(double deltaTime) {
+  final void step(double deltaTime) {
     // Update with the following sequence
     // 1. Handle all the subscribed events
     if (!subscribedEvents.isEmpty()) {
@@ -87,7 +101,7 @@ public abstract class GameScene {
    * Inputs will be handled once and then removed. So make sure to add key events every frame until released.
    * @param key the key to be subscribed
    */
-  public void subscribeInputKey(KeyCode key) {
+  public final void subscribeInputKey(KeyCode key) {
     inputKeys.add(key);
   }
 
@@ -96,7 +110,7 @@ public abstract class GameScene {
    * Events will only be called once and then removed from the subscribed list.
    * @param event the event to be subscribed
    */
-  public void subscribeEvent(Runnable event) {
+  public final void subscribeEvent(Runnable event) {
     subscribedEvents.add(event);
   }
 
@@ -105,7 +119,7 @@ public abstract class GameScene {
    * 
    * @param gameComponent the component to be registered
    */
-  public void registerComponent(GameComponent gameComponent) {
+  public final void registerComponent(GameComponent gameComponent) {
     allComponents.get(gameComponent.componentTag()).add(gameComponent);
   }
 
@@ -114,7 +128,7 @@ public abstract class GameScene {
    * 
    * @param gameComponent the gameComponent to be unregistered
    */
-  public void unregisterComponent(GameComponent gameComponent) {
+  public final void unregisterComponent(GameComponent gameComponent) {
     allComponents.get(gameComponent.componentTag()).remove(gameComponent);
   }
 
@@ -124,11 +138,12 @@ public abstract class GameScene {
    * @param gameObjectClass the gameObject class
    * @return the instantiated gameObject
    */
-  public <T extends GameObject> T instantiateObject(Class<T> gameObjectClass) {
+  public final <T extends GameObject> T instantiateObject(Class<T> gameObjectClass) {
     try {
       String className = gameObjectClass.getSimpleName();
       T object = gameObjectClass.getDeclaredConstructor(String.class).newInstance((Object) null);
       object.wakeUp();
+      object.setScene(this);
       allObjects.put(object.getId(), object);
       return object;
     } catch (Exception e) {
@@ -142,12 +157,13 @@ public abstract class GameScene {
    * 
    * @param gameObject the gameObject to be registered.
    */
-  public void registerObject(GameObject gameObject) {
+  public final void registerObject(GameObject gameObject) {
     if (allObjects.containsKey(gameObject.getId())) {
       throw new IllegalArgumentException("gameObject already added!");
     }
 
     gameObject.wakeUp();
+    gameObject.setScene(this);
     allObjects.put(gameObject.getId(), gameObject);
   }
 
@@ -156,7 +172,7 @@ public abstract class GameScene {
    * 
    * @param gameObject the gameObject to be destroyed
    */
-  public void unregisterObject(GameObject gameObject) {
+  public final void unregisterObject(GameObject gameObject) {
     for (ComponentTag order : ComponentTag.values()) {
       for (GameComponent component : allComponents.get(order)) {
         if (component.getParent().equals(gameObject)) {
@@ -165,6 +181,7 @@ public abstract class GameScene {
       }
     }
 
+    gameObject.setScene(null);
     allObjects.remove(gameObject.getId());
   }
 

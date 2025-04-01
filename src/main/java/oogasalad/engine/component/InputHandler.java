@@ -1,8 +1,11 @@
-package oogasalad.engine.gameComponent;
+package oogasalad.engine.component;
 
-import oogasalad.engine.base.*;
+import oogasalad.engine.base.architecture.GameComponent;
 
 import java.util.List;
+import oogasalad.engine.base.enumerate.ComponentTag;
+import oogasalad.engine.base.enumerate.KeyCode;
+import oogasalad.engine.base.event.GameAction;
 
 /**
  * This is the class that handle all the event and binds them to the specified keybindings

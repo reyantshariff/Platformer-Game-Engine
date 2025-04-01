@@ -1,11 +1,12 @@
-package oogasalad.engine.base;
+package oogasalad.engine.base.event;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import oogasalad.engine.base.enumerate.KeyCode;
 
 public class InputMapping {
-    private Map<KeyCode, List<GameAction>> inputActionMap;
+    private final Map<KeyCode, List<GameAction>> inputActionMap;
 
     public InputMapping() {
         inputActionMap = new HashMap<>();
@@ -17,7 +18,7 @@ public class InputMapping {
      * @param input the input to map
      * @param action the list of actions to associate with the input
      */
-    public void addMapping(KeyCode input, GameAction action) {
+    public final void addMapping(KeyCode input, GameAction action) {
         inputActionMap.computeIfAbsent(input, k -> new java.util.ArrayList<>()).add(action);
     }
 
@@ -26,11 +27,13 @@ public class InputMapping {
      *
      * @param input the input to trigger
      */
-    public void trigger(KeyCode input) {
+    public final void trigger(KeyCode input) {
         List<GameAction> actions = inputActionMap.get(input);
         if (actions != null) {
             for (GameAction action : actions) {
-                action.dispatch();
+                if (action.checkConstraints()) {
+                    action.dispatch();
+                }
             }
         }
     }

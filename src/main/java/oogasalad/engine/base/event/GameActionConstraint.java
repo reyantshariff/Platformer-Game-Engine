@@ -1,4 +1,6 @@
-package oogasalad.engine.base;
+package oogasalad.engine.base.event;
+
+import oogasalad.engine.base.architecture.GameObject;
 
 /**
  * The GameActionConstraint class is the base class for all game action constraints. Constraints are
@@ -26,7 +28,7 @@ public abstract class GameActionConstraint {
      * 
      * @return the parent action
      */
-    public GameAction getParentAction() {
+    public final GameAction getParentAction() {
         return parentAction;
     }
 
@@ -35,7 +37,7 @@ public abstract class GameActionConstraint {
      * 
      * @return the parent object
      */
-    public GameObject getParentObject() {
+    public final GameObject getParentObject() {
         return parentObject;
     }
 }

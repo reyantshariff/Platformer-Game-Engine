@@ -1,4 +1,4 @@
-package oogasalad.engine.base;
+package oogasalad.engine.base.architecture;
 
 import java.util.*;
 
@@ -25,18 +25,14 @@ public class GameObject {
     this.componentStartInitializer = new ArrayList<>();
   }
 
-  void wakeUp() {
+  final void wakeUp() {
     componentAwakeInitializer.forEach(Runnable::run);
     componentAwakeInitializer.clear();
   }
 
-  void startUp() {
+  final void startUp() {
     componentStartInitializer.forEach(Runnable::run);
     componentStartInitializer.clear();
-  }
-
-  void setParentScene(GameScene parentScene) {
-    this.parentScene = parentScene;
   }
 
   /**
@@ -46,7 +42,7 @@ public class GameObject {
    * @param componentClass the component class specified
    * @return the added component instance
    */
-  public <T extends GameComponent> T addComponent(Class<T> componentClass) {
+  public final <T extends GameComponent> T addComponent(Class<T> componentClass) {
     if (allComponents.containsKey(componentClass)) {
       throw new IllegalArgumentException("Component already exists");
     }
@@ -82,7 +78,7 @@ public class GameObject {
    * @param componentClass the component class specified
    * @return the component instance
    */
-  public <T extends GameComponent> T getComponent(Class<T> componentClass) {
+  public final <T extends GameComponent> T getComponent(Class<T> componentClass) {
     if (!allComponents.containsKey(componentClass)) {
       throw new IllegalArgumentException("Component does not exist");
     }
@@ -94,7 +90,7 @@ public class GameObject {
    * 
    * @param componentClass the component class specified
    */
-  public <T extends GameComponent> void removeComponent(Class<T> componentClass) {
+  public final <T extends GameComponent> void removeComponent(Class<T> componentClass) {
     if (!allComponents.containsKey(componentClass)) {
       throw new IllegalArgumentException("Component does not exist");
     }
@@ -108,7 +104,7 @@ public class GameObject {
    * 
    * @return the name of the object
    */
-  public String getName() {
+  public final String getName() {
     return name;
   }
 
@@ -117,7 +113,7 @@ public class GameObject {
    * 
    * @return the ID of the object
    */
-  public UUID getId() {
+  public final UUID getId() {
     return id;
   }
 
@@ -126,8 +122,12 @@ public class GameObject {
    * 
    * @return the parent scene of the object
    */
-  public GameScene getScene() {
+  public final GameScene getScene() {
     return parentScene;
+  }
+
+  final void setScene(GameScene parentScene) {
+    this.parentScene = parentScene;
   }
 
   /**
@@ -135,7 +135,7 @@ public class GameObject {
    * 
    * @param name the name of the object
    */
-  public void setName(String name) {
+  public final void setName(String name) {
     this.name = name;
   }
 }

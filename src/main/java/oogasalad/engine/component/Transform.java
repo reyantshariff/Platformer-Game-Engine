@@ -1,9 +1,8 @@
-package oogasalad.engine.gameComponent;
+package oogasalad.engine.component;
 
-import oogasalad.engine.base.ComponentTag;
-import oogasalad.engine.base.GameComponent;
-import oogasalad.engine.base.GameObject;
-import oogasalad.engine.base.SerializableField;
+import oogasalad.engine.base.enumerate.ComponentTag;
+import oogasalad.engine.base.architecture.GameComponent;
+import oogasalad.engine.base.serialization.SerializableField;
 
 public class Transform extends GameComponent {
     @Override
