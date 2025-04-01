@@ -6,8 +6,9 @@ import oogasalad.engine.base.architecture.GameObject;
  * The GameActionConstraint class is the base class for all game action constraints. Constraints are
  * conditions that must be met in order for an action to be triggered. For example, a player will
  * only jump when the user presses the jump button and the player is on the ground.
+ *
+ * @author Christian Bepler
  */
-
 public abstract class GameActionConstraint {
     private GameAction parentAction;
 

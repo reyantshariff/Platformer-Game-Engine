@@ -7,6 +7,8 @@ import oogasalad.engine.base.serialization.Serializable;
  * The GameComponent class is the base class for all game components. It is used to define the
  * behavior of game objects. Each game object can have multiple components, and each component can
  * have its own logic and behavior.
+ *
+ * @author Hsuan-Kai Liao, Christian Bepler
  */
 public abstract class GameComponent implements Serializable {
   private GameObject parent;

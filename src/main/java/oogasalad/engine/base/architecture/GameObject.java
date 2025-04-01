@@ -6,6 +6,8 @@ import java.util.*;
  * The GameObject class is the base class for all game objects. It is used to define the behavior of
  * game objects. Each game object can have multiple components, and each component can have its own
  * logic and behavior.
+ *
+ * @author Hsuan-Kai Liao, Christian Bepler
  */
 
 public class GameObject {

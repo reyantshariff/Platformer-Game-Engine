@@ -10,11 +10,16 @@ import oogasalad.engine.base.enumerate.KeyCode;
 import oogasalad.engine.base.event.GameAction;
 
 /**
- * This is the class that handle all the event and binds them to the specified keybindings
+ * This is the class that handle all the event and binds them to the specified keybindings. This
+ * component is strongly related to the actions class which you should override the specific
+ * dispatch() method and register the action with a binding key to the gameObject through this
+ * component.
+ *
+ * @author Hsuan-Kai Liao, Christian Bepler
  */
 public class InputHandler extends GameComponent {
     @Override
-    public ComponentTag componentTag() { return ComponentTag.NONE; }
+    public ComponentTag componentTag() { return ComponentTag.INPUT; }
 
     private List<GameAction> actions = new ArrayList<>();
 
