@@ -1,4 +1,4 @@
-package oogasalad.dinosaur;
+package oogasalad.player.dinosaur;
 
 import oogasalad.engine.base.architecture.GameScene;
 import javafx.scene.Group;
