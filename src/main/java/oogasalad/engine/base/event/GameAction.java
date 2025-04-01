@@ -3,6 +3,9 @@ package oogasalad.engine.base.event;
 import java.util.ArrayList;
 import java.util.List;
 import oogasalad.engine.base.architecture.GameObject;
+import oogasalad.engine.base.serialization.Serializable;
+import oogasalad.engine.base.serialization.SerializableField;
+import oogasalad.engine.component.InputHandler;
 
 /**
  * The GameAction class is the base class for all game actions. Actions are event that are called
@@ -11,40 +14,39 @@ import oogasalad.engine.base.architecture.GameObject;
  */
 
 public abstract class GameAction {
-
-    private final GameObject parent;
     private final List<GameActionConstraint> constraints;
 
-    public GameAction(GameObject parent) {
-        this.parent = parent;
+    private InputHandler parent; // NOTE: This is set using reflection
+
+    public GameAction() {
         this.constraints = new ArrayList<>();
     }
 
     /**
-     * Trigger the action
-     * Implementations of this method should call checkConstraints before executing the body
+     * This is triggered only when the registered key pressed and the constraints are met
      */
     public abstract void dispatch();
 
     /**
-     * Get the parent of the action
+     * Get the parent object of the action
      * 
-     * @return the parent of the action
+     * @return the parent object of the action
      */
     public final GameObject getParent() {
-        return parent;
+        return parent.getParent();
     }
 
-    public final void registerConstraint(Class<? extends GameActionConstraint> constraintClass) {
+    public final <T extends GameActionConstraint> void registerConstraint(Class<T> constraintClass) {
         try {
-            constraints
-                    .add(constraintClass.getDeclaredConstructor(this.getClass()).newInstance(this));
+            T constraint = constraintClass.getDeclaredConstructor().newInstance();
+            constraint.setParent(this);
+            constraints.add(constraint);
         } catch (Exception e) {
             throw new RuntimeException("Failed to register constraint", e);
         }
     }
 
-    public final void unregisterConstraint(Class<? extends GameActionConstraint> constraintClass) {
+    public final <T extends GameActionConstraint> void unregisterConstraint(Class<T> constraintClass) {
         for (GameActionConstraint constraint : constraints) {
             if (constraint.getClass().equals(constraintClass)) {
                 constraints.remove(constraint);

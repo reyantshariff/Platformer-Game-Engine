@@ -9,12 +9,14 @@ import oogasalad.engine.base.architecture.GameObject;
  */
 
 public abstract class GameActionConstraint {
-    private final GameAction parentAction;
-    private final GameObject parentObject;
+    private GameAction parentAction;
 
-    GameActionConstraint(GameAction parentAction) {
+    /**
+     * link the parent action of the constraint
+     * @param parentAction the parent action
+     */
+    final void setParent(GameAction parentAction) {
         this.parentAction = parentAction;
-        this.parentObject = parentAction.getParent();
     }
 
     /**
@@ -38,6 +40,6 @@ public abstract class GameActionConstraint {
      * @return the parent object
      */
     public final GameObject getParentObject() {
-        return parentObject;
+        return parentAction.getParent();
     }
 }

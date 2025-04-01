@@ -95,7 +95,9 @@ public class GameObject {
       throw new IllegalArgumentException("Component does not exist");
     }
 
-    parentScene.unregisterComponent(allComponents.get(componentClass));
+    GameComponent componentToRemove = allComponents.get(componentClass);
+    componentToRemove.onRemove();
+    parentScene.unregisterComponent(componentToRemove);
     allComponents.remove(componentClass);
   }
 
