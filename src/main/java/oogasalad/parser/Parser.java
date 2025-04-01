@@ -23,9 +23,8 @@ public interface Parser<T> {
    * Creates the given output to an output stream
    *
    * @param data - the data object to serialize
-   * @param output - the output stream to write data to
    * @throws IOException - the exception if writing fails
    */
-  void write(T data, OutputStream output) throws IOException;
+  JsonNode write(T data) throws IOException;
 
 }
