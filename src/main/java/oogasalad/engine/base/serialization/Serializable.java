@@ -1,4 +1,4 @@
-package oogasalad.engine.base;
+package oogasalad.engine.base.serialization;
 
 import java.util.List;
 import java.lang.reflect.Field;

@@ -1,5 +1,9 @@
-package oogasalad.engine.base;
+package oogasalad.engine.base.enumerate;
 
+/**
+ * The keycode for binding. This should be mapped from actual physical keys.
+ * @author Hsuan-Kai Liao, Christian Bepler
+ */
 public enum KeyCode {
     A(65),
     B(66),

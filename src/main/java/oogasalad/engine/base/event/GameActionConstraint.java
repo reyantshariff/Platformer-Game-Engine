@@ -1,18 +1,23 @@
-package oogasalad.engine.base;
+package oogasalad.engine.base.event;
+
+import oogasalad.engine.base.architecture.GameObject;
 
 /**
  * The GameActionConstraint class is the base class for all game action constraints. Constraints are
  * conditions that must be met in order for an action to be triggered. For example, a player will
  * only jump when the user presses the jump button and the player is on the ground.
+ *
+ * @author Christian Bepler
  */
-
 public abstract class GameActionConstraint {
-    private final GameAction parentAction;
-    private final GameObject parentObject;
+    private GameAction parentAction;
 
-    GameActionConstraint(GameAction parentAction) {
+    /**
+     * link the parent action of the constraint
+     * @param parentAction the parent action
+     */
+    final void setParent(GameAction parentAction) {
         this.parentAction = parentAction;
-        this.parentObject = parentAction.getParent();
     }
 
     /**
@@ -26,7 +31,7 @@ public abstract class GameActionConstraint {
      * 
      * @return the parent action
      */
-    public GameAction getParentAction() {
+    public final GameAction getParentAction() {
         return parentAction;
     }
 
@@ -35,7 +40,7 @@ public abstract class GameActionConstraint {
      * 
      * @return the parent object
      */
-    public GameObject getParentObject() {
-        return parentObject;
+    public final GameObject getParentObject() {
+        return parentAction.getParent();
     }
 }

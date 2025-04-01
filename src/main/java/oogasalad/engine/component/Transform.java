@@ -1,17 +1,17 @@
-package oogasalad.engine.gameComponent;
+package oogasalad.engine.component;
 
-import oogasalad.engine.base.ComponentTag;
-import oogasalad.engine.base.GameComponent;
-import oogasalad.engine.base.GameObject;
-import oogasalad.engine.base.SerializableField;
+import oogasalad.engine.base.enumerate.ComponentTag;
+import oogasalad.engine.base.architecture.GameComponent;
+import oogasalad.engine.base.serialization.SerializableField;
 
+/**
+ * This component is for all the transformation a game object can have.
+ *
+ * @author Hsuan-Kai Liao, Christian Bepler
+ */
 public class Transform extends GameComponent {
     @Override
-    public ComponentTag componentTag() { return null; }
-
-    Transform() {
-        getSerializedFields();
-    }
+    public ComponentTag componentTag() { return ComponentTag.TRANSFORM; }
 
     @SerializableField
     private double x;

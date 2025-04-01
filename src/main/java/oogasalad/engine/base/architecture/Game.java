@@ -1,4 +1,4 @@
-package oogasalad.engine.base;
+package oogasalad.engine.base.architecture;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,8 +7,9 @@ import java.util.UUID;
 /**
  * The Game class is the main entry point for the game engine. It manages the game loop, scene
  * management, and game logic.
+ *
+ * @author Hsuan-Kai Liao, Christian Bepler
  */
-
 public class Game {
   private final Map<UUID, GameScene> loadedScenes = new HashMap<>();
   private final Map<UUID, String> scenePaths = new HashMap<>();

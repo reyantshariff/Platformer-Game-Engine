@@ -1,4 +1,4 @@
-package oogasalad.engine.base;
+package oogasalad.engine.base.enumerate;
 
 /**
  * The type that specifies the order of the update of the component.
@@ -8,6 +8,7 @@ package oogasalad.engine.base;
  */
 public enum ComponentTag {
   NONE,
+  INPUT,
   TRANSFORM,
   PHYSICS,
   COLLISION,

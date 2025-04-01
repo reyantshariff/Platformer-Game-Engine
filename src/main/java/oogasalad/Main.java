@@ -4,11 +4,9 @@ package oogasalad;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import oogasalad.engine.base.Game;
+import oogasalad.engine.base.architecture.Game;
 
 /**
  * Feel free to completely change this code or delete it entirely. 
