@@ -8,6 +8,7 @@ package oogasalad.engine.base.enumerate;
  */
 public enum ComponentTag {
   NONE,
+  INPUT,
   TRANSFORM,
   PHYSICS,
   COLLISION,

@@ -6,6 +6,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import oogasalad.engine.base.enumerate.KeyCode;
 
+/**
+ * This is the mapping that stores all the bindings of key and actions. The actions should be bound
+ * to a specific key in order to make it controllable. All actions bound with the pressed key will
+ * be called dispatch() if their constraints are met.
+ *
+ * @author Hsuan-Kai Liao, Christian Bepler
+ */
 public class InputMapping {
     private final Map<KeyCode, List<GameAction>> inputActionMap;
 

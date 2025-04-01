@@ -10,15 +10,16 @@ import oogasalad.engine.base.event.InputMapping;
  * The GameScene class is the base class for all game scenes. It manages the game objects and
  * components within the scene. It is responsible for updating the game objects and components every
  * frame.
+ *
+ * @author Hsuan-Kai Liao, Christian Bepler
  */
-
 public abstract class GameScene {
   private final UUID id;
   private final InputMapping inputMapping;
   private final Map<UUID, GameObject> allObjects;
   private final Map<ComponentTag, List<GameComponent>> allComponents;
   private final Queue<KeyCode> inputKeys;
-  private final List<Runnable> subscribedEvents;
+  private final Queue<Runnable> subscribedEvents;
 
   private String name;
 
@@ -32,7 +33,7 @@ public abstract class GameScene {
       allComponents.put(tag, new ArrayList<>());
     }
     this.inputKeys = new LinkedList<>();
-    this.subscribedEvents = new ArrayList<>();
+    this.subscribedEvents = new LinkedList<>();
   }
 
   /**
@@ -70,19 +71,13 @@ public abstract class GameScene {
   final void step(double deltaTime) {
     // Update with the following sequence
     // 1. Handle all the subscribed events
-    if (!subscribedEvents.isEmpty()) {
-      Iterator<Runnable> iterator = subscribedEvents.iterator();
-      while (iterator.hasNext()) {
-        Runnable event = iterator.next();
-        event.run();
-        iterator.remove();
-      }
+    while (!subscribedEvents.isEmpty()) {
+      subscribedEvents.poll().run();
     }
 
     // 2. Handle input events
     while (!inputKeys.isEmpty()) {
-      KeyCode code = inputKeys.poll();
-      inputMapping.trigger(code);
+      inputMapping.trigger(inputKeys.poll());
     }
 
     // 3. Update the components based on the order

@@ -4,6 +4,12 @@ import oogasalad.engine.base.enumerate.ComponentTag;
 import oogasalad.engine.base.architecture.GameComponent;
 import oogasalad.engine.base.serialization.SerializableField;
 
+/**
+ * Game Behavior is a special component that aims to be inherited and implement specific object's
+ * behavior. Normally, like playerController should be one of the game behavior.
+ *
+ * @author Hsuan-Kai Liao
+ */
 public abstract class Behavior extends GameComponent {
     @Override
     public final ComponentTag componentTag() { return ComponentTag.BEHAVIOR; }
