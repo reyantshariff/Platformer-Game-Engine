@@ -3,6 +3,7 @@ package oogasalad.engine.base.architecture;
 import java.util.*;
 import oogasalad.engine.base.enumerate.ComponentTag;
 import oogasalad.engine.base.enumerate.KeyCode;
+import oogasalad.engine.base.event.GameAction;
 import oogasalad.engine.base.event.InputMapping;
 
 /**
@@ -177,6 +178,7 @@ public abstract class GameScene {
    * @param gameObject the gameObject to be destroyed
    */
   public final void unregisterObject(GameObject gameObject) {
+    // Unregister components
     for (ComponentTag order : ComponentTag.values()) {
       for (GameComponent component : allComponents.get(order)) {
         if (component.getParent().equals(gameObject)) {
@@ -184,6 +186,18 @@ public abstract class GameScene {
         }
       }
     }
+
+    // Unsubscribe the input bindings
+    Map<KeyCode, List<GameAction>> keyActionMap = inputMapping.getMapping();
+    List<GameAction> actionsToBeRemoved = new ArrayList<>();
+    for (List<GameAction> actions : keyActionMap.values()) {
+      for (GameAction action : actions) {
+        if (action.getParent().equals(gameObject)) {
+          actionsToBeRemoved.add(action);
+        }
+      }
+    }
+    actionsToBeRemoved.forEach(inputMapping::removeMapping);
 
     gameObject.setScene(null);
     allObjects.remove(gameObject.getId());

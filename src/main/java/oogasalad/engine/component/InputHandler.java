@@ -1,5 +1,7 @@
 package oogasalad.engine.component;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import oogasalad.engine.base.architecture.GameComponent;
 
 import java.util.List;
@@ -14,7 +16,15 @@ public class InputHandler extends GameComponent {
     @Override
     public ComponentTag componentTag() { return ComponentTag.NONE; }
 
-    private List<GameAction> actions;
+    private List<GameAction> actions = new ArrayList<>();
+
+    @Override
+    public void onRemove() {
+        for (GameAction action : actions) {
+            getParent().getScene().getInputMapping().removeMapping(action);
+        }
+        actions.clear();
+    }
 
     /**
      * Register the game action to the specific keyCode
@@ -22,16 +32,25 @@ public class InputHandler extends GameComponent {
      * @param action the action that binds to that key
      */
     public void registerAction(KeyCode input, GameAction action) {
+        actions.add(action);
         getParent().getScene().getInputMapping().addMapping(input, action);
     }
 
     /**
-     * Add the action to this game object
+     * Register the game action to the specific keyCode based on the actionClass
      * @param actionClass the specified game action class
      */
-    public <T extends GameAction> void addAction(Class<T> actionClass) {
+    public <T extends GameAction> void registerAction(KeyCode input, Class<T> actionClass) {
         try {
-            actions.add(actionClass.getDeclaredConstructor().newInstance());
+            T action = actionClass.getDeclaredConstructor().newInstance();
+
+            // Set the parent of the action
+            Field parentField = actionClass.getDeclaredField("parent");
+            parentField.setAccessible(true);
+            parentField.set(action, this);
+
+            actions.add(action);
+            getParent().getScene().getInputMapping().addMapping(input, action);
         } catch (Exception e) {
             throw new RuntimeException("Failed to add action", e);
         }
@@ -56,9 +75,10 @@ public class InputHandler extends GameComponent {
      * @param actionClass the specified game action class
      */
     public <T extends GameAction> void removeAction(Class<T> actionClass) {
-        for (GameAction action : actions) {
-            if (action.getClass().equals(actionClass)) {
-                actions.remove(action);
+        for (int i = 0; i < actions.size(); i++) {
+            if (actions.get(i).getClass().equals(actionClass)) {
+                getParent().getScene().getInputMapping().removeMapping(actions.get(i));
+                actions.remove(i);
                 return;
             }
         }
