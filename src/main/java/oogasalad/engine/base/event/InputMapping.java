@@ -3,6 +3,7 @@ package oogasalad.engine.base.event;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import oogasalad.engine.base.enumerate.KeyCode;
 
 public class InputMapping {
@@ -16,10 +17,38 @@ public class InputMapping {
      * Associates an action to an input.
      *
      * @param input the input to map
-     * @param action the list of actions to associate with the input
+     * @param action the action to associate with the input
      */
-    public final void addMapping(KeyCode input, GameAction action) {
+    public void addMapping(KeyCode input, GameAction action) {
         inputActionMap.computeIfAbsent(input, k -> new java.util.ArrayList<>()).add(action);
+    }
+
+    /**
+     * Get the current unmodifiable key-action mappings
+     */
+    public Map<KeyCode, List<GameAction>> getMapping() {
+        return inputActionMap.entrySet().stream()
+            .collect(Collectors.toUnmodifiableMap(
+                Map.Entry::getKey,
+                e -> List.copyOf(e.getValue())
+            ));
+    }
+
+    /**
+     * Remove the action from the input mapping
+     * NOTE: assumption is made that each action will only have one key binding
+     *
+     * @param action the action to be removed
+     */
+    public void removeMapping(GameAction action) {
+        for (List<GameAction> actions : inputActionMap.values()) {
+            for (int i = 0; i < actions.size(); i++) {
+                if (actions.get(i) == action) {
+                    actions.remove(i);
+                    return;
+                }
+            }
+        }
     }
 
     /**
@@ -27,7 +56,7 @@ public class InputMapping {
      *
      * @param input the input to trigger
      */
-    public final void trigger(KeyCode input) {
+    public void trigger(KeyCode input) {
         List<GameAction> actions = inputActionMap.get(input);
         if (actions != null) {
             for (GameAction action : actions) {
