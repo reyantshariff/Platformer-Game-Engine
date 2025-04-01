@@ -32,11 +32,22 @@ public class DinosaurGameScene extends GameScene {
       // Game Over
       // Restart
 
+    // Load values from properties file using propertiesLoader
+    /*
+    for (GameComponent comp : player.getAllComponents()) {
+      if (comp instanceof Serializable) {
+        PropertiesLoader.loadFromFile((Serializable) comp, "data/player.properties");
+      }
+    }
+     */
+
     // Add Game Components
       // dinosaur.addComponent(Transform.class)
 
     // Register Game Objects
       // registerObject(dinosaur)
+
+
 
     GraphicsContext gc = canvas.getGraphicsContext2D();
 

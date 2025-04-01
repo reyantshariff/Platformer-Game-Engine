@@ -1,10 +1,13 @@
 package oogasalad.engine.base.event;
 
 import oogasalad.engine.base.architecture.GameObject;
+import oogasalad.engine.base.serialization.Serializable;
+import oogasalad.engine.base.serialization.SerializableField;
 import oogasalad.engine.component.VelocityComponent;
 
-public class JumpAction extends GameAction{
-  private static final double JUMP_FORCE = -500.0;
+public class JumpAction extends GameAction implements Serializable {
+  @SerializableField
+  private double jumpForce;
 
   public JumpAction(GameObject parent) {
     super(parent);
@@ -19,6 +22,6 @@ public class JumpAction extends GameAction{
     if(!checkConstraints()) return;
 
     VelocityComponent velocity = getParent().getComponent(VelocityComponent.class);
-    velocity.setVelocityY(JUMP_FORCE);
+    velocity.setVelocityY(jumpForce);
   }
 }
