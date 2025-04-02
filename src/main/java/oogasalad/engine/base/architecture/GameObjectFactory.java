@@ -4,7 +4,7 @@ import java.lang.reflect.Constructor;
 
 public class GameObjectFactory {
 
-  private static final String GAME_OBJECT_PACKAGE = "oogasalad.engine.gameobject";
+  private static final String GAME_OBJECT_PACKAGE = "oogasalad.engine.prefabs.dinosaur";
 
   @SuppressWarnings("unchecked")
   public static GameObject create(String type) {
