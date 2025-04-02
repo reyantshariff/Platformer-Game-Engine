@@ -11,6 +11,8 @@ import oogasalad.player.dinosaur.DinosaurGameScene;
  * program.
  */
 public class Main extends Application {
+
+    public static Game game;
     /**
      * Start of the program.
      */
@@ -29,7 +31,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         // Create new Game
-        Game game = new Game();
+       game = new Game();
         // Create gui
         GUI gui = new GUI(stage, game);
     }
