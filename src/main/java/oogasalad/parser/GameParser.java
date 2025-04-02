@@ -1,0 +1,117 @@
+package oogasalad.parser;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import oogasalad.engine.base.architecture.Game;
+import oogasalad.engine.base.architecture.GameInfo;
+import oogasalad.engine.base.architecture.GameScene;
+import static oogasalad.config.GameConfig.LOGGER;
+
+
+/**
+ * Parses and serializes a Game object to and from a JSON node
+ *
+ * @author Justin Aronwald
+ */
+public class GameParser implements Parser<Game> {
+  private final ObjectMapper mapper = new ObjectMapper();
+  private final GameSceneParser sceneParser = new GameSceneParser();
+  private final ResourceParser resourceParser = new ResourceParser();
+  private final InformationParser informationParser = new InformationParser();
+
+  /**
+   * Parses a JSON node into a Game instance
+   *
+   * @param node - the JSON node given to parse
+   * @return - a fully configured GameScene
+   * @throws ParsingException - error thrown if reflection or parsing fails
+   */
+  @Override
+  public Game parse(JsonNode node) throws ParsingException {
+    if (node == null || !node.has("Data")) {
+      LOGGER.warn("No data found");
+      throw new ParsingException("No data found");
+    }
+
+    Game newGame = new Game();
+    JsonNode data = node.get("Data");
+
+    handleInformationParsing(data, newGame);
+    handlerResourceParsing(node, data);
+    handleSceneParsing(data, newGame);
+
+    return newGame;
+  }
+
+  private void handleInformationParsing(JsonNode data, Game newGame) throws ParsingException {
+    if (data.has("Information")) {
+      GameInfo gameInfo = informationParser.parse(data.get("Information"));
+      newGame.setGameInfo(gameInfo);
+    }
+  }
+
+  private void handleSceneParsing(JsonNode data, Game newGame) throws ParsingException {
+    if (data.has("Scene") && data.get("Scene").isArray()) {
+      for (JsonNode sceneNode : data.get("Scene")) {
+        GameScene gameScene = sceneParser.parse(sceneNode);
+        newGame.addScene(gameScene.getName());
+      }
+    }
+  }
+
+  private void handlerResourceParsing(JsonNode node, JsonNode data) throws ParsingException {
+    Map<String, String> resourceMap = new HashMap<>();
+    if (data.has("Resources")) {
+      for (JsonNode resourceNode : node.get("Resources")) {
+        Map.Entry<String, String> entry = resourceParser.parse(resourceNode);
+        resourceMap.put(entry.getKey(), entry.getValue());
+      }
+    }
+  }
+
+  /**
+   * Serializes a Game object into a JSON root node
+   *
+   * @param data - the data object to serialize
+   * @return - a JsonNode that holds all the configured Game information
+   * @throws IOException - an exception thrown if errors occur with input/output
+   */
+  @Override
+  public JsonNode write(Game data) throws IOException {
+    ObjectNode root = mapper.createObjectNode();
+    ObjectNode dataNode = mapper.createObjectNode();
+
+    handleInformationWriting(data, root);
+    handleResourceWriting(data, dataNode);
+    handleSceneWriting(data, dataNode);
+
+    root.set("Data", dataNode);
+    return root;
+  }
+
+  private void handleInformationWriting(Game data, ObjectNode root) throws IOException {
+    ObjectNode infoNode = (ObjectNode) informationParser.write(data.getGameInfo());
+    root.set("Information", infoNode);
+  }
+
+  private void handleSceneWriting(Game data, ObjectNode dataNode) throws IOException {
+    ArrayNode sceneArray = mapper.createArrayNode();
+    for (GameScene scene : data.getAllScenes()) {
+      sceneArray.add(sceneParser.write(scene));
+    }
+    dataNode.set("Scenes", sceneArray);
+  }
+
+  private void handleResourceWriting(Game data, ObjectNode dataNode) throws IOException {
+    ArrayNode resourceArray = mapper.createArrayNode();
+    for (Map.Entry<String, String> entry : data.getAllResources.entrySet()) {
+      resourceArray.add(resourceParser.write(entry));
+    }
+    dataNode.set("Resources", resourceArray);
+  }
+}
