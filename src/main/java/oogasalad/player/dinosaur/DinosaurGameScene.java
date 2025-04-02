@@ -4,11 +4,15 @@ import oogasalad.engine.base.architecture.GameScene;
 import javafx.scene.Scene;
 import oogasalad.engine.base.enumerate.KeyCode;
 import oogasalad.engine.base.event.GameAction;
+import oogasalad.engine.base.event.IsGroundedConstraint;
 import oogasalad.engine.base.event.JumpAction;
 import oogasalad.engine.component.AccelerationComponent;
+import oogasalad.engine.component.ColliderComponent;
+import oogasalad.engine.component.GroundCollisionComponent;
 import oogasalad.engine.component.InputHandler;
 import oogasalad.engine.component.Transform;
 import oogasalad.engine.component.VelocityComponent;
+import oogasalad.engine.prefabs.Base;
 import oogasalad.engine.prefabs.Player;
 
 public class DinosaurGameScene extends GameScene {
@@ -36,16 +40,22 @@ public class DinosaurGameScene extends GameScene {
 
     InputHandler input = player.addComponent(InputHandler.class);
     JumpAction jumpAction = new JumpAction(player);
+    jumpAction.registerConstraint(IsGroundedConstraint.class);
     input.registerAction(KeyCode.valueOf("SPACE"), jumpAction);
 
+    player.addComponent(ColliderComponent.class);
+    player.addComponent(GroundCollisionComponent.class);
 
-    Player ground = instantiateObject(Player.class);
+
+    Base ground = instantiateObject(Base.class);
 
     Transform tGround = ground.addComponent(Transform.class);
     tGround.setX(0);
-    tGround.setY(550); // Bottom of a 600px screen
-    tGround.setScaleX(800); // Full width
-    tGround.setScaleY(50);  // 50px tall
+    tGround.setY(550);
+    tGround.setScaleX(800);
+    tGround.setScaleY(50);
+
+    ground.addComponent(ColliderComponent.class);
 
     // Create Game Objects
     // Dinosaur

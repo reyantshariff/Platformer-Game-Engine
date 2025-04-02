@@ -38,7 +38,7 @@ public abstract class GameAction {
     public final void registerConstraint(Class<? extends GameActionConstraint> constraintClass) {
         try {
             constraints
-                    .add(constraintClass.getDeclaredConstructor(this.getClass()).newInstance(this));
+                    .add(constraintClass.getDeclaredConstructor(GameAction.class).newInstance(this));
         } catch (Exception e) {
             throw new RuntimeException("Failed to register constraint", e);
         }

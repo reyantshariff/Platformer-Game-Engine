@@ -4,6 +4,7 @@ import oogasalad.engine.base.architecture.GameObject;
 import oogasalad.engine.component.ColliderComponent;
 
 import java.util.Collection;
+import oogasalad.engine.prefabs.Base;
 
 public class IsGroundedConstraint extends GameActionConstraint {
 
@@ -20,12 +21,11 @@ public class IsGroundedConstraint extends GameActionConstraint {
     Collection<GameObject> others = player.getScene().getAllObjects();
     for (GameObject obj : others) {
       if (obj == player) continue;
-      if (obj.getComponent(ColliderComponent.class) != null &&
+      if (obj.getComponent(ColliderComponent.class) != null && obj.getClass() == Base.class &&
           playerCollider.collidesWith(obj)) {
         return true;
       }
     }
-
     return false;
   }
 }
