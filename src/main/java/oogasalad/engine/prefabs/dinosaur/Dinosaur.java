@@ -9,6 +9,10 @@ import oogasalad.engine.component.VelocityComponent;
 
 
 public class Dinosaur extends GameObject {
+  /**
+   * Outlines Dinosaur Game Object for Dinosaur Game
+   * @author Reyan Shariff
+   */
   public Dinosaur()
   {
     this(true);

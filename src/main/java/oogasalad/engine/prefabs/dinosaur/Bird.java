@@ -4,6 +4,10 @@ import oogasalad.engine.component.Behavior;
 import oogasalad.engine.component.Transform;
 
 public class Bird extends GameObject {
+  /**
+   * Outlines Bird Game Object for Dinosaur Game
+   * @author Reyan Shariff
+   */
 
   public Bird()
   {

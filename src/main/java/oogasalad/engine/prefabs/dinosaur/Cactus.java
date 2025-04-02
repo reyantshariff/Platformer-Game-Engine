@@ -4,7 +4,11 @@ import oogasalad.engine.component.Behavior;
 import oogasalad.engine.component.Transform;
 
 public class Cactus extends GameObject {
-  public Cactus() 
+  /**
+   * Outlines Cactus Game Object for Dinosaur Game
+   * @author Reyan Shariff
+   */
+  public Cactus()
   {
     this(true);
   }
