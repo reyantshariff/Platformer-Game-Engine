@@ -9,6 +9,11 @@ import oogasalad.engine.base.architecture.GameComponent;
 import oogasalad.engine.component.Behavior;
 
 // Assumes I am already within a behavior subsection at one of the array objects.
+/**
+ * Parses and serializes a Behavior object to and from a JSON node
+ *
+ * @author Justin Aronwald, Daniel Radriguez-Florido
+ */
 public class BehaviorParser implements Parser<GameComponent> {
 
   /**

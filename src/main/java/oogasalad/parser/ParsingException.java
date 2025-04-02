@@ -1,5 +1,10 @@
 package oogasalad.parser;
 
+/**
+ * A class designed to throw an exception when an error occurs during parsing failure or interruption
+ *
+ * @author Justin Aronwald
+ */
 public class ParsingException extends Exception {
 
   /**

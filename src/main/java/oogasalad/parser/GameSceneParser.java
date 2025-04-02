@@ -13,6 +13,7 @@ import static oogasalad.config.GameConfig.LOGGER;
 /**
  * Parses and serializes a GameScene to and from a JSON node
  *
+ * @author Justin Aronwald
  */
 public class GameSceneParser implements Parser<GameScene>{
   private final GameObjectParser gameObjectParser = new GameObjectParser();

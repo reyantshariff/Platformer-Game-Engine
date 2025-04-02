@@ -1,6 +1,8 @@
 package oogasalad.engine.base.architecture;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -15,6 +17,7 @@ public class Game {
   private final Map<UUID, String> scenePaths = new HashMap<>();
 
   private GameScene currentScene;
+  private GameInfo myGameInfo;
 
   public Game() {
     currentScene = null;
@@ -122,5 +125,32 @@ public class Game {
         // TODO: Add parser to reload the scene
       }
     }
+  }
+
+  /**
+   * Setter for the GameInfo
+   *
+   * @param gameInfo - a class containing the name, author, description, and resolution of a game
+   */
+  public void setGameInfo(GameInfo gameInfo) {
+    myGameInfo = gameInfo;
+  }
+
+  /**
+   * getter for GameInfo of a Game object
+   *
+   * @return - a GameInfo object comprised of name, author, description, and resolution
+   */
+  public GameInfo getGameInfo() {
+    return myGameInfo;
+  }
+
+  /**
+   * getter for the loaded gameScenes
+   *
+   * @return - a list of all the scenes currently loading in the game object
+   */
+  public List<GameScene> getAllScenes() {
+    return new ArrayList<>(loadedScenes.values());
   }
 }

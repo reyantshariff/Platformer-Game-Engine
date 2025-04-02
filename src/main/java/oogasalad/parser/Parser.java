@@ -7,6 +7,8 @@ import java.io.OutputStream;
 /**
  * A generic parser class for a JSON node, converting to an object of type T
  * @param <T> - the type of object produced by the parser
+ *
+ * @author Justin Aronwald
  */
 public interface Parser<T> {
 

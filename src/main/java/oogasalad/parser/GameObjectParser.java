@@ -12,6 +12,7 @@ import oogasalad.engine.component.Behavior;
 /**
  * This class parses and serializes gameObjects to and from a JSON
  *
+ * @author Justin Aronwald
  */
 public class GameObjectParser implements Parser<GameObject> {
 
@@ -95,6 +96,12 @@ public class GameObjectParser implements Parser<GameObject> {
     gameObject.addComponent(behavior.getClass());
   }
 
+  /**
+   * Serializes a GameObject into a JSON node
+   *
+   * @param data - the data object to serialize
+   * @return - a JSON node with the game object's data
+   */
   @Override
   public JsonNode write(GameObject data) throws IOException {
     ObjectNode root = mapper.createObjectNode();
