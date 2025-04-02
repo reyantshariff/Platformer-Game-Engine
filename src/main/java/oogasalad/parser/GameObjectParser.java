@@ -74,52 +74,25 @@ public class GameObjectParser implements Parser<GameObject> {
   }
 
   private void handleComponentParsing(GameObject gameObject, JsonNode componentNode) throws ParsingException {
-    try {
-      String name = componentNode.get("Name").asText();
-      String fullClassName = "oogasalad.engine.component." + name;
-
-      //had chatGpt help with the following three lines
-      Class<?> rawClass = Class.forName(fullClassName);
-      if (!GameComponent.class.isAssignableFrom(rawClass)) {
-        throw new ParsingException("Class does not extend GameComponent: " + fullClassName);
-      }
-
-      Class<? extends GameComponent> componentClass = (Class<? extends GameComponent>) rawClass;
-      GameComponent component = gameObject.addComponent(componentClass);
-
-      JsonNode config = componentNode.get("Configurations");
-      component.initializeFromJson(config);
-
-    } catch (ClassNotFoundException e) {
-      throw new ParsingException("Component class not found: " + componentNode, e);
-    }
+    GameComponent component = componentParser.parse(componentNode);
+    JsonNode config = componentNode.get("Configurations");
+    component.initializeFromJson(config);
+    gameObject.addComponent(component.getClass());
   }
 
   private void parseBehaviors(GameObject gameObject, JsonNode behaviorsNode) throws ParsingException {
     if (behaviorsNode.isArray()) {
       for (JsonNode behaviorNode : behaviorsNode) {
-        try {
-
-          String name = behaviorNode.get("Name").asText();
-          String fullClassName = "oogasalad.engine.component." + name;
-
-          //had chatGpt help with the following three lines
-          Class<?> rawClass = Class.forName(fullClassName);
-          if (!Behavior.class.isAssignableFrom(rawClass)) {
-            throw new ParsingException("Class does not extend Behavior: " + fullClassName);
-          }
-
-          Class<? extends Behavior> behaviorClass = (Class<? extends Behavior>) rawClass;
-          Behavior behavior = gameObject.addComponent(behaviorClass);
-
-          JsonNode config = behaviorNode.get("Configurations");
-          behavior.initializeFromJson(config);
-
-        } catch (ClassNotFoundException e) {
-          throw new ParsingException("Behavior class not found: " + behaviorNode.get("Name").asText(), e);
-        }
+        handleBehaviorParsing(gameObject, behaviorNode);
       }
     }
+  }
+
+  private void handleBehaviorParsing(GameObject gameObject, JsonNode behaviorNode) throws ParsingException {
+    Behavior behavior = behaviorParser.parse(behaviorNode);
+    JsonNode config = behaviorNode.get("Configurations");
+    behavior.initializeFromJson(config);
+    gameObject.addComponent(behavior.getClass());
   }
 
   @Override
