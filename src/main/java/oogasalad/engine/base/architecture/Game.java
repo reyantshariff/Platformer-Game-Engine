@@ -36,6 +36,8 @@ public class Game {
     currentScene.step(deltaTime);
   }
 
+  public GameScene getCurrentScene() {return currentScene;}
+
   /**
    * @return - the current scene
    */
