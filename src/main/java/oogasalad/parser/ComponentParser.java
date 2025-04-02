@@ -3,24 +3,32 @@ package oogasalad.parser;
 import static oogasalad.config.GameConfig.LOGGER;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import oogasalad.engine.base.architecture.GameComponent;
 
 
 public class ComponentParser implements Parser<GameComponent> {
 
   @Override
-  public GameComponent parse(JsonNode node) throws ParsingException {
+  public GameComponent parse(JsonNode componentNode) throws ParsingException {
     try {
-      String componentName = node.get("componentName").asText();
-      JsonNode configuations = node.get("Configurations");
+      String name = componentNode.get("Name").asText();
+      String fullClassName = "oogasalad.engine.component." + name;
 
-      Class<? extends GameComponent> componentClass = ComponentFactory.getComponentClass(componentName);
-      GameComponent gameComponent = ComponentFactory.create(componentClass);
+      //had chatGpt help with the following three lines
+      Class<?> rawClass = Class.forName(fullClassName);
+      if (!GameComponent.class.isAssignableFrom(rawClass)) {
+        throw new ParsingException("Class does not extend GameComponent: " + fullClassName);
+      }
 
-      gameComponent.initializeFromJson(configuations);
-      return gameComponent;
-    } catch (ParsingException e) {
-      LOGGER.error(e.getMessage());
+      Class<? extends GameComponent> componentClass = (Class<? extends GameComponent>) rawClass;
+
+      return componentClass.getDeclaredConstructor().newInstance();
+    } catch (ClassNotFoundException e) {
+      throw new ParsingException("Component class not found: " + componentNode, e);
+    } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+             NoSuchMethodException e) {
+      throw new RuntimeException(e);
     }
   }
 
