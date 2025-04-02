@@ -7,7 +7,6 @@ import oogasalad.engine.component.ImageComponent;
 import oogasalad.engine.component.InputHandler;
 import oogasalad.engine.component.Transform;
 import oogasalad.engine.prefabs.Player;
-import oogasalad.engine.prefabs.mainmenu.PlayerButton;
 
 public class MainMenuGameScene extends GameScene {
 
@@ -17,7 +16,7 @@ public class MainMenuGameScene extends GameScene {
 
   @Override
   public void onActivated() {
-    PlayerButton enterPlayer = instantiateObject(PlayerButton.class);
+    Player enterPlayer = instantiateObject(Player.class);
 
     ImageComponent iPlayer = enterPlayer.addComponent(ImageComponent.class);
     iPlayer.setImagePath("/oogasalad/dinosaur/GameOver.png");
