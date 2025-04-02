@@ -27,7 +27,11 @@ public class Game {
    * @param deltaTime The time since the last frame, in seconds.
    */
   public void step(double deltaTime) {
-    currentScene.step(deltaTime);
+    if (currentScene != null) {
+      currentScene.step(deltaTime);
+    } else {
+      throw new AssertionError("No Game Scene has not been loaded yet.");
+    }
   }
 
   /**
