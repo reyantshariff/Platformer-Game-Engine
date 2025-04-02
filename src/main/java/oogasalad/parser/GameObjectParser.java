@@ -14,6 +14,7 @@ import oogasalad.engine.component.Behavior;
  *
  */
 public class GameObjectParser implements Parser<GameObject> {
+
   private final ComponentParser componentParser = new ComponentParser();
   private final BehaviorParser behaviorParser = new BehaviorParser();
   private final ObjectMapper mapper = new ObjectMapper();

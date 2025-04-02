@@ -14,7 +14,7 @@ public class ComponentParser implements Parser<GameComponent> {
       String componentName = node.get("componentName").asText();
       JsonNode configuations = node.get("Configurations");
 
-      Class<? extends GameComponent> componentClass = ComponentFactory.getComponentClass(name);
+      Class<? extends GameComponent> componentClass = ComponentFactory.getComponentClass(componentName);
       GameComponent gameComponent = ComponentFactory.create(componentClass);
 
       gameComponent.initializeFromJson(configuations);
