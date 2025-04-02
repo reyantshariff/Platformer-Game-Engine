@@ -1,4 +1,4 @@
-package oogasalad.gui.resources;
+package oogasalad;
 
 import java.util.HashMap;
 import java.util.Map;
