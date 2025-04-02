@@ -28,7 +28,7 @@ public class DinosaurGameScene extends GameScene {
 
     Transform t = player.addComponent(Transform.class);
     t.setX(100);
-    t.setY(400);
+    t.setY(500);
     t.setScaleX(20);
     t.setScaleY(20);
 
