@@ -8,10 +8,21 @@ import java.io.IOException;
 import oogasalad.engine.base.architecture.GameInfo;
 import static oogasalad.config.GameConfig.LOGGER;
 
-
+/**
+ * Parses and serializes the information node of a Game object to and from a JSON node
+ *
+ * @author Justin Aronwald
+ */
 public class InformationParser implements Parser<GameInfo> {
   private final ObjectMapper mapper = new ObjectMapper();
 
+  /**
+   * Parses a JSON node into a GameInfo class
+   *
+   * @param node - the JSON node given to parse
+   * @return - a fully configured GameInfo object
+   * @throws ParsingException - error thrown if reflection or parsing fails
+   */
   @Override
   public GameInfo parse(JsonNode node) throws ParsingException {
     if (node == null || !node.has("Name")) {
@@ -44,7 +55,13 @@ public class InformationParser implements Parser<GameInfo> {
 
   }
 
-
+  /**
+   * Serializes a GameInfo object into a JSON node
+   *
+   * @param info - the GameInfo object to serialize
+   * @return - a JsonNode that holds all the configured GameInfo information (name, author ...)
+   * @throws IOException - an exception thrown if errors occur with input/output
+   */
   @Override
   public JsonNode write(GameInfo info) throws IOException {
     ObjectNode root = mapper.createObjectNode();
