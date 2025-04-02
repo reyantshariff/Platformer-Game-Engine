@@ -12,7 +12,7 @@ import oogasalad.engine.component.Behavior;
 public class BehaviorParser implements Parser<GameComponent> {
 
   /**
-   * @param node - the JSON node given to parse
+   * @param behaviorNode - the JSON node given to parse
    * @return A Behavior Game Component
    * @throws ParsingException indicating that there was an issue with parsing
    */
