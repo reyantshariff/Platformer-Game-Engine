@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.Scene;
+import oogasalad.engine.base.architecture.GameObject;
 
 /**
  * Parses and serializes scenes to and from JSON
@@ -25,7 +26,7 @@ public class SceneParser implements Parser<List<Scene>> {
   @Override
   public List<Scene> parse(JsonNode node) throws ParsingException {
     if (node == null || !node.isArray()) {
-      throw new IllegalArgumentException("SceneParser requires a JSON array");
+      throw new ParsingException("SceneParser requires a JSON array");
     }
 
     List<Scene> scenes = new ArrayList<>();
@@ -34,9 +35,12 @@ public class SceneParser implements Parser<List<Scene>> {
       String sceneName = scene.get("Name").asText();
 
       JsonNode gameObjects = scene.get("GameObjects");
-      List<Entity> entities = gameObjectParser.parse(gameObjects);
+      List<GameObject> gameObjectList = new ArrayList<>();
+      for (JsonNode gameObject : gameObjects) {
+        gameObjectList.add(gameObjectParser.parse(gameObject));
+      }
 
-      Scene newScene = new Scene(sceneName, entities);
+      Scene newScene = new Scene(sceneName, gameObjectList);
       scenes.add(newScene);
 
     }
