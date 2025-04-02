@@ -1,4 +1,4 @@
-package oogasalad.engine.prefabs.dinosaur.objects;
+package oogasalad.engine.prefabs.dinosaur;
 
 import oogasalad.engine.base.architecture.GameObject;
 import oogasalad.engine.component.GravityComponent;
