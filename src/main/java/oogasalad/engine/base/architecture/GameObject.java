@@ -77,34 +77,6 @@ public class GameObject {
 
 
   /**
-   * Attaches a pre-configured component instance to this GameObject.
-   *
-   * @param component -  the GameComponent instance to attach
-   * @throws IllegalArgumentException -  if a component of the same class already exists
-   */
-  public void attachComponent(GameComponent component) {
-    Class<? extends GameComponent> componentClass = component.getClass();
-
-    if (allComponents.containsKey(componentClass)) {
-      throw new IllegalArgumentException("Component already exists");
-    }
-
-    component.setParent(this);
-
-    if (parentScene == null) {
-      componentAwakeInitializer.add(component::awake);
-      componentStartInitializer.add(component::start);
-    } else {
-      component.awake();
-      parentScene.subscribeEvent(component::start);
-      parentScene.registerComponent(component);
-    }
-
-    allComponents.put(componentClass, component);
-  }
-
-
-  /**
    * Get the component based on
    * 
    * @param componentClass the component class specified

@@ -1,13 +1,12 @@
 package oogasalad.parser;
 
+import static oogasalad.config.GameConfig.LOGGER;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import oogasalad.engine.base.architecture.GameComponent;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 
 public class ComponentParser implements Parser<GameComponent> {
-  public static final Logger LOGGER = LogManager.getLogger();
 
   @Override
   public GameComponent parse(JsonNode node) throws ParsingException {
