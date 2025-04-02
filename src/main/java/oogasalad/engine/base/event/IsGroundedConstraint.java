@@ -26,6 +26,7 @@ public class IsGroundedConstraint extends GameActionConstraint {
         return true;
       }
     }
+
     return false;
   }
 }

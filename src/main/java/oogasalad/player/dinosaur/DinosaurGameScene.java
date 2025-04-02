@@ -17,14 +17,6 @@ import oogasalad.engine.component.VelocityComponent;
 import oogasalad.engine.prefabs.dinosaur.Base;
 import oogasalad.engine.prefabs.dinosaur.Bird;
 import oogasalad.engine.prefabs.Player;
-import oogasalad.engine.base.enumerate.KeyCode;
-import oogasalad.engine.base.event.GameAction;
-import oogasalad.engine.base.event.JumpAction;
-import oogasalad.engine.component.AccelerationComponent;
-import oogasalad.engine.component.InputHandler;
-import oogasalad.engine.component.Transform;
-import oogasalad.engine.component.VelocityComponent;
-import oogasalad.engine.prefabs.Player;
 
 public class DinosaurGameScene extends GameScene {
   private Scene scene;
