@@ -30,7 +30,6 @@ public class Main extends Application {
     public void start(Stage stage) {
         // Create new Game
         Game game = new Game();
-        game.addScene(DinosaurGameScene.class, "Dinosaur");
         // Create gui
         GUI gui = new GUI(stage, game);
     }
