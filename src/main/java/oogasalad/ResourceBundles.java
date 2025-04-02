@@ -7,6 +7,11 @@ import java.util.ResourceBundle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * The ResourceBundles class reads and casts the value pairings of properties files.
+ *
+ * @author Jack F. Regan
+ */
 public class ResourceBundles {
 
   private static final Map<String, ResourceBundle> bundles = new HashMap<>();
