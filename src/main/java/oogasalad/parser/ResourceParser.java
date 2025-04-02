@@ -3,16 +3,14 @@ package oogasalad.parser;
 import static oogasalad.config.GameConfig.LOGGER;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Parses and serializes the resources with a name-to-path mapping
  *
+ * @author Justin Aronwald
  */
 public class ResourceParser implements Parser<Map.Entry<String, String>> {
   private final ObjectMapper mapper = new ObjectMapper();
@@ -37,6 +35,13 @@ public class ResourceParser implements Parser<Map.Entry<String, String>> {
     return Map.entry(name, path);
   }
 
+  /**
+   * Serializes a resource entry into a JSON node
+   *
+   * @param entry - a map of string to string object to serialize
+   * @return - a JsonNode that holds all the configured Resource information
+   * @throws IOException - an exception thrown if errors occur with input/output
+   */
   @Override
   public JsonNode write(Map.Entry<String, String> entry) throws IOException {
     ObjectNode resourceNode = mapper.createObjectNode();

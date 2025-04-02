@@ -6,9 +6,20 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import oogasalad.engine.base.architecture.GameComponent;
 
-
+/**
+ * Parses and serializes a GameComponent object to and from a JSON node
+ *
+ * @author Justin Aronwald
+ */
 public class ComponentParser implements Parser<GameComponent> {
 
+  /**
+   * Parses a JSON node into a GameComponent instance
+   *
+   * @param componentNode - the JSON node given to parse
+   * @return - a GameComponent that gets configured in the parent class
+   * @throws ParsingException - error thrown if reflection or parsing fails
+   */
   @Override
   public GameComponent parse(JsonNode componentNode) throws ParsingException {
     try {
