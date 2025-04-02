@@ -142,4 +142,13 @@ public class GameObject {
   public final void setName(String name) {
     this.name = name;
   }
+
+  /**
+   * Returns all the components
+   *
+   * @return - a Map of some extended gameComponent to the GameComponent, representing all components
+   */
+  public final Map<Class<? extends GameComponent>, GameComponent> getAllComponents() {
+    return allComponents;
+  }
 }
