@@ -2,11 +2,15 @@ package oogasalad;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ResourceBundles {
 
   private static final Map<String, ResourceBundle> bundles = new HashMap<>();
+  private static final Logger logger = LogManager.getLogger(ResourceBundles.class);
 
   /**
    * Loads a ResourceBundle with the given base name.
@@ -17,8 +21,8 @@ public class ResourceBundles {
     try {
       ResourceBundle bundle = ResourceBundle.getBundle(baseName);
       bundles.put(baseName, bundle);
-    } catch (java.util.MissingResourceException e) {
-      System.err.println("Resource bundle not found: " + baseName);
+    } catch (MissingResourceException e) {
+      logger.error("Resource bundle not found: " + baseName);
     }
   }
 
@@ -50,7 +54,7 @@ public class ResourceBundles {
     try {
       return (int) cast(value, int.class);
     } catch (IllegalArgumentException e) {
-      System.err.println("Invalid integer value for key: " + key + " in bundle: " + baseName);
+      logger.error("Invalid integer value for key: " + key + " in bundle: " + baseName);
       return 0;
     }
   }
@@ -68,7 +72,7 @@ public class ResourceBundles {
     try {
       return (double) cast(value, double.class);
     } catch (IllegalArgumentException e) {
-      System.err.println("Invalid double value for key: " + key + " in bundle: " + baseName);
+      logger.error("Invalid double value for key: " + key + " in bundle: " + baseName);
       return 0.0;
     }
   }
