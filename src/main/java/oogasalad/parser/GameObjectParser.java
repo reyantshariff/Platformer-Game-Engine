@@ -75,7 +75,7 @@ public class GameObjectParser implements Parser<GameObject> {
   private void handleComponentParsing(GameObject gameObject, JsonNode component) {
     GameComponent newComponent = componentParser.parse(component);
     if (newComponent != null) {
-      gameObject.addComponent(newComponent.getClass());
+      gameObject.attachComponent(newComponent);
     }
   }
 
@@ -85,7 +85,7 @@ public class GameObjectParser implements Parser<GameObject> {
       for (JsonNode behavior : behaviorsNode) {
         Behavior newBehavior = behaviorParser.parse(behavior);
         if (newBehavior != null) {
-          gameObject.addComponent(newBehavior.getClass());
+          gameObject.attachComponent(newBehavior);
         }
       }
     }
