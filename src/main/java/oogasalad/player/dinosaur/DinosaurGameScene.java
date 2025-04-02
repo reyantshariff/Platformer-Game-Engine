@@ -48,13 +48,13 @@ public class DinosaurGameScene extends GameScene {
     tGround.setScaleY(50);  // 50px tall
 
     // Create Game Objects
-      // Dinosaur
-      // Track
-      // Score
-      // Bird
-      // Cactus
-      // Game Over
-      // Restart
+    // Dinosaur
+    // Track
+    // Score
+    // Bird
+    // Cactus
+    // Game Over
+    // Restart
 
     // Load values from properties file using propertiesLoader
     /*
@@ -66,15 +66,15 @@ public class DinosaurGameScene extends GameScene {
      */
 
     // Add Game Components
-      // dinosaur.addComponent(Transform.class)
+    // dinosaur.addComponent(Transform.class)
 
     // Register Game Objects
-      // registerObject(dinosaur)
+    // registerObject(dinosaur)
   }
 
   @Override
   public void onDeactivated() {
     // Remove Components
-      //
+    //
   }
 }
