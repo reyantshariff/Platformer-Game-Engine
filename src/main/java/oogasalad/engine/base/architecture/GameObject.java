@@ -66,6 +66,7 @@ public class GameObject {
 
       allComponents.put(componentClass, component);
       parentScene.registerComponent(component);
+      System.out.println("Added component " + component);
       return component;
     } catch (Exception e) {
       throw new RuntimeException("Failed to add component", e);

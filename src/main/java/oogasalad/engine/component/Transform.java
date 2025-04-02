@@ -6,9 +6,9 @@ import oogasalad.engine.base.serialization.SerializableField;
 
 public class Transform extends GameComponent {
     @Override
-    public ComponentTag componentTag() { return null; }
+    public ComponentTag componentTag() { return ComponentTag.TRANSFORM; }
 
-    Transform() {
+    public Transform() {
         getSerializedFields();
     }
 
