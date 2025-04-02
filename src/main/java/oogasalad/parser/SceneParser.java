@@ -35,6 +35,11 @@ public class SceneParser implements Parser<List<Scene>> {
       String sceneName = scene.get("Name").asText();
 
       JsonNode gameObjects = scene.get("GameObjects");
+
+      if (gameObjects == null) {
+        throw new ParsingException("SceneParser requires a GameObjects");
+      }
+
       List<GameObject> gameObjectList = new ArrayList<>();
       for (JsonNode gameObject : gameObjects) {
         gameObjectList.add(gameObjectParser.parse(gameObject));
