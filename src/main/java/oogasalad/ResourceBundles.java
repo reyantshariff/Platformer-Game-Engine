@@ -16,6 +16,7 @@ public class ResourceBundles {
 
   private static final Map<String, ResourceBundle> bundles = new HashMap<>();
   private static final Logger logger = LogManager.getLogger(ResourceBundles.class);
+  private static String activeBundleBaseName = null;
 
   /**
    * Loads a ResourceBundle with the given base name.
@@ -24,11 +25,67 @@ public class ResourceBundles {
    */
   public static void loadBundle(String baseName) {
     try {
-      ResourceBundle bundle = ResourceBundle.getBundle(baseName);
+      ResourceBundle bundle = ResourceBundle.getBundle("oogasalad.gui." + baseName);
       bundles.put(baseName, bundle);
     } catch (MissingResourceException e) {
       logger.error("Resource bundle not found: " + baseName);
     }
+  }
+
+  /**
+   * Defines which style bundle should be treated as the active/current bundle.
+   * Loads the ResourceBundle with the given baseName if it does not already exist in the map.
+   *
+   * @param baseName The base name of the resource bundle.
+   */
+  public static void setActiveBundle(String baseName) {
+    try {
+      if (!bundles.containsKey(baseName)) {
+        loadBundle(baseName);
+      }
+      activeBundleBaseName = baseName;
+    } catch (MissingResourceException e) {
+      logger.error("Could not set " + baseName + " as the active bundle.");
+    }
+  }
+
+  /**
+   * Retrieves a string from the currently "active" ResourceBundle with the given key.
+   *
+   * @param key      The key of the string to retrieve.
+   * @return The string value, or null if not found.
+   */
+  public static String getString(String key) {
+    if (activeBundleBaseName == null) {
+      logger.error("The active bundle must first be set.");
+    }
+    return getString(activeBundleBaseName, key);
+  }
+
+  /**
+   * Retrieves an integer from the currently "active" ResourceBundle with the given key.
+   *
+   * @param key      The key of the integer to retrieve.
+   * @return The integer value, or 0 if not found or invalid.
+   */
+  public static int getInt(String key) {
+    if (activeBundleBaseName == null) {
+      logger.error("The active bundle must first be set.");
+    }
+    return getInt(activeBundleBaseName, key);
+  }
+
+  /**
+   * Retrieves a double from the currently "active" ResourceBundle with the given key.
+   *
+   * @param key      The key of the double to retrieve.
+   * @return The double value, or 0.0 if not found or invalid.
+   */
+  public static double getDouble(String key) {
+    if (activeBundleBaseName == null) {
+      logger.error("The active bundle must first be set.");
+    }
+    return getDouble(activeBundleBaseName, key);
   }
 
   /**
