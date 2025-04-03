@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import oogasalad.engine.base.architecture.GameComponent;
+import oogasalad.engine.component.Transform;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -54,6 +57,26 @@ class ComponentParserTest {
   }
 
   @Test
-  void write() {
+  void write_validComponent_success() throws IOException {
+    Transform transformComponent = new Transform();
+    transformComponent.setX(1);
+    transformComponent.setY(1);
+    transformComponent.setRotation(1);
+    transformComponent.setScaleX(1);
+    transformComponent.setScaleY(1);
+
+    JsonNode gameComponent = myComponentParser.write(transformComponent);
+    assertNotNull(gameComponent);
+    assertTrue(gameComponent.isObject());
+    assertTrue(gameComponent.has("Name"));
+    assertTrue(gameComponent.has("Configurations"));
+
+    JsonNode configurations = gameComponent.get("Configurations");
+    assertTrue(configurations.has("x"));
+    assertTrue(configurations.has("y"));
+    assertTrue(configurations.has("rotation"));
+    assertTrue(configurations.has("scaleX"));
+    assertTrue(configurations.has("scaleY"));
   }
+
 }
