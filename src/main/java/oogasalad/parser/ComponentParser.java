@@ -21,7 +21,7 @@ import oogasalad.engine.base.serialization.SerializedField;
 /**
  * Parses and serializes a GameComponent object to and from a JSON node
  *
- * @author Justin Aronwald
+ * @author Justin Aronwald, Daniel Rodriguez-Florido
  */
 public class ComponentParser implements Parser<GameComponent>, Serializable {
 
@@ -34,6 +34,11 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
    */
   @Override
   public GameComponent parse(JsonNode componentNode) throws ParsingException {
+    if (!componentNode.has("Name")) {
+      LOGGER.error("Did not find component name. Throwing exception.");
+      throw new ParsingException("Component did not have name.");
+    }
+
     try {
       String name = componentNode.get("Name").asText();
       String fullClassName = "oogasalad.engine.component." + name;

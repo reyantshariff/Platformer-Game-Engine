@@ -29,8 +29,12 @@ public class BehaviorParser implements Parser<GameComponent> {
    */
   @Override
   public Behavior parse(JsonNode behaviorNode) throws ParsingException {
-    try {
+    if (!behaviorNode.has("Name")) {
+      LOGGER.error("No name found in Behavior Node. Throwing Error.");
+      throw new ParsingException("Behavior does not have required name.");
+    }
 
+    try {
       String name = behaviorNode.get("Name").asText();
       String fullClassName = "oogasalad.engine.component." + name;
 
@@ -45,18 +49,21 @@ public class BehaviorParser implements Parser<GameComponent> {
       return behaviorClass.getDeclaredConstructor().newInstance();
 
     } catch (ClassNotFoundException e) {
-      LOGGER.warn("Behavior class not found: {}", behaviorNode.get("Name").asText(), e);
+      LOGGER.error("Behavior class not found: {}", behaviorNode.get("Name").asText(), e);
     } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
              NoSuchMethodException e) {
-      LOGGER.warn("Could not instantiate Behavior class: {}", behaviorNode.get("Name").asText(), e);
+      LOGGER.error("Could not instantiate Behavior class: {}", behaviorNode.get("Name").asText(), e);
     }
+
+    LOGGER.error("Could not instantiate Behavior class: {}", behaviorNode.get("Name").asText());
     return null;
   }
 
   /**
+   * Generates a serialized object to place into JSON
+   *
    * @param data - the data object to serialize
-   * @return
-   * @throws IOException
+   * @return JsonNode to append to the parent node
    */
   @Override
   public JsonNode write(GameComponent data) throws IOException {
