@@ -1,14 +1,17 @@
 package oogasalad.player.dinosaur;
 
 import oogasalad.engine.base.architecture.GameScene;
-import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
+import oogasalad.engine.base.enumerate.KeyCode;
+import oogasalad.engine.base.event.GameAction;
+import oogasalad.engine.base.event.JumpAction;
+import oogasalad.engine.component.AccelerationComponent;
+import oogasalad.engine.component.InputHandler;
+import oogasalad.engine.component.Transform;
+import oogasalad.engine.component.VelocityComponent;
+import oogasalad.engine.prefabs.Player;
 
 public class DinosaurGameScene extends GameScene {
-  
   private Scene scene;
 
   public DinosaurGameScene(String name) {
@@ -17,11 +20,32 @@ public class DinosaurGameScene extends GameScene {
 
   @Override
   public void onActivated() {
-    Group root = new Group();
-    scene = new Scene(root, 1280, 720); // Set scene size
+    Player player = instantiateObject(Player.class);
 
-    Canvas canvas = new Canvas(1280, 720);
-    root.getChildren().add(canvas);
+    Transform t = player.addComponent(Transform.class);
+    t.setX(100);
+    t.setY(400);
+    t.setScaleX(20);
+    t.setScaleY(20);
+
+    VelocityComponent vel = player.addComponent(VelocityComponent.class);
+    vel.setVelocityX(40.0);
+
+    AccelerationComponent ac = player.addComponent(AccelerationComponent.class);
+    ac.setAccelY(100.0);
+
+    InputHandler input = player.addComponent(InputHandler.class);
+    JumpAction jumpAction = new JumpAction(player);
+    input.registerAction(KeyCode.valueOf("SPACE"), jumpAction);
+
+
+    Player ground = instantiateObject(Player.class);
+
+    Transform tGround = ground.addComponent(Transform.class);
+    tGround.setX(0);
+    tGround.setY(550); // Bottom of a 600px screen
+    tGround.setScaleX(800); // Full width
+    tGround.setScaleY(50);  // 50px tall
 
     // Create Game Objects
       // Dinosaur
@@ -46,13 +70,6 @@ public class DinosaurGameScene extends GameScene {
 
     // Register Game Objects
       // registerObject(dinosaur)
-
-
-
-    GraphicsContext gc = canvas.getGraphicsContext2D();
-
-    gc.setFill(Color.WHITE);
-    gc.fillRect(0, 0, 1280, 720);
   }
 
   @Override

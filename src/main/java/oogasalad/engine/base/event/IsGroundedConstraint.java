@@ -1,24 +1,31 @@
 package oogasalad.engine.base.event;
 
-import oogasalad.engine.component.Transform;
+import oogasalad.engine.base.architecture.GameObject;
+import oogasalad.engine.component.ColliderComponent;
 
-public class IsGroundedConstraint extends GameActionConstraint{
+import java.util.Collection;
 
-  IsGroundedConstraint(GameAction parentAction) {
-    super(parentAction);
+public class IsGroundedConstraint extends GameActionConstraint {
+
+  public IsGroundedConstraint(GameAction action) {
+    super(action);
   }
 
-  /**
-   * checks if the constraint is met
-   *
-   * @return true if the constraint is met, false otherwise
-   */
   @Override
   public boolean check() {
-    Transform transform = getParentObject().getComponent(Transform.class);
+    GameObject player = getParentObject();
+    ColliderComponent playerCollider = player.getComponent(ColliderComponent.class);
+    if (playerCollider == null) return false;
 
-    //Placeholder assuming ground is at y = 100
-    //TODO: Replace this with a IsCollidingWith(Ground) check
-    return transform.getY() >= 100;
+    Collection<GameObject> others = player.getScene().getAllObjects();
+    for (GameObject obj : others) {
+      if (obj == player) continue;
+      if (obj.getComponent(ColliderComponent.class) != null &&
+          playerCollider.collidesWith(obj)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }

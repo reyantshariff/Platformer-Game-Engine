@@ -92,6 +92,10 @@ public abstract class GameScene {
     // TODO: Handle Change Scene Action Here
   }
 
+  public List<GameObject> getAllObjects() {
+    return new ArrayList<>(allObjects.values());
+  }
+
   /**
    * Subscribe the input key for the next frame to execute.
    * Inputs will be handled once and then removed. So make sure to add key events every frame until released.
