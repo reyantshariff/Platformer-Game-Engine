@@ -3,6 +3,7 @@ package oogasalad.player.dinosaur;
 import oogasalad.engine.base.architecture.GameScene;
 import javafx.scene.Scene;
 import oogasalad.engine.base.enumerate.KeyCode;
+import oogasalad.engine.base.event.CrouchAction;
 import oogasalad.engine.base.event.IsGroundedConstraint;
 import oogasalad.engine.base.event.JumpAction;
 import oogasalad.engine.component.AccelerationComponent;
@@ -117,7 +118,11 @@ public class DinosaurGameScene extends GameScene {
     InputHandler input = player.addComponent(InputHandler.class);
     JumpAction jumpAction = new JumpAction(player);
     jumpAction.registerConstraint(IsGroundedConstraint.class);
-    input.registerAction(KeyCode.valueOf("SPACE"), jumpAction);
+    input.registerAction(KeyCode.valueOf("UP"), jumpAction);
+
+    CrouchAction crouch = new CrouchAction(player);
+    jumpAction.registerConstraint(IsGroundedConstraint.class);
+    input.registerAction(KeyCode.DOWN, crouch);
 
     player.addComponent(ColliderComponent.class);
 
