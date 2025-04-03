@@ -2,16 +2,28 @@ package oogasalad.parser;
 
 import static oogasalad.config.GameConfig.LOGGER;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
+import java.io.Serial;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import oogasalad.engine.base.architecture.GameComponent;
+import oogasalad.engine.base.serialization.Serializable;
+import oogasalad.engine.base.serialization.SerializableField;
+import oogasalad.engine.base.serialization.SerializedField;
 
 /**
  * Parses and serializes a GameComponent object to and from a JSON node
  *
  * @author Justin Aronwald
  */
-public class ComponentParser implements Parser<GameComponent> {
+public class ComponentParser implements Parser<GameComponent>, Serializable {
 
   /**
    * Parses a JSON node into a GameComponent instance
@@ -51,6 +63,23 @@ public class ComponentParser implements Parser<GameComponent> {
    */
   @Override
   public JsonNode write(GameComponent data) throws IOException {
-    return null;
+    ObjectMapper mapper = new ObjectMapper();
+
+    String componentName = data.getClass().getSimpleName();
+    ObjectNode root = mapper.createObjectNode();
+    root.put("Name", componentName);
+
+    ObjectNode configurations = root.putObject("Configurations");
+
+    List<SerializedField<?>> serializableFields = data.getSerializedFields();
+    for (SerializedField<?> serializedField : serializableFields) {
+      if (serializedField.getFieldType() == String.class) {
+        configurations.put(serializedField.getFieldName(), (String) (serializedField.getValue()));
+      } else if (serializedField.getFieldType() == Integer.class) {
+        configurations.put(serializedField.getFieldName(), (Integer) serializedField.getValue());
+      }
+    }
+
+    return root;
   }
 }
