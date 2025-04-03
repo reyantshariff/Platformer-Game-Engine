@@ -34,7 +34,9 @@ public class GameObjectParser implements Parser<GameObject> {
     }
     
     String name = node.get("Name").asText();
-    GameObject gameObject = new GameObject(name);
+    String tag = node.get("Tag").asText();
+
+    GameObject gameObject = new GameObject(name, tag);
 
     handleAddingTag(node, gameObject);
     handleAddingComponents(node, gameObject);
@@ -117,7 +119,7 @@ public class GameObjectParser implements Parser<GameObject> {
     return root;
   }
 
-  private void handleWritingComponents(GameObject data, ObjectNode root) {
+  private void handleWritingComponents(GameObject data, ObjectNode root) throws IOException {
     ArrayNode components = mapper.createArrayNode();
     for (GameComponent component : data.getAllComponents().values()) {
       JsonNode componentNode = componentParser.write(component);
@@ -126,7 +128,7 @@ public class GameObjectParser implements Parser<GameObject> {
     root.set("Components", components);
   }
 
-  private void handleWritingBehavior(GameObject data, ObjectNode root) {
+  private void handleWritingBehavior(GameObject data, ObjectNode root) throws IOException {
     ArrayNode behaviors = mapper.createArrayNode();
     for (Behavior behavior : data.getAllBehaviors()) {
       JsonNode behaviorNode = behaviorParser.write(behavior);
