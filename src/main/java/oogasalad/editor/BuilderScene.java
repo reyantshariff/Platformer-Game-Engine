@@ -1,35 +1,36 @@
 package oogasalad.editor;
 
-import javafx.scene.Scene;
 import oogasalad.engine.base.architecture.Game;
 import oogasalad.engine.base.architecture.GameObject;
-import oogasalad.engine.base.architecture.GameScene;
 import oogasalad.engine.component.Transform;
 
-/*
-Change LevelEditorScene to EditorScene
-Store a map/list of all the scenes and each scene will have a record of their objects
-Keep a pointer to the current scene
+/**
+ * Builder API that manages drag/drop and delete functions of the Editor UI
+ * @author Reyan Shariff
+ */
 
-Serializable field passes coordinates to front end
-* */
-public class LevelEditorScene implements EditorAPI {
+public class BuilderScene {
   private GameObject previewObject;
-  private String levelName;
-  private Game game;
+  private String name;
+  private Game game = new Game(); //TODO: Link this to main somehow
 
-  public LevelEditorScene(String levelName)
+  public BuilderScene(String name)
   {
-    this.levelName = levelName;
+    this.name = name;
   }
 
-  public String getLevelName()
+  /**
+   *  Returns the object name
+   */
+  public String getName()
   {
-    return levelName;
+    return name;
   }
 
-  @Override
-  public GameObject previewObject(String type)
+  /**
+   *  Records when a game object has been selected to be dragged and dropped on the UI
+   */
+  public void previewObject(String type)
   {
     if (previewObject != null) {
       game.getCurrentScene().unregisterObject(previewObject);
@@ -37,24 +38,66 @@ public class LevelEditorScene implements EditorAPI {
 
     previewObject = game.getCurrentScene().instantiateObject(GameObjectFactory.create(type));
     game.getCurrentScene().registerObject(previewObject);
-    return previewObject;
   }
 
-  @Override
-  public GameObject placeObject(String type, double x, double y)
+  /**
+   *  Moves the game object around the screen.
+   */
+  public void movePreview(double x, double y) {
+    if (previewObject != null) {
+      previewObject.addComponent(Transform.class);
+      Transform t = previewObject.getComponent(Transform.class);
+      t.setX(x);
+      t.setY(y);
+    }
+  }
+
+  /**
+   *  Stops the preview if the user lifts mouse and cursor is not on the editor screen.
+   */
+
+  public void cancelPreview() {
+    if (previewObject != null) {
+      game.getCurrentScene().unregisterObject(previewObject);
+      previewObject = null;
+    }
+  }
+
+  /**
+   *  Checks if the user is currently dragging around a game object
+   */
+  public boolean hasActivePreview() {
+    return previewObject != null;
+  }
+
+  /**
+   *  Returns X position of object in preview mode
+   */
+  public double getPreviewX()
   {
-
-    GameObject newObj = game.getCurrentScene().instantiateObject(GameObjectFactory.create(type));
-    //newObj.getComponent(Transform.class).getSerializedFields();
-    newObj.addComponent(Transform.class);
-    newObj.getComponent(Transform.class).setX(x);
-    newObj.getComponent(Transform.class).setY(y);
-    game.getCurrentScene().registerObject(newObj);
-    return newObj;
+    return previewObject.getComponent(Transform.class).getX();
   }
 
-  @Override
-  public void deleteObject(GameObject object) {
+  /**
+   *  Returns Y position of object in preview mode
+   */
+  public double getPreviewY()
+  {
+    return previewObject.getComponent(Transform.class).getY();
+  }
+
+  /**
+   *  Places game object onto screen
+   */
+  public void placeObject()
+  {
+      previewObject = null;
+  }
+
+  /**
+   *  Deletes game object from the screen
+   */
+  public void deleteObject(GameObject object) { //TODO: Change the parameter to String
     game.getCurrentScene().unregisterObject(object);
   }
 
