@@ -18,10 +18,12 @@ public class GameObject {
 
   private GameScene parentScene;
   private String name;
+  private String tag;
 
-  public GameObject(String name) {
+  public GameObject(String name, String tag) {
     this.id = UUID.randomUUID();
     this.name = name == null ? "" : this.getClass().getSimpleName() + "_" + this.id;
+    this.tag = tag;
     this.allComponents = new HashMap<>();
     this.componentAwakeInitializer = new ArrayList<>();
     this.componentStartInitializer = new ArrayList<>();
@@ -152,4 +154,23 @@ public class GameObject {
   public final Map<Class<? extends GameComponent>, GameComponent> getAllComponents() {
     return allComponents;
   }
+
+  /**
+   * Setter for the tag of the game object
+   *
+   * @param tag - the new classification for the GameObject that is set
+   */
+  public void setTag(String tag) {
+    this.tag = tag;
+  }
+
+  /**
+   * Getter for the tag of the game object
+   *
+   * @return - the classification for the GameObject
+   */
+  public String getTag() {
+    return tag;
+  }
+
 }
