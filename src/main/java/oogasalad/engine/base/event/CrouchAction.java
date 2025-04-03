@@ -6,11 +6,6 @@ import oogasalad.engine.component.Transform;
 
 public class CrouchAction extends GameAction {
 
-  @SerializableField
-  private double crouchedHeight = 10;
-  @SerializableField
-  private double normalHeight = 20;
-
   private boolean isCrouched = false;
 
   public CrouchAction(GameObject parent) {
@@ -26,11 +21,11 @@ public class CrouchAction extends GameAction {
     Transform transform = getParent().getComponent(Transform.class);
 
     if(!isCrouched){
-      transform.setScaleY(crouchedHeight);
-      transform.setY(transform.getY() + (normalHeight - crouchedHeight));
+      transform.setScaleY(transform.getScaleY()/2);
+      transform.setY(transform.getY() + transform.getScaleY());
     } else {
-      transform.setScaleY(normalHeight);
-      transform.setY(transform.getY() - (normalHeight - crouchedHeight));
+      transform.setScaleY(transform.getScaleY()*2);
+      transform.setY(transform.getY() - transform.getScaleY()/2);
     }
 
     isCrouched = !isCrouched;

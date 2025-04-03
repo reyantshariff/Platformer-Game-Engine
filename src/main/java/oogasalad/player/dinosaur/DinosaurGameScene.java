@@ -1,5 +1,6 @@
 package oogasalad.player.dinosaur;
 
+import oogasalad.ResourceBundles;
 import oogasalad.engine.base.architecture.GameScene;
 import javafx.scene.Scene;
 import oogasalad.engine.base.enumerate.KeyCode;
@@ -22,41 +23,15 @@ public class DinosaurGameScene extends GameScene {
 
   public DinosaurGameScene(String name) {
     super(name);
+    ResourceBundles.loadBundle("oogasalad.dinosaur.dinosaur");
   }
 
   @Override
   public void onActivated() {
     Player player = makePlayerTest();
-
     makeGroundTest();
-
     makeBirdTest();
-
     makeCollisionHandlers(player);
-
-    // Create Game Objects
-    // Dinosaur
-    // Track
-    // Score
-    // Bird
-    // Cactus
-    // Game Over
-    // Restart
-
-    // Load values from properties file using propertiesLoader
-    /*
-    for (GameComponent comp : player.getAllComponents()) {
-      if (comp instanceof Serializable) {
-        PropertiesLoader.loadFromFile((Serializable) comp, "data/player.properties");
-      }
-    }
-     */
-
-    // Add Game Components
-    // dinosaur.addComponent(Transform.class)
-
-    // Register Game Objects
-    // registerObject(dinosaur)
   }
 
   private static void makeCollisionHandlers(Player player) {
@@ -65,83 +40,87 @@ public class DinosaurGameScene extends GameScene {
     // Ground collision
     collisionHandler.registerCollisionBehavior(Base.class, groundUse -> {
       VelocityComponent velocity = player.getComponent(VelocityComponent.class);
-      velocity.setVelocityY(0.1);
+      velocity.setVelocityY(ResourceBundles.getDouble("oogasalad.dinosaur.dinosaur", "collision.ground.velocityY"));
     });
 
     // Bird collision = death
     collisionHandler.registerCollisionBehavior(Bird.class, birdUse -> {
       System.out.println("Player collided with a bird — Game Over!");
       VelocityComponent velocity = player.getComponent(VelocityComponent.class);
-      velocity.setVelocityX(0);
-      velocity.setVelocityY(-50);
+      velocity.setVelocityX(ResourceBundles.getDouble("oogasalad.dinosaur.dinosaur", "collision.bird.velocityX"));
+      velocity.setVelocityY(ResourceBundles.getDouble("oogasalad.dinosaur.dinosaur", "collision.bird.velocityY"));
     });
   }
+
 
   private void makeBirdTest() {
     Bird bird = instantiateObject(Bird.class);
 
     Transform tBird = bird.addComponent(Transform.class);
-    tBird.setX(500);
-    tBird.setY(500);
-    tBird.setScaleX(50);
-    tBird.setScaleY(50);
+    tBird.setX(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "bird.startX"));
+    tBird.setY(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "bird.startY"));
+    tBird.setScaleX(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "bird.width"));
+    tBird.setScaleY(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "bird.height"));
 
     SpriteSwitcherComponent birdSpriteSwitch = bird.addComponent(SpriteSwitcherComponent.class);
-    birdSpriteSwitch.registerState("bird", "/oogasalad/dinosaur/Bird1.png");
+    birdSpriteSwitch.registerState("bird", ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "bird.image"));
     birdSpriteSwitch.setState("bird");
 
     bird.addComponent(ColliderComponent.class);
   }
 
+
   private void makeGroundTest() {
     Base ground = instantiateObject(Base.class);
 
     Transform tGround = ground.addComponent(Transform.class);
-    tGround.setX(0);
-    tGround.setY(550);
-    tGround.setScaleX(1200);
-    tGround.setScaleY(50);
+    tGround.setX(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "ground.startX"));
+    tGround.setY(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "ground.startY"));
+    tGround.setScaleX(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "ground.width"));
+    tGround.setScaleY(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "ground.height"));
 
     SpriteSwitcherComponent groundSpriteSwitch = ground.addComponent(SpriteSwitcherComponent.class);
-    groundSpriteSwitch.registerState("ground", "/oogasalad/dinosaur/Track.png");
+    groundSpriteSwitch.registerState("ground", ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "ground.image"));
     groundSpriteSwitch.setState("ground");
-
 
     ground.addComponent(ColliderComponent.class);
   }
+
 
   private Player makePlayerTest() {
     Player player = instantiateObject(Player.class);
 
     Transform t = player.addComponent(Transform.class);
-    t.setX(100);
-    t.setY(450);
-    t.setScaleX(60);
-    t.setScaleY(80);
+    t.setX(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "player.startX"));
+    t.setY(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "player.startY"));
+    t.setScaleX(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "player.width"));
+    t.setScaleY(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "player.height"));
 
     VelocityComponent vel = player.addComponent(VelocityComponent.class);
-    vel.setVelocityX(80.0);
+    vel.setVelocityX(ResourceBundles.getDouble("oogasalad.dinosaur.dinosaur", "player.velocityX"));
 
     AccelerationComponent ac = player.addComponent(AccelerationComponent.class);
-    ac.setAccelY(150.0);
+    ac.setAccelY(ResourceBundles.getDouble("oogasalad.dinosaur.dinosaur", "player.accelY"));
 
     InputHandler input = player.addComponent(InputHandler.class);
     JumpAction jumpAction = new JumpAction(player);
     jumpAction.registerConstraint(IsGroundedConstraint.class);
-    input.registerAction(KeyCode.valueOf("UP"), jumpAction);
+    input.registerAction(KeyCode.UP, jumpAction);
 
     CrouchAction crouch = new CrouchAction(player);
-    jumpAction.registerConstraint(IsGroundedConstraint.class);
     input.registerAction(KeyCode.DOWN, crouch);
 
     SpriteSwitcherComponent spriteSwitcher = player.addComponent(SpriteSwitcherComponent.class);
-    spriteSwitcher.registerState("run", "/oogasalad/dinosaur/DinoRun1.png");
+    spriteSwitcher.registerState("run", ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "player.image.run"));
+    spriteSwitcher.registerState("crouch", ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "player.image.crouch"));
+    spriteSwitcher.registerState("jump", ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "player.image.jump"));
     spriteSwitcher.setState("run");
 
     player.addComponent(ColliderComponent.class);
 
     return player;
   }
+
 
   @Override
   public void onDeactivated() {
