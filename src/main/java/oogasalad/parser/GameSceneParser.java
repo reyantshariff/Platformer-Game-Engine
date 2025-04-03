@@ -52,6 +52,7 @@ public class GameSceneParser implements Parser<GameScene>{
              NoSuchMethodException e) {
       LOGGER.warn("{} could not be instantiated.", name);
     }
+
     return null;
   }
 

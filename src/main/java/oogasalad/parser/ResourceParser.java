@@ -25,10 +25,6 @@ public class ResourceParser implements Parser<Map.Entry<String, String>> {
    */
   @Override
   public Map.Entry<String, String> parse(JsonNode node) throws ParsingException {
-    if (node == null || !node.isArray()) {
-      LOGGER.warn("{} is not an array", node);
-      throw new ParsingException("Not an array");
-    }
     String name = node.get("Name").asText();
     String path = node.get("Path").asText();
 

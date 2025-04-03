@@ -1,6 +1,5 @@
 package oogasalad.parser;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -8,11 +7,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 import oogasalad.engine.base.architecture.Game;
 import oogasalad.engine.base.architecture.GameInfo;
 import oogasalad.engine.base.architecture.GameScene;
 import static oogasalad.config.GameConfig.LOGGER;
+import java.io.File;
 
 
 /**
@@ -28,14 +27,19 @@ public class GameParser implements Parser<Game> {
 
   private Game myGame;
 
+  public GameParser() {
+
+  }
+
   public GameParser(String fileName) {
     try {
-      JsonNode rootNode = mapper.readTree(fileName);
+      JsonNode rootNode = mapper.readTree(new File(fileName));
       myGame = this.parse(rootNode);
     } catch (IOException e) {
       LOGGER.error("Game File Not Found: {}", fileName);
     } catch (ParsingException e) {
       LOGGER.error("Could not parse JSON file: {}", fileName);
+      e.printStackTrace();
     }
   }
 
@@ -61,7 +65,7 @@ public class GameParser implements Parser<Game> {
     JsonNode data = node.get("Data");
 
     handleInformationParsing(data, newGame);
-    handleResourceParsing(node, data);
+    handleResourceParsing(data);
     handleSceneParsing(data, newGame);
 
     return newGame;
@@ -74,21 +78,26 @@ public class GameParser implements Parser<Game> {
     }
   }
 
-  private void handleSceneParsing(JsonNode data, Game newGame) throws ParsingException {
-    if (data.has("Scene") && data.get("Scene").isArray()) {
-      for (JsonNode sceneNode : data.get("Scene")) {
-        GameScene gameScene = sceneParser.parse(sceneNode);
-        newGame.addScene(gameScene.getName());
+  private void handleResourceParsing(JsonNode data) throws ParsingException {
+    Map<String, String> resourceMap = new HashMap<>();
+    if (data.has("Resources")) {
+      for (JsonNode resourceNode : data.get("Resources")) {
+        Map.Entry<String, String> entry = resourceParser.parse(resourceNode);
+        resourceMap.put(entry.getKey(), entry.getValue());
       }
     }
   }
 
-  private void handleResourceParsing(JsonNode node, JsonNode data) throws ParsingException {
-    Map<String, String> resourceMap = new HashMap<>();
-    if (data.has("Resources")) {
-      for (JsonNode resourceNode : node.get("Resources")) {
-        Map.Entry<String, String> entry = resourceParser.parse(resourceNode);
-        resourceMap.put(entry.getKey(), entry.getValue());
+  private void handleSceneParsing(JsonNode data, Game newGame) throws ParsingException {
+    if (data.has("Scene") && data.get("Scene").isArray()) {
+      for (JsonNode sceneNode : data.get("Scene")) {
+        GameScene gameScene = sceneParser.parse(sceneNode);
+        if (gameScene != null) {
+          newGame.addScene(gameScene.getName());
+        } else {
+          LOGGER.error("Scene with name {} not found and therefore will not be added "
+              + "to Game.", sceneNode.get("Name"));
+        }
       }
     }
   }
@@ -127,10 +136,10 @@ public class GameParser implements Parser<Game> {
   }
 
   private void handleResourceWriting(Game data, ObjectNode dataNode) throws IOException {
-    ArrayNode resourceArray = mapper.createArrayNode();
-    for (Map.Entry<String, String> entry : data.getAllResources.entrySet()) {
-      resourceArray.add(resourceParser.write(entry));
-    }
-    dataNode.set("Resources", resourceArray);
+//    ArrayNode resourceArray = mapper.createArrayNode();
+//    for (Map.Entry<String, String> entry : data.getAllResources.entrySet()) {
+//      resourceArray.add(resourceParser.write(entry));
+//    }
+//    dataNode.set("Resources", resourceArray);
   }
 }
