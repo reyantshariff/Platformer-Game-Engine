@@ -1,6 +1,7 @@
 package oogasalad.engine.base.architecture;
 
 import java.util.*;
+import static oogasalad.config.GameConfig.LOGGER;
 
 /**
  * The GameObject class is the base class for all game objects. It is used to define the behavior of
@@ -69,10 +70,10 @@ public class GameObject {
       }
 
       allComponents.put(componentClass, component);
-      parentScene.registerComponent(component);
-      System.out.println("Added component " + component);
+      parentScene.registerComponent(component); // May need a null checker. Run GameObjectParserTest to see more info.
       return component;
     } catch (Exception e) {
+      LOGGER.error("Could not add component {}", componentClass.getName());
       throw new RuntimeException("Failed to add component", e);
     }
   }
