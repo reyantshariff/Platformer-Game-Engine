@@ -41,8 +41,8 @@ public class GUI {
     Group root = new Group();
     scene = new Scene(root, ResourceBundles.getInt("oogasalad.gui.general", "windowWidth"),
         ResourceBundles.getInt("oogasalad.gui.general", "windowHeight"));
-    Canvas canvas = new Canvas(ResourceBundles.getInt("oogasalad.gui.general", "windowWidth") * 0.5,
-        ResourceBundles.getInt("oogasalad.gui.general", "windowHeight") * 0.5);
+    Canvas canvas = new Canvas(ResourceBundles.getInt("oogasalad.gui.general", "windowWidth"),
+        ResourceBundles.getInt("oogasalad.gui.general", "windowHeight"));
     gc = canvas.getGraphicsContext2D();
     root.getChildren().add(canvas);
 
