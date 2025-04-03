@@ -152,7 +152,6 @@ public class GameObjectParser implements Parser<GameObject> {
       JsonNode behaviorNode = behaviorParser.write(behavior);
       behaviors.add(behaviorNode);
     }
-
     root.set("Behaviors", behaviors);
   }
 }

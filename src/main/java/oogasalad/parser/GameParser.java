@@ -1,5 +1,6 @@
 package oogasalad.parser;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -7,6 +8,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 import oogasalad.engine.base.architecture.Game;
 import oogasalad.engine.base.architecture.GameInfo;
 import oogasalad.engine.base.architecture.GameScene;
@@ -16,13 +18,30 @@ import static oogasalad.config.GameConfig.LOGGER;
 /**
  * Parses and serializes a Game object to and from a JSON node
  *
- * @author Justin Aronwald
+ * @author Justin Aronwald, Daniel Rodriguez-Florido
  */
 public class GameParser implements Parser<Game> {
   private final ObjectMapper mapper = new ObjectMapper();
   private final GameSceneParser sceneParser = new GameSceneParser();
   private final ResourceParser resourceParser = new ResourceParser();
   private final InformationParser informationParser = new InformationParser();
+
+  private Game myGame;
+
+  public GameParser(String fileName) {
+    try {
+      JsonNode rootNode = mapper.readTree(fileName);
+      myGame = this.parse(rootNode);
+    } catch (IOException e) {
+      LOGGER.error("Game File Not Found: {}", fileName);
+    } catch (ParsingException e) {
+      LOGGER.error("Could not parse JSON file: {}", fileName);
+    }
+  }
+
+  public Game getMyGame() {
+    return myGame;
+  }
 
   /**
    * Parses a JSON node into a Game instance
@@ -42,7 +61,7 @@ public class GameParser implements Parser<Game> {
     JsonNode data = node.get("Data");
 
     handleInformationParsing(data, newGame);
-    handlerResourceParsing(node, data);
+    handleResourceParsing(node, data);
     handleSceneParsing(data, newGame);
 
     return newGame;
@@ -64,7 +83,7 @@ public class GameParser implements Parser<Game> {
     }
   }
 
-  private void handlerResourceParsing(JsonNode node, JsonNode data) throws ParsingException {
+  private void handleResourceParsing(JsonNode node, JsonNode data) throws ParsingException {
     Map<String, String> resourceMap = new HashMap<>();
     if (data.has("Resources")) {
       for (JsonNode resourceNode : node.get("Resources")) {
