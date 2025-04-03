@@ -76,12 +76,15 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
 
     ObjectNode configurations = root.putObject("Configurations");
 
+    //Note: I tried my hardest to use reflection and something dynamic but Jackson library does not allow it.
     List<SerializedField<?>> serializableFields = data.getSerializedFields();
     for (SerializedField<?> serializedField : serializableFields) {
       if (serializedField.getFieldType() == String.class) {
         configurations.put(serializedField.getFieldName(), (String) (serializedField.getValue()));
-      } else if (serializedField.getFieldType() == Integer.class) {
+      } else if (serializedField.getFieldType() == int.class) {
         configurations.put(serializedField.getFieldName(), (Integer) serializedField.getValue());
+      } else if (serializedField.getFieldType() == double.class) {
+        configurations.put(serializedField.getFieldName(), (Double) serializedField.getValue());
       }
     }
 
