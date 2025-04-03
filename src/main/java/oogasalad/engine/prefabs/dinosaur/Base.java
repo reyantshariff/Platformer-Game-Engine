@@ -5,6 +5,6 @@ public class Base extends GameObject {
 
 
   public Base(String name) {
-    super(name);
+    super(name, "");
   }
 }

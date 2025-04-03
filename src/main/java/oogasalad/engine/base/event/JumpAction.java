@@ -9,8 +9,8 @@ public class JumpAction extends GameAction implements Serializable {
   @SerializableField
   private double jumpForce = -180.0;
 
-  public JumpAction(GameObject parent) {
-    super(parent);
+  public JumpAction() {
+    super();
   }
 
   /**
@@ -20,7 +20,6 @@ public class JumpAction extends GameAction implements Serializable {
   @Override
   public void dispatch() {
     if(!checkConstraints()) return;
-    System.out.println("Jumping!");
 
     VelocityComponent velocity = getParent().getComponent(VelocityComponent.class);
     velocity.setVelocityY(jumpForce);

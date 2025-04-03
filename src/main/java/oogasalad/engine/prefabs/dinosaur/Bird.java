@@ -5,7 +5,7 @@ public class Bird extends GameObject {
 
 
   public Bird(String name) {
-    super(name);
+    super(name, "");
   }
 
 }

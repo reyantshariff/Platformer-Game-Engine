@@ -24,8 +24,8 @@ public class MainMenuGameScene extends GameScene {
     iPlayer.setY(620);
 
     InputHandler input = dino.addComponent(InputHandler.class);
-    EnterPlayerAction enterPlayerAction = new EnterPlayerAction(dino);
-    input.registerAction(KeyCode.valueOf("SPACE"), enterPlayerAction);
+    EnterPlayerAction enterPlayerAction = new EnterPlayerAction();
+    input.registerAction(KeyCode.valueOf("SPACE"), enterPlayerAction.getClass());
 
     Player ground = instantiateObject(Player.class);
 

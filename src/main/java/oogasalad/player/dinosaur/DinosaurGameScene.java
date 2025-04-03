@@ -103,12 +103,12 @@ public class DinosaurGameScene extends GameScene {
     ac.setAccelY(ResourceBundles.getDouble("oogasalad.dinosaur.dinosaur", "player.accelY"));
 
     InputHandler input = player.addComponent(InputHandler.class);
-    JumpAction jumpAction = new JumpAction(player);
+    JumpAction jumpAction = new JumpAction();
     jumpAction.registerConstraint(IsGroundedConstraint.class);
-    input.registerAction(KeyCode.UP, jumpAction);
+    input.registerAction(KeyCode.UP, jumpAction.getClass());
 
-    CrouchAction crouch = new CrouchAction(player);
-    input.registerAction(KeyCode.DOWN, crouch);
+    CrouchAction crouch = new CrouchAction();
+    input.registerAction(KeyCode.DOWN, crouch.getClass());
 
     SpriteSwitcherComponent spriteSwitcher = player.addComponent(SpriteSwitcherComponent.class);
     spriteSwitcher.registerState("run", ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "player.image.run"));
