@@ -1,10 +1,10 @@
 package oogasalad;
 
 import javafx.application.Application;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 import oogasalad.engine.base.architecture.Game;
-import oogasalad.gui.GUI;
-import oogasalad.player.dinosaur.DinosaurGameScene;
+import oogasalad.view.DinosaurGameBuilderView;
 
 /**
  * This is the main class of the OOGASalad Platformer Game Sandbox. Run the start method to open the
@@ -30,9 +30,14 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage stage) {
-        // Create new Game
-       game = new Game();
-        // Create gui
-        GUI gui = new GUI(stage, game);
+        game = new Game();
+
+        // Create the editor UI, passing in the ECS scene
+        DinosaurGameBuilderView editorUI = new DinosaurGameBuilderView();
+
+        // Wrap it in a JavaFX Scene and display
+        Scene fxScene = new Scene(editorUI, 1400, 800);
+        stage.setScene(fxScene);
+        stage.show();
     }
 }
