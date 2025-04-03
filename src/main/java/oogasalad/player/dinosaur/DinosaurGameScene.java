@@ -10,6 +10,7 @@ import oogasalad.engine.component.AccelerationComponent;
 import oogasalad.engine.component.ColliderComponent;
 import oogasalad.engine.component.CollisionHandlerComponent;
 import oogasalad.engine.component.InputHandler;
+import oogasalad.engine.component.SpriteSwitcherComponent;
 import oogasalad.engine.component.Transform;
 import oogasalad.engine.component.VelocityComponent;
 import oogasalad.engine.prefabs.dinosaur.Base;
@@ -80,11 +81,14 @@ public class DinosaurGameScene extends GameScene {
     Bird bird = instantiateObject(Bird.class);
 
     Transform tBird = bird.addComponent(Transform.class);
-    tBird.setX(300);
+    tBird.setX(500);
     tBird.setY(500);
-    tBird.setScaleX(30);
-    tBird.setScaleY(30);
-    tBird.setImagePath("/oogasalad/dinosaur/Bird1.png");
+    tBird.setScaleX(50);
+    tBird.setScaleY(50);
+
+    SpriteSwitcherComponent birdSpriteSwitch = bird.addComponent(SpriteSwitcherComponent.class);
+    birdSpriteSwitch.registerState("bird", "/oogasalad/dinosaur/Bird1.png");
+    birdSpriteSwitch.setState("bird");
 
     bird.addComponent(ColliderComponent.class);
   }
@@ -95,9 +99,13 @@ public class DinosaurGameScene extends GameScene {
     Transform tGround = ground.addComponent(Transform.class);
     tGround.setX(0);
     tGround.setY(550);
-    tGround.setScaleX(800);
+    tGround.setScaleX(1200);
     tGround.setScaleY(50);
-    tGround.setImagePath("/oogasalad/dinosaur/Track.png");
+
+    SpriteSwitcherComponent groundSpriteSwitch = ground.addComponent(SpriteSwitcherComponent.class);
+    groundSpriteSwitch.registerState("ground", "/oogasalad/dinosaur/Track.png");
+    groundSpriteSwitch.setState("ground");
+
 
     ground.addComponent(ColliderComponent.class);
   }
@@ -107,16 +115,15 @@ public class DinosaurGameScene extends GameScene {
 
     Transform t = player.addComponent(Transform.class);
     t.setX(100);
-    t.setY(500);
-    t.setScaleX(20);
-    t.setScaleY(20);
-    t.setImagePath("/oogasalad/dinosaur/DinoRun1.png");
+    t.setY(450);
+    t.setScaleX(60);
+    t.setScaleY(80);
 
     VelocityComponent vel = player.addComponent(VelocityComponent.class);
-    vel.setVelocityX(40.0);
+    vel.setVelocityX(80.0);
 
     AccelerationComponent ac = player.addComponent(AccelerationComponent.class);
-    ac.setAccelY(100.0);
+    ac.setAccelY(150.0);
 
     InputHandler input = player.addComponent(InputHandler.class);
     JumpAction jumpAction = new JumpAction(player);
@@ -126,6 +133,10 @@ public class DinosaurGameScene extends GameScene {
     CrouchAction crouch = new CrouchAction(player);
     jumpAction.registerConstraint(IsGroundedConstraint.class);
     input.registerAction(KeyCode.DOWN, crouch);
+
+    SpriteSwitcherComponent spriteSwitcher = player.addComponent(SpriteSwitcherComponent.class);
+    spriteSwitcher.registerState("run", "/oogasalad/dinosaur/DinoRun1.png");
+    spriteSwitcher.setState("run");
 
     player.addComponent(ColliderComponent.class);
 
