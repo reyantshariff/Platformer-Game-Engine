@@ -49,6 +49,21 @@ public class Game {
   }
 
   /**
+   *Returns the loaded scenes.
+   */
+  public Map<UUID, GameScene> getLoadedScenes() {
+    return loadedScenes;
+  }
+
+  /**
+  returns the current Game Scene
+  * */
+  public GameScene getCurrentScene()
+  {
+    return currentScene;
+  }
+
+  /**
    * Initialize and adds a scene of the specified class to the game
    * 
    * @param sceneClass The class of the scene to add
