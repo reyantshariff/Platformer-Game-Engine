@@ -102,7 +102,7 @@ public class GUI {
         Transform transform = obj.getComponent(Transform.class);
         if (transform != null && !transform.getImagePath().isEmpty()) {
           Image image = new Image(getClass().getResourceAsStream(transform.getImagePath()));
-          gc.drawImage(image, transform.getX(), transform.getY());
+          gc.drawImage(image, transform.getX(), transform.getY(), transform.getScaleX(), transform.getScaleY());
         }
     }
   }
