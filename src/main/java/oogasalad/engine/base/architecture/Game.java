@@ -29,7 +29,7 @@ public class Game {
     currentScene.step(deltaTime);
   }
 
-  public GameScene getCurrentScene() {return currentScene;}
+  public GameScene getCurrentScene() { return currentScene; }
 
   /**
    * Change the current scene to the specified scene
@@ -48,6 +48,13 @@ public class Game {
         return;
       }
     }
+  }
+
+  /**
+   *Returns the loaded scenes.
+   */
+  public Map<UUID, GameScene> getLoadedScenes() {
+    return loadedScenes;
   }
 
   /**

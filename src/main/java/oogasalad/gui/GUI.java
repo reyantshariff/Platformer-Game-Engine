@@ -43,13 +43,15 @@ public class GUI {
         ResourceBundles.getInt("oogasalad.gui.general", "windowHeight"));
     Canvas canvas = new Canvas(ResourceBundles.getInt("oogasalad.gui.general", "windowWidth"),
         ResourceBundles.getInt("oogasalad.gui.general", "windowHeight"));
+
     gc = canvas.getGraphicsContext2D();
     root.getChildren().add(canvas);
 
     // Apply css styling
     // scene.getStylesheets().add(getClass().getResource("/oogasalad/gui/style.css").toExternalForm());
 
-    game.addScene(MainMenuGameScene.class, "Mainmenu");
+    //game.addScene(MainMenuGameScene.class, "Mainmenu");
+    game.addScene(DinosaurGameScene.class, "Dinosaur");
     startGameLoop();
 
     stage.setTitle("OOGASalad Platformer");
@@ -97,12 +99,22 @@ public class GUI {
         ResourceBundles.getDouble("oogasalad.gui.general", "windowHeight"));
 
     for (GameObject obj : scene.getAllObjects()) {
+      Transform transform = obj.getComponent(Transform.class);
+      if (transform != null) {
+        gc.fillRect(transform.getX(), transform.getY(), transform.getScaleX(),
+            transform.getScaleY());
+      }
+    }
+
+    /*
+    for (GameObject obj : scene.getAllObjects()) {
       ImageComponent imageComponent = obj.getComponent(ImageComponent.class);
       if (imageComponent != null) {
         Image image = new Image(getClass().getResourceAsStream(imageComponent.getImagePath()));
         gc.drawImage(image, imageComponent.getX(), imageComponent.getY());
       }
     }
+     */
   }
 
   private KeyCode mapToEngineKeyCode(javafx.scene.input.KeyCode code) {
