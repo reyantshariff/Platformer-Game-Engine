@@ -100,7 +100,7 @@ public class GUI {
 
     for (GameObject obj : scene.getAllObjects()) {
         Transform transform = obj.getComponent(Transform.class);
-        if (transform != null && !transform.getImagePath().isEmpty()) {
+        if (transform != null && transform.getImagePath()!=null) {
           Image image = new Image(getClass().getResourceAsStream(transform.getImagePath()));
           gc.drawImage(image, transform.getX(), transform.getY(), transform.getScaleX(), transform.getScaleY());
         }
