@@ -32,17 +32,8 @@ public class InputHandler extends GameComponent {
     }
 
     /**
-     * Register the game action to the specific keyCode
-     * @param input the input keycode
-     * @param action the action that binds to that key
-     */
-    public void registerAction(KeyCode input, GameAction action) {
-        actions.add(action);
-        getParent().getScene().getInputMapping().addMapping(input, action);
-    }
-
-    /**
      * Register the game action to the specific keyCode based on the actionClass
+     * @param input the input keycode
      * @param actionClass the specified game action class
      */
     public <T extends GameAction> void registerAction(KeyCode input, Class<T> actionClass) {
@@ -50,7 +41,7 @@ public class InputHandler extends GameComponent {
             T action = actionClass.getDeclaredConstructor().newInstance();
 
             // Set the parent of the action
-            Field parentField = actionClass.getDeclaredField("parent");
+            Field parentField = GameAction.class.getDeclaredField("parent");
             parentField.setAccessible(true);
             parentField.set(action, this);
 

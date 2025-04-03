@@ -6,7 +6,7 @@ import oogasalad.Main;
 
 public class EnterPlayerAction extends GameAction{
 
-  public EnterPlayerAction(GameObject parent) {super(parent);}
+  public EnterPlayerAction() {super();}
   /**
    * Trigger the action Implementations of this method should call checkConstraints before executing
    * the body

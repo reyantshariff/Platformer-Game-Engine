@@ -8,8 +8,8 @@ import oogasalad.engine.prefabs.dinosaur.Base;
 
 public class IsGroundedConstraint extends GameActionConstraint {
 
-  public IsGroundedConstraint(GameAction action) {
-    super(action);
+  public IsGroundedConstraint() {
+    super();
   }
 
   @Override

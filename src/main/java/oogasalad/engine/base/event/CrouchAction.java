@@ -8,8 +8,8 @@ public class CrouchAction extends GameAction {
 
   private boolean isCrouched = false;
 
-  public CrouchAction(GameObject parent) {
-    super(parent);
+  public CrouchAction() {
+    super();
   }
 
   /**

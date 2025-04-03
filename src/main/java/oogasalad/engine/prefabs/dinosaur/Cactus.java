@@ -8,12 +8,9 @@ public class Cactus extends GameObject {
    * Outlines Cactus Game Object for Dinosaur Game
    * @author Reyan Shariff
    */
-  public Cactus()
+  public Cactus(String name)
   {
-    this(true);
+    super(name,"");
   }
 
-  public Cactus(boolean loadDefaults) {
-    super("Cactus");
-  }
 }
