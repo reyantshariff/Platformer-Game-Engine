@@ -98,11 +98,11 @@ public class GUI {
         ResourceBundles.getDouble("oogasalad.gui.general", "windowHeight"));
 
     for (GameObject obj : scene.getAllObjects()) {
-      Transform transform = obj.getComponent(Transform.class);
-      if (transform != null) {
-        gc.fillRect(transform.getX(), transform.getY(), transform.getScaleX(),
-            transform.getScaleY());
-      }
+        Transform transform = obj.getComponent(Transform.class);
+        if (transform != null && !transform.getImagePath().isEmpty()) {
+          Image image = new Image(getClass().getResourceAsStream(transform.getImagePath()));
+          gc.drawImage(image, transform.getX(), transform.getY());
+        }
     }
   }
 

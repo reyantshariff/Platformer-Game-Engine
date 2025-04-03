@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import oogasalad.engine.base.architecture.Game;
+import oogasalad.gui.GUI;
 import oogasalad.view.DinosaurGameBuilderView;
 
 /**
@@ -33,11 +34,15 @@ public class Main extends Application {
         game = new Game();
 
         // Create the editor UI, passing in the ECS scene
-        DinosaurGameBuilderView editorUI = new DinosaurGameBuilderView();
-
+        //DinosaurGameBuilderView editorUI = new DinosaurGameBuilderView();
         // Wrap it in a JavaFX Scene and display
-        Scene fxScene = new Scene(editorUI, 1400, 800);
-        stage.setScene(fxScene);
-        stage.show();
+        //Scene fxScene = new Scene(editorUI, 1400, 800);
+        //stage.setScene(fxScene);
+        //stage.show();
+
+        // Init GUI
+        GUI gui = new GUI(stage, game);
+
+
     }
 }
