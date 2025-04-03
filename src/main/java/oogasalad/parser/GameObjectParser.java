@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import oogasalad.engine.base.architecture.GameComponent;
 import oogasalad.engine.base.architecture.GameObject;
 import oogasalad.engine.component.Behavior;
@@ -34,7 +36,7 @@ public class GameObjectParser implements Parser<GameObject> {
     }
     
     String name = node.get("Name").asText();
-    String tag = node.get("Tag").asText();
+    String tag = node.has("Tag") ? node.get("Tag").asText() : null;
 
     GameObject gameObject = new GameObject(name, tag);
 
@@ -113,24 +115,40 @@ public class GameObjectParser implements Parser<GameObject> {
       root.put("Tag", data.getTag());
     }
 
-    handleWritingComponents(data, root);
-    handleWritingBehavior(data, root);
+    List<GameComponent> components = new ArrayList<>();
+    List<Behavior> behaviors = new ArrayList<>();
+
+    divideComponentsAndBehaviors(data, behaviors, components);
+
+    handleWritingComponents(root, components);
+    handleWritingBehavior(root, behaviors);
 
     return root;
   }
 
-  private void handleWritingComponents(GameObject data, ObjectNode root) throws IOException {
-    ArrayNode components = mapper.createArrayNode();
+  private static void divideComponentsAndBehaviors(GameObject data, List<Behavior> behaviors,
+      List<GameComponent> components) {
     for (GameComponent component : data.getAllComponents().values()) {
+      if (Behavior.class.isAssignableFrom(component.getClass())) {
+        behaviors.add((Behavior) component);
+      } else {
+        components.add(component);
+      }
+    }
+  }
+
+  private void handleWritingComponents(ObjectNode root, List<GameComponent> componentList) throws IOException {
+    ArrayNode components = mapper.createArrayNode();
+    for (GameComponent component : componentList) {
       JsonNode componentNode = componentParser.write(component);
       components.add(componentNode);
     }
     root.set("Components", components);
   }
 
-  private void handleWritingBehavior(GameObject data, ObjectNode root) throws IOException {
+  private void handleWritingBehavior(ObjectNode root, List<Behavior> behaviorList) throws IOException {
     ArrayNode behaviors = mapper.createArrayNode();
-    for (Behavior behavior : data.getAllBehaviors()) {
+    for (Behavior behavior : behaviorList) {
       JsonNode behaviorNode = behaviorParser.write(behavior);
       behaviors.add(behaviorNode);
     }
