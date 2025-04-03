@@ -16,16 +16,23 @@ public class MainMenuGameScene extends GameScene {
 
   @Override
   public void onActivated() {
-    Player enterPlayer = instantiateObject(Player.class);
+    Player dino = instantiateObject(Player.class);
 
-    ImageComponent iPlayer = enterPlayer.addComponent(ImageComponent.class);
-    iPlayer.setImagePath("/oogasalad/dinosaur/GameOver.png");
-    iPlayer.setX(100);
-    iPlayer.setY(100);
+    ImageComponent iPlayer = dino.addComponent(ImageComponent.class);
+    iPlayer.setImagePath("/oogasalad/dinosaur/DinoStart.png");
+    iPlayer.setX(50);
+    iPlayer.setY(620);
 
-    InputHandler input = enterPlayer.addComponent(InputHandler.class);
-    EnterPlayerAction enterPlayerAction = new EnterPlayerAction(enterPlayer);
+    InputHandler input = dino.addComponent(InputHandler.class);
+    EnterPlayerAction enterPlayerAction = new EnterPlayerAction(dino);
     input.registerAction(KeyCode.valueOf("SPACE"), enterPlayerAction);
+
+    Player ground = instantiateObject(Player.class);
+
+    ImageComponent iGround = ground.addComponent(ImageComponent.class);
+    iGround.setImagePath("/oogasalad/dinosaur/Track.png");
+    iGround.setX(0);
+    iGround.setY(680);
   }
 
   @Override
