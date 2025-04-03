@@ -15,13 +15,5 @@ public class Cactus extends GameObject {
 
   public Cactus(boolean loadDefaults) {
     super("Cactus");
-    addDefaultComponents();
   }
-
-  private void addDefaultComponents()
-  {
-    addComponent(Transform.class);
-    addComponent(Behavior.class);
-  }
-
 }
