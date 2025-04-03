@@ -15,19 +15,19 @@ public class ImageButton extends DefaultButton {
 
   @Override
   public void setWidth(double width) {
-    myButton.setPrefWidth(width);
-    myButton.setGraphic(getImageViewFromImage(myImage));  // update image size based on button size
+    this.setPrefWidth(width);
+    this.setGraphic(getImageViewFromImage(myImage));  // update image size based on button size
   }
 
   @Override
   public void setHeight(double height) {
-    myButton.setPrefHeight(height);
-    myButton.setGraphic(getImageViewFromImage(myImage));  // update image size based on button size
+    this.setPrefHeight(height);
+    this.setGraphic(getImageViewFromImage(myImage));  // update image size based on button size
   }
 
   public void setImage(Image image) {
     myImage = image;
-    myButton.setGraphic(getImageViewFromImage(image));
+    this.setGraphic(getImageViewFromImage(image));
   }
 
   public Image getImage() { return myImage; }
@@ -36,8 +36,8 @@ public class ImageButton extends DefaultButton {
     ImageView imageView = new ImageView(image);
 
     // Calculate the scaling factors for both width and height
-    double widthScale = myButton.getWidth() * (1 - IMAGE_BUTTON_MARGIN) / image.getWidth();
-    double heightScale = myButton.getHeight() * (1 - IMAGE_BUTTON_MARGIN) / image.getHeight();
+    double widthScale = this.getWidth() * (1 - IMAGE_BUTTON_MARGIN) / image.getWidth();
+    double heightScale = this.getHeight() * (1 - IMAGE_BUTTON_MARGIN) / image.getHeight();
 
     // Scale image to fit in button based on the axis (width/height) requiring the lesser scale
     double scale = Math.min(widthScale, heightScale);

@@ -4,49 +4,48 @@ import javafx.animation.PauseTransition;
 import javafx.scene.control.Button;
 import javafx.util.Duration;
 
-public class DefaultButton {
+public class DefaultButton extends Button {
   public static final String DEFAULT_BUTTON_FILL = "#FFFFFF"; // default base color
   public static final int BUTTON_CLICK_COLOR_DURATION = 100;  // default color change duration (ms)
 
-  protected final Button myButton;
   private String myIdleColor;
 
   public DefaultButton() {
-    myButton = new Button("");
+    super("");
     setToDefaults();
   }
 
   public DefaultButton(String text) {
-    myButton = new Button(text);
+    super(text);
     setToDefaults();
   }
 
   public void setWidth(double width) {
-    myButton.setPrefWidth(width);
+    this.setPrefWidth(width);
   }
 
   public void setHeight(double height) {
-    myButton.setPrefHeight(height);
+    this.setPrefHeight(height);
   }
 
   public void setIdleColor(String color) {
     myIdleColor = color;
-    myButton.setStyle("-fx-background-color: " + color);
-    myButton.setOnMouseExited(e -> myButton.setStyle("-fx-background-color: " + color + ";"));
+    this.setStyle("-fx-background-color: " + color);
+    this.setOnMouseExited(e -> this.setStyle("-fx-background-color: " + color + ";"));
   }
 
   public void setHoverColor(String color) {
     // Change the button color to hoverColor when hovered over
-    myButton.setOnMouseEntered(e -> myButton.setStyle("-fx-background-color:" + color + ";"));
+    this.setOnMouseEntered(e -> this.setStyle("-fx-background-color:" + color + ";"));
   }
 
   public void setClickColor(String color) {
     // Change the button color temporarily to clickColor when clicked
-    myButton.setOnMousePressed(e -> myButton.setStyle("-fx-background-color:" + color + ";"));
-    myButton.setOnMouseReleased(e -> {
+    this.setOnMousePressed(e -> this.setStyle("-fx-background-color:" + color + ";"));
+    this.setOnMouseReleased(e -> {
       // Use a PauseTransition to make button color change temporarily
       PauseTransition pause = new PauseTransition(Duration.millis(BUTTON_CLICK_COLOR_DURATION));
-      pause.setOnFinished(event -> myButton.setStyle("-fx-background-color:" + myIdleColor + ";"));
+      pause.setOnFinished(event -> this.setStyle("-fx-background-color:" + myIdleColor + ";"));
       pause.play();
     });
   }
