@@ -49,7 +49,8 @@ public class GUI {
     // Apply css styling
     // scene.getStylesheets().add(getClass().getResource("/oogasalad/gui/style.css").toExternalForm());
 
-    game.addScene(MainMenuGameScene.class, "Mainmenu");
+    //game.addScene(MainMenuGameScene.class, "Mainmenu");
+    game.addScene(DinosaurGameScene.class, "Dinosaur");
     startGameLoop();
 
     stage.setTitle("OOGASalad Platformer");
@@ -97,10 +98,10 @@ public class GUI {
         ResourceBundles.getDouble("oogasalad.gui.general", "windowHeight"));
 
     for (GameObject obj : scene.getAllObjects()) {
-      ImageComponent imageComponent = obj.getComponent(ImageComponent.class);
-      if (imageComponent != null) {
-        Image image = new Image(getClass().getResourceAsStream(imageComponent.getImagePath()));
-        gc.drawImage(image, imageComponent.getX(), imageComponent.getY());
+      Transform transform = obj.getComponent(Transform.class);
+      if (transform != null) {
+        gc.fillRect(transform.getX(), transform.getY(), transform.getScaleX(),
+            transform.getScaleY());
       }
     }
   }

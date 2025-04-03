@@ -3,16 +3,16 @@ package oogasalad.player.dinosaur;
 import oogasalad.engine.base.architecture.GameScene;
 import javafx.scene.Scene;
 import oogasalad.engine.base.enumerate.KeyCode;
-import oogasalad.engine.base.event.GameAction;
 import oogasalad.engine.base.event.IsGroundedConstraint;
 import oogasalad.engine.base.event.JumpAction;
 import oogasalad.engine.component.AccelerationComponent;
 import oogasalad.engine.component.ColliderComponent;
-import oogasalad.engine.component.GroundCollisionComponent;
+import oogasalad.engine.component.CollisionHandlerComponent;
 import oogasalad.engine.component.InputHandler;
 import oogasalad.engine.component.Transform;
 import oogasalad.engine.component.VelocityComponent;
 import oogasalad.engine.prefabs.Base;
+import oogasalad.engine.prefabs.Bird;
 import oogasalad.engine.prefabs.Player;
 
 public class DinosaurGameScene extends GameScene {
@@ -44,7 +44,6 @@ public class DinosaurGameScene extends GameScene {
     input.registerAction(KeyCode.valueOf("SPACE"), jumpAction);
 
     player.addComponent(ColliderComponent.class);
-    player.addComponent(GroundCollisionComponent.class);
 
 
     Base ground = instantiateObject(Base.class);
@@ -56,6 +55,33 @@ public class DinosaurGameScene extends GameScene {
     tGround.setScaleY(50);
 
     ground.addComponent(ColliderComponent.class);
+
+    Bird bird = instantiateObject(Bird.class);
+
+    Transform tBird = bird.addComponent(Transform.class);
+    tBird.setX(300);
+    tBird.setY(500);
+    tBird.setScaleX(30);
+    tBird.setScaleY(30);
+
+    bird.addComponent(ColliderComponent.class);
+
+    CollisionHandlerComponent collisionHandler = player.addComponent(CollisionHandlerComponent.class);
+
+    // Ground collision
+        collisionHandler.registerCollisionBehavior(Base.class, groundUse -> {
+          VelocityComponent velocity = player.getComponent(VelocityComponent.class);
+          velocity.setVelocityY(0.1);
+        });
+
+    // Bird collision = death
+        collisionHandler.registerCollisionBehavior(Bird.class, birdUse -> {
+          System.out.println("Player collided with a bird — Game Over!");
+          VelocityComponent velocity = player.getComponent(VelocityComponent.class);
+          velocity.setVelocityX(0);
+          velocity.setVelocityY(-50);
+        });
+
 
     // Create Game Objects
     // Dinosaur
