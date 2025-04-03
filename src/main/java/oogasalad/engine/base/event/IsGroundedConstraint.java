@@ -4,7 +4,7 @@ import oogasalad.engine.base.architecture.GameObject;
 import oogasalad.engine.component.ColliderComponent;
 
 import java.util.Collection;
-import oogasalad.engine.prefabs.Base;
+import oogasalad.engine.prefabs.dinosaur.Base;
 
 public class IsGroundedConstraint extends GameActionConstraint {
 
