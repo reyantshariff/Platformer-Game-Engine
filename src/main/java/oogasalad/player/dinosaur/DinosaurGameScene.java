@@ -5,6 +5,7 @@ import oogasalad.engine.base.architecture.GameScene;
 import javafx.scene.Scene;
 import oogasalad.engine.base.enumerate.KeyCode;
 import oogasalad.engine.base.event.CrouchAction;
+import oogasalad.engine.base.event.GameAction;
 import oogasalad.engine.base.event.IsGroundedConstraint;
 import oogasalad.engine.base.event.JumpAction;
 import oogasalad.engine.component.AccelerationComponent;
