@@ -12,8 +12,8 @@ import oogasalad.engine.component.CollisionHandlerComponent;
 import oogasalad.engine.component.InputHandler;
 import oogasalad.engine.component.Transform;
 import oogasalad.engine.component.VelocityComponent;
-import oogasalad.engine.prefabs.Base;
-import oogasalad.engine.prefabs.Bird;
+import oogasalad.engine.prefabs.dinosaur.Base;
+import oogasalad.engine.prefabs.dinosaur.Bird;
 import oogasalad.engine.prefabs.Player;
 
 public class DinosaurGameScene extends GameScene {
@@ -84,6 +84,7 @@ public class DinosaurGameScene extends GameScene {
     tBird.setY(500);
     tBird.setScaleX(30);
     tBird.setScaleY(30);
+    tBird.setImagePath("/oogasalad/dinosaur/Bird1.png");
 
     bird.addComponent(ColliderComponent.class);
   }
@@ -96,6 +97,7 @@ public class DinosaurGameScene extends GameScene {
     tGround.setY(550);
     tGround.setScaleX(800);
     tGround.setScaleY(50);
+    tGround.setImagePath("/oogasalad/dinosaur/Track.png");
 
     ground.addComponent(ColliderComponent.class);
   }
@@ -108,6 +110,7 @@ public class DinosaurGameScene extends GameScene {
     t.setY(500);
     t.setScaleX(20);
     t.setScaleY(20);
+    t.setImagePath("/oogasalad/dinosaur/DinoRun1.png");
 
     VelocityComponent vel = player.addComponent(VelocityComponent.class);
     vel.setVelocityX(40.0);
