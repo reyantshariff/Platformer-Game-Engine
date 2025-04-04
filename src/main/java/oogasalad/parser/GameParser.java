@@ -25,11 +25,39 @@ public class GameParser implements Parser<Game> {
   private final ResourceParser resourceParser = new ResourceParser();
   private final InformationParser informationParser = new InformationParser();
 
+  private Game myGame;
+
   private static final String DATA = "Data";
   private static final String INFORMATION = "Information";
   private static final String NAME = "Name";
   private static final String SCENE = "Scene";
   private static final String RESOURCES = "Resources";
+
+
+  /**
+   * Constructor to create a Game Parser with a file linking to the JSON.
+   *
+   * @param fileName - the file name that links ot the json
+   */
+  public GameParser(String fileName) {
+    try {
+      JsonNode rootNode = mapper.readTree(new File(fileName));
+      myGame = this.parse(rootNode);
+    } catch (IOException e) {
+      LOGGER.error("Game File Not Found: {}", fileName);
+    } catch (ParsingException e) {
+      LOGGER.error("Could not parse JSON file: {}", fileName);
+    }
+  }
+
+  /**
+   * Getter for the game object
+   *
+   * @return - the Game instance containing the objects, components, and behaviors
+   */
+  public Game getMyGame() {
+    return myGame;
+  }
 
   /**
    * Parses a JSON node into a Game instance
