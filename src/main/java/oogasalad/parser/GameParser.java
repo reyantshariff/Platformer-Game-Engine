@@ -91,14 +91,18 @@ public class GameParser implements Parser<Game> {
   private void handleSceneParsing(JsonNode data, Game newGame) throws ParsingException {
     if (data.has("Scene") && data.get("Scene").isArray()) {
       for (JsonNode sceneNode : data.get("Scene")) {
-        GameScene gameScene = sceneParser.parse(sceneNode);
-        if (gameScene != null) {
-          newGame.addScene(gameScene.getName());
-        } else {
-          LOGGER.error("Scene with name {} not found and therefore will not be added "
-              + "to Game.", sceneNode.get("Name"));
-        }
+        createGameScene(newGame, sceneNode);
       }
+    }
+  }
+
+  private void createGameScene(Game newGame, JsonNode sceneNode) throws ParsingException {
+    GameScene gameScene = sceneParser.parse(sceneNode);
+    if (gameScene != null) {
+      newGame.addScene(gameScene.getName());
+    } else {
+      LOGGER.error("Scene with name {} not found and therefore will not be added "
+          + "to Game.", sceneNode.get("Name"));
     }
   }
 
