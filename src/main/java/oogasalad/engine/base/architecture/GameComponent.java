@@ -116,27 +116,36 @@ public abstract class GameComponent implements Serializable {
     if (config == null || config.isNull()) return;
 
     for (SerializedField<?> serializedField : getSerializedFields()) {
-      String fieldName = serializedField.getFieldName();
-
-      if (!config.has(fieldName)) continue;
-      JsonNode valueNode = config.get(fieldName);
-      Class<?> fieldType = serializedField.getFieldType();
-
-      try {
-        Object value = switch (fieldType.getSimpleName()) {
-          case "int", "Integer" -> valueNode.asInt();
-          case "double", "Double" -> valueNode.asDouble();
-          case "boolean", "Boolean" -> valueNode.asBoolean();
-          case "String" -> valueNode.asText();
-          default -> throw new IllegalArgumentException("Unsupported field type: " + fieldType);
-        };
-
-        SerializedField<Object> typedField = (SerializedField<Object>) serializedField;
-        typedField.setValue(value);
-
-      } catch (Exception e) {
-        throw new RuntimeException("Failed to set field: " + fieldName + " from config", e);
-      }
+      setFieldFromConfig(config, serializedField);
     }
+  }
+
+  private static void setFieldFromConfig(JsonNode config, SerializedField<?> serializedField) {
+    String fieldName = serializedField.getFieldName();
+
+    if (!config.has(fieldName))
+      return;
+    JsonNode valueNode = config.get(fieldName);
+    Class<?> fieldType = serializedField.getFieldType();
+
+    try {
+      Object value = extractFieldValue(fieldType, valueNode);
+
+      SerializedField<Object> typedField = (SerializedField<Object>) serializedField;
+      typedField.setValue(value);
+
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to set field: " + fieldName + " from config", e);
+    }
+  }
+
+  private static Object extractFieldValue(Class<?> fieldType, JsonNode valueNode) {
+    return switch (fieldType.getSimpleName()) {
+      case "int", "Integer" -> valueNode.asInt();
+      case "double", "Double" -> valueNode.asDouble();
+      case "boolean", "Boolean" -> valueNode.asBoolean();
+      case "String" -> valueNode.asText();
+      default -> throw new IllegalArgumentException("Unsupported field type: " + fieldType);
+    };
   }
 }
