@@ -37,7 +37,7 @@ public abstract class GameComponent implements Serializable {
   /**
    * This method is called every frame. It is used to update the object and perform any necessary
    * game logic. NOTE: This method should be override if needed.
-   * 
+   *
    * @param deltaTime The time since the last frame, in seconds.
    */
   public void update(double deltaTime) {}
@@ -86,7 +86,7 @@ public abstract class GameComponent implements Serializable {
 
   /**
    * This is the actual updating order of the component. NOTE: This method MUST be override.
-   * 
+   *
    * @return the specified component tag
    */
   public abstract ComponentTag componentTag();
