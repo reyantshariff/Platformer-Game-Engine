@@ -136,8 +136,9 @@ public abstract class GameComponent implements Serializable {
       Object value = extractValue(fieldType, valueNode);
       SerializedField<Object> typedField = (SerializedField<Object>) serializedField;
       typedField.setValue(value);
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to set field: " + fieldName + " from config", e);
+
+    } catch (IllegalArgumentException | ClassCastException e) {
+      throw new IllegalStateException("Failed to set field '" + fieldName + "' with value: " + valueNode, e);
     }
   }
 

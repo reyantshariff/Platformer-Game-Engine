@@ -48,6 +48,7 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
 
     String name = componentNode.get(NAME).asText();
     try {
+      String name = componentNode.get("Name").asText();
       String fullClassName = "oogasalad.engine.component." + name;
 
       Class<?> rawClass = getRawClass(fullClassName);
@@ -83,7 +84,7 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
   }
 
   private static void validateComponentName(JsonNode componentNode) throws ParsingException {
-    if (!componentNode.has("Name")) {
+    if (!componentNode.has(NAME)) {
       LOGGER.error("Did not find component name. Throwing exception.");
       throw new ParsingException("Component did not have name.");
     }
