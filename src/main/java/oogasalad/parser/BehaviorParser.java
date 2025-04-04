@@ -18,6 +18,8 @@ public class BehaviorParser implements Parser<GameComponent> {
 
   private final ComponentParser componentParser = new ComponentParser();
 
+  private static final String NAME = "Name";
+
   /**
    * @param behaviorNode - the JSON node given to parse
    * @return A Behavior Game Component
@@ -25,13 +27,13 @@ public class BehaviorParser implements Parser<GameComponent> {
    */
   @Override
   public Behavior parse(JsonNode behaviorNode) throws ParsingException {
-    if (!behaviorNode.has("Name")) {
+    if (!behaviorNode.has(NAME)) {
       LOGGER.error("No name found in Behavior Node. Throwing Error.");
       throw new ParsingException("Behavior does not have required name.");
     }
 
     try {
-      String name = behaviorNode.get("Name").asText();
+      String name = behaviorNode.get(NAME).asText();
       String fullClassName = "oogasalad.engine.component." + name;
 
       //had chatGpt help with the following three lines
