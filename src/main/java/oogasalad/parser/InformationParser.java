@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.awt.Dimension;
 import java.io.IOException;
+import javax.print.attribute.standard.MediaSize.NA;
 import oogasalad.engine.base.architecture.GameInfo;
 import static oogasalad.config.GameConfig.LOGGER;
 
@@ -16,6 +17,13 @@ import static oogasalad.config.GameConfig.LOGGER;
 public class InformationParser implements Parser<GameInfo> {
   private final ObjectMapper mapper = new ObjectMapper();
 
+  private static final String NAME = "Name";
+  private static final String DESCRIPTION = "Description";
+  private static final String AUTHOR = "Author";
+  private static final String RESOLUTION = "Resolution";
+  private static final String WIDTH = "Width";
+  private static final String HEIGHT = "Height";
+
   /**
    * Parses a JSON node into a GameInfo class
    *
@@ -25,7 +33,7 @@ public class InformationParser implements Parser<GameInfo> {
    */
   @Override
   public GameInfo parse(JsonNode node) throws ParsingException {
-    if (node == null || !node.has("Name")) {
+    if (node == null || !node.has(NAME)) {
       LOGGER.warn("Missing name");
       throw new ParsingException("Missing name");
     }
@@ -35,18 +43,18 @@ public class InformationParser implements Parser<GameInfo> {
 
   private static handleGameInfoParsing getHandleGameInfoParsing(JsonNode node)
       throws ParsingException {
-    String name = node.get("Name").asText();
-    String description = node.has("Description") ? node.get("Description").asText() : "";
-    String author = node.has("Author") ? node.get("Author").asText() : "";
+    String name = node.get(NAME).asText();
+    String description = node.has(DESCRIPTION) ? node.get(DESCRIPTION).asText() : "";
+    String author = node.has(AUTHOR) ? node.get(AUTHOR).asText() : "";
 
-    JsonNode resolutionNode = node.get("Resolution");
-    if (resolutionNode == null || !resolutionNode.has("Width") || !resolutionNode.has("Height")) {
+    JsonNode resolutionNode = node.get(RESOLUTION);
+    if (resolutionNode == null || !resolutionNode.has(WIDTH) || !resolutionNode.has(HEIGHT)) {
       LOGGER.warn("Missing or invalid resolution block");
       throw new ParsingException("Missing or invalid resolution block");
     }
 
-    int width = resolutionNode.get("Width").asInt();
-    int height = resolutionNode.get("Height").asInt();
+    int width = resolutionNode.get(WIDTH).asInt();
+    int height = resolutionNode.get(HEIGHT).asInt();
     Dimension resolution = new Dimension(width, height);
     return new handleGameInfoParsing(name, description, author, resolution);
   }
@@ -65,14 +73,14 @@ public class InformationParser implements Parser<GameInfo> {
   @Override
   public JsonNode write(GameInfo info) throws IOException {
     ObjectNode root = mapper.createObjectNode();
-    root.put("Name", info.name());
-    root.put("Description", info.description());
-    root.put("Author", info.author());
+    root.put(NAME, info.name());
+    root.put(DESCRIPTION, info.description());
+    root.put(AUTHOR, info.author());
 
     ObjectNode resolutionNode = mapper.createObjectNode();
-    resolutionNode.put("Width", info.resolution().width);
-    resolutionNode.put("Height", info.resolution().height);
-    root.set("Resolution", resolutionNode);
+    resolutionNode.put(WIDTH, info.resolution().width);
+    resolutionNode.put(HEIGHT, info.resolution().height);
+    root.set(RESOLUTION, resolutionNode);
 
     return root;
   }

@@ -19,6 +19,10 @@ public class GameSceneParser implements Parser<GameScene>{
   private final GameObjectParser gameObjectParser = new GameObjectParser();
   private final ObjectMapper mapper = new ObjectMapper();
 
+  private static final String GAMEOBJECTS = "GameObjects";
+  private static final String NAME = "Name";
+
+
   /**
    * Parses a JSON node into a GameScene instance
    *
@@ -30,7 +34,7 @@ public class GameSceneParser implements Parser<GameScene>{
   public GameScene parse(JsonNode node) throws ParsingException {
     validateGameSceneName(node);
 
-    String name = node.get("Name").asText();
+    String name = node.get(NAME).asText();
     String fullClassName = "oogasalad.engine.scene." + name;
 
     try {
@@ -39,10 +43,8 @@ public class GameSceneParser implements Parser<GameScene>{
         throw new ParsingException(name + " is not a GameScene subclass.");
       }
 
-      GameScene scene = getGameScene(node,
+      return getGameScene(node,
           (Class<? extends GameScene>) sceneClass);
-
-      return scene;
     } catch (ClassNotFoundException e) {
       LOGGER.warn("{} is not a GameScene subclass.", name);
     } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
@@ -55,21 +57,20 @@ public class GameSceneParser implements Parser<GameScene>{
 
   private GameScene getGameScene(JsonNode node, Class<? extends GameScene> sceneClass)
       throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ParsingException {
-    Class<? extends GameScene> typedSceneClass = sceneClass;
-    GameScene scene = typedSceneClass.getDeclaredConstructor().newInstance();
+    GameScene scene = sceneClass.getDeclaredConstructor().newInstance();
     handleGameObjectParsing(node, scene);
     return scene;
   }
 
   private static void validateGameSceneName(JsonNode node) throws ParsingException {
-    if (node == null || !node.has("Name")) {
+    if (node == null || !node.has(NAME)) {
       throw new ParsingException("No name found");
     }
   }
 
   private void handleGameObjectParsing(JsonNode node, GameScene scene) throws ParsingException {
-    if (node.has("GameObjects") && node.get("GameObjects").isArray()) {
-      for (JsonNode gameObjectNode : node.get("GameObjects")) {
+    if (node.has(GAMEOBJECTS) && node.get(GAMEOBJECTS).isArray()) {
+      for (JsonNode gameObjectNode : node.get(GAMEOBJECTS)) {
         GameObject gameObject = gameObjectParser.parse(gameObjectNode);
         scene.registerObject(gameObject);
       }
@@ -86,7 +87,7 @@ public class GameSceneParser implements Parser<GameScene>{
   @Override
   public JsonNode write(GameScene data) throws IOException {
     ObjectNode root = mapper.createObjectNode();
-    root.put("Name", data.getName());
+    root.put(NAME, data.getName());
 
     ArrayNode gameObjects = mapper.createArrayNode();
     for (GameObject gameObject : data.getAllObjects()) {
@@ -94,7 +95,7 @@ public class GameSceneParser implements Parser<GameScene>{
       gameObjects.add(gameObjectNode);
     }
 
-    root.set("GameObjects", gameObjects);
+    root.set(GAMEOBJECTS, gameObjects);
     return root;
   }
 }
