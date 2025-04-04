@@ -89,7 +89,6 @@ public class Gui {
     root.getChildren().add(canvas);
 
     // Apply css styling
-    // scene.getStylesheets().add(getClass().getResource("/oogasalad/gui/style.css").toExternalForm());
 
     //game.addScene(MainMenuGameScene.class, "Mainmenu");
     game.addScene(DinosaurGameScene.class, "Dinosaur");
