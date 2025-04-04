@@ -34,20 +34,13 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
    */
   @Override
   public GameComponent parse(JsonNode componentNode) throws ParsingException {
-    if (!componentNode.has("Name")) {
-      LOGGER.error("Did not find component name. Throwing exception.");
-      throw new ParsingException("Component did not have name.");
-    }
+    validateComponentName(componentNode);
 
     try {
       String name = componentNode.get("Name").asText();
       String fullClassName = "oogasalad.engine.component." + name;
 
-      //had chatGpt help with the following three lines
-      Class<?> rawClass = Class.forName(fullClassName);
-      if (!GameComponent.class.isAssignableFrom(rawClass)) {
-        throw new ParsingException("Class does not extend GameComponent: " + fullClassName);
-      }
+      Class<?> rawClass = getRawClass(fullClassName);
 
       Class<? extends GameComponent> componentClass = (Class<? extends GameComponent>) rawClass;
 
@@ -57,6 +50,23 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
     } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
              NoSuchMethodException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  private static Class<?> getRawClass(String fullClassName)
+      throws ClassNotFoundException, ParsingException {
+    //had chatGpt help with the following three lines
+    Class<?> rawClass = Class.forName(fullClassName);
+    if (!GameComponent.class.isAssignableFrom(rawClass)) {
+      throw new ParsingException("Class does not extend GameComponent: " + fullClassName);
+    }
+    return rawClass;
+  }
+
+  private static void validateComponentName(JsonNode componentNode) throws ParsingException {
+    if (!componentNode.has("Name")) {
+      LOGGER.error("Did not find component name. Throwing exception.");
+      throw new ParsingException("Component did not have name.");
     }
   }
 
