@@ -3,19 +3,13 @@ package oogasalad.parser;
 import static oogasalad.config.GameConfig.LOGGER;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
-import java.io.Serial;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+import javax.print.attribute.standard.MediaSize.NA;
 import oogasalad.engine.base.architecture.GameComponent;
 import oogasalad.engine.base.serialization.Serializable;
-import oogasalad.engine.base.serialization.SerializableField;
 import oogasalad.engine.base.serialization.SerializedField;
 
 /**
@@ -24,6 +18,7 @@ import oogasalad.engine.base.serialization.SerializedField;
  * @author Justin Aronwald, Daniel Rodriguez-Florido
  */
 public class ComponentParser implements Parser<GameComponent>, Serializable {
+  private static final String NAME = "Name";
 
   /**
    * Parses a JSON node into a GameComponent instance
@@ -37,7 +32,7 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
     validateComponentName(componentNode);
 
     try {
-      String name = componentNode.get("Name").asText();
+      String name = componentNode.get(NAME).asText();
       String fullClassName = "oogasalad.engine.component." + name;
 
       Class<?> rawClass = getRawClass(fullClassName);
@@ -64,7 +59,7 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
   }
 
   private static void validateComponentName(JsonNode componentNode) throws ParsingException {
-    if (!componentNode.has("Name")) {
+    if (!componentNode.has(NAME)) {
       LOGGER.error("Did not find component name. Throwing exception.");
       throw new ParsingException("Component did not have name.");
     }
@@ -82,7 +77,7 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
 
     String componentName = data.getClass().getSimpleName();
     ObjectNode root = mapper.createObjectNode();
-    root.put("Name", componentName);
+    root.put(NAME, componentName);
 
     ObjectNode configurations = root.putObject("Configurations");
 
