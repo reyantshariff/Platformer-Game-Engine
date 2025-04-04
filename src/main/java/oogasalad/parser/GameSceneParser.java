@@ -28,9 +28,7 @@ public class GameSceneParser implements Parser<GameScene>{
    */
   @Override
   public GameScene parse(JsonNode node) throws ParsingException {
-    if (node == null || !node.has("Name")) {
-      throw new ParsingException("No name found");
-    }
+    validateGameSceneName(node);
 
     String name = node.get("Name").asText();
     String fullClassName = "oogasalad.engine.scene." + name;
@@ -41,9 +39,8 @@ public class GameSceneParser implements Parser<GameScene>{
         throw new ParsingException(name + " is not a GameScene subclass.");
       }
 
-      Class<? extends GameScene> typedSceneClass = (Class<? extends GameScene>) sceneClass;
-      GameScene scene = typedSceneClass.getDeclaredConstructor().newInstance();
-      handleGameObjectParsing(node, scene);
+      GameScene scene = getGameScene(node,
+          (Class<? extends GameScene>) sceneClass);
 
       return scene;
     } catch (ClassNotFoundException e) {
@@ -54,6 +51,20 @@ public class GameSceneParser implements Parser<GameScene>{
     }
 
     return null;
+  }
+
+  private GameScene getGameScene(JsonNode node, Class<? extends GameScene> sceneClass)
+      throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ParsingException {
+    Class<? extends GameScene> typedSceneClass = sceneClass;
+    GameScene scene = typedSceneClass.getDeclaredConstructor().newInstance();
+    handleGameObjectParsing(node, scene);
+    return scene;
+  }
+
+  private static void validateGameSceneName(JsonNode node) throws ParsingException {
+    if (node == null || !node.has("Name")) {
+      throw new ParsingException("No name found");
+    }
   }
 
   private void handleGameObjectParsing(JsonNode node, GameScene scene) throws ParsingException {

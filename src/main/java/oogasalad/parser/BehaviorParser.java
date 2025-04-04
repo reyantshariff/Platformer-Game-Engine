@@ -3,13 +3,9 @@ package oogasalad.parser;
 import static oogasalad.config.GameConfig.LOGGER;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 import oogasalad.engine.base.architecture.GameComponent;
-import oogasalad.engine.base.serialization.SerializedField;
 import oogasalad.engine.component.Behavior;
 
 // Assumes I am already within a behavior subsection at one of the array objects.
@@ -20,7 +16,7 @@ import oogasalad.engine.component.Behavior;
  */
 public class BehaviorParser implements Parser<GameComponent> {
 
-  ComponentParser componentParser = new ComponentParser();
+  private final ComponentParser componentParser = new ComponentParser();
 
   /**
    * @param behaviorNode - the JSON node given to parse
