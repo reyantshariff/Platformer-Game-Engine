@@ -33,8 +33,8 @@ public class ResourceBundles {
   }
 
   /**
-   * Defines which style bundle should be treated as the active/current bundle.
-   * Loads the ResourceBundle with the given baseName if it does not already exist in the map.
+   * Defines which style bundle should be treated as the active/current bundle. Loads the
+   * ResourceBundle with the given baseName if it does not already exist in the map.
    *
    * @param baseName The base name of the resource bundle.
    */
@@ -52,7 +52,7 @@ public class ResourceBundles {
   /**
    * Retrieves a string from the currently "active" ResourceBundle with the given key.
    *
-   * @param key      The key of the string to retrieve.
+   * @param key The key of the string to retrieve.
    * @return The string value, or null if not found.
    */
   public static String getString(String key) {
@@ -65,7 +65,7 @@ public class ResourceBundles {
   /**
    * Retrieves an integer from the currently "active" ResourceBundle with the given key.
    *
-   * @param key      The key of the integer to retrieve.
+   * @param key The key of the integer to retrieve.
    * @return The integer value, or 0 if not found or invalid.
    */
   public static int getInt(String key) {
@@ -78,7 +78,7 @@ public class ResourceBundles {
   /**
    * Retrieves a double from the currently "active" ResourceBundle with the given key.
    *
-   * @param key      The key of the double to retrieve.
+   * @param key The key of the double to retrieve.
    * @return The double value, or 0.0 if not found or invalid.
    */
   public static double getDouble(String key) {
@@ -112,7 +112,9 @@ public class ResourceBundles {
    */
   public static int getInt(String baseName, String key) {
     String value = getString(baseName, key);
-    if (value == null) return 0;
+    if (value == null) {
+      return 0;
+    }
     try {
       return (int) cast(value, int.class);
     } catch (IllegalArgumentException e) {
@@ -130,7 +132,9 @@ public class ResourceBundles {
    */
   public static double getDouble(String baseName, String key) {
     String value = getString(baseName, key);
-    if (value == null) return 0.0;
+    if (value == null) {
+      return 0.0;
+    }
     try {
       return (double) cast(value, double.class);
     } catch (IllegalArgumentException e) {
@@ -148,7 +152,9 @@ public class ResourceBundles {
    */
   public static boolean getBoolean(String baseName, String key) {
     String value = getString(baseName, key);
-    if (value == null) return false;
+    if (value == null) {
+      return false;
+    }
     return (boolean) cast(value, boolean.class);
   }
 
@@ -161,10 +167,18 @@ public class ResourceBundles {
    * @throws IllegalArgumentException if the type is not supported.
    */
   private static Object cast(String value, Class<?> type) {
-    if (type == Double.class || type == double.class) return Double.parseDouble(value);
-    if (type == Integer.class || type == int.class) return Integer.parseInt(value);
-    if (type == Boolean.class || type == boolean.class) return Boolean.parseBoolean(value);
-    if (type == String.class) return value;
+    if (type == Double.class || type == double.class) {
+      return Double.parseDouble(value);
+    }
+    if (type == Integer.class || type == int.class) {
+      return Integer.parseInt(value);
+    }
+    if (type == Boolean.class || type == boolean.class) {
+      return Boolean.parseBoolean(value);
+    }
+    if (type == String.class) {
+      return value;
+    }
     throw new IllegalArgumentException("Unsupported type: " + type);
   }
 }

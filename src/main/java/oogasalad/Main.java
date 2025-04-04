@@ -4,7 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import oogasalad.engine.base.architecture.Game;
-import oogasalad.gui.GUI;
+import oogasalad.gui.Gui;
 import oogasalad.view.DinosaurGameBuilderView;
 
 /**
@@ -41,7 +41,7 @@ public class Main extends Application {
         //stage.show();
 
         // Init GUI
-        GUI gui = new GUI(stage, game);
+        Gui gui = new Gui(stage, game);
 
 
     }
