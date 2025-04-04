@@ -5,12 +5,12 @@ import oogasalad.engine.base.enumerate.ComponentTag;
 import oogasalad.engine.base.serialization.SerializableField;
 
 /**
- * This component is for all game objects that are rendered from image files
- *
- * @ Jack F. Regan
+ * A visual component that represents an image to be rendered at a specific position.
+ * This component stores the image path and its intended render coordinates (x, y).
  */
 public class ImageComponent extends GameComponent {
 
+  /** The path to the image file used for rendering. */
   @SerializableField
   private String imagePath;
 
@@ -21,12 +21,6 @@ public class ImageComponent extends GameComponent {
   /** The y-coordinate where the image should be rendered. */
   @SerializableField
   private double y;
-  @SerializableField
-  private double scaleX;
-  @SerializableField
-  private double scaleY;
-  @SerializableField
-  private double rotation;
 
   /**
    * Returns the component tag identifying this as a render-related component.
@@ -82,18 +76,6 @@ public class ImageComponent extends GameComponent {
   public String getImagePath() {
     return imagePath;
   }
-  public double getScaleX() {
-    return scaleX;
-  }
-
-  /**
-   * Sets the path to the image file used for rendering.
-   *
-   * @param imagePath the image file path
-   */
-  public void setScaleX(double scaleX) {
-    this.scaleX = scaleX;
-  }
 
   /**
    * Sets the path to the image file used for rendering.
@@ -104,19 +86,13 @@ public class ImageComponent extends GameComponent {
     this.imagePath = imagePath;
   }
 
-  public double getScaleY() {
-    return scaleY;
-  }
-
-  public void setScaleY(double scaleY) {
-    this.scaleY = scaleY;
-  }
-
-  public double getRotation() {
-    return rotation;
-  }
-
-  public void setRotation(double rotation) {
-    this.rotation = rotation;
+  /**
+   * Updates the component. Image components typically do not require updates over time.
+   *
+   * @param deltaTime time passed since the last update
+   */
+  @Override
+  public void update(double deltaTime) {
+    // Image components typically don't update over time.
   }
 }
