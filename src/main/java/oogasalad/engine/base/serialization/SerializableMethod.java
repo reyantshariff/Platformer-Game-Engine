@@ -12,5 +12,5 @@ import java.lang.annotation.Target;
  * @author Hsuan-Kai Liao
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target(ElementType.METHOD)
 public @interface SerializableMethod {}

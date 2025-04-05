@@ -2,6 +2,9 @@ package oogasalad.engine.base.serialization;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * The class that represents the serialized method from method annotated @SerializableMethod
@@ -35,10 +38,20 @@ public class SerializedMethod {
   }
 
   /**
+   * Get the types of the arguments this method takes.
+   */
+  public List<Class<?>> getArgumentTypes() {
+    return List.of(method.getParameterTypes());
+  }
+
+  /**
    * Invoke the method and return the result.
    */
   public Object invoke(Object... args) {
     try {
+      if (args.length != method.getParameterTypes().length) {
+        throw new IllegalArgumentException("Argument count mismatch: Expected " + method.getParameterTypes().length + " but got " + args.length);
+      }
       return method.invoke(targetObject, args);
     } catch (IllegalAccessException | InvocationTargetException e) {
       throw new RuntimeException("Cannot invoke the method: " + methodName, e);
@@ -47,6 +60,16 @@ public class SerializedMethod {
 
   @Override
   public String toString() {
-    return "SerializedMethod{name='" + methodName + "'}";
+    StringBuilder sb = new StringBuilder("SerializedMethod{name='")
+        .append(methodName)
+        .append("', parameterTypes=[");
+    for (Class<?> paramType : method.getParameterTypes()) {
+      sb.append(paramType.getSimpleName()).append(", ");
+    }
+    if (method.getParameterTypes().length > 0) {
+      sb.setLength(sb.length() - 2);
+    }
+    sb.append("]}");
+    return sb.toString();
   }
 }
