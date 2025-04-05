@@ -11,15 +11,14 @@ import oogasalad.engine.base.serialization.SerializableField;
  */
 public class ImageComponent extends GameComponent {
 
-  @Override
-  public ComponentTag componentTag() {
-    return ComponentTag.NONE;
-  }
-
   @SerializableField
   private String imagePath;
+
+  /** The x-coordinate where the image should be rendered. */
   @SerializableField
   private double x;
+
+  /** The y-coordinate where the image should be rendered. */
   @SerializableField
   private double y;
   @SerializableField
@@ -29,14 +28,21 @@ public class ImageComponent extends GameComponent {
   @SerializableField
   private double rotation;
 
-  public String getImagePath() {
-    return imagePath;
+  /**
+   * Returns the component tag identifying this as a render-related component.
+   *
+   * @return {@link ComponentTag#RENDER}
+   */
+  @Override
+  public ComponentTag componentTag() {
+    return ComponentTag.RENDER;
   }
 
-  public void setImagePath(String imagePath) {
-    this.imagePath = imagePath;
-  }
-
+  /**
+   * Returns the x-coordinate for rendering the image.
+   *
+   * @return the x position
+   */
   public double getX() {
     return x;
   }
@@ -80,6 +86,11 @@ public class ImageComponent extends GameComponent {
     return scaleX;
   }
 
+  /**
+   * Sets the path to the image file used for rendering.
+   *
+   * @param imagePath the image file path
+   */
   public void setScaleX(double scaleX) {
     this.scaleX = scaleX;
   }

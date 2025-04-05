@@ -1,6 +1,9 @@
 package oogasalad.engine.base.architecture;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 import oogasalad.engine.base.enumerate.ComponentTag;
 import oogasalad.engine.base.serialization.Serializable;
 import oogasalad.engine.base.serialization.SerializedField;
@@ -14,6 +17,18 @@ import oogasalad.engine.base.serialization.SerializedField;
  */
 public abstract class GameComponent implements Serializable {
   private GameObject parent;
+  private static final Map<Class<?>, Function<JsonNode, Object>> extractors = new HashMap<>();
+
+  static {
+    extractors.put(int.class, JsonNode::asInt);
+    extractors.put(Integer.class, JsonNode::asInt);
+    extractors.put(double.class, JsonNode::asDouble);
+    extractors.put(Double.class, JsonNode::asDouble);
+    extractors.put(boolean.class, JsonNode::asBoolean);
+    extractors.put(Boolean.class, JsonNode::asBoolean);
+    extractors.put(String.class, JsonNode::asText);
+  }
+
 
 
 
