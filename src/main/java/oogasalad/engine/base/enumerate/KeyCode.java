@@ -67,6 +67,14 @@ public enum KeyCode {
     KeyCode(int keyCode) {
         this.keyCode = keyCode;
     }
+
+    /**
+     * Get the integer value of the key code.
+     * @return The integer key code.
+     */
+    public int getValue() {
+        return keyCode;
+    }
     
     /**
     * Finds a KeyCode by its integer value.
