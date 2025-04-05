@@ -203,4 +203,13 @@ public abstract class GameScene {
    * Event that will be called when the gameScene is set to inactive.
    */
   public void onDeactivated() {};
+
+  /**
+   * Getter to return a Collection of all the GameObjects
+   *
+   * @return - a collection containing each GameObject
+   */
+  public final Collection<GameObject> getAllObjects() {
+    return allObjects.values();
+  }
 }

@@ -1,6 +1,7 @@
 package oogasalad.engine.base.architecture;
 
 import java.util.*;
+import static oogasalad.config.GameConfig.LOGGER;
 
 /**
  * The GameObject class is the base class for all game objects. It is used to define the behavior of
@@ -18,10 +19,12 @@ public class GameObject {
 
   private GameScene parentScene;
   private String name;
+  private String tag;
 
-  public GameObject(String name) {
+  public GameObject(String name, String tag) {
     this.id = UUID.randomUUID();
     this.name = name == null ? "" : this.getClass().getSimpleName() + "_" + this.id;
+    this.tag = tag;
     this.allComponents = new HashMap<>();
     this.componentAwakeInitializer = new ArrayList<>();
     this.componentStartInitializer = new ArrayList<>();
@@ -67,12 +70,14 @@ public class GameObject {
       }
 
       allComponents.put(componentClass, component);
-      parentScene.registerComponent(component);
+      parentScene.registerComponent(component); // May need a null checker. Run GameObjectParserTest to see more info.
       return component;
     } catch (Exception e) {
+      LOGGER.error("Could not add component {}", componentClass.getName());
       throw new RuntimeException("Failed to add component", e);
     }
   }
+
 
   /**
    * Get the component based on
@@ -142,4 +147,32 @@ public class GameObject {
   public final void setName(String name) {
     this.name = name;
   }
+
+  /**
+   * Returns all the components
+   *
+   * @return - a Map of some extended gameComponent to the GameComponent, representing all components
+   */
+  public final Map<Class<? extends GameComponent>, GameComponent> getAllComponents() {
+    return allComponents;
+  }
+
+  /**
+   * Setter for the tag of the game object
+   *
+   * @param tag - the new classification for the GameObject that is set
+   */
+  public void setTag(String tag) {
+    this.tag = tag;
+  }
+
+  /**
+   * Getter for the tag of the game object
+   *
+   * @return - the classification for the GameObject
+   */
+  public String getTag() {
+    return tag;
+  }
+
 }
