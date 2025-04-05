@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
  *
  * @author Hsuan-Kai Liao
  */
-public class SerializedField<T> {
+public class SerializedField {
     private final String fieldName;
     private final Method getter;
     private final Method setter;
@@ -42,16 +42,16 @@ public class SerializedField<T> {
     /**
      * Get the value of the serializedField.
      */
-    public T getValue() {
+    public Object getValue() {
         if (getter != null) {
           try {
-            return (T) getter.invoke(targetObject);
+            return getter.invoke(targetObject);
           } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException("Cannot get the value to SerializedField: " + fieldName);
           }
         }
       try {
-        return (T) field.get(targetObject);
+        return field.get(targetObject);
       } catch (IllegalAccessException e) {
         throw new RuntimeException("Cannot get the value to SerializedField: " + fieldName);
       }
@@ -59,9 +59,9 @@ public class SerializedField<T> {
 
     /**
      * Set the value of the serializedField
-     * @param value
+     * @param value the value to set
      */
-    public void setValue(T value) {
+    public void setValue(Object value) {
         if (setter != null) {
           try {
             setter.invoke(targetObject, value);

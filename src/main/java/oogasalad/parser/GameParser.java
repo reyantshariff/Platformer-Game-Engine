@@ -111,7 +111,7 @@ public class GameParser implements Parser<Game> {
   private void createGameScene(Game newGame, JsonNode sceneNode) throws ParsingException {
     GameScene gameScene = sceneParser.parse(sceneNode);
     if (gameScene != null) {
-      newGame.addScene(gameScene.getName());
+      newGame.addScene(gameScene);
     } else {
       LOGGER.error("Scene with name {} not found and therefore will not be added "
           + "to Game.", sceneNode.get(NAME));
@@ -145,7 +145,7 @@ public class GameParser implements Parser<Game> {
 
   private void handleSceneWriting(Game data, ObjectNode dataNode) throws IOException {
     ArrayNode sceneArray = mapper.createArrayNode();
-    for (GameScene scene : data.getAllScenes()) {
+    for (GameScene scene : data.getAllScenes().values()) {
       sceneArray.add(sceneParser.write(scene));
     }
     dataNode.set(SCENE, sceneArray);

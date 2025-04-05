@@ -15,11 +15,11 @@ public interface Serializable {
     /**
      * Get all the field annotated @SerializableField.
      */
-    default List<SerializedField<?>> getSerializedFields() {
-        List<SerializedField<?>> serializedFields = new ArrayList<>();
+    default List<SerializedField> getSerializedFields() {
+        List<SerializedField> serializedFields = new ArrayList<>();
         Class<?> clazz = this.getClass();
 
-        // Get all the field annotated @Serializable
+        // Get all the field annotated @SerializableField
         for (Field field : clazz.getDeclaredFields()) {
             if (field.isAnnotationPresent(SerializableField.class)) {
                 String fieldName = field.getName();
@@ -36,10 +36,25 @@ public interface Serializable {
                     setter = clazz.getMethod("set" + capitalized, field.getType());
                 } catch (NoSuchMethodException ignored) {}
 
-                serializedFields.add(new SerializedField<>(this, field, getter, setter));
+                serializedFields.add(new SerializedField(this, field, getter, setter));
             }
         }
         return serializedFields;
+    }
+
+    default List<SerializedMethod> getSerializableMethods(Object targetObject) {
+        List<SerializedMethod> serializedMethods = new ArrayList<>();
+        Class<?> targetClass = targetObject.getClass();
+
+        // Get all the method annotated @SerializableMethod
+        for (Method method : targetClass.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(SerializableMethod.class)) {
+
+                serializedMethods.add(new SerializedMethod(targetObject, method));
+            }
+        }
+
+        return serializedMethods;
     }
 }
 

@@ -1,9 +1,12 @@
 package oogasalad.engine.base.architecture;
 
-import java.util.ArrayList;
+import static oogasalad.config.GameConfig.LOGGER;
+
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -13,15 +16,11 @@ import java.util.UUID;
  * @author Hsuan-Kai Liao, Christian Bepler
  */
 public class Game {
-  private final Map<UUID, GameScene> loadedScenes = new HashMap<>();
-  private final Map<UUID, String> scenePaths = new HashMap<>();
+  private final Map<UUID, GameScene> allScenes = new HashMap<>();
+  private final Set<Integer> inputKeys = new HashSet<>();
 
   private GameScene currentScene;
   private GameInfo myGameInfo;
-
-  public Game() {
-    currentScene = null;
-  }
 
   /**
    * The main game loop. This method should be called every frame. It updates the current scene and
@@ -43,7 +42,7 @@ public class Game {
    * @param sceneName The name of the scene to change to
    */
   public void changeScene(String sceneName) {
-    for (GameScene scene : loadedScenes.values()) {
+    for (GameScene scene : allScenes.values()) {
       if (scene.getName().equals(sceneName)) {
         if (currentScene != null && !currentScene.equals(scene)) {
           currentScene.onDeactivated();
@@ -57,55 +56,34 @@ public class Game {
   }
 
   /**
-   *Returns the loaded scenes.
+   * Returns the current scene.
    */
-  public Map<UUID, GameScene> getLoadedScenes() {
-    return loadedScenes;
-  }
-
-  /**
-  returns the current Game Scene
-  * */
   public GameScene getCurrentScene()
   {
     return currentScene;
   }
 
   /**
-   * Initialize and adds a scene of the specified class to the game
-   * 
-   * @param sceneClass The class of the scene to add
+   * Returns the all the loaded scenes.
    */
-  public <T extends GameScene> void addScene(Class<T> sceneClass, String name) {
-    // Check for same name
-    for (GameScene scene : loadedScenes.values()) {
-      if (scene.getName().equals(name)) {
-        throw new IllegalArgumentException("The scene with name" + name + "already exists.");
-      }
-    }
-
-    // Instantiate scene instance
-    try {
-      T scene = sceneClass.getDeclaredConstructor(String.class).newInstance(name);
-      loadedScenes.put(scene.getId(), scene);
-
-      if (currentScene == null) {
-        currentScene = scene;
-        currentScene.onActivated();
-      }
-
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
+  public Map<UUID, GameScene> getAllScenes() {
+    return Collections.unmodifiableMap(allScenes);
   }
 
   /**
-   * Adds a pre-made scene to the game. The scene is loaded from the specified path.
-   * 
-   * @param scenePath The path to the scene file
+   * Adds a scene to the game.
    */
-  public void addScene(String scenePath) {
-    // TODO: Add parser to the addScene
+  public void addScene(GameScene scene) {
+    if (allScenes.containsKey(scene.getId())) {
+      LOGGER.error("Scene with ID {} already exists", scene.getId());
+      throw new IllegalArgumentException("Scene with ID " + scene.getId() + " already exists");
+    } else {
+      allScenes.put(scene.getId(), scene);
+      scene.setGame(this);
+      if (currentScene == null) {
+        currentScene = scene;
+      }
+    }
   }
 
   /**
@@ -114,10 +92,11 @@ public class Game {
    * @param sceneName The name of the scene to remove
    */
   public void removeScene(String sceneName) {
-    for (UUID id : loadedScenes.keySet()) {
-      if (loadedScenes.get(id).getName().equals(sceneName)) {
-        loadedScenes.remove(id);
-        scenePaths.remove(id);
+    for (UUID id : allScenes.keySet()) {
+      if (allScenes.get(id).getName().equals(sceneName)) {
+        GameScene scene = allScenes.get(id);
+        scene.setGame(null);
+        allScenes.remove(id);
         return;
       }
     }
@@ -128,13 +107,32 @@ public class Game {
    * 
    * @param sceneName The name of the scene to reset
    */
-  public void resetScene(String sceneName) {
-    for (UUID id : loadedScenes.keySet()) {
-      if (loadedScenes.get(id).getName().equals(sceneName)) {
-        String path = scenePaths.get(id);
-        // TODO: Add parser to reload the scene
-      }
-    }
+  public void resetScene(String sceneName) {}
+
+  /**
+   * Called externally when a key is pressed.
+   * Note: This method need to be subscribed to the outer input event bus.
+   * @param keyCode the key code of the pressed key
+   */
+  public void keyPressed(int keyCode) {
+    inputKeys.add(keyCode);
+  }
+
+  /**
+   * Called externally when a key is released.
+   * Note: This method need to be subscribed to the outer input event bus.
+   * @param keyCode the key code of the released key
+   */
+  public void keyReleased(int keyCode) {
+    inputKeys.remove(keyCode);
+  }
+
+  /**
+   * Returns a set of all the input keys currently pressed.
+   * @return a unmodifiable set of all the input keys currently pressed
+   */
+  public Set<Integer> getCurrentInputKeys() {
+    return Collections.unmodifiableSet(inputKeys);
   }
 
   /**
@@ -153,14 +151,5 @@ public class Game {
    */
   public GameInfo getGameInfo() {
     return myGameInfo;
-  }
-
-  /**
-   * getter for the loaded gameScenes
-   *
-   * @return - a list of all the scenes currently loading in the game object
-   */
-  public List<GameScene> getAllScenes() {
-    return new ArrayList<>(loadedScenes.values());
   }
 }

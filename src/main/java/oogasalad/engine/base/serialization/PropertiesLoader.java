@@ -13,7 +13,7 @@ public class PropertiesLoader {
       throw new RuntimeException("Failed to read properties file", e);
     }
 
-    for (SerializedField<?> field : obj.getSerializedFields()) {
+    for (SerializedField field : obj.getSerializedFields()) {
       String fieldName = field.getFieldName();
       if (props.containsKey(fieldName)) {
         try {
@@ -36,9 +36,8 @@ public class PropertiesLoader {
     throw new IllegalArgumentException("Unsupported type: " + type);
   }
 
-  @SuppressWarnings("unchecked")
-  private static <T> void setGenericField(SerializedField<T> field, Object value) throws Exception {
-    field.setValue((T) value);
+  private static void setGenericField(SerializedField field, Object value) throws Exception {
+    field.setValue(value);
   }
 
 }

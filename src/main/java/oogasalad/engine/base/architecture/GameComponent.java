@@ -1,5 +1,7 @@
 package oogasalad.engine.base.architecture;
 
+import static oogasalad.config.GameConfig.LOGGER;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import oogasalad.engine.base.enumerate.ComponentTag;
 import oogasalad.engine.base.serialization.Serializable;
@@ -54,6 +56,7 @@ public abstract class GameComponent implements Serializable {
       return parent.addComponent(componentClass);
     }
 
+    LOGGER.error(this.getClass().getSimpleName() + " has no parent");
     throw new IllegalArgumentException("Parent gameObject not exist!");
   }
 
@@ -68,6 +71,7 @@ public abstract class GameComponent implements Serializable {
       return parent.getComponent(componentClass);
     }
 
+    LOGGER.error(this.getClass().getSimpleName() + " has no parent");
     throw new IllegalArgumentException("Parent gameObject not exist!");
   }
 
@@ -81,6 +85,7 @@ public abstract class GameComponent implements Serializable {
       parent.removeComponent(componentClass);
     }
 
+    LOGGER.error(this.getClass().getSimpleName() + " has no parent");
     throw new IllegalArgumentException("Parent gameObject not exist!");
   }
 
@@ -105,6 +110,15 @@ public abstract class GameComponent implements Serializable {
     this.parent = parent;
   }
 
+  /**
+   * Change the scene to the specified scene name.
+   * @param sceneName the name of the scene to be changed to
+   */
+  public final void changeScene(String sceneName) {
+    parent.changeScene(sceneName);
+  }
+
+  /* TODO: MOVE THE BOTTOM CODE IN THE PARSER */
 
   /**
    * This sets the fields if they are annotated -- used especially for loading Json files
