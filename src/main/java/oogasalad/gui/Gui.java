@@ -1,7 +1,13 @@
 package oogasalad.gui;
 
+import java.awt.TextComponent;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
+import javafx.scene.text.Text;
+import oogasalad.engine.base.architecture.GameComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import javafx.scene.Scene;
@@ -118,20 +124,57 @@ public class Gui {
    * @param gc    The graphics context of the canvas.
    * @param scene The game scene to render.
    */
-  private void render(GraphicsContext gc, GameScene scene) {
+  private void render(GraphicsContext gc, GameScene scene)
+      throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
     gc.clearRect(ResourceBundles.getInt("oogasalad.gui.general", "windowX"),
         ResourceBundles.getInt("oogasalad.gui.general", "windowY"),
         ResourceBundles.getDouble("oogasalad.gui.general", "windowWidth"),
         ResourceBundles.getDouble("oogasalad.gui.general", "windowHeight"));
 
     for (GameObject obj : scene.getAllObjects()) {
-      Transform transform = obj.getComponent(Transform.class);
-      if (transform != null && transform.getImagePath() != null) {
-        Image image = new Image(getClass().getResourceAsStream(transform.getImagePath()));
-        gc.drawImage(image, transform.getX(), transform.getY(), transform.getScaleX(),
-            transform.getScaleY());
+      try {
+        GameComponent component = obj.getComponent(GameComponent.class);
+        String renderMethod = "render" + component.getClass().getSimpleName();
+        Method method = this.getClass()
+            .getDeclaredMethod(renderMethod, GraphicsContext.class, component.getClass());
+        method.invoke(this, component, gc);
+      } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+        logger.error("No such component render method exists");
       }
     }
+  }
+
+  /**
+   * renders a javaFX Text object
+   *
+   * @param component
+   * @param gc
+   */
+  private void renderText(TextComponent component, GraphicsContext gc) {
+    Text text = new Text(component.getText());
+    WritableImage snapshot = text.snapshot(null, null);
+    gc.drawImage(snapshot, component.getX(), component.getY());
+  }
+
+  /**
+   * renders a javaFX Image object
+   *
+   * @param component
+   * @param gc
+   */
+  private void renderImage(ImageComponent component, GraphicsContext gc) {
+    Image image = new Image(component.getImagePath());
+    gc.drawImage(image, component.getX(), component.getY());
+  }
+
+  /**
+   * renders a javafx Rectangle object
+   *
+   * @param component
+   * @param gc
+   */
+  private void renderRectangle(Transform component, GraphicsContext gc) {
+    gc.fillRect(component.getX(), component.getY(), component.getScaleX(), component.getScaleY());
   }
 
   /**
