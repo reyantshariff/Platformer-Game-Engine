@@ -1,22 +1,19 @@
 package oogasalad;
 
-
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import oogasalad.engine.base.architecture.Game;
+import oogasalad.gui.GUI;
+import oogasalad.view.DinosaurGameBuilderView;
 
 /**
- * Feel free to completely change this code or delete it entirely. 
+ * This is the main class of the OOGASalad Platformer Game Sandbox. Run the start method to open the
+ * program.
  */
 public class Main extends Application {
-    /**
-     * Game update frame rate.
-     */
-    public static final int FRAMES_PER_SECOND = 60;
 
+    public static Game game;
     /**
      * Start of the program.
      */
@@ -24,18 +21,28 @@ public class Main extends Application {
         launch(args);
     }
 
+    /**
+     * Create a new game and open the gui.
+     *
+     * @param stage the primary stage for this application, onto which
+     * the application scene can be set.
+     * Applications may create other stages, if needed, but they will not be
+     * primary stages.
+     */
     @Override
-    public void start(Stage stage) throws Exception {
-        // Create new Game
-        Game game = new Game();
+    public void start(Stage stage) {
+        game = new Game();
 
-        // Start game loop
-        Timeline gameLoop = new Timeline();
-        gameLoop.setCycleCount(Timeline.INDEFINITE);
-        gameLoop.getKeyFrames().add(new KeyFrame(
-            Duration.seconds((double) 1 / FRAMES_PER_SECOND),
-            event -> game.step((double) 1 / FRAMES_PER_SECOND)
-        ));
-        gameLoop.play();
+        // Create the editor UI, passing in the ECS scene
+        //DinosaurGameBuilderView editorUI = new DinosaurGameBuilderView();
+        // Wrap it in a JavaFX Scene and display
+        //Scene fxScene = new Scene(editorUI, 1400, 800);
+        //stage.setScene(fxScene);
+        //stage.show();
+
+        // Init GUI
+        GUI gui = new GUI(stage, game);
+
+
     }
 }

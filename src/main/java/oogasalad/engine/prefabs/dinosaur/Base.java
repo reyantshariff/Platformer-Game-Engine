@@ -1,11 +1,10 @@
 package oogasalad.engine.prefabs.dinosaur;
 import oogasalad.engine.base.architecture.GameObject;
 
-public class Bird extends GameObject {
+public class Base extends GameObject {
 
 
-  public Bird(String name) {
+  public Base(String name) {
     super(name, "");
   }
-
 }

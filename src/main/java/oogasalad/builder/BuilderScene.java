@@ -1,4 +1,4 @@
-package oogasalad.editor;
+package oogasalad.builder;
 
 import oogasalad.engine.base.architecture.Game;
 import oogasalad.engine.base.architecture.GameObject;

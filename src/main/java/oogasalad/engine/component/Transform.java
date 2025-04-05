@@ -23,6 +23,8 @@ public class Transform extends GameComponent {
     private double scaleX;
     @SerializableField
     private double scaleY;
+    @SerializableField
+    private String imagePath;
 
     public double getX() {
         return x;
@@ -62,5 +64,11 @@ public class Transform extends GameComponent {
 
     public void setScaleY(double scaleY) {
         this.scaleY = scaleY;
+    }
+
+    public String getImagePath() {return imagePath;}
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 }

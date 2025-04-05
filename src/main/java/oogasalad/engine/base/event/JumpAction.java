@@ -7,10 +7,10 @@ import oogasalad.engine.component.VelocityComponent;
 
 public class JumpAction extends GameAction implements Serializable {
   @SerializableField
-  private double jumpForce;
+  private double jumpForce = -180.0;
 
-  public JumpAction(GameObject parent) {
-    super(parent);
+  public JumpAction() {
+    super();
   }
 
   /**
