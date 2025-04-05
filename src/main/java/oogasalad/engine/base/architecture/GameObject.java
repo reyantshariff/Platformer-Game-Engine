@@ -21,6 +21,12 @@ public class GameObject {
   private String name;
   private String tag;
 
+  /**
+   * Constructor for base game object
+   *
+   * @param name - Name of game object
+   * @param tag - Tag for game object for identification
+   */
   public GameObject(String name, String tag) {
     this.id = UUID.randomUUID();
     this.name = name == null ? "" : this.getClass().getSimpleName() + "_" + this.id;
