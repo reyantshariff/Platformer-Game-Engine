@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.function.Function;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,6 +18,18 @@ public class ResourceBundles {
   private static final Map<String, ResourceBundle> bundles = new HashMap<>();
   private static final Logger logger = LogManager.getLogger(ResourceBundles.class);
   private static String activeBundleBaseName = null;
+
+  private static final Map<Class<?>, Function<String, Object>> typeParsers = new HashMap<>();
+
+  static {
+    typeParsers.put(Double.class, Double::parseDouble);
+    typeParsers.put(double.class, Double::parseDouble);
+    typeParsers.put(Integer.class, Integer::parseInt);
+    typeParsers.put(int.class, Integer::parseInt);
+    typeParsers.put(Boolean.class, Boolean::parseBoolean);
+    typeParsers.put(boolean.class, Boolean::parseBoolean);
+    typeParsers.put(String.class, s -> s);
+  }
 
   /**
    * Loads a ResourceBundle with the given base name.
@@ -167,18 +180,10 @@ public class ResourceBundles {
    * @throws IllegalArgumentException if the type is not supported.
    */
   private static Object cast(String value, Class<?> type) {
-    if (type == Double.class || type == double.class) {
-      return Double.parseDouble(value);
+    Function<String, Object> parser = typeParsers.get(type);
+    if (parser == null) {
+      throw new IllegalArgumentException("Unsupported type: " + type);
     }
-    if (type == Integer.class || type == int.class) {
-      return Integer.parseInt(value);
-    }
-    if (type == Boolean.class || type == boolean.class) {
-      return Boolean.parseBoolean(value);
-    }
-    if (type == String.class) {
-      return value;
-    }
-    throw new IllegalArgumentException("Unsupported type: " + type);
+    return parser.apply(value);
   }
 }

@@ -41,18 +41,41 @@ public class ImageComponent extends GameComponent {
     return x;
   }
 
+  /**
+   * Sets the x-coordinate for rendering the image.
+   *
+   * @param x the new x position
+   */
   public void setX(double x) {
     this.x = x;
   }
 
+  /**
+   * Returns the y-coordinate for rendering the image.
+   *
+   * @return the y position
+   */
   public double getY() {
     return y;
   }
 
+  /**
+   * Sets the y-coordinate for rendering the image.
+   *
+   * @param y the new y position
+   */
   public void setY(double y) {
     this.y = y;
   }
 
+  /**
+   * Returns the path to the image file used for rendering.
+   *
+   * @return the image path
+   */
+  public String getImagePath() {
+    return imagePath;
+    }
   public double getScaleX() {
     return scaleX;
   }
@@ -61,6 +84,14 @@ public class ImageComponent extends GameComponent {
     this.scaleX = scaleX;
   }
 
+  /**
+   * Sets the path to the image file used for rendering.
+   *
+   * @param imagePath the image file path
+   */
+  public void setImagePath(String imagePath) {
+    this.imagePath = imagePath;
+    }
   public double getScaleY() {
     return scaleY;
   }
