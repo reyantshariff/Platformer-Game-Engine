@@ -1,11 +1,11 @@
 package oogasalad.engine.component;
 
-import java.security.Key;
 import java.util.HashSet;
 import java.util.Set;
 import oogasalad.engine.base.architecture.GameComponent;
 import oogasalad.engine.base.enumerate.ComponentTag;
 import oogasalad.engine.base.enumerate.KeyCode;
+import oogasalad.engine.base.serialization.SerializableMethod;
 
 /**
  * Handles raw keyboard input with custom key codes.
@@ -32,6 +32,7 @@ public final class InputHandler extends GameComponent {
     /**
      * Returns true if the key was just pressed this frame.
      */
+    @SerializableMethod
     public boolean isKeyPressed(KeyCode keyCode) {
         return currentKeys.contains(keyCode.getValue()) && !previousKeys.contains(keyCode.getValue());
     }
@@ -39,6 +40,7 @@ public final class InputHandler extends GameComponent {
     /**
      * Returns true if the key is being held down.
      */
+    @SerializableMethod
     public boolean isKeyHold(KeyCode keyCode) {
         return currentKeys.contains(keyCode.getValue());
     }
@@ -46,6 +48,7 @@ public final class InputHandler extends GameComponent {
     /**
      * Returns true if the key was just released this frame.
      */
+    @SerializableMethod
     public boolean isKeyReleased(KeyCode keyCode) {
         return !currentKeys.contains(keyCode.getValue()) && previousKeys.contains(keyCode.getValue());
     }
