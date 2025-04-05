@@ -14,6 +14,11 @@ public class BuilderScene {
   private String name;
   private Game game = new Game(); //TODO: Link this to main somehow
 
+  /**
+   * Constructor for BuilderScene
+   *
+   * @param name - Name of scene
+   */
   public BuilderScene(String name)
   {
     this.name = name;
