@@ -1,5 +1,9 @@
 package oogasalad.builder;
 
+import java.util.Stack;
+import oogasalad.builder.actions.DeleteObjectAction;
+import oogasalad.builder.actions.CreateObjectAction;
+import oogasalad.builder.actions.MoveObjectAction;
 import oogasalad.engine.base.architecture.Game;
 import oogasalad.engine.base.architecture.GameObject;
 import oogasalad.engine.component.Transform;
@@ -10,9 +14,9 @@ import oogasalad.engine.component.Transform;
  */
 
 public class BuilderScene {
-  private GameObject previewObject;
+  private GameObject selectedObject;
   private String name;
-  private Game game = new Game(); //TODO: Link this to main somehow
+  private Game game = new Game();
 
   /**
    * Constructor for BuilderScene
@@ -32,78 +36,94 @@ public class BuilderScene {
     return name;
   }
 
-  /**
-   *  Records when a game object has been selected to be dragged and dropped on the UI
-   */
-  public void previewObject(String type)
-  {
-    if (previewObject != null) {
-      game.getCurrentScene().unregisterObject(previewObject);
-    }
+  private Stack<EditorAction> actionStack = new Stack<>();
 
-    previewObject = game.getCurrentScene().instantiateObject(GameObjectFactory.create(type));
-    game.getCurrentScene().registerObject(previewObject);
+  /**
+   Undoes Last User Action
+   * */
+  public void undoLastAction() {
+    if (!actionStack.isEmpty()) {
+      actionStack.pop().undo();
+    }
   }
 
   /**
-   *  Moves the game object around the screen.
-   */
-  public void movePreview(double x, double y) {
-    if (previewObject != null) {
-      previewObject.addComponent(Transform.class);
-      Transform t = previewObject.getComponent(Transform.class);
-      t.setX(x);
-      t.setY(y);
+   Redoes Last User Action
+   * */
+  public void redoLastAction()
+  {
+    if (!actionStack.isEmpty())
+    {
+      actionStack.pop().redo();
     }
+
+  }
+
+  /**
+   *  Records when a game object has been selected to be dragged and dropped on the UI
+   */
+
+  public void selectObject(String type, int x, int y)
+  {
+    if (selectedObject != null) {
+      game.getCurrentScene().unregisterObject(selectedObject);
+    }
+
+    if (findObject(x, y) != null)
+    {
+      selectedObject = game.getCurrentScene().instantiateObject(GameObjectFactory.create(type));
+      actionStack.push(new CreateObjectAction(game, selectedObject));
+    }
+    else
+    {
+      selectedObject = findObject(x, y);
+    }
+    game.getCurrentScene().registerObject(selectedObject);
+  }
+
+
+  private GameObject findObject(int x, int y)
+  {
+    for (GameObject object : game.getCurrentScene().getAllObjects())
+    {
+      object.addComponent(Transform.class);
+      if (object.getComponent(Transform.class).getX() == x && object.getComponent(Transform.class).getY() == y)
+      {
+        return object;
+      }
+    }
+    return null;
   }
 
   /**
    *  Stops the preview if the user lifts mouse and cursor is not on the editor screen.
    */
-
-  public void cancelPreview() {
-    if (previewObject != null) {
-      game.getCurrentScene().unregisterObject(previewObject);
-      previewObject = null;
+  public void placeObject(double x, double y) {
+    if (selectedObject != null) {
+      selectedObject.addComponent(Transform.class);
+      actionStack.push(new MoveObjectAction(selectedObject, selectedObject.getComponent(Transform.class).getX(), selectedObject.getComponent(Transform.class).getY(), x, y));
+      selectedObject.getComponent(Transform.class).setX(x);
+      selectedObject.getComponent(Transform.class).setY(y);
     }
+    selectedObject = null;
   }
 
   /**
    *  Checks if the user is currently dragging around a game object
    */
-  public boolean hasActivePreview() {
-    return previewObject != null;
+  public boolean objectIsSelected() {
+    return selectedObject != null;
   }
 
   /**
-   *  Returns X position of object in preview mode
+   *  Deletes selected game object from the screen
    */
-  public double getPreviewX()
-  {
-    return previewObject.getComponent(Transform.class).getX();
-  }
-
-  /**
-   *  Returns Y position of object in preview mode
-   */
-  public double getPreviewY()
-  {
-    return previewObject.getComponent(Transform.class).getY();
-  }
-
-  /**
-   *  Places game object onto screen
-   */
-  public void placeObject()
-  {
-      previewObject = null;
-  }
-
-  /**
-   *  Deletes game object from the screen
-   */
-  public void deleteObject(GameObject object) { //TODO: Change the parameter to String
-    game.getCurrentScene().unregisterObject(object);
+  public void deleteSelectedObject() {
+    if (selectedObject != null)
+    {
+      game.getCurrentScene().unregisterObject(selectedObject);
+      actionStack.push(new DeleteObjectAction(game, selectedObject));
+    }
   }
 
 }
