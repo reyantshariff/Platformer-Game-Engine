@@ -1,21 +1,17 @@
 package oogasalad.parser;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import java.awt.Dimension;
-import javafx.scene.layout.Pane;
 import oogasalad.engine.base.architecture.Game;
 import oogasalad.engine.base.architecture.GameInfo;
 import oogasalad.engine.base.architecture.GameScene;
 import oogasalad.player.dinosaur.DinosaurGameScene;
-import oogasalad.view.ViewScene;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
  * JSON Parser Test. Cannot test without some other concrete stuff being created.
- *
+ * <p>
  * Author: Daniel Rodriguez-Florido
  */
 class JsonParserTest {

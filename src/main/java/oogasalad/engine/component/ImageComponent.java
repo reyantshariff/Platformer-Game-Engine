@@ -5,20 +5,26 @@ import oogasalad.engine.base.enumerate.ComponentTag;
 import oogasalad.engine.base.serialization.SerializableField;
 
 /**
- * A visual component that represents an image to be rendered at a specific position.
- * This component stores the image path and its intended render coordinates (x, y).
+ * A visual component that represents an image to be rendered at a specific position. This component
+ * stores the image path and its intended render coordinates (x, y).
  */
 public class ImageComponent extends GameComponent {
 
-  /** The path to the image file used for rendering. */
+  /**
+   * The path to the image file used for rendering.
+   */
   @SerializableField
   private String imagePath;
 
-  /** The x-coordinate where the image should be rendered. */
+  /**
+   * The x-coordinate where the image should be rendered.
+   */
   @SerializableField
   private double x;
 
-  /** The y-coordinate where the image should be rendered. */
+  /**
+   * The y-coordinate where the image should be rendered.
+   */
   @SerializableField
   private double y;
 

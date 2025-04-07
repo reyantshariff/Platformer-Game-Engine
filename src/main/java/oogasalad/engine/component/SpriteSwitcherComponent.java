@@ -1,28 +1,29 @@
 package oogasalad.engine.component;
 
-import oogasalad.engine.base.architecture.GameComponent;
-import oogasalad.engine.base.architecture.GameObject;
-import oogasalad.engine.base.enumerate.ComponentTag;
-
 import java.util.HashMap;
 import java.util.Map;
+import oogasalad.engine.base.architecture.GameComponent;
+import oogasalad.engine.base.enumerate.ComponentTag;
 
 /**
- * A rendering component that allows switching the image of a GameObject
- * based on a logical state. Useful for character animation, button state changes,
- * or visual feedback tied to game state.
+ * A rendering component that allows switching the image of a GameObject based on a logical state.
+ * Useful for character animation, button state changes, or visual feedback tied to game state.
  */
 public class SpriteSwitcherComponent extends GameComponent {
 
-  /** A mapping from state names to image file paths. */
+  /**
+   * A mapping from state names to image file paths.
+   */
   private final Map<String, String> stateToImage = new HashMap<>();
 
-  /** The currently active visual state. */
+  /**
+   * The currently active visual state.
+   */
   private String currentState = null;
 
   /**
-   * Returns the component tag identifying this as a render-related component.
-   * This determines update ordering relative to other components.
+   * Returns the component tag identifying this as a render-related component. This determines
+   * update ordering relative to other components.
    *
    * @return {@link ComponentTag#RENDER}
    */
@@ -42,8 +43,8 @@ public class SpriteSwitcherComponent extends GameComponent {
   }
 
   /**
-   * Sets the current state of the object. If the state changes and has a registered image,
-   * updates the image path on the GameObject's {@link Transform} component.
+   * Sets the current state of the object. If the state changes and has a registered image, updates
+   * the image path on the GameObject's {@link Transform} component.
    *
    * @param stateName the new state to switch to
    */

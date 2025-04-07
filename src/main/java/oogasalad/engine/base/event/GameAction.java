@@ -13,59 +13,61 @@ import oogasalad.engine.component.InputHandler;
  * @author Hsuan-Kai Liao, Christian Bepler
  */
 public abstract class GameAction {
-    private final List<GameActionConstraint> constraints;
 
-    private InputHandler parent; // NOTE: This is set using reflection
+  private final List<GameActionConstraint> constraints;
 
-    public GameAction() {
-        this.constraints = new ArrayList<>();
+  private InputHandler parent; // NOTE: This is set using reflection
+
+  public GameAction() {
+    this.constraints = new ArrayList<>();
+  }
+
+  /**
+   * This is triggered only when the registered key pressed and the constraints are met
+   */
+  public abstract void dispatch();
+
+  /**
+   * Get the parent object of the action
+   *
+   * @return the parent object of the action
+   */
+  public final GameObject getParent() {
+    return parent.getParent();
+  }
+
+  public final <T extends GameActionConstraint> void registerConstraint(Class<T> constraintClass) {
+    try {
+      T constraint = constraintClass.getDeclaredConstructor().newInstance();
+      constraint.setParent(this);
+      constraints.add(constraint);
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to register constraint", e);
     }
+  }
 
-    /**
-     * This is triggered only when the registered key pressed and the constraints are met
-     */
-    public abstract void dispatch();
-
-    /**
-     * Get the parent object of the action
-     * 
-     * @return the parent object of the action
-     */
-    public final GameObject getParent() {
-        return parent.getParent();
+  public final <T extends GameActionConstraint> void unregisterConstraint(
+      Class<T> constraintClass) {
+    for (GameActionConstraint constraint : constraints) {
+      if (constraint.getClass().equals(constraintClass)) {
+        constraints.remove(constraint);
+        return;
+      }
     }
+    throw new IllegalArgumentException("Constraint does not exist");
+  }
 
-    public final <T extends GameActionConstraint> void registerConstraint(Class<T> constraintClass) {
-        try {
-            T constraint = constraintClass.getDeclaredConstructor().newInstance();
-            constraint.setParent(this);
-            constraints.add(constraint);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to register constraint", e);
-        }
+  /**
+   * Check all constraints of the action
+   *
+   * @return true if all constraints are met, false otherwise
+   */
+  public final boolean checkConstraints() {
+    for (GameActionConstraint constraint : constraints) {
+      if (!constraint.check()) {
+        return false;
+      }
     }
-
-    public final <T extends GameActionConstraint> void unregisterConstraint(Class<T> constraintClass) {
-        for (GameActionConstraint constraint : constraints) {
-            if (constraint.getClass().equals(constraintClass)) {
-                constraints.remove(constraint);
-                return;
-            }
-        }
-        throw new IllegalArgumentException("Constraint does not exist");
-    }
-
-    /**
-     * Check all constraints of the action
-     * 
-     * @return true if all constraints are met, false otherwise
-     */
-    public final boolean checkConstraints() {
-        for (GameActionConstraint constraint : constraints) {
-            if (!constraint.check()) {
-                return false;
-            }
-        }
-        return true;
-    }
+    return true;
+  }
 }

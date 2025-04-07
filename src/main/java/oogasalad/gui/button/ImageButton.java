@@ -4,6 +4,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class ImageButton extends StylizedButton {
+
   public static final double IMAGE_BUTTON_MARGIN = 0.1;
 
   private Image myImage;
@@ -30,7 +31,9 @@ public class ImageButton extends StylizedButton {
     myButton.setGraphic(getImageViewFromImage(image));
   }
 
-  public Image getImage() { return myImage; }
+  public Image getImage() {
+    return myImage;
+  }
 
   private ImageView getImageViewFromImage(Image image) {
     ImageView imageView = new ImageView(image);

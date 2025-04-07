@@ -1,6 +1,9 @@
 package oogasalad.parser;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -19,17 +22,17 @@ class ComponentParserTest {
 
   String goodJsonString =
       """
-      {
-        "Name": "Transform",
-        "Configurations": {
-          "x": 1,
-          "y": 1,
-          "rotation": 1,
-          "scaleX": 1,
-          "scaleY": 1
-        }
-      }
-      """;
+          {
+            "Name": "Transform",
+            "Configurations": {
+              "x": 1,
+              "y": 1,
+              "rotation": 1,
+              "scaleX": 1,
+              "scaleY": 1
+            }
+          }
+          """;
 
   String badJsonString = """
       {
@@ -68,7 +71,8 @@ class ComponentParserTest {
   @Test
   void parse_invalidJsonFile_catchError() throws JsonProcessingException, ParsingException {
     JsonNode node = myMapper.readTree(badJsonString);
-    assertThrows(ParsingException.class, () -> myComponentParser.parse(node)); // TODO: Look at this error. Super weird.
+    assertThrows(ParsingException.class,
+        () -> myComponentParser.parse(node)); // TODO: Look at this error. Super weird.
   }
 
   @Test

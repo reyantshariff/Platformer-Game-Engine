@@ -1,6 +1,13 @@
 package oogasalad.engine.base.architecture;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.UUID;
 import oogasalad.engine.base.enumerate.ComponentTag;
 import oogasalad.engine.base.enumerate.KeyCode;
 import oogasalad.engine.base.event.GameAction;
@@ -14,6 +21,7 @@ import oogasalad.engine.base.event.InputMapping;
  * @author Hsuan-Kai Liao, Christian Bepler
  */
 public abstract class GameScene {
+
   private final UUID id;
   private final InputMapping inputMapping;
   private final Map<UUID, GameObject> allObjects;
@@ -24,8 +32,8 @@ public abstract class GameScene {
   private String name;
 
   /**
-   * Constructor for basic game scene, assigning a unique ID and initializing all lists for objects, components, input keys,
-   * and subscribed events
+   * Constructor for basic game scene, assigning a unique ID and initializing all lists for objects,
+   * components, input keys, and subscribed events
    *
    * @param name - Name of game scene
    */
@@ -72,6 +80,7 @@ public abstract class GameScene {
 
   /**
    * This will be called every frame.
+   *
    * @param deltaTime the elapsed time between two frames
    */
   final void step(double deltaTime) {
@@ -88,7 +97,9 @@ public abstract class GameScene {
 
     // 3. Update the components based on the order
     for (ComponentTag order : ComponentTag.values()) {
-      if (order == ComponentTag.NONE) continue;
+      if (order == ComponentTag.NONE) {
+        continue;
+      }
       for (GameComponent component : allComponents.get(order)) {
         component.update(deltaTime);
       }
@@ -103,8 +114,9 @@ public abstract class GameScene {
   }
 
   /**
-   * Subscribe the input key for the next frame to execute.
-   * Inputs will be handled once and then removed. So make sure to add key events every frame until released.
+   * Subscribe the input key for the next frame to execute. Inputs will be handled once and then
+   * removed. So make sure to add key events every frame until released.
+   *
    * @param key the key to be subscribed
    */
   public final void subscribeInputKey(KeyCode key) {
@@ -112,8 +124,9 @@ public abstract class GameScene {
   }
 
   /**
-   * Subscribe the runnable event to the next frame to execute.
-   * Events will only be called once and then removed from the subscribed list.
+   * Subscribe the runnable event to the next frame to execute. Events will only be called once and
+   * then removed from the subscribed list.
+   *
    * @param event the event to be subscribed
    */
   public final void subscribeEvent(Runnable event) {
@@ -122,7 +135,7 @@ public abstract class GameScene {
 
   /**
    * Register the component from the gameObject onto the scene
-   * 
+   *
    * @param gameComponent the component to be registered
    */
   public final void registerComponent(GameComponent gameComponent) {
@@ -131,7 +144,7 @@ public abstract class GameScene {
 
   /**
    * Unregister the component from the scene.
-   * 
+   *
    * @param gameComponent the gameComponent to be unregistered
    */
   public final void unregisterComponent(GameComponent gameComponent) {
@@ -140,7 +153,7 @@ public abstract class GameScene {
 
   /**
    * Instantiate the gameObject based on the specified gameObject subclass.
-   * 
+   *
    * @param gameObjectClass the gameObject class
    * @return the instantiated gameObject
    */
@@ -160,7 +173,7 @@ public abstract class GameScene {
 
   /**
    * Register the existing gameObject to the scene.
-   * 
+   *
    * @param gameObject the gameObject to be registered.
    */
   public final void registerObject(GameObject gameObject) {
@@ -175,7 +188,7 @@ public abstract class GameScene {
 
   /**
    * unregister the gameObject specified.
-   * 
+   *
    * @param gameObject the gameObject to be destroyed
    */
   public final void unregisterObject(GameObject gameObject) {
@@ -215,10 +228,16 @@ public abstract class GameScene {
   /**
    * Event that will be called when the gameScene is set to active.
    */
-  public void onActivated() {};
+  public void onActivated() {
+  }
+
+  ;
 
   /**
    * Event that will be called when the gameScene is set to inactive.
    */
-  public void onDeactivated() {};
+  public void onDeactivated() {
+  }
+
+  ;
 }

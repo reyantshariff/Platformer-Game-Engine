@@ -162,7 +162,9 @@
                     "Y": 1
                   }
                 },
-                "collideTags": ["Platform"]
+                "collideTags": [
+                  "Platform"
+                ]
               },
               {
                 "Name": "SpriteRenderer",
@@ -234,7 +236,9 @@
                     "Y": 1
                   }
                 },
-                "collideTags": ["Player"]
+                "collideTags": [
+                  "Player"
+                ]
               },
               {
                 "Name": "SpriteRenderer",

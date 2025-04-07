@@ -3,10 +3,8 @@ package oogasalad.player.dinosaur;
 import oogasalad.engine.base.architecture.GameScene;
 import oogasalad.engine.base.enumerate.KeyCode;
 import oogasalad.engine.base.event.EnterPlayerAction;
-import oogasalad.engine.component.ImageComponent;
 import oogasalad.engine.component.InputHandler;
 import oogasalad.engine.component.TextComponent;
-import oogasalad.engine.component.Transform;
 import oogasalad.engine.prefabs.Player;
 
 public class MainMenuGameScene extends GameScene {

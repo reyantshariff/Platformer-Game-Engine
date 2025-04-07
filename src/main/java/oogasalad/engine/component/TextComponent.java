@@ -79,7 +79,11 @@ public class TextComponent extends GameComponent {
     this.rotation = rotation;
   }
 
-  public String getStyleClass() {return styleClass;}
+  public String getStyleClass() {
+    return styleClass;
+  }
 
-  public void setStyleClass(String styleClass) {this.styleClass = styleClass;}
+  public void setStyleClass(String styleClass) {
+    this.styleClass = styleClass;
+  }
 }

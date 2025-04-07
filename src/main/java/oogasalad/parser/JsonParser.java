@@ -1,5 +1,7 @@
 package oogasalad.parser;
 
+import static oogasalad.config.GameConfig.LOGGER;
+
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,12 +11,10 @@ import java.io.IOException;
 import oogasalad.engine.base.architecture.Game;
 import org.apache.logging.log4j.Level;
 
-import static oogasalad.config.GameConfig.LOGGER;
-
 /**
- * Json Parser Class. Highest level of hierarchy (JsonParser uses GameParser uses SceneParser
- * uses GameObjectParser uses Component/BehaviorParser
- *
+ * Json Parser Class. Highest level of hierarchy (JsonParser uses GameParser uses SceneParser uses
+ * GameObjectParser uses Component/BehaviorParser
+ * <p>
  * Author: Daniel Rodriguez-Florido
  */
 
@@ -28,8 +28,9 @@ public class JsonParser implements Parser {
 
   /**
    * Constructor to create parser that can read and write.
-   * @param fileName Either the path of the file you want to read or the name of the file
-   *                 to be saved. Automatically appended .json at end.
+   *
+   * @param fileName Either the path of the file you want to read or the name of the file to be
+   *                 saved. Automatically appended .json at end.
    */
   public JsonParser(String fileName) {
     this.fileName = FILE_PATH + fileName + ".json";

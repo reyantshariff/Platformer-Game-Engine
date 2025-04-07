@@ -11,6 +11,7 @@ import oogasalad.engine.base.serialization.Serializable;
  * @author Hsuan-Kai Liao, Christian Bepler
  */
 public abstract class GameComponent implements Serializable {
+
   private GameObject parent;
 
   /**
@@ -18,19 +19,22 @@ public abstract class GameComponent implements Serializable {
    * references to other objects and components. If an object is made mid-game, this method is
    * called right after the constructor. NOTE: This method should be override if needed.
    */
-  public void awake() {}
+  public void awake() {
+  }
 
   /**
    * This method is called before the object calls its update method for the first time NOTE: This
    * method should be override if needed.
    */
-  public void start() {}
+  public void start() {
+  }
 
   /**
    * This method is called when the component is removed. NOTE: This method should be override if
    * needed.
    */
-  public void onRemove() {}
+  public void onRemove() {
+  }
 
   /**
    * This method is called every frame. It is used to update the object and perform any necessary
@@ -38,14 +42,15 @@ public abstract class GameComponent implements Serializable {
    *
    * @param deltaTime The time since the last frame, in seconds.
    */
-  public void update(double deltaTime) {}
+  public void update(double deltaTime) {
+  }
 
   /**
    * Add the component to the gameObject based on its class.
    *
-   * @apiNote Every component class should only have one instance per object.
    * @param componentClass the component class specified
    * @return the added component instance
+   * @apiNote Every component class should only have one instance per object.
    */
   protected final <T extends GameComponent> T addComponent(Class<T> componentClass) {
     if (parent != null) {

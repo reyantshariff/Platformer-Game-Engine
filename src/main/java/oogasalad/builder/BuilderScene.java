@@ -6,10 +6,12 @@ import oogasalad.engine.component.Transform;
 
 /**
  * Builder API that manages drag/drop and delete functions of the Editor UI
+ *
  * @author Reyan Shariff
  */
 
 public class BuilderScene {
+
   private GameObject previewObject;
   private String name;
   private Game game = new Game(); //TODO: Link this to main somehow
@@ -19,24 +21,21 @@ public class BuilderScene {
    *
    * @param name - Name of scene
    */
-  public BuilderScene(String name)
-  {
+  public BuilderScene(String name) {
     this.name = name;
   }
 
   /**
-   *  Returns the object name
+   * Returns the object name
    */
-  public String getName()
-  {
+  public String getName() {
     return name;
   }
 
   /**
-   *  Records when a game object has been selected to be dragged and dropped on the UI
+   * Records when a game object has been selected to be dragged and dropped on the UI
    */
-  public void previewObject(String type)
-  {
+  public void previewObject(String type) {
     if (previewObject != null) {
       game.getCurrentScene().unregisterObject(previewObject);
     }
@@ -46,7 +45,7 @@ public class BuilderScene {
   }
 
   /**
-   *  Moves the game object around the screen.
+   * Moves the game object around the screen.
    */
   public void movePreview(double x, double y) {
     if (previewObject != null) {
@@ -58,7 +57,7 @@ public class BuilderScene {
   }
 
   /**
-   *  Stops the preview if the user lifts mouse and cursor is not on the editor screen.
+   * Stops the preview if the user lifts mouse and cursor is not on the editor screen.
    */
 
   public void cancelPreview() {
@@ -69,38 +68,35 @@ public class BuilderScene {
   }
 
   /**
-   *  Checks if the user is currently dragging around a game object
+   * Checks if the user is currently dragging around a game object
    */
   public boolean hasActivePreview() {
     return previewObject != null;
   }
 
   /**
-   *  Returns X position of object in preview mode
+   * Returns X position of object in preview mode
    */
-  public double getPreviewX()
-  {
+  public double getPreviewX() {
     return previewObject.getComponent(Transform.class).getX();
   }
 
   /**
-   *  Returns Y position of object in preview mode
+   * Returns Y position of object in preview mode
    */
-  public double getPreviewY()
-  {
+  public double getPreviewY() {
     return previewObject.getComponent(Transform.class).getY();
   }
 
   /**
-   *  Places game object onto screen
+   * Places game object onto screen
    */
-  public void placeObject()
-  {
-      previewObject = null;
+  public void placeObject() {
+    previewObject = null;
   }
 
   /**
-   *  Deletes game object from the screen
+   * Deletes game object from the screen
    */
   public void deleteObject(GameObject object) { //TODO: Change the parameter to String
     game.getCurrentScene().unregisterObject(object);

@@ -14,63 +14,64 @@ import oogasalad.engine.base.enumerate.KeyCode;
  * @author Hsuan-Kai Liao, Christian Bepler
  */
 public class InputMapping {
-    private final Map<KeyCode, List<GameAction>> inputActionMap;
 
-    public InputMapping() {
-        inputActionMap = new HashMap<>();
-    }
+  private final Map<KeyCode, List<GameAction>> inputActionMap;
 
-    /**
-     * Associates an action to an input.
-     *
-     * @param input the input to map
-     * @param action the action to associate with the input
-     */
-    public void addMapping(KeyCode input, GameAction action) {
-        inputActionMap.computeIfAbsent(input, k -> new java.util.ArrayList<>()).add(action);
-    }
+  public InputMapping() {
+    inputActionMap = new HashMap<>();
+  }
 
-    /**
-     * Get the current unmodifiable key-action mappings
-     */
-    public Map<KeyCode, List<GameAction>> getMapping() {
-        return inputActionMap.entrySet().stream()
-            .collect(Collectors.toUnmodifiableMap(
-                Map.Entry::getKey,
-                e -> List.copyOf(e.getValue())
-            ));
-    }
+  /**
+   * Associates an action to an input.
+   *
+   * @param input  the input to map
+   * @param action the action to associate with the input
+   */
+  public void addMapping(KeyCode input, GameAction action) {
+    inputActionMap.computeIfAbsent(input, k -> new java.util.ArrayList<>()).add(action);
+  }
 
-    /**
-     * Remove the action from the input mapping
-     * NOTE: assumption is made that each action will only have one key binding
-     *
-     * @param action the action to be removed
-     */
-    public void removeMapping(GameAction action) {
-        for (List<GameAction> actions : inputActionMap.values()) {
-            for (int i = 0; i < actions.size(); i++) {
-                if (actions.get(i) == action) {
-                    actions.remove(i);
-                    return;
-                }
-            }
+  /**
+   * Get the current unmodifiable key-action mappings
+   */
+  public Map<KeyCode, List<GameAction>> getMapping() {
+    return inputActionMap.entrySet().stream()
+        .collect(Collectors.toUnmodifiableMap(
+            Map.Entry::getKey,
+            e -> List.copyOf(e.getValue())
+        ));
+  }
+
+  /**
+   * Remove the action from the input mapping NOTE: assumption is made that each action will only
+   * have one key binding
+   *
+   * @param action the action to be removed
+   */
+  public void removeMapping(GameAction action) {
+    for (List<GameAction> actions : inputActionMap.values()) {
+      for (int i = 0; i < actions.size(); i++) {
+        if (actions.get(i) == action) {
+          actions.remove(i);
+          return;
         }
+      }
     }
+  }
 
-    /**
-     * Triggers the dispatch method on all actions associated with the input.
-     *
-     * @param input the input to trigger
-     */
-    public void trigger(KeyCode input) {
-        List<GameAction> actions = inputActionMap.get(input);
-        if (actions != null) {
-            for (GameAction action : actions) {
-                if (action.checkConstraints()) {
-                    action.dispatch();
-                }
-            }
+  /**
+   * Triggers the dispatch method on all actions associated with the input.
+   *
+   * @param input the input to trigger
+   */
+  public void trigger(KeyCode input) {
+    List<GameAction> actions = inputActionMap.get(input);
+    if (actions != null) {
+      for (GameAction action : actions) {
+        if (action.checkConstraints()) {
+          action.dispatch();
         }
+      }
     }
+  }
 }

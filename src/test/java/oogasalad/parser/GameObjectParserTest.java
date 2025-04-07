@@ -1,13 +1,14 @@
 package oogasalad.parser;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import oogasalad.engine.base.architecture.GameObject;
-import oogasalad.engine.component.Transform;
 import oogasalad.engine.prefabs.dinosaur.Bird;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,38 +18,38 @@ class GameObjectParserTest {
   GameObjectParser myGameObjectParser;
   ObjectMapper myMapper;
   String goodJsonString =
-        """
-        {
-          "Name": "Test Object",
-          "Components": [
-            {
-              "Name": "Transform",
-              "Configurations": {
-                "position": { "X": 0, "Y": 0 },
-                "rotation": { "X": 0, "Y": 0 },
-                "scale": { "X": 1, "Y": 1 }
+      """
+          {
+            "Name": "Test Object",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "position": { "X": 0, "Y": 0 },
+                  "rotation": { "X": 0, "Y": 0 },
+                  "scale": { "X": 1, "Y": 1 }
+                }
               }
-            }
-          ]
-        }
-        """;
+            ]
+          }
+          """;
 
   // The bad json string has no name, should return error
   String badJsonString =
       """
-      {
-        "Components": [
           {
-            "Name": "Transform",
-            "Configurations": {
-              "position": { "X": 0, "Y": 0 },
-              "rotation": { "X": 0, "Y": 0 },
-              "scale": { "X": 1, "Y": 1 }
-            }
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "position": { "X": 0, "Y": 0 },
+                  "rotation": { "X": 0, "Y": 0 },
+                  "scale": { "X": 1, "Y": 1 }
+                }
+              }
+            ]
           }
-        ]
-      }
-      """;
+          """;
 
   @BeforeEach
   void setUp() {

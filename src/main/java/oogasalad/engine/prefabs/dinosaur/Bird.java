@@ -1,4 +1,5 @@
 package oogasalad.engine.prefabs.dinosaur;
+
 import oogasalad.engine.base.architecture.GameObject;
 
 public class Bird extends GameObject {

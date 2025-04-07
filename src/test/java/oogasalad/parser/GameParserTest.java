@@ -1,8 +1,5 @@
 package oogasalad.parser;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import oogasalad.engine.base.architecture.Game;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

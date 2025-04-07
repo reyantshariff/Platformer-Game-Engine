@@ -1,6 +1,7 @@
 package oogasalad.parser;
 
 import static oogasalad.config.GameConfig.LOGGER;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -10,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import javax.print.attribute.standard.MediaSize.NA;
 import oogasalad.engine.base.architecture.GameComponent;
 import oogasalad.engine.base.serialization.Serializable;
 import oogasalad.engine.base.serialization.SerializedField;
@@ -21,6 +21,7 @@ import oogasalad.engine.base.serialization.SerializedField;
  * @author Justin Aronwald, Daniel Rodriguez-Florido
  */
 public class ComponentParser implements Parser<GameComponent>, Serializable {
+
   private static final String NAME = "Name";
 
   private static final Map<Class<?>, Function<JsonNode, Object>> EXTRACTORS = new HashMap<>();
@@ -92,8 +93,9 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
   private void setFieldFromConfig(JsonNode config, SerializedField<?> serializedField) {
     String fieldName = serializedField.getFieldName();
 
-    if (!config.has(fieldName))
+    if (!config.has(fieldName)) {
       return;
+    }
     JsonNode valueNode = config.get(fieldName);
     Class<?> fieldType = serializedField.getFieldType();
 
@@ -104,7 +106,8 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
       typedField.setValue(value);
 
     } catch (IllegalArgumentException | ClassCastException e) {
-      throw new IllegalStateException("Failed to set field '" + fieldName + "' with value: " + valueNode, e);
+      throw new IllegalStateException(
+          "Failed to set field '" + fieldName + "' with value: " + valueNode, e);
     }
   }
 

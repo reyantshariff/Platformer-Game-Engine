@@ -9,6 +9,7 @@ import oogasalad.engine.base.architecture.GameComponent;
 import oogasalad.engine.component.Behavior;
 
 // Assumes I am already within a behavior subsection at one of the array objects.
+
 /**
  * Parses and serializes a Behavior object to and from a JSON node
  *
@@ -50,7 +51,8 @@ public class BehaviorParser implements Parser<GameComponent> {
       LOGGER.error("Behavior class not found: {}", behaviorNode.get("Name").asText(), e);
     } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
              NoSuchMethodException e) {
-      LOGGER.error("Could not instantiate Behavior class: {}", behaviorNode.get("Name").asText(), e);
+      LOGGER.error("Could not instantiate Behavior class: {}", behaviorNode.get("Name").asText(),
+          e);
     }
 
     LOGGER.error("Could not instantiate Behavior class: {}", behaviorNode.get("Name").asText());

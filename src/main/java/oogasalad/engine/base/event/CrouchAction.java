@@ -1,7 +1,5 @@
 package oogasalad.engine.base.event;
 
-import oogasalad.engine.base.architecture.GameObject;
-import oogasalad.engine.base.serialization.SerializableField;
 import oogasalad.engine.component.Transform;
 
 public class CrouchAction extends GameAction {
@@ -20,12 +18,12 @@ public class CrouchAction extends GameAction {
   public void dispatch() {
     Transform transform = getParent().getComponent(Transform.class);
 
-    if(!isCrouched){
-      transform.setScaleY(transform.getScaleY()/2);
+    if (!isCrouched) {
+      transform.setScaleY(transform.getScaleY() / 2);
       transform.setY(transform.getY() + transform.getScaleY());
     } else {
-      transform.setScaleY(transform.getScaleY()*2);
-      transform.setY(transform.getY() - transform.getScaleY()/2);
+      transform.setScaleY(transform.getScaleY() * 2);
+      transform.setY(transform.getY() - transform.getScaleY() / 2);
     }
 
     isCrouched = !isCrouched;

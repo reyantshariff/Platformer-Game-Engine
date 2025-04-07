@@ -1,5 +1,7 @@
 package oogasalad.parser;
 
+import static oogasalad.config.GameConfig.LOGGER;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -10,8 +12,6 @@ import java.util.Map;
 import oogasalad.engine.base.architecture.Game;
 import oogasalad.engine.base.architecture.GameInfo;
 import oogasalad.engine.base.architecture.GameScene;
-import static oogasalad.config.GameConfig.LOGGER;
-import java.io.File;
 
 
 /**
@@ -20,6 +20,7 @@ import java.io.File;
  * @author Justin Aronwald, Daniel Rodriguez-Florido
  */
 public class GameParser implements Parser<Game> {
+
   private final ObjectMapper mapper = new ObjectMapper();
   private final GameSceneParser sceneParser = new GameSceneParser();
   private final ResourceParser resourceParser = new ResourceParser();

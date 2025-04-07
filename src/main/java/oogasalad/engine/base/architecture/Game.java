@@ -13,6 +13,7 @@ import java.util.UUID;
  * @author Hsuan-Kai Liao, Christian Bepler
  */
 public class Game {
+
   private final Map<UUID, GameScene> loadedScenes = new HashMap<>();
   private final Map<UUID, String> scenePaths = new HashMap<>();
 
@@ -29,7 +30,7 @@ public class Game {
   /**
    * The main game loop. This method should be called every frame. It updates the current scene and
    * handles any necessary game logic.
-   * 
+   *
    * @param deltaTime The time since the last frame, in seconds.
    */
   public void step(double deltaTime) {
@@ -41,13 +42,13 @@ public class Game {
    *
    * @return - The current scene
    */
-  public GameScene getCurrentScene(){
+  public GameScene getCurrentScene() {
     return currentScene;
   }
 
   /**
    * Change the current scene to the specified scene
-   * 
+   *
    * @param sceneName The name of the scene to change to
    */
   public void changeScene(String sceneName) {
@@ -65,7 +66,7 @@ public class Game {
   }
 
   /**
-   *Returns the loaded scenes.
+   * Returns the loaded scenes.
    */
   public Map<UUID, GameScene> getLoadedScenes() {
     return loadedScenes;
@@ -73,7 +74,7 @@ public class Game {
 
   /**
    * Initialize and adds a scene of the specified class to the game
-   * 
+   *
    * @param sceneClass The class of the scene to add
    */
   public <T extends GameScene> void addScene(Class<T> sceneClass, String name) {
@@ -101,7 +102,7 @@ public class Game {
 
   /**
    * Adds a pre-made scene to the game. The scene is loaded from the specified path.
-   * 
+   *
    * @param scenePath The path to the scene file
    */
   public void addScene(String scenePath) {
@@ -110,7 +111,7 @@ public class Game {
 
   /**
    * Removes a scene from the game.
-   * 
+   *
    * @param sceneName The name of the scene to remove
    */
   public void removeScene(String sceneName) {
@@ -125,7 +126,7 @@ public class Game {
 
   /**
    * Resets the specified scene to its initial state
-   * 
+   *
    * @param sceneName The name of the scene to reset
    */
   public void resetScene(String sceneName) {

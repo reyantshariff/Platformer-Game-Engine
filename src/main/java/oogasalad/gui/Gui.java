@@ -3,31 +3,30 @@ package oogasalad.gui;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
-import javafx.scene.text.Text;
-import oogasalad.engine.base.architecture.GameComponent;
-import oogasalad.engine.component.ImageComponent;
-import oogasalad.engine.component.TextComponent;
-import oogasalad.player.dinosaur.MainMenuGameScene;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import oogasalad.ResourceBundles;
-import oogasalad.engine.base.enumerate.KeyCode;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.util.Duration;
+import oogasalad.ResourceBundles;
 import oogasalad.engine.base.architecture.Game;
-import oogasalad.engine.base.architecture.GameScene;
-import oogasalad.engine.component.Transform;
+import oogasalad.engine.base.architecture.GameComponent;
 import oogasalad.engine.base.architecture.GameObject;
-import oogasalad.player.dinosaur.DinosaurGameScene;
+import oogasalad.engine.base.architecture.GameScene;
+import oogasalad.engine.base.enumerate.KeyCode;
+import oogasalad.engine.component.ImageComponent;
+import oogasalad.engine.component.TextComponent;
+import oogasalad.engine.component.Transform;
+import oogasalad.player.dinosaur.MainMenuGameScene;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The GUI class manages the graphical user interface for the OOGASalad game engine. It handles the
@@ -73,7 +72,9 @@ public class Gui {
     root.getChildren().add(canvas);
 
     // Apply css styling
-    scene.getStylesheets().add(getClass().getResource(ResourceBundles.getString("oogasalad.gui.general", "stylesheet")).toExternalForm());
+    scene.getStylesheets().add(
+        getClass().getResource(ResourceBundles.getString("oogasalad.gui.general", "stylesheet"))
+            .toExternalForm());
 
     game.addScene(MainMenuGameScene.class, "Mainmenu");
     // game.addScene(DinosaurGameScene.class, "Dinosaur");

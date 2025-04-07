@@ -41,7 +41,7 @@ public class GameObjectParser implements Parser<GameObject> {
     if (node == null || !node.has(NAME)) {
       throw new ParsingException("No name found");
     }
-    
+
     String name = node.get(NAME).asText();
     String tag = node.has(TAG) ? node.get(TAG).asText() : null;
 
@@ -68,14 +68,16 @@ public class GameObjectParser implements Parser<GameObject> {
     }
   }
 
-  private void handleAddingComponents(JsonNode node, GameObject gameObject) throws ParsingException {
+  private void handleAddingComponents(JsonNode node, GameObject gameObject)
+      throws ParsingException {
     if (node.has(COMPONENTS)) {
       JsonNode components = node.get(COMPONENTS);
       parseComponents(gameObject, components);
     }
   }
 
-  private void parseComponents(GameObject gameObject, JsonNode componentsNode) throws ParsingException {
+  private void parseComponents(GameObject gameObject, JsonNode componentsNode)
+      throws ParsingException {
     if (componentsNode.isArray()) {
       for (JsonNode component : componentsNode) {
         handleComponentParsing(gameObject, component);
@@ -85,12 +87,15 @@ public class GameObjectParser implements Parser<GameObject> {
     }
   }
 
-  private void handleComponentParsing(GameObject gameObject, JsonNode componentNode) throws ParsingException {
+  private void handleComponentParsing(GameObject gameObject, JsonNode componentNode)
+      throws ParsingException {
     GameComponent component = componentParser.parse(componentNode);
-    gameObject.addComponent(component.getClass()); // TODO: Change to addComponent(Component) instead of component class
+    gameObject.addComponent(
+        component.getClass()); // TODO: Change to addComponent(Component) instead of component class
   }
 
-  private void parseBehaviors(GameObject gameObject, JsonNode behaviorsNode) throws ParsingException {
+  private void parseBehaviors(GameObject gameObject, JsonNode behaviorsNode)
+      throws ParsingException {
     if (behaviorsNode.isArray()) {
       for (JsonNode behaviorNode : behaviorsNode) {
         handleBehaviorParsing(gameObject, behaviorNode);
@@ -98,9 +103,11 @@ public class GameObjectParser implements Parser<GameObject> {
     }
   }
 
-  private void handleBehaviorParsing(GameObject gameObject, JsonNode behaviorNode) throws ParsingException {
+  private void handleBehaviorParsing(GameObject gameObject, JsonNode behaviorNode)
+      throws ParsingException {
     Behavior behavior = behaviorParser.parse(behaviorNode);
-    gameObject.addComponent(behavior.getClass()); // TODO: Change to addComponent(Component) instead of component class
+    gameObject.addComponent(
+        behavior.getClass()); // TODO: Change to addComponent(Component) instead of component class
   }
 
   /**
@@ -140,7 +147,8 @@ public class GameObjectParser implements Parser<GameObject> {
     }
   }
 
-  private void handleWritingComponents(ObjectNode root, List<GameComponent> componentList) throws IOException {
+  private void handleWritingComponents(ObjectNode root, List<GameComponent> componentList)
+      throws IOException {
     ArrayNode components = mapper.createArrayNode();
     for (GameComponent component : componentList) {
       JsonNode componentNode = componentParser.write(component);
@@ -149,7 +157,8 @@ public class GameObjectParser implements Parser<GameObject> {
     root.set(COMPONENTS, components);
   }
 
-  private void handleWritingBehavior(ObjectNode root, List<Behavior> behaviorList) throws IOException {
+  private void handleWritingBehavior(ObjectNode root, List<Behavior> behaviorList)
+      throws IOException {
     ArrayNode behaviors = mapper.createArrayNode();
     for (Behavior behavior : behaviorList) {
       JsonNode behaviorNode = behaviorParser.write(behavior);

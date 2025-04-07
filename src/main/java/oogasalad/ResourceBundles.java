@@ -132,7 +132,9 @@ public class ResourceBundles {
    */
   public static double getDouble(String baseName, String key) {
     String value = getString(baseName, key);
-    if (value == null) return 0.0;
+    if (value == null) {
+      return 0.0;
+    }
     try {
       return (double) cast(value, double.class);
     } catch (IllegalArgumentException e) {
@@ -163,7 +165,9 @@ public class ResourceBundles {
    */
   public static boolean getBoolean(String baseName, String key) {
     String value = getString(baseName, key);
-    if (value == null) return false;
+    if (value == null) {
+      return false;
+    }
     return (boolean) cast(value, boolean.class);
   }
 

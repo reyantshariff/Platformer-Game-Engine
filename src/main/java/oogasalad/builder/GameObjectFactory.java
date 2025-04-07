@@ -1,9 +1,11 @@
 package oogasalad.builder;
+
 import oogasalad.engine.base.architecture.GameObject;
 
 
 /**
  * Factory class that creates class Types of GameObject
+ *
  * @author Reyan Shariff
  */
 

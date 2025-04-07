@@ -5,16 +5,20 @@ import oogasalad.engine.base.enumerate.ComponentTag;
 import oogasalad.engine.base.serialization.SerializableField;
 
 /**
- * Represents a physics component that applies acceleration to its parent GameObject.
- * This component updates the object's velocity over time based on X and Y acceleration.
+ * Represents a physics component that applies acceleration to its parent GameObject. This component
+ * updates the object's velocity over time based on X and Y acceleration.
  */
 public class AccelerationComponent extends GameComponent {
 
-  /** Acceleration in the X direction. */
+  /**
+   * Acceleration in the X direction.
+   */
   @SerializableField
   private double accelX;
 
-  /** Acceleration in the Y direction. */
+  /**
+   * Acceleration in the Y direction.
+   */
   @SerializableField
   private double accelY;
 
@@ -72,7 +76,9 @@ public class AccelerationComponent extends GameComponent {
   @Override
   public void update(double deltaTime) {
     VelocityComponent velocity = getParent().getComponent(VelocityComponent.class);
-    if (velocity == null) return;
+    if (velocity == null) {
+      return;
+    }
 
     double newVX = velocity.getVelocityX() + accelX * deltaTime;
     double newVY = velocity.getVelocityY() + accelY * deltaTime;

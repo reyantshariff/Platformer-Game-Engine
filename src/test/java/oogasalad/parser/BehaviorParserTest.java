@@ -1,13 +1,13 @@
 package oogasalad.parser;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import oogasalad.engine.component.Behavior;
-import oogasalad.engine.component.Transform;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,21 +17,21 @@ class BehaviorParserTest {
   ObjectMapper myMapper;
   String goodJsonString =
       """
-      {
-        "Name": "TestBehaviour",
-        "Configurations": {
-          "startScene": "Example Main Scene"
-        }
-      }
-      """;
+          {
+            "Name": "TestBehaviour",
+            "Configurations": {
+              "startScene": "Example Main Scene"
+            }
+          }
+          """;
 
   // The bad json string has no name, should return error
   String badJsonString =
       """
-      {
-        "Configurations": {}
-      }
-      """;
+          {
+            "Configurations": {}
+          }
+          """;
 
   @BeforeEach
   void setUp() {

@@ -20,25 +20,31 @@ public class CollisionHandlerComponent extends GameComponent {
   public ComponentTag componentTag() {
     return ComponentTag.COLLISION;
   }
-  
+
   public void registerCollisionBehavior(Class<?> clazz, Consumer<GameObject> collisionBehavior) {
     collisionMap.put(clazz, collisionBehavior);
   }
-  
+
   @Override
   public void update(double deltaTime) {
     ColliderComponent collider = getParent().getComponent(ColliderComponent.class);
-    if(collider == null) return;
-    
-    for(GameObject obj : getParent().getScene().getAllObjects()){
-      if(obj == getParent()) continue;
-      if(!objHasCollider(obj)) continue;
+    if (collider == null) {
+      return;
+    }
 
-      if(collider.collidesWith(obj)){
+    for (GameObject obj : getParent().getScene().getAllObjects()) {
+      if (obj == getParent()) {
+        continue;
+      }
+      if (!objHasCollider(obj)) {
+        continue;
+      }
+
+      if (collider.collidesWith(obj)) {
         collisionMap.forEach((clazz, handler) -> {
-            if(clazz.isAssignableFrom(obj.getClass())){
-              handler.accept(obj);
-            }
+          if (clazz.isAssignableFrom(obj.getClass())) {
+            handler.accept(obj);
+          }
         });
       }
     }

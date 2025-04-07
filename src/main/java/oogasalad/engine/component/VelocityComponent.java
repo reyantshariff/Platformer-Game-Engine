@@ -5,17 +5,20 @@ import oogasalad.engine.base.enumerate.ComponentTag;
 import oogasalad.engine.base.serialization.SerializableField;
 
 /**
- * A physics component that applies velocity to a GameObject over time.
- * It updates the object's position based on the velocity vector (X and Y axes)
- * during each game update cycle.
+ * A physics component that applies velocity to a GameObject over time. It updates the object's
+ * position based on the velocity vector (X and Y axes) during each game update cycle.
  */
 public class VelocityComponent extends GameComponent {
 
-  /** The velocity of the GameObject along the X-axis. */
+  /**
+   * The velocity of the GameObject along the X-axis.
+   */
   @SerializableField
   private double velocityX;
 
-  /** The velocity of the GameObject along the Y-axis. */
+  /**
+   * The velocity of the GameObject along the Y-axis.
+   */
   @SerializableField
   private double velocityY;
 
@@ -66,8 +69,8 @@ public class VelocityComponent extends GameComponent {
   }
 
   /**
-   * Updates the GameObject's position using its velocity and the time delta.
-   * This moves the object along both axes based on velocity and frame time.
+   * Updates the GameObject's position using its velocity and the time delta. This moves the object
+   * along both axes based on velocity and frame time.
    *
    * @param deltaTime time passed since the last update
    */

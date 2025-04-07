@@ -10,37 +10,40 @@ import oogasalad.engine.base.architecture.GameObject;
  * @author Christian Bepler
  */
 public abstract class GameActionConstraint {
-    private GameAction parentAction;
 
-    /**
-     * link the parent action of the constraint
-     * @param parentAction the parent action
-     */
-    final void setParent(GameAction parentAction) {
-        this.parentAction = parentAction;
-    }
+  private GameAction parentAction;
 
-    /**
-     * checks if the constraint is met
-     * @return true if the constraint is met, false otherwise
-     */
-    public abstract boolean check();
+  /**
+   * link the parent action of the constraint
+   *
+   * @param parentAction the parent action
+   */
+  final void setParent(GameAction parentAction) {
+    this.parentAction = parentAction;
+  }
 
-    /**
-     * Gets the parent action of the constraint
-     * 
-     * @return the parent action
-     */
-    public final GameAction getParentAction() {
-        return parentAction;
-    }
+  /**
+   * checks if the constraint is met
+   *
+   * @return true if the constraint is met, false otherwise
+   */
+  public abstract boolean check();
 
-    /**
-     * Gets the parent object of the constraint
-     * 
-     * @return the parent object
-     */
-    public final GameObject getParentObject() {
-        return parentAction.getParent();
-    }
+  /**
+   * Gets the parent action of the constraint
+   *
+   * @return the parent action
+   */
+  public final GameAction getParentAction() {
+    return parentAction;
+  }
+
+  /**
+   * Gets the parent object of the constraint
+   *
+   * @return the parent object
+   */
+  public final GameObject getParentObject() {
+    return parentAction.getParent();
+  }
 }

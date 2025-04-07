@@ -1,5 +1,7 @@
 package oogasalad.parser;
 
+import static oogasalad.config.GameConfig.LOGGER;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -8,14 +10,14 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import oogasalad.engine.base.architecture.GameObject;
 import oogasalad.engine.base.architecture.GameScene;
-import static oogasalad.config.GameConfig.LOGGER;
 
 /**
  * Parses and serializes a GameScene to and from a JSON node
  *
  * @author Justin Aronwald
  */
-public class GameSceneParser implements Parser<GameScene>{
+public class GameSceneParser implements Parser<GameScene> {
+
   private final GameObjectParser gameObjectParser = new GameObjectParser();
   private final ObjectMapper mapper = new ObjectMapper();
 

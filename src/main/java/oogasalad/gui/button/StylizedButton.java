@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import javafx.util.Duration;
 
 public class StylizedButton {
+
   public static final String DEFAULT_BUTTON_FILL = "WHITE"; // default base color
   public static final int BUTTON_CLICK_COLOR_DURATION = 100;  // default color change duration (ms)
 
@@ -60,10 +61,9 @@ public class StylizedButton {
       // Use a PauseTransition to make button color change temporarily
       PauseTransition pause = new PauseTransition(Duration.millis(BUTTON_CLICK_COLOR_DURATION));
       pause.setOnFinished(event -> {
-        if(mouseHover) {
+        if (mouseHover) {
           myButton.setStyle("-fx-background-color:" + myHoverColor + ";");
-        }
-        else {
+        } else {
           myButton.setStyle("-fx-background-color:" + myIdleColor + ";");
         }
       });

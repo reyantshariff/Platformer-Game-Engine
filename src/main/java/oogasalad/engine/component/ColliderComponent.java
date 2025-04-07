@@ -8,8 +8,8 @@ import oogasalad.engine.base.architecture.GameObject;
 import oogasalad.engine.base.enumerate.ComponentTag;
 
 /**
- * A physics component responsible for detecting collisions and executing
- * behaviors based on object type.
+ * A physics component responsible for detecting collisions and executing behaviors based on object
+ * type.
  */
 public class ColliderComponent extends GameComponent {
 
@@ -31,7 +31,7 @@ public class ColliderComponent extends GameComponent {
   /**
    * Registers a collision behavior for a specific GameObject class.
    *
-   * @param clazz the class to match against colliding objects
+   * @param clazz   the class to match against colliding objects
    * @param handler the action to perform upon collision
    */
   public void registerCollisionBehavior(Class<?> clazz, Consumer<GameObject> handler) {
@@ -48,7 +48,9 @@ public class ColliderComponent extends GameComponent {
     Transform a = getParent().getComponent(Transform.class);
     Transform b = other.getComponent(Transform.class);
 
-    if (a == null || b == null) return false;
+    if (a == null || b == null) {
+      return false;
+    }
 
     return (
         a.getX() < b.getX() + b.getScaleX() &&
@@ -59,8 +61,8 @@ public class ColliderComponent extends GameComponent {
   }
 
   /**
-   * Updates this component by checking for collisions and applying any
-   * registered handlers based on the class of the collided object.
+   * Updates this component by checking for collisions and applying any registered handlers based on
+   * the class of the collided object.
    *
    * @param deltaTime time passed since the last update
    */

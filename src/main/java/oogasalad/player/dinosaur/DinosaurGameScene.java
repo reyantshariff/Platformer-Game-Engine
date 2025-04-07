@@ -1,8 +1,8 @@
 package oogasalad.player.dinosaur;
 
+import javafx.scene.Scene;
 import oogasalad.ResourceBundles;
 import oogasalad.engine.base.architecture.GameScene;
-import javafx.scene.Scene;
 import oogasalad.engine.base.enumerate.KeyCode;
 import oogasalad.engine.base.event.CrouchAction;
 import oogasalad.engine.base.event.IsGroundedConstraint;
@@ -13,11 +13,12 @@ import oogasalad.engine.component.InputHandler;
 import oogasalad.engine.component.SpriteSwitcherComponent;
 import oogasalad.engine.component.Transform;
 import oogasalad.engine.component.VelocityComponent;
+import oogasalad.engine.prefabs.Player;
 import oogasalad.engine.prefabs.dinosaur.Base;
 import oogasalad.engine.prefabs.dinosaur.Bird;
-import oogasalad.engine.prefabs.Player;
 
 public class DinosaurGameScene extends GameScene {
+
   private Scene scene;
 
   public DinosaurGameScene(String name) {
@@ -33,7 +34,6 @@ public class DinosaurGameScene extends GameScene {
   }
 
 
-
   private void makeBirdTest() {
     Bird bird = instantiateObject(Bird.class);
 
@@ -44,7 +44,8 @@ public class DinosaurGameScene extends GameScene {
     tBird.setScaleY(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "bird.height"));
 
     SpriteSwitcherComponent birdSpriteSwitch = bird.addComponent(SpriteSwitcherComponent.class);
-    birdSpriteSwitch.registerState("bird", ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "bird.image"));
+    birdSpriteSwitch.registerState("bird",
+        ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "bird.image"));
     birdSpriteSwitch.setState("bird");
 
     bird.addComponent(ColliderComponent.class);
@@ -61,7 +62,8 @@ public class DinosaurGameScene extends GameScene {
     tGround.setScaleY(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "ground.height"));
 
     SpriteSwitcherComponent groundSpriteSwitch = ground.addComponent(SpriteSwitcherComponent.class);
-    groundSpriteSwitch.registerState("ground", ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "ground.image"));
+    groundSpriteSwitch.registerState("ground",
+        ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "ground.image"));
     groundSpriteSwitch.setState("ground");
 
     ground.addComponent(ColliderComponent.class);
@@ -92,9 +94,12 @@ public class DinosaurGameScene extends GameScene {
     input.registerAction(KeyCode.DOWN, crouch.getClass());
 
     SpriteSwitcherComponent spriteSwitcher = player.addComponent(SpriteSwitcherComponent.class);
-    spriteSwitcher.registerState("run", ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "player.image.run"));
-    spriteSwitcher.registerState("crouch", ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "player.image.crouch"));
-    spriteSwitcher.registerState("jump", ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "player.image.jump"));
+    spriteSwitcher.registerState("run",
+        ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "player.image.run"));
+    spriteSwitcher.registerState("crouch",
+        ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "player.image.crouch"));
+    spriteSwitcher.registerState("jump",
+        ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "player.image.jump"));
     spriteSwitcher.setState("run");
 
     ColliderComponent collider = player.addComponent(ColliderComponent.class);
