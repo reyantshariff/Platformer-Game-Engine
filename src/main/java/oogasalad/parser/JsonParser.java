@@ -20,7 +20,7 @@ import static oogasalad.config.GameConfig.LOGGER;
 
 public class JsonParser implements Parser {
 
-  private static final String FILE_PATH = "./src/test/resources/json/"; // fix this to be real one
+  private static final String FILE_PATH = "./src/main/gameFiles/";
   private static final GameParser GAME_PARSER = new GameParser();
 
   private final ObjectMapper mapper;
@@ -66,6 +66,7 @@ public class JsonParser implements Parser {
   public JsonNode write(Object data) throws IOException {
     Game game = (Game) data;
     JsonNode gameNode = null;
+
     try {
       gameNode = GAME_PARSER.write(game);
       File outputFile = new File(FILE_PATH, fileName);
@@ -74,14 +75,18 @@ public class JsonParser implements Parser {
       LOGGER.error("Could not write file {}. Error mapping to JSON.", fileName);
     }
 
-    if (gameNode == null) {
-      LOGGER.error("Could not write file {}. Is a file corrupted?", fileName);
-      throw new IOException("GameNode unable to be initialized. Could not generate file.");
-    }
+    handleNullGameNode(gameNode);
 
     LOGGER.log(Level.INFO, "Created game file {}.", fileName);
 
     return gameNode;
+  }
+
+  private void handleNullGameNode(JsonNode gameNode) throws IOException {
+    if (gameNode == null) {
+      LOGGER.error("Could not write file {}. Is a file corrupted?", fileName);
+      throw new IOException("GameNode unable to be initialized. Could not generate file.");
+    }
   }
 
 
