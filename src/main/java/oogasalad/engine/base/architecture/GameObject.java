@@ -76,8 +76,7 @@ public class GameObject {
       }
 
       allComponents.put(componentClass, component);
-      parentScene.registerComponent(component); // May need a null checker. Run GameObjectParserTest
-                                                // to see more info.
+      parentScene.registerComponent(component); // May need a null checker. Run GameObjectParserTest to see more info.
       return component;
     } catch (Exception e) {
       LOGGER.error("Could not add component {}", componentClass.getName());
