@@ -4,6 +4,12 @@ package oogasalad.gui;
 
 import javafx.scene.Group;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
+import javafx.scene.text.Text;
+import oogasalad.engine.base.architecture.GameComponent;
+import oogasalad.engine.component.ImageComponent;
+import oogasalad.engine.component.TextComponent;
+import oogasalad.player.dinosaur.MainMenuGameScene;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import javafx.scene.Scene;
@@ -19,7 +25,6 @@ import oogasalad.engine.base.architecture.Game;
 import oogasalad.engine.base.architecture.GameScene;
 import oogasalad.engine.component.Transform;
 import oogasalad.engine.base.architecture.GameObject;
-import oogasalad.player.dinosaur.DinosaurGameScene;
 
 /**
 <<<<<<< HEAD:src/main/java/oogasalad/gui/GUI.java
