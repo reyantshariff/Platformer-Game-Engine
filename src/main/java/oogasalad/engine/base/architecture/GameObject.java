@@ -76,7 +76,8 @@ public class GameObject {
       }
 
       allComponents.put(componentClass, component);
-      parentScene.registerComponent(component); // May need a null checker. Run GameObjectParserTest to see more info.
+      parentScene.registerComponent(component); // May need a null checker. Run GameObjectParserTest
+                                                // to see more info.
       return component;
     } catch (Exception e) {
       LOGGER.error("Could not add component {}", componentClass.getName());
@@ -157,7 +158,8 @@ public class GameObject {
   /**
    * Returns all the components
    *
-   * @return - a Map of some extended gameComponent to the GameComponent, representing all components
+   * @return - a Map of some extended gameComponent to the GameComponent, representing all
+   *         components
    */
   public final Map<Class<? extends GameComponent>, GameComponent> getAllComponents() {
     return allComponents;
