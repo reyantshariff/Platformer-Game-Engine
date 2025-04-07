@@ -6,7 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import javax.print.attribute.standard.MediaSize.NA;
 import oogasalad.engine.base.architecture.GameComponent;
 import oogasalad.engine.base.serialization.Serializable;
@@ -20,6 +23,18 @@ import oogasalad.engine.base.serialization.SerializedField;
 public class ComponentParser implements Parser<GameComponent>, Serializable {
   private static final String NAME = "Name";
 
+  private static final Map<Class<?>, Function<JsonNode, Object>> EXTRACTORS = new HashMap<>();
+
+  static {
+    EXTRACTORS.put(int.class, JsonNode::asInt);
+    EXTRACTORS.put(Integer.class, JsonNode::asInt);
+    EXTRACTORS.put(double.class, JsonNode::asDouble);
+    EXTRACTORS.put(Double.class, JsonNode::asDouble);
+    EXTRACTORS.put(boolean.class, JsonNode::asBoolean);
+    EXTRACTORS.put(Boolean.class, JsonNode::asBoolean);
+    EXTRACTORS.put(String.class, JsonNode::asText);
+  }
+
   /**
    * Parses a JSON node into a GameComponent instance
    *
@@ -31,24 +46,33 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
   public GameComponent parse(JsonNode componentNode) throws ParsingException {
     validateComponentName(componentNode);
 
+    String name = componentNode.get(NAME).asText();
     try {
-      String name = componentNode.get(NAME).asText();
       String fullClassName = "oogasalad.engine.component." + name;
 
       Class<?> rawClass = getRawClass(fullClassName);
 
       Class<? extends GameComponent> componentClass = (Class<? extends GameComponent>) rawClass;
 
-      return componentClass.getDeclaredConstructor().newInstance();
+      GameComponent myComponent = componentClass.getDeclaredConstructor().newInstance();
+      JsonNode configNode = componentNode.get("Configurations");
+
+      myComponent
+          .getSerializedFields()
+          .forEach(field -> setFieldFromConfig(configNode, field));
+
+      return myComponent;
+
     } catch (ClassNotFoundException e) {
       throw new ParsingException("Component class not found: " + componentNode, e);
     } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
              NoSuchMethodException e) {
+      LOGGER.error("Error instantiating component: {}", name);
       throw new RuntimeException(e);
     }
   }
 
-  private static Class<?> getRawClass(String fullClassName)
+  private Class<?> getRawClass(String fullClassName)
       throws ClassNotFoundException, ParsingException {
     //had chatGpt help with the following three lines
     Class<?> rawClass = Class.forName(fullClassName);
@@ -58,11 +82,38 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
     return rawClass;
   }
 
-  private static void validateComponentName(JsonNode componentNode) throws ParsingException {
+  private void validateComponentName(JsonNode componentNode) throws ParsingException {
     if (!componentNode.has(NAME)) {
       LOGGER.error("Did not find component name. Throwing exception.");
       throw new ParsingException("Component did not have name.");
     }
+  }
+
+  private void setFieldFromConfig(JsonNode config, SerializedField<?> serializedField) {
+    String fieldName = serializedField.getFieldName();
+
+    if (!config.has(fieldName))
+      return;
+    JsonNode valueNode = config.get(fieldName);
+    Class<?> fieldType = serializedField.getFieldType();
+
+    try {
+      Object value = extractFieldValue(fieldType, valueNode);
+
+      SerializedField<Object> typedField = (SerializedField<Object>) serializedField;
+      typedField.setValue(value);
+
+    } catch (IllegalArgumentException | ClassCastException e) {
+      throw new IllegalStateException("Failed to set field '" + fieldName + "' with value: " + valueNode, e);
+    }
+  }
+
+  private Object extractFieldValue(Class<?> fieldType, JsonNode valueNode) {
+    Function<JsonNode, Object> extractor = EXTRACTORS.get(fieldType);
+    if (extractor == null) {
+      throw new IllegalArgumentException("Unsupported field type: " + fieldType);
+    }
+    return extractor.apply(valueNode);
   }
 
   /**
