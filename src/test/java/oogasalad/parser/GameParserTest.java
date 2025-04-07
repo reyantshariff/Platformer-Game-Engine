@@ -13,16 +13,16 @@ class GameParserTest {
 
   @BeforeEach
   void setUp() {
-    parser = new GameParser(TEST_FILE_NAME);
+    parser = new GameParser();
   }
 
   @Test
   void parse() {
-    Game myGame = parser.getMyGame();
-    assertNotNull(myGame);
+    // TODO: Create once we have concrete scenes
   }
 
   @Test
   void write() {
+    // TODO: Create once we have concrete scenes
   }
 }

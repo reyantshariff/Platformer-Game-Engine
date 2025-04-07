@@ -5,7 +5,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import oogasalad.engine.base.architecture.GameObject;
+import oogasalad.engine.component.Transform;
+import oogasalad.engine.prefabs.dinosaur.Bird;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -68,6 +71,20 @@ class GameObjectParserTest {
   }
 
   @Test
-  void write() {
+  void write_validJson_writesGameObject() throws IOException {
+    Bird bird = new Bird("Bird1");
+    JsonNode node = null;
+    try {
+      node = myGameObjectParser.write(bird);
+    } catch (IOException e) {
+      throw new IOException(e);
+    }
+    assertNotNull(node);
+    System.out.println(node);
+    assertTrue(node.toString().contains("Name"));
+    assertTrue(node.toString().contains("Bird"));
+    assertTrue(node.toString().contains("Tag"));
+    assertTrue(node.toString().contains("Components"));
+    assertTrue(node.toString().contains("Behaviors"));
   }
 }
