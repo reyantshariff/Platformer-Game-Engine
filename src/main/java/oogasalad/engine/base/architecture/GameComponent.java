@@ -45,44 +45,14 @@ public abstract class GameComponent implements Serializable {
   public void update(double deltaTime) {}
 
   /**
-   * Add the component to the gameObject based on its class.
-   *
-   * @apiNote Every component class should only have one instance per object.
-   * @param componentClass the component class specified
-   * @return the added component instance
-   */
-  protected final <T extends GameComponent> T addComponent(Class<T> componentClass) {
-    if (parent != null) {
-      return parent.addComponent(componentClass);
-    }
-
-    LOGGER.error(this.getClass().getSimpleName() + " has no parent");
-    throw new IllegalArgumentException("Parent gameObject not exist!");
-  }
-
-  /**
    * Get the component based on
    *
    * @param componentClass the component class specified
    * @return the component instance
    */
-  protected final <T extends GameComponent> T getComponent(Class<T> componentClass) {
+  public final <T extends GameComponent> T getComponent(Class<T> componentClass) {
     if (parent != null) {
       return parent.getComponent(componentClass);
-    }
-
-    LOGGER.error(this.getClass().getSimpleName() + " has no parent");
-    throw new IllegalArgumentException("Parent gameObject not exist!");
-  }
-
-  /**
-   * Remove the component based on its class.
-   *
-   * @param componentClass the component class specified
-   */
-  protected final <T extends GameComponent> void removeComponent(Class<T> componentClass) {
-    if (parent != null) {
-      parent.removeComponent(componentClass);
     }
 
     LOGGER.error(this.getClass().getSimpleName() + " has no parent");
@@ -129,12 +99,12 @@ public abstract class GameComponent implements Serializable {
   public void initializeFromJson(JsonNode config) {
     if (config == null || config.isNull()) return;
 
-    for (SerializedField<?> serializedField : getSerializedFields()) {
+    for (SerializedField serializedField : getSerializedFields()) {
       setFieldFromConfig(config, serializedField);
     }
   }
 
-  private static void setFieldFromConfig(JsonNode config, SerializedField<?> serializedField) {
+  private static void setFieldFromConfig(JsonNode config, SerializedField serializedField) {
     String fieldName = serializedField.getFieldName();
 
     if (!config.has(fieldName))
@@ -145,7 +115,7 @@ public abstract class GameComponent implements Serializable {
     try {
       Object value = extractFieldValue(fieldType, valueNode);
 
-      SerializedField<Object> typedField = (SerializedField<Object>) serializedField;
+      SerializedField typedField = serializedField;
       typedField.setValue(value);
 
     } catch (IllegalArgumentException | ClassCastException e) {

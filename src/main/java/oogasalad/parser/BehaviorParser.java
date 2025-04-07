@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import oogasalad.engine.base.architecture.GameComponent;
-import oogasalad.engine.component.Behavior;
+import oogasalad.engine.base.behavior.Behavior;
 
 // Assumes I am already within a behavior subsection at one of the array objects.
 /**

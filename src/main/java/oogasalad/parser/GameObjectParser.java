@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import oogasalad.engine.base.architecture.GameComponent;
 import oogasalad.engine.base.architecture.GameObject;
-import oogasalad.engine.component.Behavior;
+import oogasalad.engine.base.behavior.Behavior;
 
 /**
  * This class parses and serializes gameObjects to and from a JSON

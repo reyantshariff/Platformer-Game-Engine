@@ -12,49 +12,37 @@ import java.util.ArrayList;
  * @author Hsuan-Kai Liao
  */
 public interface Serializable {
-    /**
-     * Get all the field annotated @SerializableField.
-     */
     default List<SerializedField> getSerializedFields() {
         List<SerializedField> serializedFields = new ArrayList<>();
         Class<?> clazz = this.getClass();
 
-        // Get all the field annotated @SerializableField
-        for (Field field : clazz.getDeclaredFields()) {
-            if (field.isAnnotationPresent(SerializableField.class)) {
-                String fieldName = field.getName();
-                String capitalized = Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
+        while (clazz != null && clazz != Object.class) {
+            for (Field field : clazz.getDeclaredFields()) {
+                if (field.isAnnotationPresent(SerializableField.class)) {
+                    String fieldName = field.getName();
+                    String capitalized = Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
 
-                Method getter = null;
-                Method setter = null;
+                    Method getter = null;
+                    Method setter = null;
 
-                try {
-                    getter = clazz.getMethod("get" + capitalized);
-                } catch (NoSuchMethodException ignored) {}
+                    try {
+                        getter = this.getClass().getMethod("get" + capitalized);
+                    } catch (NoSuchMethodException ignored) {}
 
-                try {
-                    setter = clazz.getMethod("set" + capitalized, field.getType());
-                } catch (NoSuchMethodException ignored) {}
+                    try {
+                        setter = this.getClass().getMethod("set" + capitalized, field.getType());
+                    } catch (NoSuchMethodException ignored) {}
 
-                serializedFields.add(new SerializedField(this, field, getter, setter));
+                    field.setAccessible(true); // In case it's private
+                    serializedFields.add(new SerializedField(this, field, getter, setter));
+                }
             }
+
+            clazz = clazz.getSuperclass(); // Move up the hierarchy
         }
+
         return serializedFields;
     }
 
-    default List<SerializedMethod> getSerializableMethods(Object targetObject) {
-        List<SerializedMethod> serializedMethods = new ArrayList<>();
-        Class<?> targetClass = targetObject.getClass();
-
-        // Get all the method annotated @SerializableMethod
-        for (Method method : targetClass.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(SerializableMethod.class)) {
-
-                serializedMethods.add(new SerializedMethod(targetObject, method));
-            }
-        }
-
-        return serializedMethods;
-    }
 }
 
