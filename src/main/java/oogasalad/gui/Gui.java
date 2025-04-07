@@ -7,7 +7,6 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import oogasalad.engine.base.architecture.GameComponent;
 import oogasalad.engine.component.ImageComponent;
@@ -28,7 +27,6 @@ import oogasalad.engine.base.architecture.Game;
 import oogasalad.engine.base.architecture.GameScene;
 import oogasalad.engine.component.Transform;
 import oogasalad.engine.base.architecture.GameObject;
-import oogasalad.player.dinosaur.DinosaurGameScene;
 
 /**
  * The GUI class manages the graphical user interface for the OOGASalad game engine. It handles the
@@ -39,7 +37,7 @@ import oogasalad.player.dinosaur.DinosaurGameScene;
 public class Gui {
 
   private static final Logger logger = LogManager.getLogger(Gui.class);
-  private Game game;
+  private final Game game;
   private GraphicsContext gc;
   private Timeline gameLoop;
   private Scene scene;
