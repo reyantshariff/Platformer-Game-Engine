@@ -25,8 +25,6 @@ public class GameParser implements Parser<Game> {
   private final ResourceParser resourceParser = new ResourceParser();
   private final InformationParser informationParser = new InformationParser();
 
-  private Game myGame;
-
   private static final String DATA = "Data";
   private static final String INFORMATION = "Information";
   private static final String NAME = "Name";
