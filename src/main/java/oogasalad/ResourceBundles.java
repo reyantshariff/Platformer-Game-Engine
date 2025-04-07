@@ -25,7 +25,7 @@ public class ResourceBundles {
    */
   public static void loadBundle(String baseName) {
     try {
-      ResourceBundle bundle = ResourceBundle.getBundle("oogasalad.gui." + baseName);
+      ResourceBundle bundle = ResourceBundle.getBundle(baseName);
       bundles.put(baseName, bundle);
     } catch (MissingResourceException e) {
       logger.error("Resource bundle not found: " + baseName);

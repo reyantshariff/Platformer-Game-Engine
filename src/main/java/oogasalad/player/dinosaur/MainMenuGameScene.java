@@ -19,28 +19,36 @@ public class MainMenuGameScene extends GameScene {
    */
   @Override
   public void onActivated() {
-    Player player = makePlayerTest();
+    Player player = makeTitleTest();
+    Player player2 = makeButtonTest();
   }
 
-  private Player makePlayerTest() {
-    Player player = instantiateObject(Player.class);
+  private Player makeTitleTest() {
+    Player title = instantiateObject(Player.class);
 
-    Transform t = player.addComponent(Transform.class);
-    t.setX(100);
-    t.setY(100);
-    t.setScaleX(10);
-    t.setScaleY(10);
-
-    TextComponent textComponent = player.addComponent(TextComponent.class);
+    TextComponent textComponent = title.addComponent(TextComponent.class);
     textComponent.setText("Welcome to OOOOOOOGASALAD");
-    textComponent.setX(600);
-    textComponent.setY(300);
+    textComponent.setX(400);
+    textComponent.setY(200);
+    textComponent.setStyleClass("text-component");
 
-    InputHandler input = player.addComponent(InputHandler.class);
+    return title;
+  }
+
+  private Player makeButtonTest() {
+    Player button = instantiateObject(Player.class);
+
+    TextComponent textComponent = button.addComponent(TextComponent.class);
+    textComponent.setText("Enter Dinosaur");
+    textComponent.setX(500);
+    textComponent.setY(300);
+    textComponent.setStyleClass("text-component");
+
+    InputHandler input = button.addComponent(InputHandler.class);
     EnterPlayerAction enterPlayer = new EnterPlayerAction();
     input.registerAction(KeyCode.SPACE, enterPlayer.getClass());
 
-    return player;
+    return button;
   }
 
   /**

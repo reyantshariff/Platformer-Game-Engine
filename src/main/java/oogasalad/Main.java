@@ -5,7 +5,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import oogasalad.engine.base.architecture.Game;
 import oogasalad.gui.Gui;
-import oogasalad.view.DinosaurGameBuilderView;
+// import oogasalad.view.DinosaurGameBuilderView;
 
 /**
  * This is the main class of the OOGASalad Platformer Game Sandbox. Run the start method to open the

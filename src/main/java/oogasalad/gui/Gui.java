@@ -4,12 +4,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import oogasalad.engine.base.architecture.GameComponent;
 import oogasalad.engine.component.ImageComponent;
 import oogasalad.engine.component.TextComponent;
+import oogasalad.player.dinosaur.MainMenuGameScene;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import javafx.scene.Scene;
@@ -71,9 +74,10 @@ public class Gui {
     root.getChildren().add(canvas);
 
     // Apply css styling
+    scene.getStylesheets().add(getClass().getResource(ResourceBundles.getString("oogasalad.gui.general", "stylesheet")).toExternalForm());
 
-    //game.addScene(MainMenuGameScene.class, "Mainmenu");
-    game.addScene(DinosaurGameScene.class, "Dinosaur");
+    game.addScene(MainMenuGameScene.class, "Mainmenu");
+    // game.addScene(DinosaurGameScene.class, "Dinosaur");
     startGameLoop();
 
     stage.setTitle("OOGASalad Platformer");
@@ -158,6 +162,7 @@ public class Gui {
    */
   private void renderTextComponent(TextComponent component, GraphicsContext gc) {
     Text text = new Text(component.getText());
+    applyStyleSheet(text, component.getStyleClass());
     WritableImage snapshot = text.snapshot(null, null);
     gc.drawImage(snapshot, component.getX(), component.getY());
   }
@@ -181,6 +186,13 @@ public class Gui {
    */
   private void renderTransform(Transform component, GraphicsContext gc) {
     gc.fillRect(component.getX(), component.getY(), component.getScaleX(), component.getScaleY());
+  }
+
+  private void applyStyleSheet(Node node, String styleSheet) {
+    node.getStyleClass().add(styleSheet);
+    Group tempRoot = new Group(node);
+    Scene tempScene = new Scene(tempRoot);
+    tempScene.getStylesheets().addAll(scene.getStylesheets());
   }
 
   /**

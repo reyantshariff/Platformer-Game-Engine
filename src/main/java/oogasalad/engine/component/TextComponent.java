@@ -28,6 +28,8 @@ public class TextComponent extends GameComponent {
   private double scaleY;
   @SerializableField
   private double rotation;
+  @SerializableField
+  private String styleClass;
 
   public String getText() {
     return text;
@@ -76,4 +78,8 @@ public class TextComponent extends GameComponent {
   public void setRotation(double rotation) {
     this.rotation = rotation;
   }
+
+  public String getStyleClass() {return styleClass;}
+
+  public void setStyleClass(String styleClass) {this.styleClass = styleClass;}
 }
