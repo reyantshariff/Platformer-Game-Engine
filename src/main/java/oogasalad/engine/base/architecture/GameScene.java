@@ -222,12 +222,4 @@ public abstract class GameScene {
    */
   public void onDeactivated() {};
 
-  /**
-   * Getter to return a Collection of all the GameObjects
-   *
-   * @return - a collection containing each GameObject
-   */
-  public final Collection<GameObject> getAllObjects() {
-    return allObjects.values();
-  }
 }

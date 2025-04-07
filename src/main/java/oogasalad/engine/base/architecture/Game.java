@@ -36,12 +36,14 @@ public class Game {
     currentScene.step(deltaTime);
   }
 
-  public GameScene getCurrentScene() {return currentScene;}
-
   /**
-   * @return - the current scene
+   * Getter for current gameScene
+   *
+   * @return - The current scene
    */
-  public GameScene getCurrentScene() { return currentScene; }
+  public GameScene getCurrentScene(){
+    return currentScene;
+  }
 
   /**
    * Change the current scene to the specified scene
