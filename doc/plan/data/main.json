@@ -1,0 +1,211 @@
+{
+  "Data": {
+    "Information": {
+      "Name": "GAME_DATA_EXAMPLE",
+      "Description": "This is an example of a game data file",
+      "Author": "Author Name",
+      "Resolution": {
+        "Width": 1280,
+        "Height": 720
+      }
+    },
+    "Resources": [
+      {
+        "Name": "ExampleMenuBackgroundSprite",
+        "Path": "Resources/ExampleMenuBackgroundSprite.png"
+      },
+      {
+        "Name": "ExampleMenuStartButtonSprite",
+        "Path": "Resources/ExampleMenuStartButtonSprite.png"
+      },
+      {
+        "Name": "ExamplePlayerSprite",
+        "Path": "Resources/ExamplePlayerSprite.png"
+      },
+      {
+        "Name": "ExamplePlatformSprite",
+        "Path": "Resources/ExamplePlatformSprite.png"
+      }
+    ],
+    "Scene": [
+      {
+        "Name": "Example Menu Scene",
+        "GameObjects": [
+          {
+            "Name": "Example Menu Background",
+            "Tag": "Background",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "positionX": 0,
+                  "positionY": 0,
+                  "rotationX": 0,
+                  "rotationY": 0,
+                  "scaleX": 1,
+                  "scaleY": 1
+                }
+              },
+              {
+                "Name": "SpriteRenderer",
+                "Configurations": {
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "sizeX": 1,
+                  "sizeY": 1,
+                  "sprite": "ExampleMenuBackgroundSprite.png"
+                }
+              }
+            ],
+            "Behaviors": [
+              {
+                "Name": "MenuController",
+                "Configurations": {
+                  "startScene": "Example Main Scene"
+                }
+              }
+            ]
+          },
+          {
+            "Name": "Example Menu Start Button",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "positionX": 0,
+                  "positionY": 0,
+                  "rotationX": 0,
+                  "rotationY": 0,
+                  "scaleX": 1,
+                  "scaleY": 1
+                }
+              },
+              {
+                "Name": "SpriteRenderer",
+                "Configurations": {
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "sizeX": 1,
+                  "sizeY": 1,
+                  "sprite": "ExampleMenuStartButtonSprite.png"
+                }
+              }
+            ],
+            "Behaviors": [
+              {
+                "Name": "ButtonController",
+                "Configurations": {}
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Example Main Scene",
+        "GameObjects": [
+          {
+            "Name": "Example Player",
+            "Tag": "Player",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "positionX": 0,
+                  "positionY": 0,
+                  "rotationX": 0,
+                  "rotationY": 0,
+                  "scaleX": 1,
+                  "scaleY": 1
+                }
+              },
+              {
+                "Name": "PhysicsHandler",
+                "Configurations": {
+                  "velocityX": 0,
+                  "velocityY": 0,
+                  "mass": 1,
+                  "applyGravity": true,
+                  "applyAirResistance": true
+                }
+              },
+              {
+                "Name": "CircleCollider",
+                "Configurations": {
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "sizeX": 1,
+                  "sizeY": 1
+                }
+              },
+              {
+                "Name": "SpriteRenderer",
+                "Configurations": {
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "sizeX": 1,
+                  "sizeY": 1,
+                  "sprite": "ExamplePlayerSprite.png"
+                }
+              }
+            ],
+            "Behaviors": [
+              {
+                "Name": "PlayerController",
+                "Configurations": {
+                  "speed": 5,
+                  "jumpForce": 10,
+                  "maxJumpCount": 2
+                }
+              }
+            ]
+          },
+          {
+            "Name": "Example Platform",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "positionX": 0,
+                  "positionY": 0,
+                  "rotationX": 0,
+                  "rotationY": 0,
+                  "scaleX": 1,
+                  "scaleY": 1
+                }
+              },
+              {
+                "Name": "PhysicsHandler",
+                "Configurations": {
+                  "velocityX": 0,
+                  "velocityY": 0,
+                  "mass": 1,
+                  "applyGravity": false,
+                  "applyAirResistance": false
+                }
+              },
+              {
+                "Name": "BoxCollider",
+                "Configurations": {
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "sizeX": 1,
+                  "sizeY": 1
+                }
+              },
+              {
+                "Name": "SpriteRenderer",
+                "Configurations": {
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "sizeX": 1,
+                  "sizeY": 1,
+                  "sprite": "ExamplePlatformSprite.png"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

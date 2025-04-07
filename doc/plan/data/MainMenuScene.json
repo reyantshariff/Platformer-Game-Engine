@@ -1,0 +1,102 @@
+{
+  "Name": "MainMenuScene",
+  "GameObjects": [
+    {
+      "Name": "MainMenuBackground",
+      "Tag": "Background",
+      "Components": [
+        {
+          "Name": "Transform",
+          "Configurations": {
+            "positionX": 0,
+            "positionY": 0,
+            "rotationX": 0,
+            "rotationY": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          }
+        },
+        {
+          "Name": "SpriteRenderer",
+          "Configurations": {
+            "offsetX": 0,
+            "offsetY": 0,
+            "sizeX": 1,
+            "sizeY": 1,
+            "sprite": "MainMenuBackground.png"
+          }
+        }
+      ]
+    },
+    {
+      "Name": "PlayButton",
+      "Tag": "Button",
+      "Components": [
+        {
+          "Name": "Transform",
+          "Configurations": {
+            "positionX": 500,
+            "positionY": 300,
+            "rotationX": 0,
+            "rotationY": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          }
+        },
+        {
+          "Name": "SpriteRenderer",
+          "Configurations": {
+            "offsetX": 0,
+            "offsetY": 0,
+            "sizeX": 2,
+            "sizeY": 1,
+            "sprite": "PlayButtonSprite.png"
+          }
+        }
+      ],
+      "Behaviors": [
+        {
+          "Name": "ButtonController",
+          "Configurations": {
+            "onClickScene": "Example Main Scene"
+          }
+        }
+      ]
+    },
+    {
+      "Name": "SettingsButton",
+      "Tag": "Button",
+      "Components": [
+        {
+          "Name": "Transform",
+          "Configurations": {
+            "positionX": 500,
+            "positionY": 450,
+            "rotationX": 0,
+            "rotationY": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          }
+        },
+        {
+          "Name": "SpriteRenderer",
+          "Configurations": {
+            "offsetX": 0,
+            "offsetY": 0,
+            "sizeX": 2,
+            "sizeY": 1,
+            "sprite": "SettingsButtonSprite.png"
+          }
+        }
+      ],
+      "Behaviors": [
+        {
+          "Name": "ButtonController",
+          "Configurations": {
+            "onClickScene": "SettingsScene"
+          }
+        }
+      ]
+    }
+  ]
+}
