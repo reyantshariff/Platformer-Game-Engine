@@ -10,7 +10,6 @@ import oogasalad.engine.base.event.IsGroundedConstraint;
 import oogasalad.engine.base.event.JumpAction;
 import oogasalad.engine.component.AccelerationComponent;
 import oogasalad.engine.component.ColliderComponent;
-import oogasalad.engine.component.CollisionHandlerComponent;
 import oogasalad.engine.component.InputHandler;
 import oogasalad.engine.component.SpriteSwitcherComponent;
 import oogasalad.engine.component.Transform;
@@ -32,26 +31,8 @@ public class DinosaurGameScene extends GameScene {
     Player player = makePlayerTest();
     makeGroundTest();
     makeBirdTest();
-    makeCollisionHandlers(player);
   }
 
-  private static void makeCollisionHandlers(Player player) {
-    CollisionHandlerComponent collisionHandler = player.addComponent(CollisionHandlerComponent.class);
-
-    // Ground collision
-    collisionHandler.registerCollisionBehavior(Base.class, groundUse -> {
-      VelocityComponent velocity = player.getComponent(VelocityComponent.class);
-      velocity.setVelocityY(ResourceBundles.getDouble("oogasalad.dinosaur.dinosaur", "collision.ground.velocityY"));
-    });
-
-    // Bird collision = death
-    collisionHandler.registerCollisionBehavior(Bird.class, birdUse -> {
-      System.out.println("Player collided with a bird — Game Over!");
-      VelocityComponent velocity = player.getComponent(VelocityComponent.class);
-      velocity.setVelocityX(ResourceBundles.getDouble("oogasalad.dinosaur.dinosaur", "collision.bird.velocityX"));
-      velocity.setVelocityY(ResourceBundles.getDouble("oogasalad.dinosaur.dinosaur", "collision.bird.velocityY"));
-    });
-  }
 
 
   private void makeBirdTest() {
@@ -117,7 +98,24 @@ public class DinosaurGameScene extends GameScene {
     spriteSwitcher.registerState("jump", ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "player.image.jump"));
     spriteSwitcher.setState("run");
 
-    player.addComponent(ColliderComponent.class);
+    ColliderComponent collider = player.addComponent(ColliderComponent.class);
+
+    collider.registerCollisionBehavior(Base.class, groundUse -> {
+      VelocityComponent velocity = player.getComponent(VelocityComponent.class);
+      velocity.setVelocityY(ResourceBundles.getDouble(
+          "oogasalad.dinosaur.dinosaur", "collision.ground.velocityY"
+      ));
+    });
+
+    collider.registerCollisionBehavior(Bird.class, birdUse -> {
+      VelocityComponent velocity = player.getComponent(VelocityComponent.class);
+      velocity.setVelocityX(ResourceBundles.getDouble(
+          "oogasalad.dinosaur.dinosaur", "collision.bird.velocityX"
+      ));
+      velocity.setVelocityY(ResourceBundles.getDouble(
+          "oogasalad.dinosaur.dinosaur", "collision.bird.velocityY"
+      ));
+    });
 
     return player;
   }

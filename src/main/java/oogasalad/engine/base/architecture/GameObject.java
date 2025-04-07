@@ -21,6 +21,12 @@ public class GameObject {
   private String name;
   private String tag;
 
+  /**
+   * Constructor for base game object
+   *
+   * @param name - Name of game object
+   * @param tag - Tag for game object for identification
+   */
   public GameObject(String name, String tag) {
     this.id = UUID.randomUUID();
     this.name = name == null ? "" : this.getClass().getSimpleName() + "_" + this.id;
@@ -151,7 +157,8 @@ public class GameObject {
   /**
    * Returns all the components
    *
-   * @return - a Map of some extended gameComponent to the GameComponent, representing all components
+   * @return - a Map of some extended gameComponent to the GameComponent, representing all
+   *         components
    */
   public final Map<Class<? extends GameComponent>, GameComponent> getAllComponents() {
     return allComponents;

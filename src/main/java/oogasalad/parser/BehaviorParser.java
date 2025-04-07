@@ -3,13 +3,9 @@ package oogasalad.parser;
 import static oogasalad.config.GameConfig.LOGGER;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 import oogasalad.engine.base.architecture.GameComponent;
-import oogasalad.engine.base.serialization.SerializedField;
 import oogasalad.engine.component.Behavior;
 
 // Assumes I am already within a behavior subsection at one of the array objects.
@@ -20,7 +16,9 @@ import oogasalad.engine.component.Behavior;
  */
 public class BehaviorParser implements Parser<GameComponent> {
 
-  ComponentParser componentParser = new ComponentParser();
+  private final ComponentParser componentParser = new ComponentParser();
+
+  private static final String NAME = "Name";
 
   /**
    * @param behaviorNode - the JSON node given to parse
@@ -29,13 +27,13 @@ public class BehaviorParser implements Parser<GameComponent> {
    */
   @Override
   public Behavior parse(JsonNode behaviorNode) throws ParsingException {
-    if (!behaviorNode.has("Name")) {
+    if (!behaviorNode.has(NAME)) {
       LOGGER.error("No name found in Behavior Node. Throwing Error.");
       throw new ParsingException("Behavior does not have required name.");
     }
 
     try {
-      String name = behaviorNode.get("Name").asText();
+      String name = behaviorNode.get(NAME).asText();
       String fullClassName = "oogasalad.engine.component." + name;
 
       //had chatGpt help with the following three lines

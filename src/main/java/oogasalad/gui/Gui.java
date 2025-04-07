@@ -7,6 +7,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import oogasalad.engine.base.architecture.GameComponent;
 import oogasalad.engine.component.ImageComponent;
@@ -27,6 +28,7 @@ import oogasalad.engine.base.architecture.Game;
 import oogasalad.engine.base.architecture.GameScene;
 import oogasalad.engine.component.Transform;
 import oogasalad.engine.base.architecture.GameObject;
+import oogasalad.player.dinosaur.DinosaurGameScene;
 
 /**
  * The GUI class manages the graphical user interface for the OOGASalad game engine. It handles the
@@ -37,7 +39,7 @@ import oogasalad.engine.base.architecture.GameObject;
 public class Gui {
 
   private static final Logger logger = LogManager.getLogger(Gui.class);
-  private final Game game;
+  private Game game;
   private GraphicsContext gc;
   private Timeline gameLoop;
   private Scene scene;
@@ -135,23 +137,19 @@ public class Gui {
         ResourceBundles.getDouble("oogasalad.gui.general", "windowHeight"));
 
     for (GameObject obj : scene.getAllObjects()) {
-      renderGameObject(gc, obj);
-    }
-  }
-
-  private void renderGameObject(GraphicsContext gc, GameObject obj) {
-    for (Map.Entry<Class<? extends GameComponent>, GameComponent> entry : obj.getAllComponents()
-        .entrySet()) {
-      GameComponent component = entry.getValue();
-      Class<? extends GameComponent> clazz = entry.getKey();
-      try {
-        String renderMethod = "render" + clazz.getSimpleName();
-        Method method = this.getClass()
-            .getDeclaredMethod(renderMethod, component.getClass(), GraphicsContext.class);
-        method.setAccessible(true);
-        method.invoke(this, component, gc);
-      } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-        logger.error("No such component render method exists");
+      for (Map.Entry<Class<? extends GameComponent>, GameComponent> entry : obj.getAllComponents()
+          .entrySet()) {
+        GameComponent component = entry.getValue();
+        Class<? extends GameComponent> clazz = entry.getKey();
+        try {
+          String renderMethod = "render" + clazz.getSimpleName();
+          Method method = this.getClass()
+              .getDeclaredMethod(renderMethod, component.getClass(), GraphicsContext.class);
+          method.setAccessible(true);
+          method.invoke(this, component, gc);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+          logger.info("No such component render method exists: " + clazz.getSimpleName());
+        }
       }
     }
   }
