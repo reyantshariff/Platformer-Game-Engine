@@ -19,6 +19,9 @@ public class Game {
   private GameScene currentScene;
   private GameInfo myGameInfo;
 
+  /**
+   * Constructor for game object, initializing currentScene to null
+   */
   public Game() {
     currentScene = null;
   }
@@ -33,6 +36,9 @@ public class Game {
     currentScene.step(deltaTime);
   }
 
+  /**
+   * @return - the current scene
+   */
   public GameScene getCurrentScene() { return currentScene; }
 
   /**

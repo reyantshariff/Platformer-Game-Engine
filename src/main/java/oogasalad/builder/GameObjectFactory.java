@@ -11,6 +11,12 @@ public class GameObjectFactory {
 
   private static final String GAME_OBJECT_PACKAGE = "oogasalad.engine.prefabs.dinosaur"; //TODO: Refactor this line to work with any subfolder.
 
+  /**
+   * Method that uses reflection to create a gameObject
+   *
+   * @param type - Type of game object being created
+   * @return - Game object created using reflection
+   */
   @SuppressWarnings("unchecked")
   public static Class<? extends GameObject> create(String type) {
     try {

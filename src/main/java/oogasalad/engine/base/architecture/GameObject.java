@@ -22,10 +22,10 @@ public class GameObject {
   private String tag;
 
   /**
-   * Constructor for the GameObject class.
-   * 
-   * @param name the name of the object
-   * @param tag the tag of the object these are groupings for objects
+   * Constructor for base game object
+   *
+   * @param name - Name of game object
+   * @param tag - Tag for game object for identification
    */
   public GameObject(String name, String tag) {
     this.id = UUID.randomUUID();

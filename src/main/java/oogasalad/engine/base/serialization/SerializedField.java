@@ -16,6 +16,14 @@ public class SerializedField<T> {
     private final Field field;
     private final Object targetObject;
 
+  /**
+   * Constructor for a serialized field
+   *
+   * @param targetObject - Object for field
+   * @param field - Field being assigned
+   * @param getter - Getter for field
+   * @param setter - Setter for field
+   */
     public SerializedField(Object targetObject, Field field, Method getter, Method setter) {
         this.targetObject = targetObject;
         this.fieldName = field.getName();

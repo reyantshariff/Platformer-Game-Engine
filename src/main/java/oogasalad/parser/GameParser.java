@@ -25,27 +25,11 @@ public class GameParser implements Parser<Game> {
   private final ResourceParser resourceParser = new ResourceParser();
   private final InformationParser informationParser = new InformationParser();
 
-  private Game myGame;
-
-  public GameParser() {
-
-  }
-
-  public GameParser(String fileName) {
-    try {
-      JsonNode rootNode = mapper.readTree(new File(fileName));
-      myGame = this.parse(rootNode);
-    } catch (IOException e) {
-      LOGGER.error("Game File Not Found: {}", fileName);
-    } catch (ParsingException e) {
-      LOGGER.error("Could not parse JSON file: {}", fileName);
-      e.printStackTrace();
-    }
-  }
-
-  public Game getMyGame() {
-    return myGame;
-  }
+  private static final String DATA = "Data";
+  private static final String INFORMATION = "Information";
+  private static final String NAME = "Name";
+  private static final String SCENE = "Scene";
+  private static final String RESOURCES = "Resources";
 
   /**
    * Parses a JSON node into a Game instance
@@ -56,13 +40,13 @@ public class GameParser implements Parser<Game> {
    */
   @Override
   public Game parse(JsonNode node) throws ParsingException {
-    if (node == null || !node.has("Data")) {
+    if (node == null || !node.has(DATA)) {
       LOGGER.warn("No data found");
       throw new ParsingException("No data found");
     }
 
     Game newGame = new Game();
-    JsonNode data = node.get("Data");
+    JsonNode data = node.get(DATA);
 
     handleInformationParsing(data, newGame);
     handleResourceParsing(data);
@@ -72,16 +56,16 @@ public class GameParser implements Parser<Game> {
   }
 
   private void handleInformationParsing(JsonNode data, Game newGame) throws ParsingException {
-    if (data.has("Information")) {
-      GameInfo gameInfo = informationParser.parse(data.get("Information"));
+    if (data.has(INFORMATION)) {
+      GameInfo gameInfo = informationParser.parse(data.get(INFORMATION));
       newGame.setGameInfo(gameInfo);
     }
   }
 
   private void handleResourceParsing(JsonNode data) throws ParsingException {
     Map<String, String> resourceMap = new HashMap<>();
-    if (data.has("Resources")) {
-      for (JsonNode resourceNode : data.get("Resources")) {
+    if (data.has(RESOURCES)) {
+      for (JsonNode resourceNode : data.get(RESOURCES)) {
         Map.Entry<String, String> entry = resourceParser.parse(resourceNode);
         resourceMap.put(entry.getKey(), entry.getValue());
       }
@@ -89,16 +73,20 @@ public class GameParser implements Parser<Game> {
   }
 
   private void handleSceneParsing(JsonNode data, Game newGame) throws ParsingException {
-    if (data.has("Scene") && data.get("Scene").isArray()) {
-      for (JsonNode sceneNode : data.get("Scene")) {
-        GameScene gameScene = sceneParser.parse(sceneNode);
-        if (gameScene != null) {
-          newGame.addScene(gameScene.getName());
-        } else {
-          LOGGER.error("Scene with name {} not found and therefore will not be added "
-              + "to Game.", sceneNode.get("Name"));
-        }
+    if (data.has(SCENE) && data.get(SCENE).isArray()) {
+      for (JsonNode sceneNode : data.get(SCENE)) {
+        createGameScene(newGame, sceneNode);
       }
+    }
+  }
+
+  private void createGameScene(Game newGame, JsonNode sceneNode) throws ParsingException {
+    GameScene gameScene = sceneParser.parse(sceneNode);
+    if (gameScene != null) {
+      newGame.addScene(gameScene.getName());
+    } else {
+      LOGGER.error("Scene with name {} not found and therefore will not be added "
+          + "to Game.", sceneNode.get(NAME));
     }
   }
 
@@ -118,13 +106,13 @@ public class GameParser implements Parser<Game> {
     handleResourceWriting(data, dataNode);
     handleSceneWriting(data, dataNode);
 
-    root.set("Data", dataNode);
+    root.set(DATA, dataNode);
     return root;
   }
 
   private void handleInformationWriting(Game data, ObjectNode root) throws IOException {
     ObjectNode infoNode = (ObjectNode) informationParser.write(data.getGameInfo());
-    root.set("Information", infoNode);
+    root.set(INFORMATION, infoNode);
   }
 
   private void handleSceneWriting(Game data, ObjectNode dataNode) throws IOException {
@@ -132,7 +120,7 @@ public class GameParser implements Parser<Game> {
     for (GameScene scene : data.getAllScenes()) {
       sceneArray.add(sceneParser.write(scene));
     }
-    dataNode.set("Scenes", sceneArray);
+    dataNode.set(SCENE, sceneArray);
   }
 
   private void handleResourceWriting(Game data, ObjectNode dataNode) throws IOException {

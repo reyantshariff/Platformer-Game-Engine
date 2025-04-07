@@ -1,6 +1,9 @@
 package oogasalad.engine.base.architecture;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 import oogasalad.engine.base.enumerate.ComponentTag;
 import oogasalad.engine.base.serialization.Serializable;
 import oogasalad.engine.base.serialization.SerializedField;
@@ -14,6 +17,8 @@ import oogasalad.engine.base.serialization.SerializedField;
  */
 public abstract class GameComponent implements Serializable {
   private GameObject parent;
+
+
 
   /**
    * This method is called after all objects have been created and initialized. It is used to set up

@@ -19,27 +19,33 @@ public interface Serializable {
         List<SerializedField<?>> serializedFields = new ArrayList<>();
         Class<?> clazz = this.getClass();
 
-        // Get all the field annotated @Serializable
         for (Field field : clazz.getDeclaredFields()) {
             if (field.isAnnotationPresent(SerializableField.class)) {
-                String fieldName = field.getName();
-                String capitalized = Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
-
-                Method getter = null;
-                Method setter = null;
-
-                try {
-                    getter = clazz.getMethod("get" + capitalized);
-                } catch (NoSuchMethodException ignored) {}
-
-                try {
-                    setter = clazz.getMethod("set" + capitalized, field.getType());
-                } catch (NoSuchMethodException ignored) {}
-
-                serializedFields.add(new SerializedField<>(this, field, getter, setter));
+                SerializedField<?> serializedField = createSerializedField(clazz, field);
+                serializedFields.add(serializedField);
             }
         }
+
         return serializedFields;
     }
+
+    private SerializedField<?> createSerializedField(Class<?> clazz, Field field) {
+        String fieldName = field.getName();
+        String capitalized = Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
+
+        Method getter = null;
+        Method setter = null;
+
+        try {
+            getter = clazz.getMethod("get" + capitalized);
+        } catch (NoSuchMethodException ignored) {}
+
+        try {
+            setter = clazz.getMethod("set" + capitalized, field.getType());
+        } catch (NoSuchMethodException ignored) {}
+
+        return new SerializedField<>(this, field, getter, setter);
+    }
+
 }
 
