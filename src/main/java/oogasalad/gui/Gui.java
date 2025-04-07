@@ -137,19 +137,23 @@ public class Gui {
         ResourceBundles.getDouble("oogasalad.gui.general", "windowHeight"));
 
     for (GameObject obj : scene.getAllObjects()) {
-      for (Map.Entry<Class<? extends GameComponent>, GameComponent> entry : obj.getAllComponents()
-          .entrySet()) {
-        GameComponent component = entry.getValue();
-        Class<? extends GameComponent> clazz = entry.getKey();
-        try {
-          String renderMethod = "render" + clazz.getSimpleName();
-          Method method = this.getClass()
-              .getDeclaredMethod(renderMethod, component.getClass(), GraphicsContext.class);
-          method.setAccessible(true);
-          method.invoke(this, component, gc);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-          logger.error("No such component render method exists");
-        }
+      renderGameObject(gc, obj);
+    }
+  }
+
+  private void renderGameObject(GraphicsContext gc, GameObject obj) {
+    for (Map.Entry<Class<? extends GameComponent>, GameComponent> entry : obj.getAllComponents()
+        .entrySet()) {
+      GameComponent component = entry.getValue();
+      Class<? extends GameComponent> clazz = entry.getKey();
+      try {
+        String renderMethod = "render" + clazz.getSimpleName();
+        Method method = this.getClass()
+            .getDeclaredMethod(renderMethod, component.getClass(), GraphicsContext.class);
+        method.setAccessible(true);
+        method.invoke(this, component, gc);
+      } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+        logger.error("No such component render method exists");
       }
     }
   }
