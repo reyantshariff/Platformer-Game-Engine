@@ -31,18 +31,6 @@ public class ResourceBundles {
     typeParsers.put(String.class, s -> s);
   }
 
-  private static final Map<Class<?>, Function<String, Object>> typeParsers = new HashMap<>();
-
-  static {
-    typeParsers.put(Double.class, Double::parseDouble);
-    typeParsers.put(double.class, Double::parseDouble);
-    typeParsers.put(Integer.class, Integer::parseInt);
-    typeParsers.put(int.class, Integer::parseInt);
-    typeParsers.put(Boolean.class, Boolean::parseBoolean);
-    typeParsers.put(boolean.class, Boolean::parseBoolean);
-    typeParsers.put(String.class, s -> s);
-  }
-
   /**
    * Loads a ResourceBundle with the given base name.
    *

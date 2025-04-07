@@ -1,5 +1,3 @@
-<<<<<<< HEAD:src/main/java/oogasalad/gui/GUI.java
-=======
 package oogasalad.gui;
 
 import java.lang.reflect.InvocationTargetException;
@@ -9,6 +7,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import oogasalad.engine.base.architecture.GameComponent;
 import oogasalad.engine.component.ImageComponent;
@@ -210,4 +209,3 @@ public class Gui {
     }
   }
 }
->>>>>>> 7a58b6c (SALAD-01: clean up pipeline):src/main/java/oogasalad/gui/Gui.java
