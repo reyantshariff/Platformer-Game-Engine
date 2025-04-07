@@ -37,7 +37,7 @@ public class CameraComponent extends GameComponent {
     public List<GameObject> getObjectsInView() {
         try {
             GameScene scene = getParent().getScene();
-            List<GameObject> objects = scene.getAllObjects();
+            List<GameObject> objects = new ArrayList<>(scene.getAllObjects());
             List<GameObject> objectsInView = new ArrayList<>();
             for (GameObject object : objects) {
                 Transform transform = object.getComponent(Transform.class);
