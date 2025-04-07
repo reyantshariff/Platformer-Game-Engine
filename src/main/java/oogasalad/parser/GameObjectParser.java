@@ -87,9 +87,7 @@ public class GameObjectParser implements Parser<GameObject> {
 
   private void handleComponentParsing(GameObject gameObject, JsonNode componentNode) throws ParsingException {
     GameComponent component = componentParser.parse(componentNode);
-    JsonNode config = componentNode.get(CONFIGURATIONS);
-    component.initializeFromJson(config);
-    gameObject.addComponent(component.getClass());
+    gameObject.addComponent(component.getClass()); // TODO: Change to addComponent(Component) instead of component class
   }
 
   private void parseBehaviors(GameObject gameObject, JsonNode behaviorsNode) throws ParsingException {
@@ -102,9 +100,7 @@ public class GameObjectParser implements Parser<GameObject> {
 
   private void handleBehaviorParsing(GameObject gameObject, JsonNode behaviorNode) throws ParsingException {
     Behavior behavior = behaviorParser.parse(behaviorNode);
-    JsonNode config = behaviorNode.get(CONFIGURATIONS);
-    behavior.initializeFromJson(config);
-    gameObject.addComponent(behavior.getClass());
+    gameObject.addComponent(behavior.getClass()); // TODO: Change to addComponent(Component) instead of component class
   }
 
   /**

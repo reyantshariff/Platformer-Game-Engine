@@ -75,7 +75,7 @@ public class ImageComponent extends GameComponent {
    */
   public String getImagePath() {
     return imagePath;
-    }
+  }
   public double getScaleX() {
     return scaleX;
   }
@@ -91,7 +91,8 @@ public class ImageComponent extends GameComponent {
    */
   public void setImagePath(String imagePath) {
     this.imagePath = imagePath;
-    }
+  }
+
   public double getScaleY() {
     return scaleY;
   }
