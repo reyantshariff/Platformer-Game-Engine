@@ -48,7 +48,6 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
 
     String name = componentNode.get(NAME).asText();
     try {
-      String name = componentNode.get("Name").asText();
       String fullClassName = "oogasalad.engine.component." + name;
 
       Class<?> rawClass = getRawClass(fullClassName);
@@ -73,7 +72,7 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
     }
   }
 
-  private static Class<?> getRawClass(String fullClassName)
+  private Class<?> getRawClass(String fullClassName)
       throws ClassNotFoundException, ParsingException {
     //had chatGpt help with the following three lines
     Class<?> rawClass = Class.forName(fullClassName);
@@ -83,11 +82,38 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
     return rawClass;
   }
 
-  private static void validateComponentName(JsonNode componentNode) throws ParsingException {
+  private void validateComponentName(JsonNode componentNode) throws ParsingException {
     if (!componentNode.has(NAME)) {
       LOGGER.error("Did not find component name. Throwing exception.");
       throw new ParsingException("Component did not have name.");
     }
+  }
+
+  private void setFieldFromConfig(JsonNode config, SerializedField<?> serializedField) {
+    String fieldName = serializedField.getFieldName();
+
+    if (!config.has(fieldName))
+      return;
+    JsonNode valueNode = config.get(fieldName);
+    Class<?> fieldType = serializedField.getFieldType();
+
+    try {
+      Object value = extractFieldValue(fieldType, valueNode);
+
+      SerializedField<Object> typedField = (SerializedField<Object>) serializedField;
+      typedField.setValue(value);
+
+    } catch (IllegalArgumentException | ClassCastException e) {
+      throw new IllegalStateException("Failed to set field '" + fieldName + "' with value: " + valueNode, e);
+    }
+  }
+
+  private Object extractFieldValue(Class<?> fieldType, JsonNode valueNode) {
+    Function<JsonNode, Object> extractor = EXTRACTORS.get(fieldType);
+    if (extractor == null) {
+      throw new IllegalArgumentException("Unsupported field type: " + fieldType);
+    }
+    return extractor.apply(valueNode);
   }
 
   /**
