@@ -5,13 +5,15 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import oogasalad.gui.button.DefaultButton;
+import oogasalad.builder.BuilderScene;
+import oogasalad.gui.button.StylizedButton;
 
 public class DinosaurGameBuilderView extends BorderPane {
+  private BuilderScene sceneBackend;
 
-  private DefaultButton loadButton;
-  private DefaultButton saveButton;
-  private DefaultButton playtestButton;
+  private StylizedButton loadButton;
+  private StylizedButton saveButton;
+  private StylizedButton playtestButton;
 
   private Pane editorCanvas;
   private VBox toolbox;
@@ -24,10 +26,10 @@ public class DinosaurGameBuilderView extends BorderPane {
   private void initializeUI() {
     // Top bar
     HBox topBar = new HBox();
-    loadButton = new DefaultButton("Load");
-    saveButton = new DefaultButton("Save");
-    playtestButton = new DefaultButton("Playtest");
-    topBar.getChildren().addAll(loadButton, saveButton, playtestButton);
+    loadButton = new StylizedButton("Load");
+    saveButton = new StylizedButton("Save");
+    playtestButton = new StylizedButton("Playtest");
+    topBar.getChildren().addAll(loadButton.getButton(), saveButton.getButton(), playtestButton.getButton());
     setTop(topBar);
 
     // Left toolbox
@@ -46,9 +48,9 @@ public class DinosaurGameBuilderView extends BorderPane {
     setRight(propertiesPanel);
 
     // Event handlers
-    loadButton.setOnAction(e -> handleLoad());
-    saveButton.setOnAction(e -> handleSave());
-    playtestButton.setOnAction(e -> handlePlaytest());
+//    loadButton.setOnAction(e -> handleLoad());
+//    saveButton.setOnAction(e -> handleSave());
+//    playtestButton.setOnAction(e -> handlePlaytest());
   }
 
   private void handleLoad() {
