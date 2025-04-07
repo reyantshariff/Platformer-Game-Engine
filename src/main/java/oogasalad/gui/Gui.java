@@ -148,7 +148,7 @@ public class Gui {
           method.setAccessible(true);
           method.invoke(this, component, gc);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-          logger.error("No such component render method exists");
+          logger.info("No such component render method exists: " + clazz.getSimpleName());
         }
       }
     }
