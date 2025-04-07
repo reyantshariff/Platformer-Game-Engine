@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import oogasalad.engine.base.architecture.GameComponent;
+import oogasalad.engine.base.serialization.SerializedField;
 import oogasalad.engine.component.Transform;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,9 +22,11 @@ class ComponentParserTest {
       {
         "Name": "Transform",
         "Configurations": {
-          "position": { "X": 0, "Y": 0 },
-          "rotation": { "X": 0, "Y": 0 },
-          "scale": { "X": 1, "Y": 1 }
+          "x": 1,
+          "y": 1,
+          "rotation": 1,
+          "scaleX": 1,
+          "scaleY": 1
         }
       }
       """;
@@ -31,9 +34,11 @@ class ComponentParserTest {
   String badJsonString = """
       {
         "Configurations": {
-          "position": { "X": 0, "Y": 0 },
-          "rotation": { "X": 0, "Y": 0 },
-          "scale": { "X": 1, "Y": 1 }
+          "x": 1,
+          "y": 1,
+          "rotation": 1,
+          "scaleX": 1,
+          "scaleY": 1
         }
       }
       """;
@@ -47,13 +52,23 @@ class ComponentParserTest {
   @Test
   void parse_validJsonFile_success() throws JsonProcessingException, ParsingException {
     JsonNode node = myMapper.readTree(goodJsonString);
-    assertNotNull(myComponentParser.parse(node));
+    GameComponent myComponent = myComponentParser.parse(node);
+    assertNotNull(myComponent);
+    for (SerializedField<?> serializedField : myComponent.getSerializedFields()) {
+      if (serializedField.getFieldType() == double.class) {
+        assertEquals(1.0, (double) serializedField.getValue());
+      }
+    }
+    // Use this print statement to verify output
+//    myComponent.getSerializedFields()
+//        .forEach(serializedField -> System.out.println(serializedField + ": " +
+//            serializedField.getValue()));
   }
 
   @Test
   void parse_invalidJsonFile_catchError() throws JsonProcessingException, ParsingException {
     JsonNode node = myMapper.readTree(badJsonString);
-    assertThrows(ParsingException.class, () -> myComponentParser.parse(node));
+    assertThrows(ParsingException.class, () -> myComponentParser.parse(node)); // TODO: Look at this error. Super weird.
   }
 
   @Test

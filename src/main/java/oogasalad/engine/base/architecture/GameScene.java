@@ -23,6 +23,12 @@ public abstract class GameScene {
 
   private String name;
 
+  /**
+   * Constructor for basic game scene, assigning a unique ID and initializing all lists for objects, components, input keys,
+   * and subscribed events
+   *
+   * @param name - Name of game scene
+   */
   public GameScene(String name) {
     this.id = UUID.randomUUID();
     this.name = name;
@@ -90,6 +96,10 @@ public abstract class GameScene {
 
     // 4. Update the scene actions
     // TODO: Handle Change Scene Action Here
+  }
+
+  public List<GameObject> getAllObjects() {
+    return new ArrayList<>(allObjects.values());
   }
 
   /**
@@ -169,16 +179,26 @@ public abstract class GameScene {
    * @param gameObject the gameObject to be destroyed
    */
   public final void unregisterObject(GameObject gameObject) {
-    // Unregister components
+    unregisterObjectComponents(gameObject);
+    unregisterInputBindings(gameObject);
+    gameObject.setScene(null);
+    allObjects.remove(gameObject.getId());
+  }
+
+  private void unregisterObjectComponents(GameObject gameObject) {
     for (ComponentTag order : ComponentTag.values()) {
-      for (GameComponent component : allComponents.get(order)) {
+      List<GameComponent> components = allComponents.get(order);
+      components.removeIf(component -> {
         if (component.getParent().equals(gameObject)) {
           unregisterComponent(component);
+          return true; // Remove it from the list if needed
         }
-      }
+        return false;
+      });
     }
+  }
 
-    // Unsubscribe the input bindings
+  private void unregisterInputBindings(GameObject gameObject) {
     Map<KeyCode, List<GameAction>> keyActionMap = inputMapping.getMapping();
     List<GameAction> actionsToBeRemoved = new ArrayList<>();
     for (List<GameAction> actions : keyActionMap.values()) {
@@ -189,10 +209,8 @@ public abstract class GameScene {
       }
     }
     actionsToBeRemoved.forEach(inputMapping::removeMapping);
-
-    gameObject.setScene(null);
-    allObjects.remove(gameObject.getId());
   }
+
 
   /**
    * Event that will be called when the gameScene is set to active.
@@ -204,12 +222,4 @@ public abstract class GameScene {
    */
   public void onDeactivated() {};
 
-  /**
-   * Getter to return a Collection of all the GameObjects
-   *
-   * @return - a collection containing each GameObject
-   */
-  public final Collection<GameObject> getAllObjects() {
-    return allObjects.values();
-  }
 }

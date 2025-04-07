@@ -22,6 +22,13 @@ public class GameObjectParser implements Parser<GameObject> {
   private final BehaviorParser behaviorParser = new BehaviorParser();
   private final ObjectMapper mapper = new ObjectMapper();
 
+  private static final String TAG = "Tag";
+  private static final String BEHAVIORS = "Behaviors";
+  private static final String NAME = "Name";
+  private static final String COMPONENTS = "Components";
+  private static final String CONFIGURATIONS = "Configurations";
+
+
   /**
    * Parses a JSON node into a gameObject (entity)
    *
@@ -31,12 +38,12 @@ public class GameObjectParser implements Parser<GameObject> {
    */
   @Override
   public GameObject parse(JsonNode node) throws ParsingException {
-    if (node == null || !node.has("Name")) {
+    if (node == null || !node.has(NAME)) {
       throw new ParsingException("No name found");
     }
     
-    String name = node.get("Name").asText();
-    String tag = node.has("Tag") ? node.get("Tag").asText() : null;
+    String name = node.get(NAME).asText();
+    String tag = node.has(TAG) ? node.get(TAG).asText() : null;
 
     GameObject gameObject = new GameObject(name, tag);
 
@@ -48,22 +55,22 @@ public class GameObjectParser implements Parser<GameObject> {
   }
 
   private static void handleAddingTag(JsonNode node, GameObject gameObject) {
-    if (node.has("Tag")) {
-      String tag = node.get("Tag").asText();
+    if (node.has(TAG)) {
+      String tag = node.get(TAG).asText();
       gameObject.setTag(tag);
     }
   }
 
   private void handleAddingBehaviors(JsonNode node, GameObject gameObject) throws ParsingException {
-    if (node.has("Behaviors")) {
-      JsonNode behaviors = node.get("Behaviors");
+    if (node.has(BEHAVIORS)) {
+      JsonNode behaviors = node.get(BEHAVIORS);
       parseBehaviors(gameObject, behaviors);
     }
   }
 
   private void handleAddingComponents(JsonNode node, GameObject gameObject) throws ParsingException {
-    if (node.has("Components")) {
-      JsonNode components = node.get("Components");
+    if (node.has(COMPONENTS)) {
+      JsonNode components = node.get(COMPONENTS);
       parseComponents(gameObject, components);
     }
   }
@@ -80,9 +87,7 @@ public class GameObjectParser implements Parser<GameObject> {
 
   private void handleComponentParsing(GameObject gameObject, JsonNode componentNode) throws ParsingException {
     GameComponent component = componentParser.parse(componentNode);
-    JsonNode config = componentNode.get("Configurations");
-    component.initializeFromJson(config);
-    gameObject.addComponent(component.getClass());
+    gameObject.addComponent(component.getClass()); // TODO: Change to addComponent(Component) instead of component class
   }
 
   private void parseBehaviors(GameObject gameObject, JsonNode behaviorsNode) throws ParsingException {
@@ -95,9 +100,7 @@ public class GameObjectParser implements Parser<GameObject> {
 
   private void handleBehaviorParsing(GameObject gameObject, JsonNode behaviorNode) throws ParsingException {
     Behavior behavior = behaviorParser.parse(behaviorNode);
-    JsonNode config = behaviorNode.get("Configurations");
-    behavior.initializeFromJson(config);
-    gameObject.addComponent(behavior.getClass());
+    gameObject.addComponent(behavior.getClass()); // TODO: Change to addComponent(Component) instead of component class
   }
 
   /**
@@ -109,10 +112,10 @@ public class GameObjectParser implements Parser<GameObject> {
   @Override
   public JsonNode write(GameObject data) throws IOException {
     ObjectNode root = mapper.createObjectNode();
-    root.put("Name", data.getName());
+    root.put(NAME, data.getName());
 
     if (data.getTag() != null) {
-      root.put("Tag", data.getTag());
+      root.put(TAG, data.getTag());
     }
 
     List<GameComponent> components = new ArrayList<>();
@@ -143,7 +146,7 @@ public class GameObjectParser implements Parser<GameObject> {
       JsonNode componentNode = componentParser.write(component);
       components.add(componentNode);
     }
-    root.set("Components", components);
+    root.set(COMPONENTS, components);
   }
 
   private void handleWritingBehavior(ObjectNode root, List<Behavior> behaviorList) throws IOException {
@@ -152,6 +155,6 @@ public class GameObjectParser implements Parser<GameObject> {
       JsonNode behaviorNode = behaviorParser.write(behavior);
       behaviors.add(behaviorNode);
     }
-    root.set("Behaviors", behaviors);
+    root.set(BEHAVIORS, behaviors);
   }
 }
