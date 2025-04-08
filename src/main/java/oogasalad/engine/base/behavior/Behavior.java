@@ -94,11 +94,12 @@ public class Behavior implements Serializable {
    * @param actionClass the action class specified
    * @param <T> the type of the action
    */
-  public <T extends BehaviorAction<?>> void addAction(Class<T> actionClass) {
+  public <T extends BehaviorAction<?>> T addAction(Class<T> actionClass) {
     try {
       T action = actionClass.getDeclaredConstructor().newInstance();
       action.setBehavior(this);
       actions.add(action);
+      return action;
     } catch (Exception e) {
       LOGGER.error("Failed to create action: {}", actionClass.getName(), e);
       throw new RuntimeException("Failed to create action: " + actionClass.getName(), e);

@@ -22,13 +22,13 @@ public abstract class GameComponent implements Serializable {
    * right after the constructor.
    * NOTE: This method should be override if needed.
    */
-  public void awake() {}
+  protected void awake() {}
 
   /**
    * This method is called before the object calls its update method for the first time
    * NOTE: This method should be override if needed.
    */
-  public void start() {}
+  protected void start() {}
 
   /**
    * This method is called when the component is removed.
@@ -42,7 +42,7 @@ public abstract class GameComponent implements Serializable {
    * NOTE: This method should be override if needed.
    * @param deltaTime The time since the last frame, in seconds.
    */
-  public void update(double deltaTime) {}
+  protected void update(double deltaTime) {}
 
   /**
    * Get the component based on

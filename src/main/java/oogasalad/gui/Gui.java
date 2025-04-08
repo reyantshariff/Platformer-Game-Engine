@@ -27,6 +27,8 @@ import oogasalad.engine.base.enumerate.KeyCode;
 import oogasalad.engine.component.SpriteRenderer;
 import oogasalad.engine.component.Text;
 import oogasalad.engine.component.Transform;
+import oogasalad.parser.GameSceneParser;
+import oogasalad.parser.ParsingException;
 import oogasalad.player.dinosaur.MainMenuGameScene;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
