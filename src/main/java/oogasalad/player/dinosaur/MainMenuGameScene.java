@@ -4,8 +4,8 @@ import oogasalad.engine.base.architecture.GameScene;
 import oogasalad.engine.base.enumerate.KeyCode;
 import oogasalad.engine.base.event.EnterPlayerAction;
 import oogasalad.engine.component.InputHandler;
-import oogasalad.engine.component.TextComponent;
-import oogasalad.engine.prefabs.Player;
+import oogasalad.engine.component.Text;
+import oogasalad.engine.prefab.Player;
 
 public class MainMenuGameScene extends GameScene {
 
@@ -25,7 +25,7 @@ public class MainMenuGameScene extends GameScene {
   private Player makeTitleTest() {
     Player title = instantiateObject(Player.class);
 
-    TextComponent textComponent = title.addComponent(TextComponent.class);
+    Text textComponent = title.addComponent(Text.class);
     textComponent.setText("Welcome to OOOOOOOGASALAD");
     textComponent.setX(400);
     textComponent.setY(200);
@@ -37,7 +37,7 @@ public class MainMenuGameScene extends GameScene {
   private Player makeButtonTest() {
     Player button = instantiateObject(Player.class);
 
-    TextComponent textComponent = button.addComponent(TextComponent.class);
+    Text textComponent = button.addComponent(Text.class);
     textComponent.setText("Enter Dinosaur");
     textComponent.setX(500);
     textComponent.setY(300);

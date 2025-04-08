@@ -71,6 +71,13 @@ public enum KeyCode {
   }
 
   /**
+   * Get the integer value of the key code.
+   */
+  public int getValue() {
+    return keyCode;
+  }
+
+  /**
    * Finds a KeyCode by its integer value.
    *
    * @param keyCode The integer key code.

@@ -12,11 +12,11 @@ import oogasalad.engine.base.enumerate.ComponentTag;
  * determining which objects are in view.
  */
 
-public class CameraComponent extends GameComponent {
+public class Camera extends GameComponent {
 
   private Transform transform;
 
-  public CameraComponent() {
+  public Camera() {
     super();
   }
 

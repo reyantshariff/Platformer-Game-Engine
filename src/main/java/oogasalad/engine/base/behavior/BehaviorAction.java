@@ -6,10 +6,10 @@ import oogasalad.engine.base.serialization.Serializable;
 import oogasalad.engine.base.serialization.SerializableField;
 
 /**
- * The GameAction class is the base class for all game actions. Actions are event that are called
- * only under certain conditions. For example, a player will only jump when the user presses the
- * jump button.
+ * The BehaviorAction class is the base class for all behavior actions. the actions will be called
+ * only under certain conditions.
  *
+ * @param <T> the type of the parameter that the action will take as input parameter
  * @author Hsuan-Kai Liao
  */
 public abstract class BehaviorAction<T> implements Serializable {
@@ -66,8 +66,8 @@ public abstract class BehaviorAction<T> implements Serializable {
    * @return true if the constraint is met, false otherwise
    */
   @SuppressWarnings("unchecked")
-  final boolean onPerform(Object parameter) {
-    return perform((T) parameter);
+  final void onPerform(Object parameter) {
+    perform((T) parameter);
   }
 
   /**
@@ -75,5 +75,11 @@ public abstract class BehaviorAction<T> implements Serializable {
    * @param parameter the parameter to check against
    * @return true if the constraint is met, false otherwise
    */
-  public abstract boolean perform(T parameter);
+  protected abstract void perform(T parameter);
+
+  /**
+   * This method is called to get the component references.
+   * NOTE: This method should be override if needed.
+   */
+  protected void awake() {}
 }

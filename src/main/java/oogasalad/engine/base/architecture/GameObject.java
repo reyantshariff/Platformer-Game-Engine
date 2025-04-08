@@ -28,6 +28,9 @@ public class GameObject {
     this.allComponents = new HashMap<>();
     this.componentAwakeInitializer = new ArrayList<>();
     this.componentStartInitializer = new ArrayList<>();
+
+    // Add the Transform component by default
+    addComponent(Transform.class);
   }
 
   final void wakeUp() {
@@ -98,11 +101,26 @@ public class GameObject {
   /**
    * Remove the component based on its class.
    *
+   * @return - a Map of some extended gameComponent to the GameComponent, representing all components
+   */
+  public final Map<Class<? extends GameComponent>, GameComponent> getAllComponents() {
+    return allComponents;
+  }
+
+  /**
+   * Remove the component based on its class.
+   * 
    * @param componentClass the component class specified
    */
   public final <T extends GameComponent> void removeComponent(Class<T> componentClass) {
     if (!allComponents.containsKey(componentClass)) {
       throw new IllegalArgumentException("Component does not exist");
+    }
+
+    // Check if the component is Transform
+    if (componentClass.equals(Transform.class)) {
+      LOGGER.error("Cannot remove Transform component");
+      throw new IllegalArgumentException("Cannot remove Transform component");
     }
 
     GameComponent componentToRemove = allComponents.get(componentClass);
@@ -126,7 +144,7 @@ public class GameObject {
 
   /**
    * Returns the name of the object.
-   *
+   * 
    * @return the name of the object
    */
   public final String getName() {
@@ -135,7 +153,7 @@ public class GameObject {
 
   /**
    * Returns the ID of the object.
-   *
+   * 
    * @return the ID of the object
    */
   public final UUID getId() {
@@ -144,7 +162,7 @@ public class GameObject {
 
   /**
    * Returns the parent scene of the object.
-   *
+   * 
    * @return the parent scene of the object
    */
   public final GameScene getScene() {
@@ -157,7 +175,7 @@ public class GameObject {
 
   /**
    * Sets the name of the object.
-   *
+   * 
    * @param name the name of the object
    */
   public final void setName(String name) {

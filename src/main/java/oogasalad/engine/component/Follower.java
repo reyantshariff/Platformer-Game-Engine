@@ -1,6 +1,8 @@
 package oogasalad.engine.component;
 
+import oogasalad.engine.base.architecture.GameComponent;
 import oogasalad.engine.base.architecture.GameObject;
+import oogasalad.engine.base.enumerate.ComponentTag;
 import oogasalad.engine.base.serialization.SerializableField;
 
 /**
@@ -8,7 +10,11 @@ import oogasalad.engine.base.serialization.SerializableField;
  * specified offset.
  */
 
-public class FollowBehavior extends Behavior {
+public class Follower extends GameComponent {
+  @Override
+  public ComponentTag componentTag() {
+    return ComponentTag.TRANSFORM;
+  }
 
   @SerializableField
   private GameObject followObject;
@@ -18,7 +24,7 @@ public class FollowBehavior extends Behavior {
   private double offsetY;
   private Transform myTransform;
 
-  public FollowBehavior() {
+  public Follower() {
     super();
     this.followObject = null;
     this.offsetX = 0;

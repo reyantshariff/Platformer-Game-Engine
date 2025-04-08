@@ -53,6 +53,18 @@ public class Behavior implements Serializable {
   }
 
   /**
+   * Awake the behavior. This method is used to awake the behavior and all the constraints and actions.
+   */
+  public void awake() {
+    for (BehaviorConstraint<?> constraint : constraints) {
+      constraint.awake();
+    }
+    for (BehaviorAction<?> action : actions) {
+      action.awake();
+    }
+  }
+
+  /**
    * Add a constraint to the behavior. This method is used to add a constraint to the behavior.
    * @param constraintClass the constraint class specified
    * @param <T> the type of the constraint

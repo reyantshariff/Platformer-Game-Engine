@@ -127,7 +127,7 @@ public class GameScene {
 
   /**
    * Register the component from the gameObject onto the scene
-   *
+   * 
    * @param gameComponent the component to be registered
    */
   final void registerComponent(GameComponent gameComponent) {
@@ -136,7 +136,7 @@ public class GameScene {
 
   /**
    * Unregister the component from the scene.
-   *
+   * 
    * @param gameComponent the gameComponent to be unregistered
    */
   final void unregisterComponent(GameComponent gameComponent) {
@@ -145,7 +145,7 @@ public class GameScene {
 
   /**
    * Register the existing gameObject to the scene.
-   *
+   * 
    * @param gameObject the gameObject to be registered.
    */
   public final void registerObject(GameObject gameObject) {
@@ -165,7 +165,7 @@ public class GameScene {
 
   /**
    * unregister the gameObject specified.
-   *
+   * 
    * @param gameObject the gameObject to be destroyed
    */
   public final void unregisterObject(GameObject gameObject) {
