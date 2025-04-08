@@ -7,7 +7,7 @@ import oogasalad.engine.base.behavior.Behavior;
 import oogasalad.engine.constraint.IsGroundedConstraint;
 import oogasalad.engine.action.JumpAction;
 import oogasalad.engine.base.enumerate.KeyCode;
-import oogasalad.engine.base.event.CrouchAction;
+import oogasalad.engine.action.CrouchAction;
 import oogasalad.engine.component.BehaviorController;
 import oogasalad.engine.component.Collider;
 import oogasalad.engine.component.InputHandler;
@@ -89,13 +89,6 @@ public class DinosaurGameScene extends GameScene {
 
     InputHandler input = player.addComponent(InputHandler.class);
 
-
-    input.registerAction(KeyCode.UP, new GameAction(player) {
-      @Override
-      public void dispatch() {
-        jumpBehavior.execute(); // This runs constraint checks + actions
-      }
-    });
 
 
 

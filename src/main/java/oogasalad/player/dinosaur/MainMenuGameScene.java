@@ -2,7 +2,7 @@ package oogasalad.player.dinosaur;
 
 import oogasalad.engine.base.architecture.GameScene;
 import oogasalad.engine.base.enumerate.KeyCode;
-import oogasalad.engine.base.event.EnterPlayerAction;
+import oogasalad.engine.action.EnterPlayerAction;
 import oogasalad.engine.component.InputHandler;
 import oogasalad.engine.component.Text;
 import oogasalad.engine.prefab.Player;
