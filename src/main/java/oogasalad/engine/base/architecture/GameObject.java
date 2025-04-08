@@ -4,6 +4,7 @@ import java.util.*;
 import oogasalad.engine.component.Transform;
 
 import static oogasalad.config.GameConfig.LOGGER;
+import oogasalad.engine.component.Transform;
 
 /**
  * The GameObject class is the base class for all game objects. It is used to define the behavior of
@@ -129,6 +130,7 @@ public class GameObject {
 
   /**
    * Change the scene to the specified scene name.
+   *
    * @param sceneName the name of the scene to be changed to
    */
   final void changeScene(String sceneName) {

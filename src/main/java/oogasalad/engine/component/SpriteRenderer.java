@@ -25,7 +25,7 @@ public class SpriteRenderer extends GameComponent {
   private int currentSpriteIndex;
 
   @Override
-  protected void start() {
+  public void start() {
     currentSpriteIndex = 0;
   }
 
