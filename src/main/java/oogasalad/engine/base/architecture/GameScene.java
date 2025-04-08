@@ -87,17 +87,10 @@ public class GameScene {
   }
 
   /**
-   * Getter to return an unmodifiable collection of all the GameObjects
+   * Getter to return a Collection of all the GameObjects
    */
   public final Collection<GameObject> getAllObjects() {
     return Collections.unmodifiableCollection(allObjects.values());
-  }
-
-  /**
-   * Getter to return an unmodifiable map of all the GameComponents
-   */
-  public final Map<ComponentTag, List<GameComponent>> getAllComponents() {
-    return Collections.unmodifiableMap(allComponents);
   }
 
   /**

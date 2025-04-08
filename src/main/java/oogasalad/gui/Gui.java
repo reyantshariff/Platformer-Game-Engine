@@ -1,5 +1,9 @@
 package oogasalad.gui;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -41,13 +45,16 @@ public class Gui {
   private Timeline gameLoop;
   private Scene scene;
 
+  private final GameSceneParser gameSceneParser = new GameSceneParser();
+  private final ObjectMapper objectMapper = new ObjectMapper();
+
   /**
    * Constructs a new GUI instance for the given game and stage.
    *
    * @param stage The primary stage for the application.
    * @param game  The game instance to be displayed.
    */
-  public Gui(Stage stage, Game game) {
+  public Gui(Stage stage, Game game) throws ParsingException, IOException {
     this.game = game;
     ResourceBundles.loadBundle("oogasalad.gui.general");
     generateGui(stage);
@@ -58,7 +65,7 @@ public class Gui {
    *
    * @param stage The primary stage for the application.
    */
-  private void generateGui(Stage stage) {
+  private void generateGui(Stage stage) throws IOException, ParsingException {
     logger.debug("Generating GUI...");
 
     Group root = new Group();
@@ -75,7 +82,12 @@ public class Gui {
         getClass().getResource(ResourceBundles.getString("oogasalad.gui.general", "stylesheet"))
             .toExternalForm());
 
-    game.addScene(MainMenuGameScene.class, "Mainmenu");
+    JsonNode mainMenuSceneNode = objectMapper.readTree(new File("doc/plan/data/MainMenuScene.json"));
+    GameScene mainMenuScene = gameSceneParser.parse(mainMenuSceneNode);
+    game.getLoadedScenes().put(mainMenuScene.getId(), mainMenuScene);
+
+
+    //game.addScene(MainMenuGameScene.class, "Mainmenu");
     // game.addScene(DinosaurGameScene.class, "Dinosaur");
     startGameLoop();
 

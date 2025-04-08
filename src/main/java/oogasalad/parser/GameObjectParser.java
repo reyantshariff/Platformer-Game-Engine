@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import oogasalad.engine.base.architecture.GameComponent;
 import oogasalad.engine.base.architecture.GameObject;
-import oogasalad.engine.component.Behavior;
+import oogasalad.engine.base.behavior.Behavior;
 
 /**
  * This class parses and serializes gameObjects to and from a JSON
@@ -106,8 +106,7 @@ public class GameObjectParser implements Parser<GameObject> {
   private void handleBehaviorParsing(GameObject gameObject, JsonNode behaviorNode)
       throws ParsingException {
     Behavior behavior = behaviorParser.parse(behaviorNode);
-    gameObject.addComponent(
-        behavior.getClass()); // TODO: Change to addComponent(Component) instead of component class
+    gameObject.addComponent(behavior.getClass()); // TODO: Change to addComponent(Component) instead of component class
   }
 
   /**

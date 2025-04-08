@@ -1,0 +1,59 @@
+{
+  "Name": "MainMenuScene",
+  "GameObjects": [
+    {
+      "Name": "MainMenuBackground",
+      "Tag": "Background",
+      "Components": [
+        {
+          "Name": "Transform",
+          "Configurations": {
+            "positionX": 0,
+            "positionY": 0,
+            "rotationX": 0,
+            "rotationY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "imagePath": "MainMenuBackground.png"
+          }
+        }
+      ]
+    },
+    {
+      "Name": "PlayButton",
+      "Tag": "Button",
+      "Components": [
+        {
+          "Name": "Transform",
+          "Configurations": {
+            "positionX": 500,
+            "positionY": 300,
+            "rotationX": 0,
+            "rotationY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "imagePath": "PlayButtonSprite.png"
+          }
+        }
+      ]
+    },
+    {
+      "Name": "SettingsButton",
+      "Tag": "Button",
+      "Components": [
+        {
+          "Name": "Transform",
+          "Configurations": {
+            "positionX": 500,
+            "positionY": 450,
+            "rotationX": 0,
+            "rotationY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "imagePath": "SettingsButtonSprite.png"
+          }
+        }
+      ]
+    }
+  ]
+}

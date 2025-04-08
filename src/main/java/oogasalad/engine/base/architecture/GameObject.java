@@ -1,8 +1,6 @@
 package oogasalad.engine.base.architecture;
 
 import java.util.*;
-import oogasalad.engine.component.Transform;
-
 import static oogasalad.config.GameConfig.LOGGER;
 
 /**
@@ -47,7 +45,7 @@ public class GameObject {
 
   /**
    * Add the component to the gameObject based on its class.
-   * 
+   *
    * @apiNote Every component class should only have one instance per object.
    * @param componentClass the component class specified
    * @return the added component instance
@@ -80,7 +78,7 @@ public class GameObject {
 
   /**
    * Get the component based on the input component class type.
-   * 
+   *
    * @param componentClass the component class specified
    * @return the component instance
    */
@@ -93,6 +91,15 @@ public class GameObject {
 
   /**
    * Returns all the components
+   *
+   * @return - a Map of some extended gameComponent to the GameComponent, representing all components
+   */
+  public final Map<Class<? extends GameComponent>, GameComponent> getAllComponents() {
+    return allComponents;
+  }
+
+  /**
+   * Remove the component based on its class.
    *
    * @return - a Map of some extended gameComponent to the GameComponent, representing all components
    */
@@ -191,6 +198,15 @@ public class GameObject {
    */
   public String getTag() {
     return tag;
+  }
+
+  /**
+   * Setter for the parent scene
+   *
+   * @param parentScene - the scene in which the objects will be added to
+   */
+  public void setParentScene(GameScene parentScene) {
+    this.parentScene = parentScene;
   }
 
 }
