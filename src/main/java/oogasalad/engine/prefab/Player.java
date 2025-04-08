@@ -1,4 +1,4 @@
-package oogasalad.engine.prefabs;
+package oogasalad.engine.prefab;
 
 import oogasalad.engine.base.architecture.GameObject;
 

@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import oogasalad.engine.base.architecture.GameObject;
-import oogasalad.engine.prefabs.dinosaur.Bird;
+import oogasalad.engine.prefab.dinosaur.Bird;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

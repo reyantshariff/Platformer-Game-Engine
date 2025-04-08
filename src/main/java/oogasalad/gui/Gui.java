@@ -12,7 +12,6 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import oogasalad.ResourceBundles;
@@ -21,8 +20,8 @@ import oogasalad.engine.base.architecture.GameComponent;
 import oogasalad.engine.base.architecture.GameObject;
 import oogasalad.engine.base.architecture.GameScene;
 import oogasalad.engine.base.enumerate.KeyCode;
-import oogasalad.engine.component.ImageComponent;
-import oogasalad.engine.component.TextComponent;
+import oogasalad.engine.component.SpriteRenderer;
+import oogasalad.engine.component.Text;
 import oogasalad.engine.component.Transform;
 import oogasalad.player.dinosaur.MainMenuGameScene;
 import org.apache.logging.log4j.LogManager;
@@ -160,8 +159,8 @@ public class Gui {
    * @param component
    * @param gc
    */
-  private void renderTextComponent(TextComponent component, GraphicsContext gc) {
-    Text text = new Text(component.getText());
+  private void renderTextComponent(Text component, GraphicsContext gc) {
+    javafx.scene.text.Text text = new javafx.scene.text.Text(component.getText());
     applyStyleSheet(text, component.getStyleClass());
     WritableImage snapshot = text.snapshot(null, null);
     gc.drawImage(snapshot, component.getX(), component.getY());
@@ -173,7 +172,7 @@ public class Gui {
    * @param component
    * @param gc
    */
-  private void renderImageComponent(ImageComponent component, GraphicsContext gc) {
+  private void renderImageComponent(SpriteRenderer component, GraphicsContext gc) {
     Image image = new Image(component.getImagePath());
     gc.drawImage(image, component.getX(), component.getY());
   }

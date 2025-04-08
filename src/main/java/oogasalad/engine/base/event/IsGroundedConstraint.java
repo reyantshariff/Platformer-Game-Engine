@@ -2,8 +2,8 @@ package oogasalad.engine.base.event;
 
 import java.util.Collection;
 import oogasalad.engine.base.architecture.GameObject;
-import oogasalad.engine.component.ColliderComponent;
-import oogasalad.engine.prefabs.dinosaur.Base;
+import oogasalad.engine.component.Collider;
+import oogasalad.engine.prefab.dinosaur.Base;
 
 public class IsGroundedConstraint extends GameActionConstraint {
 
@@ -14,7 +14,7 @@ public class IsGroundedConstraint extends GameActionConstraint {
   @Override
   public boolean check() {
     GameObject player = getParentObject();
-    ColliderComponent playerCollider = player.getComponent(ColliderComponent.class);
+    Collider playerCollider = player.getComponent(Collider.class);
     if (playerCollider == null) {
       return false;
     }
@@ -24,7 +24,7 @@ public class IsGroundedConstraint extends GameActionConstraint {
       if (obj == player) {
         continue;
       }
-      if (obj.getComponent(ColliderComponent.class) != null && obj.getClass() == Base.class &&
+      if (obj.getComponent(Collider.class) != null && obj.getClass() == Base.class &&
           playerCollider.collidesWith(obj)) {
         return true;
       }

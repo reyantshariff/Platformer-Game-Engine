@@ -15,51 +15,21 @@ import oogasalad.engine.base.serialization.SerializableField;
  */
 public class Transform extends GameComponent {
 
-  /**
-   * Returns the component tag identifying this as a transform-related component.
-   *
-   * @return {@link ComponentTag#TRANSFORM}
-   */
   @Override
   public ComponentTag componentTag() {
     return ComponentTag.TRANSFORM;
   }
 
-  /**
-   * The x-coordinate of the GameObject.
-   */
   @SerializableField
   private double x;
-
-  /**
-   * The y-coordinate of the GameObject.
-   */
   @SerializableField
   private double y;
-
-  /**
-   * The rotation angle (in degrees or radians, based on engine convention).
-   */
   @SerializableField
   private double rotation;
-
-  /**
-   * The scale factor along the x-axis.
-   */
   @SerializableField
   private double scaleX;
-
-  /**
-   * The scale factor along the y-axis.
-   */
   @SerializableField
   private double scaleY;
-
-  /**
-   * The file path to the image used to visually represent the GameObject.
-   */
-  @SerializableField
-  private String imagePath;
 
   /**
    * Returns the x-coordinate of the GameObject.
@@ -149,23 +119,5 @@ public class Transform extends GameComponent {
    */
   public void setScaleY(double scaleY) {
     this.scaleY = scaleY;
-  }
-
-  /**
-   * Returns the image path representing the GameObject's appearance.
-   *
-   * @return the image path string
-   */
-  public String getImagePath() {
-    return imagePath;
-  }
-
-  /**
-   * Sets the image path to visually represent the GameObject.
-   *
-   * @param imagePath the new image file path
-   */
-  public void setImagePath(String imagePath) {
-    this.imagePath = imagePath;
   }
 }

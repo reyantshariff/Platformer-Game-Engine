@@ -1,17 +1,9 @@
 package oogasalad.engine.base.architecture;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.UUID;
+import static oogasalad.config.GameConfig.LOGGER;
+
+import java.util.*;
 import oogasalad.engine.base.enumerate.ComponentTag;
-import oogasalad.engine.base.enumerate.KeyCode;
-import oogasalad.engine.base.event.GameAction;
-import oogasalad.engine.base.event.InputMapping;
 
 /**
  * The GameScene class is the base class for all game scenes. It manages the game objects and
@@ -20,34 +12,35 @@ import oogasalad.engine.base.event.InputMapping;
  *
  * @author Hsuan-Kai Liao, Christian Bepler
  */
-public abstract class GameScene {
-
+public class GameScene {
   private final UUID id;
-  private final InputMapping inputMapping;
   private final Map<UUID, GameObject> allObjects;
   private final Map<ComponentTag, List<GameComponent>> allComponents;
-  private final Queue<KeyCode> inputKeys;
   private final Queue<Runnable> subscribedEvents;
 
   private String name;
+  private Game game;
 
-  /**
-   * Constructor for basic game scene, assigning a unique ID and initializing all lists for objects,
-   * components, input keys, and subscribed events
-   *
-   * @param name - Name of game scene
-   */
   public GameScene(String name) {
     this.id = UUID.randomUUID();
     this.name = name;
-    this.inputMapping = new InputMapping();
     this.allObjects = new HashMap<>();
     this.allComponents = new EnumMap<>(ComponentTag.class);
     for (ComponentTag tag : ComponentTag.values()) {
       allComponents.put(tag, new ArrayList<>());
     }
-    this.inputKeys = new LinkedList<>();
     this.subscribedEvents = new LinkedList<>();
+  }
+
+  final void setGame(Game game) {
+    this.game = game;
+  }
+
+  /**
+   * Get the game that this scene belongs to.
+   */
+  public Game getGame() {
+    return game;
   }
 
   /**
@@ -72,15 +65,43 @@ public abstract class GameScene {
   }
 
   /**
-   * Get the input mapping of the scene
+   * Get the Object based on the UUID
+   * @param id the UUID of the object
    */
-  public final InputMapping getInputMapping() {
-    return inputMapping;
+  public final GameObject getObject(UUID id) {
+    return allObjects.get(id);
+  }
+
+  /**
+   * Get the Object based on the name
+   * @param name the name of the object
+   */
+  public final GameObject getObject(String name) {
+    for (GameObject object : allObjects.values()) {
+      if (object.getName().equals(name)) {
+        return object;
+      }
+    }
+    LOGGER.error("Could not find object with name {}", name);
+    throw new IllegalArgumentException("No such object with name " + name);
+  }
+
+  /**
+   * Getter to return an unmodifiable collection of all the GameObjects
+   */
+  public final Collection<GameObject> getAllObjects() {
+    return Collections.unmodifiableCollection(allObjects.values());
+  }
+
+  /**
+   * Getter to return an unmodifiable map of all the GameComponents
+   */
+  public final Map<ComponentTag, List<GameComponent>> getAllComponents() {
+    return Collections.unmodifiableMap(allComponents);
   }
 
   /**
    * This will be called every frame.
-   *
    * @param deltaTime the elapsed time between two frames
    */
   final void step(double deltaTime) {
@@ -90,16 +111,9 @@ public abstract class GameScene {
       subscribedEvents.poll().run();
     }
 
-    // 2. Handle input events
-    while (!inputKeys.isEmpty()) {
-      inputMapping.trigger(inputKeys.poll());
-    }
-
     // 3. Update the components based on the order
     for (ComponentTag order : ComponentTag.values()) {
-      if (order == ComponentTag.NONE) {
-        continue;
-      }
+      if (order == ComponentTag.NONE) continue;
       for (GameComponent component : allComponents.get(order)) {
         component.update(deltaTime);
       }
@@ -109,24 +123,9 @@ public abstract class GameScene {
     // TODO: Handle Change Scene Action Here
   }
 
-  public List<GameObject> getAllObjects() {
-    return new ArrayList<>(allObjects.values());
-  }
-
   /**
-   * Subscribe the input key for the next frame to execute. Inputs will be handled once and then
-   * removed. So make sure to add key events every frame until released.
-   *
-   * @param key the key to be subscribed
-   */
-  public final void subscribeInputKey(KeyCode key) {
-    inputKeys.add(key);
-  }
-
-  /**
-   * Subscribe the runnable event to the next frame to execute. Events will only be called once and
-   * then removed from the subscribed list.
-   *
+   * Subscribe the runnable event to the next frame to execute.
+   * Events will only be called once and then removed from the subscribed list.
    * @param event the event to be subscribed
    */
   public final void subscribeEvent(Runnable event) {
@@ -135,50 +134,35 @@ public abstract class GameScene {
 
   /**
    * Register the component from the gameObject onto the scene
-   *
+   * 
    * @param gameComponent the component to be registered
    */
-  public final void registerComponent(GameComponent gameComponent) {
+  final void registerComponent(GameComponent gameComponent) {
     allComponents.get(gameComponent.componentTag()).add(gameComponent);
   }
 
   /**
    * Unregister the component from the scene.
-   *
+   * 
    * @param gameComponent the gameComponent to be unregistered
    */
-  public final void unregisterComponent(GameComponent gameComponent) {
+  final void unregisterComponent(GameComponent gameComponent) {
     allComponents.get(gameComponent.componentTag()).remove(gameComponent);
   }
 
   /**
-   * Instantiate the gameObject based on the specified gameObject subclass.
-   *
-   * @param gameObjectClass the gameObject class
-   * @return the instantiated gameObject
-   */
-  public final <T extends GameObject> T instantiateObject(Class<T> gameObjectClass) {
-    try {
-      String className = gameObjectClass.getSimpleName();
-      T object = gameObjectClass.getDeclaredConstructor(String.class).newInstance((Object) null);
-      object.wakeUp();
-      object.setScene(this);
-      allObjects.put(object.getId(), object);
-      return object;
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to add component", e);
-    }
-
-  }
-
-  /**
    * Register the existing gameObject to the scene.
-   *
+   * 
    * @param gameObject the gameObject to be registered.
    */
   public final void registerObject(GameObject gameObject) {
     if (allObjects.containsKey(gameObject.getId())) {
       throw new IllegalArgumentException("gameObject already added!");
+    }
+
+    // Register components
+    for (GameComponent component : gameObject.getAllComponents().values()) {
+      registerComponent(component);
     }
 
     gameObject.wakeUp();
@@ -188,56 +172,38 @@ public abstract class GameScene {
 
   /**
    * unregister the gameObject specified.
-   *
+   * 
    * @param gameObject the gameObject to be destroyed
    */
   public final void unregisterObject(GameObject gameObject) {
-    unregisterObjectComponents(gameObject);
-    unregisterInputBindings(gameObject);
+    // Unregister components
+    for (ComponentTag order : ComponentTag.values()) {
+      for (GameComponent component : allComponents.get(order)) {
+        if (component.getParent().equals(gameObject)) {
+          unregisterComponent(component);
+        }
+      }
+    }
+
     gameObject.setScene(null);
     allObjects.remove(gameObject.getId());
   }
 
-  private void unregisterObjectComponents(GameObject gameObject) {
-    for (ComponentTag order : ComponentTag.values()) {
-      List<GameComponent> components = allComponents.get(order);
-      components.removeIf(component -> {
-        if (component.getParent().equals(gameObject)) {
-          unregisterComponent(component);
-          return true; // Remove it from the list if needed
-        }
-        return false;
-      });
-    }
+  /**
+   * Change the scene to the specified scene name.
+   * @param sceneName the name of the scene to be changed to
+   */
+  final void changeScene(String sceneName) {
+    game.changeScene(sceneName);
   }
-
-  private void unregisterInputBindings(GameObject gameObject) {
-    Map<KeyCode, List<GameAction>> keyActionMap = inputMapping.getMapping();
-    List<GameAction> actionsToBeRemoved = new ArrayList<>();
-    for (List<GameAction> actions : keyActionMap.values()) {
-      for (GameAction action : actions) {
-        if (action.getParent().equals(gameObject)) {
-          actionsToBeRemoved.add(action);
-        }
-      }
-    }
-    actionsToBeRemoved.forEach(inputMapping::removeMapping);
-  }
-
 
   /**
    * Event that will be called when the gameScene is set to active.
    */
-  public void onActivated() {
-  }
-
-  ;
+  public void onActivated() {};
 
   /**
    * Event that will be called when the gameScene is set to inactive.
    */
-  public void onDeactivated() {
-  }
-
-  ;
+  public void onDeactivated() {};
 }

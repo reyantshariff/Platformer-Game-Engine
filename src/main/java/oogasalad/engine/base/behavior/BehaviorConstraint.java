@@ -6,11 +6,11 @@ import oogasalad.engine.base.serialization.Serializable;
 import oogasalad.engine.base.serialization.SerializableField;
 
 /**
- * The GameConstraint class is the base class for all game action constraints. Constraints are
- * conditions that must be met in order for an action to be triggered. For example, a player will
- * only jump when the user presses the jump button and the player is on the ground.
+ * The BehaviorConstraint class is the base class for all behavior action constraints. Constraints are
+ * conditions that must be met in order for an BehaviorAction to be triggered.
  *
- * @author Hsuan-Kai Liao
+ * @param <T> the type of the parameter that the constraint will check against
+ * @author Hsuan-Kai Liao 
  */
 public abstract class BehaviorConstraint<T> implements Serializable {
   @SerializableField
@@ -75,5 +75,11 @@ public abstract class BehaviorConstraint<T> implements Serializable {
    * @param parameter the parameter to check against
    * @return true if the constraint is met, false otherwise
    */
-  public abstract boolean check(T parameter);
+  protected abstract boolean check(T parameter);
+
+  /**
+   * This method is called to get the component references.
+   * NOTE: This method should be override if needed.
+   */
+  protected void awake() {}
 }

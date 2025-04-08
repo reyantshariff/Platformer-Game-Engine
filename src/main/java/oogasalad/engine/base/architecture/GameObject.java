@@ -1,12 +1,9 @@
 package oogasalad.engine.base.architecture;
 
-import static oogasalad.config.GameConfig.LOGGER;
+import java.util.*;
+import oogasalad.engine.component.Transform;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import static oogasalad.config.GameConfig.LOGGER;
 
 /**
  * The GameObject class is the base class for all game objects. It is used to define the behavior of
@@ -17,7 +14,6 @@ import java.util.UUID;
  */
 
 public class GameObject {
-
   private final UUID id;
   private final Map<Class<? extends GameComponent>, GameComponent> allComponents;
   private final List<Runnable> componentAwakeInitializer;
@@ -27,12 +23,6 @@ public class GameObject {
   private String name;
   private String tag;
 
-  /**
-   * Constructor for base game object
-   *
-   * @param name - Name of game object
-   * @param tag  - Tag for game object for identification
-   */
   public GameObject(String name, String tag) {
     this.id = UUID.randomUUID();
     this.name = name == null ? "" : this.getClass().getSimpleName() + "_" + this.id;
@@ -40,6 +30,9 @@ public class GameObject {
     this.allComponents = new HashMap<>();
     this.componentAwakeInitializer = new ArrayList<>();
     this.componentStartInitializer = new ArrayList<>();
+
+    // Add the Transform component by default
+    addComponent(Transform.class);
   }
 
   final void wakeUp() {
@@ -54,10 +47,10 @@ public class GameObject {
 
   /**
    * Add the component to the gameObject based on its class.
-   *
+   * 
+   * @apiNote Every component class should only have one instance per object.
    * @param componentClass the component class specified
    * @return the added component instance
-   * @apiNote Every component class should only have one instance per object.
    */
   public final <T extends GameComponent> T addComponent(Class<T> componentClass) {
     if (allComponents.containsKey(componentClass)) {
@@ -67,23 +60,16 @@ public class GameObject {
       T component = componentClass.getDeclaredConstructor().newInstance();
       component.setParent(this);
 
-      // Awake method subscription
       if (parentScene == null) {
         componentAwakeInitializer.add(component::awake);
-      } else {
-        component.awake();
-      }
-
-      // Start method subscription
-      if (parentScene == null) {
         componentStartInitializer.add(component::start);
       } else {
+        component.awake();
         parentScene.subscribeEvent(component::start);
+        parentScene.registerComponent(component);
       }
 
       allComponents.put(componentClass, component);
-      parentScene.registerComponent(
-          component); // May need a null checker. Run GameObjectParserTest to see more info.
       return component;
     } catch (Exception e) {
       LOGGER.error("Could not add component {}", componentClass.getName());
@@ -93,8 +79,8 @@ public class GameObject {
 
 
   /**
-   * Get the component based on
-   *
+   * Get the component based on the input component class type.
+   * 
    * @param componentClass the component class specified
    * @return the component instance
    */
@@ -106,8 +92,17 @@ public class GameObject {
   }
 
   /**
-   * Remove the component based on its class.
+   * Returns all the components
    *
+   * @return - a Map of some extended gameComponent to the GameComponent, representing all components
+   */
+  public final Map<Class<? extends GameComponent>, GameComponent> getAllComponents() {
+    return allComponents;
+  }
+
+  /**
+   * Remove the component based on its class.
+   * 
    * @param componentClass the component class specified
    */
   public final <T extends GameComponent> void removeComponent(Class<T> componentClass) {
@@ -115,15 +110,34 @@ public class GameObject {
       throw new IllegalArgumentException("Component does not exist");
     }
 
+    // Check if the component is Transform
+    if (componentClass.equals(Transform.class)) {
+      LOGGER.error("Cannot remove Transform component");
+      throw new IllegalArgumentException("Cannot remove Transform component");
+    }
+
     GameComponent componentToRemove = allComponents.get(componentClass);
     componentToRemove.onRemove();
-    parentScene.unregisterComponent(componentToRemove);
+
+    if (parentScene != null) {
+      parentScene.unregisterComponent(componentToRemove);
+    }
+
+    componentToRemove.setParent(null);
     allComponents.remove(componentClass);
   }
 
   /**
+   * Change the scene to the specified scene name.
+   * @param sceneName the name of the scene to be changed to
+   */
+  final void changeScene(String sceneName) {
+    parentScene.changeScene(sceneName);
+  }
+
+  /**
    * Returns the name of the object.
-   *
+   * 
    * @return the name of the object
    */
   public final String getName() {
@@ -132,7 +146,7 @@ public class GameObject {
 
   /**
    * Returns the ID of the object.
-   *
+   * 
    * @return the ID of the object
    */
   public final UUID getId() {
@@ -141,7 +155,7 @@ public class GameObject {
 
   /**
    * Returns the parent scene of the object.
-   *
+   * 
    * @return the parent scene of the object
    */
   public final GameScene getScene() {
@@ -154,21 +168,11 @@ public class GameObject {
 
   /**
    * Sets the name of the object.
-   *
+   * 
    * @param name the name of the object
    */
   public final void setName(String name) {
     this.name = name;
-  }
-
-  /**
-   * Returns all the components
-   *
-   * @return - a Map of some extended gameComponent to the GameComponent, representing all
-   * components
-   */
-  public final Map<Class<? extends GameComponent>, GameComponent> getAllComponents() {
-    return allComponents;
   }
 
   /**

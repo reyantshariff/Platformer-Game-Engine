@@ -9,7 +9,7 @@ import oogasalad.engine.base.serialization.SerializableField;
  *
  * @author Jack F. Regan
  */
-public class TextComponent extends GameComponent {
+public class Text extends GameComponent {
 
   @Override
   public ComponentTag componentTag() {
