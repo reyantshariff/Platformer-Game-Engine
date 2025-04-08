@@ -14,9 +14,7 @@ import oogasalad.ResourceBundles;
 import oogasalad.engine.base.architecture.GameComponent;
 import oogasalad.engine.base.architecture.GameObject;
 import oogasalad.engine.base.architecture.GameScene;
-import oogasalad.engine.component.ImageComponent;
-import oogasalad.engine.component.SpriteSwitcherComponent;
-import oogasalad.engine.component.TextComponent;
+import oogasalad.engine.component.SpriteRenderer;
 import oogasalad.engine.component.Transform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,9 +63,12 @@ public class GameObjectRenderer {
 
   /**
    * renders a javaFX Text object
+   *
+   * @param component
+   * @param gc
    */
-  private void renderTextComponent(TextComponent component, GraphicsContext gc) {
-    Text text = new Text(component.getText());
+  private void renderTextComponent(Text component, GraphicsContext gc) {
+    javafx.scene.text.Text text = new javafx.scene.text.Text(component.getText());
     applyStyleSheet(text, component.getStyleClass());
     WritableImage snapshot = text.snapshot(null, null);
     gc.drawImage(snapshot, component.getX(), component.getY());
@@ -75,28 +76,22 @@ public class GameObjectRenderer {
 
   /**
    * renders a javaFX Image object
+   *
+   * @param component
+   * @param gc
    */
-  private void renderImageComponent(ImageComponent component, GraphicsContext gc) {
+  private void renderImageComponent(SpriteRenderer component, GraphicsContext gc) {
     Image image = new Image(component.getImagePath());
-    System.out.println(component.getImagePath());
-    gc.drawImage(image, component.getX(), component.getY());
-  }
-
-  /**
-   * renders a javaFX Image object based on the spriteswitcher
-   */
-  private void renderSpriteSwitcherComponent(SpriteSwitcherComponent component, GraphicsContext gc) {
-    Image image = new Image(component.getImagePath(component.getState()));
-    try {
-      Transform transform = component.getParent().getComponent(Transform.class); // for positional data
-      gc.drawImage(image, transform.getX(), transform.getY());
-    } catch (Exception e) {
-      throw new IllegalStateException("Object does not have a Transform component. " + e.getMessage());
-    }
+    Transform transform = component.getParent().getComponent(Transform.class);
+    gc.drawImage(image, transform.getX() + component.getOffsetX(),
+        transform.getY() + component.getOffsetY());
   }
 
   /**
    * renders a javafx Rectangle object
+   *
+   * @param component
+   * @param gc
    */
   private void renderTransform(Transform component, GraphicsContext gc) {
     gc.fillRect(component.getX(), component.getY(), component.getScaleX(), component.getScaleY());
@@ -107,5 +102,19 @@ public class GameObjectRenderer {
     Group tempRoot = new Group(node);
     Scene tempScene = new Scene(tempRoot);
     tempScene.getStylesheets().addAll(myScene.getStylesheets());
+  }
+
+  /**
+   * Maps a JavaFX KeyCode to an engine KeyCode.
+   *
+   * @param code The JavaFX KeyCode.
+   * @return The engine KeyCode, or null if the mapping fails.
+   */
+  private KeyCode mapToEngineKeyCode(javafx.scene.input.KeyCode code) {
+    try {
+      return KeyCode.valueOf(code.name());
+    } catch (IllegalArgumentException e) {
+      return null;
+    }
   }
 }
