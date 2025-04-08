@@ -2,6 +2,7 @@ package oogasalad.engine.base.architecture;
 
 import java.util.*;
 import static oogasalad.config.GameConfig.LOGGER;
+import oogasalad.engine.component.Transform;
 
 /**
  * The GameObject class is the base class for all game objects. It is used to define the behavior of
@@ -92,16 +93,8 @@ public class GameObject {
   /**
    * Returns all the components
    *
-   * @return - a Map of some extended gameComponent to the GameComponent, representing all components
-   */
-  public final Map<Class<? extends GameComponent>, GameComponent> getAllComponents() {
-    return allComponents;
-  }
-
-  /**
-   * Remove the component based on its class.
-   *
-   * @return - a Map of some extended gameComponent to the GameComponent, representing all components
+   * @return - a Map of some extended gameComponent to the GameComponent, representing all
+   *         components
    */
   public final Map<Class<? extends GameComponent>, GameComponent> getAllComponents() {
     return allComponents;
@@ -136,6 +129,7 @@ public class GameObject {
 
   /**
    * Change the scene to the specified scene name.
+   * 
    * @param sceneName the name of the scene to be changed to
    */
   final void changeScene(String sceneName) {
