@@ -1,5 +1,6 @@
 package oogasalad.engine.component;
 
+import static oogasalad.config.GameConfig.LOGGER;
 import java.util.ArrayList;
 import java.util.List;
 import oogasalad.engine.base.architecture.GameComponent;
@@ -48,7 +49,7 @@ public class Camera extends GameComponent {
       }
       return objectsInView;
     } catch (NullPointerException e) {
-      System.err.println("Missing GameScene or Transform Component");
+      LOGGER.error("Missing GameScene or Transform Component");
       return new ArrayList<>();
     }
   }
