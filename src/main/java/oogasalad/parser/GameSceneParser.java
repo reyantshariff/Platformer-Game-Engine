@@ -35,7 +35,7 @@ public class GameSceneParser implements Parser<GameScene>{
     validateGameSceneName(node);
 
     String name = node.get(NAME).asText();
-    String fullClassName = "oogasalad.engine.scene." + name;
+    String fullClassName = "oogasalad.scene." + name;
 
     try {
       Class<?> sceneClass = Class.forName(fullClassName);

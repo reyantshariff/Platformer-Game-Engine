@@ -13,17 +13,8 @@
             "rotationX": 0,
             "rotationY": 0,
             "scaleX": 1,
-            "scaleY": 1
-          }
-        },
-        {
-          "Name": "SpriteRenderer",
-          "Configurations": {
-            "offsetX": 0,
-            "offsetY": 0,
-            "sizeX": 1,
-            "sizeY": 1,
-            "sprite": "MainMenuBackground.png"
+            "scaleY": 1,
+            "imagePath": "MainMenuBackground.png"
           }
         }
       ]
@@ -40,25 +31,8 @@
             "rotationX": 0,
             "rotationY": 0,
             "scaleX": 1,
-            "scaleY": 1
-          }
-        },
-        {
-          "Name": "SpriteRenderer",
-          "Configurations": {
-            "offsetX": 0,
-            "offsetY": 0,
-            "sizeX": 2,
-            "sizeY": 1,
-            "sprite": "PlayButtonSprite.png"
-          }
-        }
-      ],
-      "Behaviors": [
-        {
-          "Name": "ButtonController",
-          "Configurations": {
-            "onClickScene": "Example Main Scene"
+            "scaleY": 1,
+            "imagePath": "PlayButtonSprite.png"
           }
         }
       ]
@@ -75,25 +49,8 @@
             "rotationX": 0,
             "rotationY": 0,
             "scaleX": 1,
-            "scaleY": 1
-          }
-        },
-        {
-          "Name": "SpriteRenderer",
-          "Configurations": {
-            "offsetX": 0,
-            "offsetY": 0,
-            "sizeX": 2,
-            "sizeY": 1,
-            "sprite": "SettingsButtonSprite.png"
-          }
-        }
-      ],
-      "Behaviors": [
-        {
-          "Name": "ButtonController",
-          "Configurations": {
-            "onClickScene": "SettingsScene"
+            "scaleY": 1,
+            "imagePath": "SettingsButtonSprite.png"
           }
         }
       ]

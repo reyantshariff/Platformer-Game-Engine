@@ -61,22 +61,16 @@ public class GameObject {
       T component = componentClass.getDeclaredConstructor().newInstance();
       component.setParent(this);
 
-      // Awake method subscription
       if (parentScene == null) {
         componentAwakeInitializer.add(component::awake);
-      } else {
-        component.awake();
-      }
-
-      // Start method subscription
-      if (parentScene == null) {
         componentStartInitializer.add(component::start);
       } else {
+        component.awake();
         parentScene.subscribeEvent(component::start);
+        parentScene.registerComponent(component);
       }
 
       allComponents.put(componentClass, component);
-      parentScene.registerComponent(component); // May need a null checker. Run GameObjectParserTest to see more info.
       return component;
     } catch (Exception e) {
       LOGGER.error("Could not add component {}", componentClass.getName());
@@ -180,6 +174,15 @@ public class GameObject {
    */
   public String getTag() {
     return tag;
+  }
+
+  /**
+   * Setter for the parent scene
+   *
+   * @param parentScene - the scene in which the objects will be added to
+   */
+  public void setParentScene(GameScene parentScene) {
+    this.parentScene = parentScene;
   }
 
 }
