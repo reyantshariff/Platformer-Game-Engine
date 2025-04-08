@@ -1,6 +1,8 @@
 package oogasalad.engine.base.architecture;
 
 import java.util.*;
+import oogasalad.engine.component.Transform;
+
 import static oogasalad.config.GameConfig.LOGGER;
 import oogasalad.engine.component.Transform;
 
