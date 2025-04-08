@@ -1,11 +1,11 @@
 package oogasalad.engine.component;
 
 import oogasalad.engine.base.architecture.GameComponent;
-import oogasalad.engine.base.architecture.GameObject;
 import oogasalad.engine.base.enumerate.ComponentTag;
 
 import java.util.HashMap;
 import java.util.Map;
+import oogasalad.engine.base.serialization.SerializableField;
 
 /**
  * A rendering component that allows switching the image of a GameObject
@@ -18,6 +18,7 @@ public class SpriteSwitcherComponent extends GameComponent {
   private final Map<String, String> stateToImage = new HashMap<>();
 
   /** The currently active visual state. */
+  @SerializableField
   private String currentState = null;
 
   /**
@@ -64,7 +65,21 @@ public class SpriteSwitcherComponent extends GameComponent {
    *
    * @return the active state name
    */
-  public String getCurrentState() {
+  public String getState() {
     return currentState;
+  }
+
+  /**
+   * Returns the image path of the requested state
+   *
+   * @param stateName name of state as String, used as key for stateToImage map
+   * @return image-path String
+   */
+  public String getImagePath(String stateName) {
+    String imagePath = stateToImage.get(stateName);
+    if (imagePath == null || imagePath.isEmpty()) {
+      throw new IllegalArgumentException("State " + stateName + " has not been registered for this component.");
+    }
+    return imagePath;
   }
 }

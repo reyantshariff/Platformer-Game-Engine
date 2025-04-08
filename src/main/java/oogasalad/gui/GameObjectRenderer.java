@@ -13,6 +13,7 @@ import oogasalad.engine.base.architecture.GameComponent;
 import oogasalad.engine.base.architecture.GameObject;
 import oogasalad.engine.base.architecture.GameScene;
 import oogasalad.engine.component.ImageComponent;
+import oogasalad.engine.component.SpriteSwitcherComponent;
 import oogasalad.engine.component.TextComponent;
 import oogasalad.engine.component.Transform;
 import org.apache.logging.log4j.LogManager;
@@ -48,7 +49,7 @@ public class GameObjectRenderer {
       try {
         String renderMethod = "render" + clazz.getSimpleName();
         Method method = this.getClass()
-            .getDeclaredMethod(renderMethod, component.getClass(), GraphicsContext.class);
+            .getDeclaredMethod(renderMethod, clazz, GraphicsContext.class);
         method.setAccessible(true);
         method.invoke(this, component, gc);
       } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
@@ -72,7 +73,21 @@ public class GameObjectRenderer {
    */
   private void renderImageComponent(ImageComponent component, GraphicsContext gc) {
     Image image = new Image(component.getImagePath());
+    System.out.println(component.getImagePath());
     gc.drawImage(image, component.getX(), component.getY());
+  }
+
+  /**
+   * renders a javaFX Image object based on the spriteswitcher
+   */
+  private void renderSpriteSwitcherComponent(SpriteSwitcherComponent component, GraphicsContext gc) {
+    Image image = new Image(component.getImagePath(component.getState()));
+    try {
+      Transform transform = component.getParent().getComponent(Transform.class); // for positional data
+      gc.drawImage(image, transform.getX(), transform.getY());
+    } catch (Exception e) {
+      throw new IllegalStateException("Object does not have a Transform component. " + e.getMessage());
+    }
   }
 
   /**
