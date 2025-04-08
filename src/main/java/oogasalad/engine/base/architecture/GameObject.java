@@ -1,6 +1,8 @@
 package oogasalad.engine.base.architecture;
 
 import java.util.*;
+import oogasalad.engine.component.Transform;
+
 import static oogasalad.config.GameConfig.LOGGER;
 
 /**
@@ -87,15 +89,6 @@ public class GameObject {
       throw new IllegalArgumentException("Component does not exist");
     }
     return (T) allComponents.get(componentClass);
-  }
-
-  /**
-   * Returns all the components
-   *
-   * @return - a Map of some extended gameComponent to the GameComponent, representing all components
-   */
-  public final Map<Class<? extends GameComponent>, GameComponent> getAllComponents() {
-    return allComponents;
   }
 
   /**
