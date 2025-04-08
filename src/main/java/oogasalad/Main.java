@@ -1,9 +1,11 @@
 package oogasalad;
 
+import java.io.IOException;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import oogasalad.engine.base.architecture.Game;
 import oogasalad.gui.Gui;
+import oogasalad.parser.ParsingException;
 // import oogasalad.view.DinosaurGameBuilderView;
 
 /**
@@ -29,7 +31,7 @@ public class Main extends Application {
    *              stages.
    */
   @Override
-  public void start(Stage stage) {
+  public void start(Stage stage) throws ParsingException, IOException {
     game = new Game();
 
     // Create the editor UI, passing in the ECS scene

@@ -182,4 +182,13 @@ public class GameObject {
     return tag;
   }
 
+  /**
+   * Setter for the parent scene
+   *
+   * @param parentScene - the scene in which the objects will be added to
+   */
+  public void setParentScene(GameScene parentScene) {
+    this.parentScene = parentScene;
+  }
+
 }
