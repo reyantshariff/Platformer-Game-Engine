@@ -17,6 +17,9 @@ public class Camera extends GameComponent {
 
   private Transform transform;
 
+  /**
+   * Default constructor for the Camera class.
+   */
   public Camera() {
     super();
   }
