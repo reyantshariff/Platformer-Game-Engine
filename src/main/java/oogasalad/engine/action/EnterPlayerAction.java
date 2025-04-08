@@ -6,11 +6,18 @@ import oogasalad.engine.base.enumerate.ComponentTag;
 import oogasalad.engine.base.serialization.SerializableField;
 import oogasalad.player.dinosaur.DinosaurGameScene;
 
+/**
+ * The EnterPlayerAction class is used to enter the player into the game. It is responsible for
+ * creating a new game scene and adding it to the game.
+ */
+
 public class EnterPlayerAction extends BehaviorAction<String> {
   @SerializableField
   private String parameter;
 
-
+  /**
+   * Default constructor for the EnterPlayerAction class.
+   */
   public EnterPlayerAction() {
     super();
   }
@@ -34,7 +41,7 @@ public class EnterPlayerAction extends BehaviorAction<String> {
    */
   @Override
   protected void perform(String parameter) {
-    //TODO: Make this use reflection
+    // TODO: Make this use reflection
     DinosaurGameScene scene = new DinosaurGameScene(parameter);
     Main.game.addScene(scene);
     Main.game.changeScene("Dinosaur");
