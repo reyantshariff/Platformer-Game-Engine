@@ -17,7 +17,8 @@ public class Builder {
   private GameObject selectedObject; //Should be passed from front end to back end. Front end should pass string ID.
   private String filepath = " ";
   private Game game; //Front end should pass a list of selected objects to the backend.
-//Add validation for placing ob jects
+  private boolean fileSaved = false;
+//Add validation for placing objects
 
   //Add Backend boolean to keep track of whether user has saved Game.
   /**
@@ -63,6 +64,21 @@ public class Builder {
     }
   }
 
+  /**
+   * Save the file
+   */
+  public void Save()
+  {
+    fileSaved = true;
+  }
+
+  /**
+   * Checks if the file was saved
+   */
+  public boolean isSaved()
+    {
+      return fileSaved;
+    }
 
   /**
    *  Records when a game object has been selected to be dragged and dropped on the UI
