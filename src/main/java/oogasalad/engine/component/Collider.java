@@ -33,22 +33,26 @@ public class Collider extends GameComponent {
   protected void update(double deltaTime) {
     collidedColliders.clear();
     for (GameObject obj : getParent().getScene().getAllObjects()) {
-      Collider collider;
+      processCollision(obj);
+    }
+  }
 
-      try {
-        collider = obj.getComponent(Collider.class);
-      } catch (IllegalArgumentException e) {
-        continue;
-      }
+  private void processCollision(GameObject obj) {
+    Collider collider;
 
-      if (collider == this || collidableTags.contains(collider.getParent().getTag())) {
-        continue;
-      }
+    try {
+      collider = obj.getComponent(Collider.class);
+    } catch (IllegalArgumentException e) {
+      return;
+    }
 
-      Transform collidedTransform = getComponent(Transform.class);
-      if (isOverlapping(collidedTransform)) {
-        collidedColliders.add(collider);
-      }
+    if (collider == this || collidableTags.contains(collider.getParent().getTag())) {
+      return;
+    }
+
+    Transform collidedTransform = getComponent(Transform.class);
+    if (isOverlapping(collidedTransform)) {
+      collidedColliders.add(collider);
     }
   }
 

@@ -3,6 +3,8 @@ package oogasalad.engine.base.architecture;
 import static oogasalad.config.GameConfig.LOGGER;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import java.util.Map;
+import java.util.function.Function;
 import oogasalad.engine.base.enumerate.ComponentTag;
 import oogasalad.engine.base.serialization.Serializable;
 import oogasalad.engine.base.serialization.SerializedField;
@@ -15,6 +17,16 @@ import oogasalad.engine.base.serialization.SerializedField;
  */
 public abstract class GameComponent implements Serializable {
   private GameObject parent;
+
+  private static final Map<String, Function<JsonNode, Object>> FIELD_TYPE_EXTRACTORS = Map.of(
+      "int", JsonNode::asInt,
+      "Integer", JsonNode::asInt,
+      "double", JsonNode::asDouble,
+      "Double", JsonNode::asDouble,
+      "boolean", JsonNode::asBoolean,
+      "Boolean", JsonNode::asBoolean,
+      "String", JsonNode::asText
+  );
 
   /**
    * This method is called after all objects have been created and initialized. It is used to set up
@@ -104,7 +116,7 @@ public abstract class GameComponent implements Serializable {
     }
   }
 
-  private static void setFieldFromConfig(JsonNode config, SerializedField serializedField) {
+  private void setFieldFromConfig(JsonNode config, SerializedField serializedField) {
     String fieldName = serializedField.getFieldName();
 
     if (!config.has(fieldName))
@@ -123,13 +135,12 @@ public abstract class GameComponent implements Serializable {
     }
   }
 
-  private static Object extractFieldValue(Class<?> fieldType, JsonNode valueNode) {
-    return switch (fieldType.getSimpleName()) {
-      case "int", "Integer" -> valueNode.asInt();
-      case "double", "Double" -> valueNode.asDouble();
-      case "boolean", "Boolean" -> valueNode.asBoolean();
-      case "String" -> valueNode.asText();
-      default -> throw new IllegalArgumentException("Unsupported field type: " + fieldType);
-    };
+  private Object extractFieldValue(Class<?> fieldType, JsonNode valueNode) {
+    Function<JsonNode, Object> extractor = FIELD_TYPE_EXTRACTORS.get(fieldType.getSimpleName());
+    if (extractor == null) {
+        LOGGER.error("Unsupported field type: " + fieldType.getSimpleName());
+        throw new IllegalArgumentException("Unsupported field type: " + fieldType);
+    }
+    return extractor.apply(valueNode);
   }
 }
