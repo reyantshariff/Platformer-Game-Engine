@@ -21,7 +21,7 @@ public final class InputHandler extends GameComponent {
   }
 
   @Override
-  protected void update(double deltaTime) {
+  public void update(double deltaTime) {
     previousKeys.clear();
     previousKeys.addAll(currentKeys);
     currentKeys.clear();
