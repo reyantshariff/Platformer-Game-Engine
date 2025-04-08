@@ -14,23 +14,30 @@ import oogasalad.engine.component.Transform;
  */
 
 public class Builder {
-  private GameObject selectedObject;
-  private String filepath;
-  private Game game;
+  private GameObject selectedObject; //Should be passed from front end to back end. Front end should pass string ID.
+  private String filepath = " ";
+  private Game game; //Front end should pass a list of selected objects to the backend.
+//Add validation for placing ob jects
 
+  //Add Backend boolean to keep track of whether user has saved Game.
   /**
-   * Constructor for BuilderScene
+   * Constructor for Loading a Game
    *
-   * @param filepath - Name of scene
+   * @param filepath - JSON filepath of Game
    */
+
   public Builder(String filepath) {
 
     this.filepath = filepath;
+    //game would then load filepath
   }
+
+  /**
+   * Constructor for Creating a Game from Scratch
+   */
 
   public Builder()
   {
-
     game = new Game();
   }
 
@@ -54,8 +61,8 @@ public class Builder {
     {
       actionStack.pop().redo();
     }
-
   }
+
 
   /**
    *  Records when a game object has been selected to be dragged and dropped on the UI
@@ -64,19 +71,34 @@ public class Builder {
   public void selectObject(String type, int x, int y) //type will change to file path
   {
     if (selectedObject != null) {
-      selectedObject = null;
+      selectedObject = null; //Front end should store the image  path and its Game ID. Front end should keep track of selected object.
     }
 
     if (findObject(x, y) == null)
     {
       selectedObject = game.getCurrentScene().instantiateObject(GameObjectFactory.create(type)); //Change to Unique IDs
       actionStack.push(new CreateObjectAction(game, selectedObject));
+      game.getCurrentScene().registerObject(selectedObject); //Make an add object method
     }
     else
     {
-      selectedObject = findObject(x, y);
+      selectedObject = findObject(x, y); // Front end should pass in game object ID
     }
-    game.getCurrentScene().registerObject(selectedObject);
+  }
+
+  /**
+   *  Records when two game objects overlap
+   */
+  public boolean overlaps(GameObject currentObject)
+  {
+    for (GameObject object : game.getCurrentScene().getAllObjects())
+    {
+      if (object.getComponent(Transform.class).getX() == currentObject.getComponent(Transform.class).getX() && object.getComponent(Transform.class).getY() == currentObject.getComponent(Transform.class).getY() && currentObject.getId() != object.getId())
+      {
+        return true;
+      }
+    }
+    return false;
   }
 
 
@@ -95,6 +117,7 @@ public class Builder {
 
   /**
    *  Stops the preview if the user lifts mouse and cursor is not on the editor screen.
+   *  Game object should be instantiated after mouse is released
    */
   public void placeObject(double x, double y) {
     if (selectedObject != null) {
