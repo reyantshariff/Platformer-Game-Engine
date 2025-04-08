@@ -66,6 +66,7 @@ public class GameScene {
 
   /**
    * Get the Object based on the UUID
+   * 
    * @param id the UUID of the object
    */
   public final GameObject getObject(UUID id) {
@@ -74,6 +75,7 @@ public class GameScene {
 
   /**
    * Get the Object based on the name
+   * 
    * @param name the name of the object
    */
   public final GameObject getObject(String name) {
@@ -94,7 +96,15 @@ public class GameScene {
   }
 
   /**
+   * Getter to return a Collection of all the GameComponents
+   */
+  public final Map<ComponentTag, List<GameComponent>> getAllComponents() {
+    return Collections.unmodifiableMap(allComponents);
+  }
+
+  /**
    * This will be called every frame.
+   * 
    * @param deltaTime the elapsed time between two frames
    */
   final void step(double deltaTime) {
@@ -106,7 +116,8 @@ public class GameScene {
 
     // 3. Update the components based on the order
     for (ComponentTag order : ComponentTag.values()) {
-      if (order == ComponentTag.NONE) continue;
+      if (order == ComponentTag.NONE)
+        continue;
       for (GameComponent component : allComponents.get(order)) {
         component.update(deltaTime);
       }
@@ -117,8 +128,9 @@ public class GameScene {
   }
 
   /**
-   * Subscribe the runnable event to the next frame to execute.
-   * Events will only be called once and then removed from the subscribed list.
+   * Subscribe the runnable event to the next frame to execute. Events will only be called once and
+   * then removed from the subscribed list.
+   * 
    * @param event the event to be subscribed
    */
   public final void subscribeEvent(Runnable event) {
@@ -184,6 +196,7 @@ public class GameScene {
 
   /**
    * Change the scene to the specified scene name.
+   * 
    * @param sceneName the name of the scene to be changed to
    */
   final void changeScene(String sceneName) {
