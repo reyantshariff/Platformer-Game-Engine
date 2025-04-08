@@ -24,11 +24,10 @@ import oogasalad.engine.base.architecture.Game;
 public class Gui {
 
   private static final Logger logger = LogManager.getLogger(Gui.class);
-  private Game game;
+  private final Game game;
   private GraphicsContext gc;
   private Timeline gameLoop;
-  private Scene scene;
-  private final GameObjectRenderer objectRenderer;
+  private GameObjectRenderer objectRenderer;
 
   /**
    * Constructs a new GUI instance for the given game and stage.
@@ -39,7 +38,6 @@ public class Gui {
   public Gui(Stage stage, Game game) {
     this.game = game;
     ResourceBundles.loadBundle("oogasalad.gui.general");
-    objectRenderer = new GameObjectRenderer();
     generateGui(stage);
   }
 
@@ -52,10 +50,13 @@ public class Gui {
     logger.debug("Generating GUI...");
 
     Group root = new Group();
-    scene = new Scene(root, ResourceBundles.getInt("oogasalad.gui.general", "windowWidth"),
+    Scene scene = new Scene(root, ResourceBundles.getInt("oogasalad.gui.general", "windowWidth"),
         ResourceBundles.getInt("oogasalad.gui.general", "windowHeight"));
     Canvas canvas = new Canvas(ResourceBundles.getInt("oogasalad.gui.general", "windowWidth"),
         ResourceBundles.getInt("oogasalad.gui.general", "windowHeight"));
+
+    // Create the GameObject-to-JavaFX renderer for this scene
+    objectRenderer = new GameObjectRenderer(scene);
 
     gc = canvas.getGraphicsContext2D();
     root.getChildren().add(canvas);

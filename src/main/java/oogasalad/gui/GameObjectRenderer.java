@@ -3,7 +3,9 @@ package oogasalad.gui;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
+import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
@@ -21,8 +23,11 @@ import org.apache.logging.log4j.Logger;
 
 public class GameObjectRenderer {
   private static final Logger logger = LogManager.getLogger(GameObjectRenderer.class);
+  private final Scene myScene;
 
-  public GameObjectRenderer() { }
+  public GameObjectRenderer(Scene scene) {
+    myScene = scene;
+  }
 
   /**
    * Renders the game objects in the given scene onto the canvas.
@@ -99,9 +104,8 @@ public class GameObjectRenderer {
 
   private void applyStyleSheet(Node node, String styleSheet) {
     node.getStyleClass().add(styleSheet);
-    //Group tempRoot = new Group(node);
-    //Scene tempScene = new Scene(tempRoot);
-    //tempScene.getStylesheets().addAll(scene.getStylesheets());
-    // TODO: refactor code to enable stylesheet application
+    Group tempRoot = new Group(node);
+    Scene tempScene = new Scene(tempRoot);
+    tempScene.getStylesheets().addAll(myScene.getStylesheets());
   }
 }
