@@ -22,7 +22,7 @@ public abstract class BehaviorAction<T> implements Serializable {
    * Set the behavior of the constraint. This is used to set the behavior that the constraint belongs to
    * @param behavior the behavior to set
    */
-  final void setBehavior(Behavior behavior) {
+  public final void setBehavior(Behavior behavior) {
     this.behavior = behavior;
   }
 
