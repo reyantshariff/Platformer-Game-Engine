@@ -3,6 +3,7 @@ package oogasalad.gui.button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+@Deprecated
 public class ImageButton extends StylizedButton {
   public static final double IMAGE_BUTTON_MARGIN = 0.1;
 

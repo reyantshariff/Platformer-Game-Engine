@@ -4,6 +4,7 @@ import javafx.animation.PauseTransition;
 import javafx.scene.control.Button;
 import javafx.util.Duration;
 
+@Deprecated
 public class StylizedButton {
   public static final String DEFAULT_BUTTON_FILL = "WHITE"; // default base color
   public static final int BUTTON_CLICK_COLOR_DURATION = 100;  // default color change duration (ms)
