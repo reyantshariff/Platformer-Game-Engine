@@ -32,19 +32,31 @@ public class Collider extends GameComponent {
   @Override
   protected void update(double deltaTime) {
     collidedColliders.clear();
-    for (GameComponent collider : getParent().getScene().getAllComponents().get(ComponentTag.COLLISION)) {
+    for (GameObject obj : getParent().getScene().getAllObjects()) {
+      Collider collider;
+
+      try {
+        collider = obj.getComponent(Collider.class);
+      } catch (IllegalArgumentException e) {
+        continue;
+      }
+
       if (collider == this || collidableTags.contains(collider.getParent().getTag())) {
         continue;
       }
 
       Transform collidedTransform = getComponent(Transform.class);
-      if (transform.getX() < collidedTransform.getX() + collidedTransform.getScaleX() &&
-          transform.getX() + transform.getScaleX() > collidedTransform.getX() &&
-          transform.getY() < collidedTransform.getY() + collidedTransform.getScaleY() &&
-          transform.getY() + transform.getScaleY() > collidedTransform.getY()) {
-        collidedColliders.add((Collider) collider);
+      if (isOverlapping(collidedTransform)) {
+        collidedColliders.add(collider);
       }
     }
+  }
+
+  private boolean isOverlapping(Transform collidedTransform) {
+    return transform.getX() < collidedTransform.getX() + collidedTransform.getScaleX() &&
+        transform.getX() + transform.getScaleX() > collidedTransform.getX() &&
+        transform.getY() < collidedTransform.getY() + collidedTransform.getScaleY() &&
+        transform.getY() + transform.getScaleY() > collidedTransform.getY();
   }
 
   /**
@@ -56,6 +68,43 @@ public class Collider extends GameComponent {
     for (Collider collider : collidedColliders) {
       if (collider.getParent().getTag().equals(tag)) {
         return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Check if the collider is touching another collider from above, within a tolerance.
+   * @param tag the gameobject tag of the collider to check for collision
+   * @param tolerance the allowable difference between the bottom of this collider and the top of the other collider.
+   * @return true if the collider is touching another collider from above, false otherwise
+   */
+  public boolean touchingFromAbove(String tag, double tolerance) {
+    Transform t = getComponent(Transform.class);
+    double selfBottom = t.getY() + t.getScaleY();
+
+    for (Collider collider : collidedColliders) {
+      if (collider.getParent().getTag().equals(tag)) {
+        Transform tOther = collider.getComponent(Transform.class);
+        return Math.abs(selfBottom - tOther.getY()) < tolerance;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Check if the collider is horizontally aligned with another collider.
+   * @param tag the gameobject tag of the collider to check for alignment
+   * @return true if the collider is horizontally aligned with another collider, false otherwise
+   */
+  public boolean horizontallyAligned(String tag) {
+    Transform t = getComponent(Transform.class);
+
+    for (Collider collider : collidedColliders) {
+      if (collider.getParent().getTag().equals(tag)) {
+        Transform tOther = collider.getComponent(Transform.class);
+        return t.getX() + t.getScaleX() > tOther.getX() &&
+            t.getX() < tOther.getX() + tOther.getScaleX();
       }
     }
     return false;
