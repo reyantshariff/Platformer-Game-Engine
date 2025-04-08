@@ -25,23 +25,24 @@ public class Collider extends GameComponent {
   private Transform transform;
 
   @Override
-  protected void awake() {
+  public void awake() {
     transform = getComponent(Transform.class);
   }
 
   @Override
-  protected void update(double deltaTime) {
+  public void update(double deltaTime) {
     collidedColliders.clear();
-    for (GameComponent collider : getParent().getScene().getAllComponents().get(ComponentTag.COLLISION)) {
+    for (GameComponent collider : getParent().getScene().getAllComponents()
+        .get(ComponentTag.COLLISION)) {
       if (collider == this || collidableTags.contains(collider.getParent().getTag())) {
         continue;
       }
 
       Transform collidedTransform = getComponent(Transform.class);
-      if (transform.getX() < collidedTransform.getX() + collidedTransform.getScaleX() &&
-          transform.getX() + transform.getScaleX() > collidedTransform.getX() &&
-          transform.getY() < collidedTransform.getY() + collidedTransform.getScaleY() &&
-          transform.getY() + transform.getScaleY() > collidedTransform.getY()) {
+      if (transform.getX() < collidedTransform.getX() + collidedTransform.getScaleX()
+          && transform.getX() + transform.getScaleX() > collidedTransform.getX()
+          && transform.getY() < collidedTransform.getY() + collidedTransform.getScaleY()
+          && transform.getY() + transform.getScaleY() > collidedTransform.getY()) {
         collidedColliders.add((Collider) collider);
       }
     }
@@ -49,6 +50,7 @@ public class Collider extends GameComponent {
 
   /**
    * Check if the collider has collided with another collider.
+   * 
    * @param tag the gameobject tag of the collider to check for collision
    * @return true if the collider has collided with another collider, false otherwise
    */
