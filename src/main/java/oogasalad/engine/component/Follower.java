@@ -1,5 +1,6 @@
 package oogasalad.engine.component;
 
+import static oogasalad.config.GameConfig.LOGGER;
 import oogasalad.engine.base.architecture.GameComponent;
 import oogasalad.engine.base.architecture.GameObject;
 import oogasalad.engine.base.enumerate.ComponentTag;
@@ -43,7 +44,8 @@ public class Follower extends GameComponent {
       myTransform.setX(targetTransform.getX() + offsetX);
       myTransform.setY(targetTransform.getY() + offsetY);
     } catch (NullPointerException e) {
-      System.err.println("Missing Transform Component");
+      LOGGER.error("Missing Transform Component");
+      throw new RuntimeException("Missing Transform Component", e);
     }
   }
 }

@@ -4,10 +4,18 @@ import oogasalad.engine.base.behavior.BehaviorAction;
 import oogasalad.engine.base.enumerate.ComponentTag;
 import oogasalad.engine.component.Transform;
 
+/**
+ * The CrouchAction class is used to make a game object crouch or uncrouch by changing its scale and
+ * position.
+ */
+
 public class CrouchAction extends BehaviorAction {
 
   private boolean isCrouched = false;
 
+  /**
+   * Default constructor for the CrouchAction class.
+   */
   public CrouchAction() {
     super();
   }
@@ -32,7 +40,7 @@ public class CrouchAction extends BehaviorAction {
   @Override
   protected void perform(Object parameter) {
     Transform transform;
-    try{
+    try {
       transform = (Transform) getComponent(Transform.class);
     } catch (Exception e) {
       return;
