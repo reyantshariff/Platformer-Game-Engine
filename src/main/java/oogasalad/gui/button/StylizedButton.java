@@ -7,11 +7,11 @@ import javafx.util.Duration;
 public class StylizedButton {
 
   public static final String DEFAULT_BUTTON_FILL = "WHITE"; // default base color
-  public static final int BUTTON_CLICK_COLOR_DURATION = 100;  // default color change duration (ms)
+  public static final int BUTTON_CLICK_COLOR_DURATION = 100; // default color change duration (ms)
 
   private String myIdleColor;
   private String myHoverColor;
-  protected Button myButton;
+  private Button myButton;
   private boolean mouseHover;
 
   public StylizedButton() {
@@ -73,7 +73,7 @@ public class StylizedButton {
 
   private void setToDefaults() {
     setIdleColor(DEFAULT_BUTTON_FILL);
-    setHoverColor("Yellow");  // TODO: specify via resource file
+    setHoverColor("Yellow"); // TODO: specify via resource file
     setClickColor("Blue");
     mouseHover = false;
   }
