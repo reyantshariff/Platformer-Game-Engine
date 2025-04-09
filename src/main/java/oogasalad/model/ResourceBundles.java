@@ -18,6 +18,7 @@ public class ResourceBundles {
 
   private static final Map<String, ResourceBundle> bundles = new HashMap<>();
   private static String activeBundleBaseName = null;
+  private static final String SET_BUNDLE_KEY = "setBundle";
 
   private static final Map<Class<?>, Function<String, Object>> typeParsers = new HashMap<>();
 
@@ -86,7 +87,7 @@ public class ResourceBundles {
    */
   public static String getString(String key) {
     if (activeBundleBaseName == null) {
-      LOGGER.error(GameConfig.getText("setBundle"));
+      LOGGER.error(GameConfig.getText(SET_BUNDLE_KEY));
     }
     return getString(activeBundleBaseName, key);
   }
@@ -119,7 +120,7 @@ public class ResourceBundles {
    */
   public static int getInt(String key) {
     if (activeBundleBaseName == null) {
-      LOGGER.error(GameConfig.getText("setBundle"));
+      LOGGER.error(GameConfig.getText(SET_BUNDLE_KEY));
     }
     return getInt(activeBundleBaseName, key);
   }
@@ -152,7 +153,7 @@ public class ResourceBundles {
    */
   public static double getDouble(String key) {
     if (activeBundleBaseName == null) {
-      LOGGER.error(GameConfig.getText("setBundle"));
+      LOGGER.error(GameConfig.getText(SET_BUNDLE_KEY));
     }
     return getDouble(activeBundleBaseName, key);
   }
