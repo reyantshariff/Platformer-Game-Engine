@@ -1,12 +1,15 @@
 package oogasalad.view.screens;
 
-import javafx.application.Platform;
+import java.util.function.Consumer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 /**
@@ -15,30 +18,43 @@ import javafx.stage.Stage;
  * @author Justin Aronwald
  */
 public class MainMenuView {
+  private final VBox menuBox = new VBox();
+  private final ComboBox<String> gameSelector = new ComboBox<>();
+
 
   /**
+   * The constructor for the MainMenuView that creates all of the buttons and components
    *
-   * @param stage - the primary JavaFX stage that is being used
-   * @param onPlay - the function for the button that starts gameplay
-   * @return - a JavaFX scene
+   * @param onPlay - the button that handles playing a game
+   * @param onBuilder - the button that handles building a game
    */
-  public Scene createMainMenu(Stage stage, Runnable onPlay) {
-    VBox root = new VBox(20);
-    root.setAlignment(Pos.CENTER);
-    root.setPadding(new Insets(50));
-    root.setStyle("-fx-background-color: white;");
-
+  public MainMenuView(Consumer<String> onPlay, Consumer<String> onBuilder) {
     Label title = new Label("Welcome to OOGASalad");
-    title.setStyle("-fx-text-fill: blue; -fx-font-size: 32px;");
+    title.setFont(new Font("Arial", 30));
 
-    Button playButton = new Button("Play Game");
-    playButton.setStyle("-fx-font-size: 20px;");
-    playButton.setOnAction(e -> onPlay.run());
+    Label subtitle = new Label("Select a game to play");
+    subtitle.setFont(new Font("Arial", 15));
 
-    Button builderButton = new Button("Build Game");
-    playButton.setStyle("-fx-font-size: 20px;");
+    gameSelector.getItems().addAll("Dinosaur Game", "Geometry Dash");
+    gameSelector.setValue("Dino Game");
 
-    root.getChildren().addAll(title, playButton, builderButton);
-    return new Scene(root, 1280, 720);
+    Button playButton = new Button("Player");
+    Button builderButton = new Button("Builder");
+
+    playButton.setOnAction(e -> onPlay.accept(gameSelector.getValue()));
+    builderButton.setOnAction(e -> onBuilder.accept(gameSelector.getValue()));
+
+    menuBox.getChildren().addAll(title, subtitle, gameSelector, playButton, builderButton);
+    menuBox.setAlignment(Pos.CENTER);
+    menuBox.setSpacing(20);
+  }
+
+  /**
+   * Returns the view of the main menu scene
+   *
+   * @return - the VBox containing the main menu elements
+   */
+  public Node getMenuView() {
+    return menuBox;
   }
 }

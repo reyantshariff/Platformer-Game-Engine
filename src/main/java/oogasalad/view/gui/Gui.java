@@ -1,93 +1,76 @@
 package oogasalad.view.gui;
 
-import javafx.scene.Group;
-import oogasalad.model.engine.base.architecture.GameScene;
-import oogasalad.view.player.dinosaur.DinosaurGameScene;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.stage.Stage;
-import oogasalad.model.ResourceBundles;
-import oogasalad.model.engine.base.enumerate.KeyCode;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.util.Duration;
+import oogasalad.model.ResourceBundles;
 import oogasalad.model.engine.base.architecture.Game;
+import oogasalad.model.engine.base.architecture.GameScene;
+import oogasalad.model.engine.base.enumerate.KeyCode;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
- * The GUI class manages the graphical user interface for the OOGASalad game engine. It handles the
- * creation of the game window, rendering game objects, and processing user input.
+ * The GUI class manages the canvas-based graphical rendering of the OOGASalad game engine.
+ * It is meant to be embedded inside a larger JavaFX UI layout, allowing game rendering to happen
+ * alongside JavaFX UI controls.
+ *
+ * This class handles rendering game scenes, processing input, and running the game loop.
  *
  * @author Jack F. Regan and Logan Dracos
  */
 public class Gui {
 
   private static final Logger logger = LogManager.getLogger(Gui.class);
-  private final String GUI_GENERAL_PATH = "oogasalad.gui.general";
+  private static final String GUI_GENERAL_PATH = "oogasalad.gui.general";
+
   private final Game game;
-  private final Stage curStage;
-  private GraphicsContext gc;
+  private final Canvas canvas;
+  private final GraphicsContext gc;
+  private final GameObjectRenderer objectRenderer;
   private Timeline gameLoop;
-  private GameObjectRenderer objectRenderer;
 
   /**
-   * Constructs a new GUI instance for the given game and stage.
+   * Constructs a new GUI instance for the given game.
    *
-   * @param stage The primary stage for the application.
-   * @param game  The game instance to be displayed.
+   * @param game The game instance to be displayed.
    */
-  public Gui(Stage stage, Game game) {
+  public Gui(Game game) {
     this.game = game;
-    this.curStage = stage;
     ResourceBundles.loadBundle(GUI_GENERAL_PATH);
-    generateGui(stage);
-  }
 
-  /**
-   * Method to change the current scene you are on to a new one
-   *
-   * @param newScene - the new GameScene to push to
-   */
-  public void switchToScene(GameScene newScene) {
-    game.changeScene(newScene.getName());
-    Scene fxScene = buildJavaFXScene(newScene);
-    curStage.setScene(fxScene);
-  }
+    canvas = new Canvas(
+        ResourceBundles.getInt(GUI_GENERAL_PATH, "windowWidth"),
+        ResourceBundles.getInt(GUI_GENERAL_PATH, "windowHeight"));
 
-  /**
-   * Generates the graphical user interface for the game.
-   *
-   * @param stage The primary stage for the application.
-   */
-  private void generateGui(Stage stage) {
-    logger.debug("Generating GUI...");
-
-    DinosaurGameScene dinoScene = new DinosaurGameScene("DinoScene");
-    game.addScene(dinoScene);
-    game.changeScene(dinoScene.getName());
-
-    Scene newScene = buildJavaFXScene(dinoScene);
-    stage.setTitle("OOGASalad Platformer");
-    stage.setScene(newScene);
-    stage.show();
+    gc = canvas.getGraphicsContext2D();
+    objectRenderer = new GameObjectRenderer(null);
 
     startGameLoop();
-    logger.debug("GUI generated.");
   }
+
+  /**
+   * Returns the canvas object used for rendering. This should be embedded into a parent layout
+   * (e.g., Pane, VBox, StackPane) to display the game.
+   *
+   * @return the Canvas instance
+   */
+  public Canvas getCanvas() {
+    return canvas;
+  }
+
   /**
    * Starts the game loop, which updates and renders the game at a fixed frame rate.
    */
   private void startGameLoop() {
-    if (gameLoop == null) { // Only create Timeline once
+    if (gameLoop == null) {
       gameLoop = new Timeline();
       gameLoop.setCycleCount(Timeline.INDEFINITE);
       gameLoop.getKeyFrames().add(new KeyFrame(
-          Duration.seconds(
-              1.0 / ResourceBundles.getDouble(GUI_GENERAL_PATH, "framesPerSecond")),
-          event -> step() // Call step method
-      ));
+          Duration.seconds(1.0 / ResourceBundles.getDouble(GUI_GENERAL_PATH, "framesPerSecond")),
+          event -> step()));
       gameLoop.play();
     }
   }
@@ -96,12 +79,33 @@ public class Gui {
    * Executes a single step of the game loop, updating the game state and rendering the scene.
    */
   private void step() {
-    if (game.getCurrentScene() != null) { // Check if scene is loaded
+    GameScene current = game.getCurrentScene();
+    if (current != null) {
       game.step(1.0 / ResourceBundles.getDouble(GUI_GENERAL_PATH, "framesPerSecond"));
-      objectRenderer.render(gc, game.getCurrentScene());
+      objectRenderer.render(gc, current);
     } else {
       logger.debug("No game scene loaded. Skipping step.");
     }
+  }
+
+  /**
+   * Handles a key press event and maps it to the game engine.
+   *
+   * @param e The JavaFX key event.
+   */
+  public void handleKeyPressed(javafx.scene.input.KeyEvent e) {
+    KeyCode key = mapToEngineKeyCode(e.getCode());
+    if (key != null) game.keyPressed(key.getValue());
+  }
+
+  /**
+   * Handles a key release event and maps it to the game engine.
+   *
+   * @param e The JavaFX key event.
+   */
+  public void handleKeyReleased(javafx.scene.input.KeyEvent e) {
+    KeyCode key = mapToEngineKeyCode(e.getCode());
+    if (key != null) game.keyReleased(key.getValue());
   }
 
   /**
@@ -116,36 +120,5 @@ public class Gui {
     } catch (IllegalArgumentException e) {
       return null;
     }
-  }
-
-
-  private Scene buildJavaFXScene(GameScene sceneToRender) {
-    Group root = new Group();
-    Scene fxScene = new Scene(root,
-        ResourceBundles.getInt(GUI_GENERAL_PATH, "windowWidth"),
-        ResourceBundles.getInt(GUI_GENERAL_PATH, "windowHeight"));
-    Canvas canvas = new Canvas(
-        ResourceBundles.getInt(GUI_GENERAL_PATH, "windowWidth"),
-        ResourceBundles.getInt(GUI_GENERAL_PATH, "windowHeight"));
-
-    gc = canvas.getGraphicsContext2D();
-    root.getChildren().add(canvas);
-
-    fxScene.getStylesheets().add(getClass()
-        .getResource(ResourceBundles.getString( GUI_GENERAL_PATH,"stylesheet"))
-        .toExternalForm());
-
-    fxScene.setOnKeyPressed(e -> {
-      KeyCode key = mapToEngineKeyCode(e.getCode());
-      if (key != null) game.keyPressed(key.getValue());
-    });
-
-    fxScene.setOnKeyReleased(e -> {
-      KeyCode key = mapToEngineKeyCode(e.getCode());
-      if (key != null) game.keyReleased(key.getValue());
-    });
-
-    objectRenderer = new GameObjectRenderer(fxScene);
-    return fxScene;
   }
 }
