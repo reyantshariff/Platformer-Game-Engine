@@ -73,8 +73,7 @@ class ComponentParserTest {
   @Test
   void parse_invalidJsonFile_catchError() throws JsonProcessingException, ParsingException {
     JsonNode node = myMapper.readTree(badJsonString);
-    assertThrows(ParsingException.class,
-        () -> myComponentParser.parse(node)); // TODO: Look at this error. Super weird.
+    assertThrows(ParsingException.class, () -> myComponentParser.parse(node));
   }
 
   @Test

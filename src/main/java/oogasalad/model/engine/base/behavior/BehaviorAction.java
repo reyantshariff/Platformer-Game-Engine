@@ -83,4 +83,8 @@ public abstract class BehaviorAction<T> implements Serializable {
   protected void awake() {
     // NOTE: Override this method if needed
   }
+
+  public boolean equals(BehaviorAction<?> other) {
+    return this.getClass().equals(other.getClass());
+  }
 }
