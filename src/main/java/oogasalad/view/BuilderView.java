@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.view.gui.button.StylizedButton;
 import oogasalad.view.player.dinosaur.DinosaurGameScene;
+import oogasalad.view.scene.ViewScene;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

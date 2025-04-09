@@ -1,4 +1,4 @@
-package oogasalad.view;
+package oogasalad.view.scene;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;

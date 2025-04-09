@@ -1,12 +1,8 @@
 package oogasalad;
 
 import javafx.application.Application;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
-import oogasalad.model.engine.base.architecture.Game;
-import oogasalad.view.gui.Gui;
-import oogasalad.view.player.dinosaur.DinosaurGameScene;
-import oogasalad.view.screens.MainMenuView;
+import oogasalad.view.scene.MainViewManager;
 
 /**
  * This is the main class of the OOGASalad Platformer Game Sandbox. Run the start method to open the
@@ -15,7 +11,7 @@ import oogasalad.view.screens.MainMenuView;
 public class Main extends Application {
 
   /**
-   * Start of the program.
+   * Start of the program
    */
   public static void main(String[] args) {
     launch(args);
@@ -30,9 +26,8 @@ public class Main extends Application {
    */
   @Override
   public void start(Stage stage) {
-    Game game = new Game();
-    showMainMenu(game, stage);
-
+    MainViewManager viewManager = new MainViewManager(stage);
+    viewManager.switchToMainMenu();
     /**
     // Create an example builder UI
     BuilderView builderUI = new BuilderView(1400, 800);
@@ -43,19 +38,4 @@ public class Main extends Application {
      */
   }
 
-  private static void showMainMenu(Game curGame, Stage stage) {
-    MainMenuView menu = new MainMenuView();
-    Scene menuScene = menu.createMainMenu(stage, () -> launchGameScene(curGame, stage));
-
-    stage.setScene(menuScene);
-    stage.setTitle("OOGASalad Game");
-    stage.show();
-  }
-
-  private static void launchGameScene(Game game, Stage stage) {
-    DinosaurGameScene dinoScene = new DinosaurGameScene("Dinosaur");
-    game.addScene(dinoScene);
-    game.changeScene(dinoScene.getName());
-    Gui gui = new Gui(stage, game);
-  }
 }
