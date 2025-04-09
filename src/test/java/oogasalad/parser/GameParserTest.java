@@ -1,5 +1,6 @@
 package oogasalad.parser;
 
+import oogasalad.model.parser.GameParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -9,9 +9,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
-import oogasalad.engine.base.architecture.GameScene;
-import oogasalad.gui.button.StylizedButton;
-import oogasalad.player.dinosaur.DinosaurGameScene;
+import oogasalad.model.engine.base.architecture.GameScene;
+import oogasalad.view.gui.button.StylizedButton;
+import oogasalad.view.player.dinosaur.DinosaurGameScene;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

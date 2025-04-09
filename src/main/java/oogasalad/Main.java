@@ -1,11 +1,9 @@
 package oogasalad;
 
 import javafx.application.Application;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
-import oogasalad.engine.base.architecture.Game;
-import oogasalad.gui.Gui;
-import oogasalad.view.BuilderView;
+import oogasalad.model.engine.base.architecture.Game;
+import oogasalad.view.gui.Gui;
 
 /**
  * This is the main class of the OOGASalad Platformer Game Sandbox. Run the start method to open the

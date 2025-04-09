@@ -2,7 +2,7 @@ package oogasalad.view;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import oogasalad.gui.GameObjectRenderer;
+import oogasalad.view.gui.GameObjectRenderer;
 
 public abstract class ViewScene {
   private final Scene myScene;

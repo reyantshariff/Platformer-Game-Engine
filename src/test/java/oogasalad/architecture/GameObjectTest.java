@@ -2,9 +2,9 @@ package oogasalad.architecture;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
-import oogasalad.engine.base.architecture.GameObject;
-import oogasalad.engine.component.Transform;
-import oogasalad.engine.component.Follower;
+import oogasalad.model.engine.base.architecture.GameObject;
+import oogasalad.model.engine.component.Transform;
+import oogasalad.model.engine.component.Follower;
 
 public class GameObjectTest {
     

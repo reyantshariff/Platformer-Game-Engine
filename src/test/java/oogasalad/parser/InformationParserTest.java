@@ -8,7 +8,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.awt.Dimension;
-import oogasalad.engine.base.architecture.GameInfo;
+import oogasalad.model.engine.base.architecture.GameInfo;
+import oogasalad.model.parser.InformationParser;
+import oogasalad.model.parser.ParsingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
