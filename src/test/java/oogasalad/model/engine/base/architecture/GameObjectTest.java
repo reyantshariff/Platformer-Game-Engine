@@ -2,7 +2,6 @@ package oogasalad.model.engine.base.architecture;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
-import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.component.Transform;
 import oogasalad.model.engine.component.Follower;
 
@@ -19,6 +18,7 @@ public class GameObjectTest {
     @Test
     public void getComponent_retrievePresentComponent_returnsTrue() {
         GameObject object = new GameObject("Object", "Tag");
+        object.addComponent(Transform.class);
         assertNotNull(object.getComponent(Transform.class));
     }
 
@@ -26,6 +26,18 @@ public class GameObjectTest {
     public void getComponent_retrieveAbsentComponent_throwsException() {
         GameObject object = new GameObject("Object", "Tag");
         assertThrows(IllegalArgumentException.class, () -> object.getComponent(Follower.class));
+    }
+
+    @Test
+    public void hasComponent_checkPresentComponent_returnsTrue() {
+        GameObject object = new GameObject("Object", "Tag");
+        object.addComponent(new Transform());
+        assertTrue(object.hasComponent(Transform.class));
+    }
+
+    @Test void hasComponent_checkAbsentComponent_returnsFalse() {
+        GameObject object = new GameObject("Object", "Tag");
+        assertFalse(object.hasComponent(Follower.class));
     }
 
     @Test
@@ -61,6 +73,7 @@ public class GameObjectTest {
     @Test
     public void getAllComponents_getAllComponentsFromObject_returnsTrue() {
         GameObject object = new GameObject("Object", "Tag");
+        object.addComponent(Transform.class);
         object.addComponent(Follower.class);
         assertEquals(2, object.getAllComponents().size());
     }
