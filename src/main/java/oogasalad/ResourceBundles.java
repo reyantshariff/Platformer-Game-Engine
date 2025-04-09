@@ -17,6 +17,7 @@ public class ResourceBundles {
 
   private static final Map<String, ResourceBundle> bundles = new HashMap<>();
   private static final Logger logger = LogManager.getLogger(ResourceBundles.class);
+  private static String activeBundleBaseName = null;
 
   private static final Map<Class<?>, Function<String, Object>> typeParsers = new HashMap<>();
 
@@ -45,6 +46,23 @@ public class ResourceBundles {
   }
 
   /**
+   * Defines which style bundle should be treated as the active/current bundle. Loads the
+   * ResourceBundle with the given baseName if it does not already exist in the map.
+   *
+   * @param baseName The base name of the resource bundle.
+   */
+  public static void setActiveBundle(String baseName) {
+    try {
+      if (!bundles.containsKey(baseName)) {
+        loadBundle(baseName);
+      }
+      activeBundleBaseName = baseName;
+    } catch (MissingResourceException e) {
+      logger.error("Could not set " + baseName + " as the active bundle.");
+    }
+  }
+
+  /**
    * Retrieves a string from the ResourceBundle with the given base name and key.
    *
    * @param baseName The base name of the resource bundle.
@@ -60,6 +78,19 @@ public class ResourceBundles {
   }
 
   /**
+   * Retrieves a string from the currently "active" ResourceBundle with the given key.
+   *
+   * @param key The key of the string to retrieve.
+   * @return The string value, or null if not found.
+   */
+  public static String getString(String key) {
+    if (activeBundleBaseName == null) {
+      logger.error("The active bundle must first be set.");
+    }
+    return getString(activeBundleBaseName, key);
+  }
+
+  /**
    * Retrieves an integer from the ResourceBundle with the given base name and key.
    *
    * @param baseName The base name of the resource bundle.
@@ -68,13 +99,28 @@ public class ResourceBundles {
    */
   public static int getInt(String baseName, String key) {
     String value = getString(baseName, key);
-    if (value == null) return 0;
+    if (value == null) {
+      return 0;
+    }
     try {
       return (int) cast(value, int.class);
     } catch (IllegalArgumentException e) {
       logger.error("Invalid integer value for key: " + key + " in bundle: " + baseName);
       return 0;
     }
+  }
+
+  /**
+   * Retrieves an integer from the currently "active" ResourceBundle with the given key.
+   *
+   * @param key The key of the integer to retrieve.
+   * @return The integer value, or 0 if not found or invalid.
+   */
+  public static int getInt(String key) {
+    if (activeBundleBaseName == null) {
+      logger.error("The active bundle must first be set.");
+    }
+    return getInt(activeBundleBaseName, key);
   }
 
   /**
@@ -86,13 +132,28 @@ public class ResourceBundles {
    */
   public static double getDouble(String baseName, String key) {
     String value = getString(baseName, key);
-    if (value == null) return 0.0;
+    if (value == null) {
+      return 0.0;
+    }
     try {
       return (double) cast(value, double.class);
     } catch (IllegalArgumentException e) {
       logger.error("Invalid double value for key: " + key + " in bundle: " + baseName);
       return 0.0;
     }
+  }
+
+  /**
+   * Retrieves a double from the currently "active" ResourceBundle with the given key.
+   *
+   * @param key The key of the double to retrieve.
+   * @return The double value, or 0.0 if not found or invalid.
+   */
+  public static double getDouble(String key) {
+    if (activeBundleBaseName == null) {
+      logger.error("The active bundle must first be set.");
+    }
+    return getDouble(activeBundleBaseName, key);
   }
 
   /**
@@ -104,7 +165,9 @@ public class ResourceBundles {
    */
   public static boolean getBoolean(String baseName, String key) {
     String value = getString(baseName, key);
-    if (value == null) return false;
+    if (value == null) {
+      return false;
+    }
     return (boolean) cast(value, boolean.class);
   }
 

@@ -3,7 +3,8 @@ package oogasalad.gui.button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class ImageButton extends DefaultButton {
+public class ImageButton extends StylizedButton {
+
   public static final double IMAGE_BUTTON_MARGIN = 0.1;
 
   private Image myImage;
@@ -15,29 +16,33 @@ public class ImageButton extends DefaultButton {
 
   @Override
   public void setWidth(double width) {
-    this.setPrefWidth(width);
-    this.setGraphic(getImageViewFromImage(myImage));  // update image size based on button size
+    getButton().setPrefWidth(width);
+    getButton().setGraphic(getImageViewFromImage(myImage)); // update image size based on button
+                                                            // size
   }
 
   @Override
   public void setHeight(double height) {
-    this.setPrefHeight(height);
-    this.setGraphic(getImageViewFromImage(myImage));  // update image size based on button size
+    getButton().setPrefHeight(height);
+    getButton().setGraphic(getImageViewFromImage(myImage)); // update image size based on button
+                                                            // size
   }
 
   public void setImage(Image image) {
     myImage = image;
-    this.setGraphic(getImageViewFromImage(image));
+    getButton().setGraphic(getImageViewFromImage(image));
   }
 
-  public Image getImage() { return myImage; }
+  public Image getImage() {
+    return myImage;
+  }
 
   private ImageView getImageViewFromImage(Image image) {
     ImageView imageView = new ImageView(image);
 
     // Calculate the scaling factors for both width and height
-    double widthScale = this.getWidth() * (1 - IMAGE_BUTTON_MARGIN) / image.getWidth();
-    double heightScale = this.getHeight() * (1 - IMAGE_BUTTON_MARGIN) / image.getHeight();
+    double widthScale = getButton().getWidth() * (1 - IMAGE_BUTTON_MARGIN) / image.getWidth();
+    double heightScale = getButton().getHeight() * (1 - IMAGE_BUTTON_MARGIN) / image.getHeight();
 
     // Scale image to fit in button based on the axis (width/height) requiring the lesser scale
     double scale = Math.min(widthScale, heightScale);

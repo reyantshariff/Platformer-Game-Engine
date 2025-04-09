@@ -5,8 +5,8 @@ import java.io.IOException;
 
 /**
  * A generic parser class for a JSON node, converting to an object of type T
- * @param <T> - the type of object produced by the parser
  *
+ * @param <T> - the type of object produced by the parser
  * @author Justin Aronwald
  */
 public interface Parser<T> {

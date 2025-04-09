@@ -1,7 +1,8 @@
 package oogasalad.engine.base.architecture;
 
+import static oogasalad.config.GameConfig.LOGGER;
+
 import com.fasterxml.jackson.databind.JsonNode;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import oogasalad.engine.base.enumerate.ComponentTag;
@@ -16,18 +17,16 @@ import oogasalad.engine.base.serialization.SerializedField;
  */
 public abstract class GameComponent implements Serializable {
   private GameObject parent;
-  private static final Map<Class<?>, Function<JsonNode, Object>> extractors = new HashMap<>();
 
-  static {
-    extractors.put(int.class, JsonNode::asInt);
-    extractors.put(Integer.class, JsonNode::asInt);
-    extractors.put(double.class, JsonNode::asDouble);
-    extractors.put(Double.class, JsonNode::asDouble);
-    extractors.put(boolean.class, JsonNode::asBoolean);
-    extractors.put(Boolean.class, JsonNode::asBoolean);
-    extractors.put(String.class, JsonNode::asText);
-  }
-
+  private static final Map<String, Function<JsonNode, Object>> FIELD_TYPE_EXTRACTORS = Map.of(
+      "int", JsonNode::asInt,
+      "Integer", JsonNode::asInt,
+      "double", JsonNode::asDouble,
+      "Double", JsonNode::asDouble,
+      "boolean", JsonNode::asBoolean,
+      "Boolean", JsonNode::asBoolean,
+      "String", JsonNode::asText
+  );
 
   /**
    * This method is called after all objects have been created and initialized. It is used to set up
@@ -35,13 +34,13 @@ public abstract class GameComponent implements Serializable {
    * right after the constructor.
    * NOTE: This method should be override if needed.
    */
-  public void awake() {}
+  protected void awake() {}
 
   /**
    * This method is called before the object calls its update method for the first time
    * NOTE: This method should be override if needed.
    */
-  public void start() {}
+  protected void start() {}
 
   /**
    * This method is called when the component is removed.
@@ -55,22 +54,7 @@ public abstract class GameComponent implements Serializable {
    * NOTE: This method should be override if needed.
    * @param deltaTime The time since the last frame, in seconds.
    */
-  public void update(double deltaTime) {}
-
-  /**
-   * Add the component to the gameObject based on its class.
-   *
-   * @apiNote Every component class should only have one instance per object.
-   * @param componentClass the component class specified
-   * @return the added component instance
-   */
-  protected final <T extends GameComponent> T addComponent(Class<T> componentClass) {
-    if (parent != null) {
-      return parent.addComponent(componentClass);
-    }
-
-    throw new IllegalArgumentException("Parent gameObject not exist!");
-  }
+  protected void update(double deltaTime) {}
 
   /**
    * Get the component based on
@@ -78,24 +62,12 @@ public abstract class GameComponent implements Serializable {
    * @param componentClass the component class specified
    * @return the component instance
    */
-  protected final <T extends GameComponent> T getComponent(Class<T> componentClass) {
+  public final <T extends GameComponent> T getComponent(Class<T> componentClass) {
     if (parent != null) {
       return parent.getComponent(componentClass);
     }
 
-    throw new IllegalArgumentException("Parent gameObject not exist!");
-  }
-
-  /**
-   * Remove the component based on its class.
-   *
-   * @param componentClass the component class specified
-   */
-  protected final <T extends GameComponent> void removeComponent(Class<T> componentClass) {
-    if (parent != null) {
-      parent.removeComponent(componentClass);
-    }
-
+    LOGGER.error(this.getClass().getSimpleName() + " has no parent");
     throw new IllegalArgumentException("Parent gameObject not exist!");
   }
 
@@ -120,6 +92,15 @@ public abstract class GameComponent implements Serializable {
     this.parent = parent;
   }
 
+  /**
+   * Change the scene to the specified scene name.
+   * @param sceneName the name of the scene to be changed to
+   */
+  public final void changeScene(String sceneName) {
+    parent.changeScene(sceneName);
+  }
+
+  /* TODO: MOVE THE BOTTOM CODE IN THE PARSER */
 
   /**
    * This sets the fields if they are annotated -- used especially for loading Json files
@@ -130,12 +111,12 @@ public abstract class GameComponent implements Serializable {
   public void initializeFromJson(JsonNode config) {
     if (config == null || config.isNull()) return;
 
-    for (SerializedField<?> serializedField : getSerializedFields()) {
+    for (SerializedField serializedField : getSerializedFields()) {
       setFieldFromConfig(config, serializedField);
     }
   }
 
-  private static void setFieldFromConfig(JsonNode config, SerializedField<?> serializedField) {
+  private void setFieldFromConfig(JsonNode config, SerializedField serializedField) {
     String fieldName = serializedField.getFieldName();
 
     if (!config.has(fieldName))
@@ -146,7 +127,7 @@ public abstract class GameComponent implements Serializable {
     try {
       Object value = extractFieldValue(fieldType, valueNode);
 
-      SerializedField<Object> typedField = (SerializedField<Object>) serializedField;
+      SerializedField typedField = serializedField;
       typedField.setValue(value);
 
     } catch (IllegalArgumentException | ClassCastException e) {
@@ -154,10 +135,11 @@ public abstract class GameComponent implements Serializable {
     }
   }
 
-  private static Object extractFieldValue(Class<?> fieldType, JsonNode valueNode) {
-    Function<JsonNode, Object> extractor = extractors.get(fieldType);
+  private Object extractFieldValue(Class<?> fieldType, JsonNode valueNode) {
+    Function<JsonNode, Object> extractor = FIELD_TYPE_EXTRACTORS.get(fieldType.getSimpleName());
     if (extractor == null) {
-      throw new IllegalArgumentException("Unsupported field type: " + fieldType);
+        LOGGER.error("Unsupported field type: " + fieldType.getSimpleName());
+        throw new IllegalArgumentException("Unsupported field type: " + fieldType);
     }
     return extractor.apply(valueNode);
   }

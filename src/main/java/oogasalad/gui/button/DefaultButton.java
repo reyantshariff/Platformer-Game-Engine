@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import javafx.util.Duration;
 
 public class DefaultButton extends Button {
+
   public static final String DEFAULT_BUTTON_FILL = "#FFFFFF"; // default base color
   public static final int BUTTON_CLICK_COLOR_DURATION = 100;  // default color change duration (ms)
 

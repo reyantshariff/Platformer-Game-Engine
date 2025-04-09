@@ -15,31 +15,31 @@ class GameSceneParserTest {
   GameSceneParser myGameSceneParser;
   ObjectMapper myMapper;
   String goodJsonString = """
-        {
-          "Name": "Test Scene",
-          "GameObjects": [
-            {
-              "Name": "Test Object",
-              "Components": [
-                {
-                  "Name": "Transform",
-                  "Configurations": {
-                    "position": { "X": 0, "Y": 0 },
-                    "rotation": { "X": 0, "Y": 0 },
-                    "scale": { "X": 1, "Y": 1 }
-                  }
+      {
+        "Name": "Test Scene",
+        "GameObjects": [
+          {
+            "Name": "Test Object",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "position": { "X": 0, "Y": 0 },
+                  "rotation": { "X": 0, "Y": 0 },
+                  "scale": { "X": 1, "Y": 1 }
                 }
-              ],
-              "Behaviours": [
-                {
-                  "Name": "TestBehaviour",
-                  "Configurations": {}
-                }
-              ]
-            }
-          ]
-        }
-        """;
+              }
+            ],
+            "Behaviours": [
+              {
+                "Name": "TestBehaviour",
+                "Configurations": {}
+              }
+            ]
+          }
+        ]
+      }
+      """;
 
   // The bad json string has no name, should return error
   String badJsonString = """
@@ -91,5 +91,6 @@ class GameSceneParserTest {
 
   @Test
   void write() {
+    // TODO: Write once we have a concrete game scenes
   }
 }

@@ -1,13 +1,13 @@
 package oogasalad.parser;
 
+import static oogasalad.config.GameConfig.LOGGER;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.awt.Dimension;
 import java.io.IOException;
-import javax.print.attribute.standard.MediaSize.NA;
 import oogasalad.engine.base.architecture.GameInfo;
-import static oogasalad.config.GameConfig.LOGGER;
 
 /**
  * Parses and serializes the information node of a Game object to and from a JSON node
@@ -15,6 +15,7 @@ import static oogasalad.config.GameConfig.LOGGER;
  * @author Justin Aronwald
  */
 public class InformationParser implements Parser<GameInfo> {
+
   private final ObjectMapper mapper = new ObjectMapper();
 
   private static final String NAME = "Name";
@@ -59,7 +60,8 @@ public class InformationParser implements Parser<GameInfo> {
     return new handleGameInfoParsing(name, description, author, resolution);
   }
 
-  private record handleGameInfoParsing(String name, String description, String author, Dimension resolution) {
+  private record handleGameInfoParsing(String name, String description, String author,
+                                       Dimension resolution) {
 
   }
 

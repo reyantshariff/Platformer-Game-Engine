@@ -1,8 +1,5 @@
 package oogasalad.parser;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import oogasalad.engine.base.architecture.Game;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,16 +10,16 @@ class GameParserTest {
 
   @BeforeEach
   void setUp() {
-    parser = new GameParser(TEST_FILE_NAME);
+    parser = new GameParser();
   }
 
   @Test
   void parse() {
-    Game myGame = parser.getMyGame();
-    assertNotNull(myGame);
+    // TODO: Create once we have concrete scenes
   }
 
   @Test
   void write() {
+    // TODO: Create once we have concrete scenes
   }
 }

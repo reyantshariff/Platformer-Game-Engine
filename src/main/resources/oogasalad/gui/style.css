@@ -32,8 +32,15 @@
 /* Scene-Specific Styles */
 .dinosaur-scene {
   /* Specific styles for the Dinosaur Game */
-}
+  /* Default Text Component Styling */
 
-.menu-scene {
-  /* Specific styles for the menu */
+  .text-component {
+    -fx-font-family: "Monaco";
+    -fx-font-size: 30px;
+    -fx-fill: Blue;
+  }
+
+  .menu-scene {
+    /* Specific styles for the menu */
+  }
 }

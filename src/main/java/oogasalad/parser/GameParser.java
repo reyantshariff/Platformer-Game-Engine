@@ -1,5 +1,7 @@
 package oogasalad.parser;
 
+import static oogasalad.config.GameConfig.LOGGER;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -10,8 +12,6 @@ import java.util.Map;
 import oogasalad.engine.base.architecture.Game;
 import oogasalad.engine.base.architecture.GameInfo;
 import oogasalad.engine.base.architecture.GameScene;
-import static oogasalad.config.GameConfig.LOGGER;
-import java.io.File;
 
 
 /**
@@ -20,44 +20,17 @@ import java.io.File;
  * @author Justin Aronwald, Daniel Rodriguez-Florido
  */
 public class GameParser implements Parser<Game> {
+
   private final ObjectMapper mapper = new ObjectMapper();
   private final GameSceneParser sceneParser = new GameSceneParser();
   private final ResourceParser resourceParser = new ResourceParser();
   private final InformationParser informationParser = new InformationParser();
-
-  private Game myGame;
 
   private static final String DATA = "Data";
   private static final String INFORMATION = "Information";
   private static final String NAME = "Name";
   private static final String SCENE = "Scene";
   private static final String RESOURCES = "Resources";
-
-
-  /**
-   * Constructor to create a Game Parser with a file linking to the JSON.
-   *
-   * @param fileName - the file name that links ot the json
-   */
-  public GameParser(String fileName) {
-    try {
-      JsonNode rootNode = mapper.readTree(new File(fileName));
-      myGame = this.parse(rootNode);
-    } catch (IOException e) {
-      LOGGER.error("Game File Not Found: {}", fileName);
-    } catch (ParsingException e) {
-      LOGGER.error("Could not parse JSON file: {}", fileName);
-    }
-  }
-
-  /**
-   * Getter for the game object
-   *
-   * @return - the Game instance containing the objects, components, and behaviors
-   */
-  public Game getMyGame() {
-    return myGame;
-  }
 
   /**
    * Parses a JSON node into a Game instance
@@ -111,7 +84,7 @@ public class GameParser implements Parser<Game> {
   private void createGameScene(Game newGame, JsonNode sceneNode) throws ParsingException {
     GameScene gameScene = sceneParser.parse(sceneNode);
     if (gameScene != null) {
-      newGame.addScene(gameScene.getName());
+      newGame.addScene(gameScene);
     } else {
       LOGGER.error("Scene with name {} not found and therefore will not be added "
           + "to Game.", sceneNode.get(NAME));
@@ -145,7 +118,7 @@ public class GameParser implements Parser<Game> {
 
   private void handleSceneWriting(Game data, ObjectNode dataNode) throws IOException {
     ArrayNode sceneArray = mapper.createArrayNode();
-    for (GameScene scene : data.getAllScenes()) {
+    for (GameScene scene : data.getAllScenes().values()) {
       sceneArray.add(sceneParser.write(scene));
     }
     dataNode.set(SCENE, sceneArray);

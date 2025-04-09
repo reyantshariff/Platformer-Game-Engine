@@ -1,6 +1,8 @@
 # API Use Cases and Implementation
 
-This document outlines how the game engine APIs are designed to accomplish various use cases, including starting a new game, adding or removing obstacles, handling player actions, managing the camera, determining win/lose states, and saving levels.
+This document outlines how the game engine APIs are designed to accomplish various use cases,
+including starting a new game, adding or removing obstacles, handling player actions, managing the
+camera, determining win/lose states, and saving levels.
 
 ## BUILDER-01: New Game
 
@@ -15,12 +17,14 @@ currentScene = new GameScene()
 }
 
 ## BUILDER-02: Add/Remove Obstacle
+
 GameScene scene = new GameScene  
 GameObject newObject = new GameObject  
 scene.addObject(newObject)  
 scene.removeObject(newObject)
 
 ## PLAYER-05: New Game
+
 Class Display   
 {  
 Parser parser = new Parser  
@@ -42,6 +46,7 @@ gameObject.step()
 *We’ll have previous pointers to the content of the last step as well as a current pointer.*
 
 ## PLAYER-01: Pause
+
 Boolean pause  
 EventHandler escapeKey = new EventHandler()  
 onClick -> CurrentScene.loadScene("PauseMenu")

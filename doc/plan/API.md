@@ -11,7 +11,8 @@ API's design goals, primary abstractions and their behavior, as well as how they
     - Public void addObject(GameObject)
 - GameObject API
     - Public void init()
-    - Public void removeComponent(String className) \#Note the assumption that there is at most 1 instance of a particular component type on an object
+    - Public void removeComponent(String className) \#Note the assumption that there is at most 1
+      instance of a particular component type on an object
     - Public void addComponent(String className)
 - Logger API
     - Public String getLatestLog()

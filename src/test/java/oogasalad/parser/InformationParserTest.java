@@ -1,6 +1,8 @@
 package oogasalad.parser;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class InformationParserTest {
+
   private ObjectMapper mapper;
   private InformationParser informationParser;
   public String json;
@@ -20,16 +23,16 @@ class InformationParserTest {
     mapper = new ObjectMapper();
     informationParser = new InformationParser();
     json = """
-        {
-          "Name": "TestGame",
-          "Description": "A fun game",
-          "Author": "Justin",
-          "Resolution": {
-            "Width": 1280,
-            "Height": 720
+          {
+            "Name": "TestGame",
+            "Description": "A fun game",
+            "Author": "Justin",
+            "Resolution": {
+              "Width": 1280,
+              "Height": 720
+            }
           }
-        }
-      """;
+        """;
   }
 
   @Test
@@ -60,31 +63,33 @@ class InformationParserTest {
   }
 
   @Test
-  void parse_missingField_throwsParsingException() throws ParsingException, JsonProcessingException {
+  void parse_missingField_throwsParsingException()
+      throws ParsingException, JsonProcessingException {
     json = """
-      {
-        "Description": "A fun game",
-        "Author": "Justin",
-        "Resolution": {
-          "Width": 1280,
-          "Height": 720
-        }
-      }
-    """;
+          {
+            "Description": "A fun game",
+            "Author": "Justin",
+            "Resolution": {
+              "Width": 1280,
+              "Height": 720
+            }
+          }
+        """;
 
     JsonNode node = mapper.readTree(json);
     assertThrows(ParsingException.class, () -> informationParser.parse(node));
   }
 
   @Test
-  void parse_missingResolution_throwsParsingException() throws ParsingException, JsonProcessingException {
+  void parse_missingResolution_throwsParsingException()
+      throws ParsingException, JsonProcessingException {
     json = """
-      {
-        "Name": "TestGame",
-        "Description": "A fun game",
-        "Author": "Justin"
-      }
-    """;
+          {
+            "Name": "TestGame",
+            "Description": "A fun game",
+            "Author": "Justin"
+          }
+        """;
 
     JsonNode node = mapper.readTree(json);
     assertThrows(ParsingException.class, () -> informationParser.parse(node));

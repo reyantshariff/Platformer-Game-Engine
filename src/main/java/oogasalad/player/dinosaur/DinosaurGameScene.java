@@ -1,23 +1,23 @@
 package oogasalad.player.dinosaur;
 
+import javafx.scene.Scene;
 import oogasalad.ResourceBundles;
 import oogasalad.engine.base.architecture.GameScene;
-import javafx.scene.Scene;
+import oogasalad.engine.base.behavior.Behavior;
+import oogasalad.engine.constraint.IsGroundedConstraint;
+import oogasalad.engine.action.JumpAction;
 import oogasalad.engine.base.enumerate.KeyCode;
-import oogasalad.engine.base.event.CrouchAction;
-import oogasalad.engine.base.event.IsGroundedConstraint;
-import oogasalad.engine.base.event.JumpAction;
-import oogasalad.engine.component.AccelerationComponent;
-import oogasalad.engine.component.ColliderComponent;
+import oogasalad.engine.action.CrouchAction;
+import oogasalad.engine.component.BehaviorController;
+import oogasalad.engine.component.Collider;
 import oogasalad.engine.component.InputHandler;
-import oogasalad.engine.component.SpriteSwitcherComponent;
 import oogasalad.engine.component.Transform;
-import oogasalad.engine.component.VelocityComponent;
-import oogasalad.engine.prefabs.dinosaur.Base;
-import oogasalad.engine.prefabs.dinosaur.Bird;
-import oogasalad.engine.prefabs.Player;
+import oogasalad.engine.prefab.Player;
+import oogasalad.engine.prefab.dinosaur.Base;
+import oogasalad.engine.prefab.dinosaur.Bird;
 
 public class DinosaurGameScene extends GameScene {
+
   private Scene scene;
 
   public DinosaurGameScene(String name) {
@@ -33,7 +33,6 @@ public class DinosaurGameScene extends GameScene {
   }
 
 
-
   private void makeBirdTest() {
     Bird bird = instantiateObject(Bird.class);
 
@@ -43,11 +42,12 @@ public class DinosaurGameScene extends GameScene {
     tBird.setScaleX(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "bird.width"));
     tBird.setScaleY(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "bird.height"));
 
-    SpriteSwitcherComponent birdSpriteSwitch = bird.addComponent(SpriteSwitcherComponent.class);
-    birdSpriteSwitch.registerState("bird", ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "bird.image"));
+    SpriteSwitcher birdSpriteSwitch = bird.addComponent(SpriteSwitcher.class);
+    birdSpriteSwitch.registerState("bird",
+        ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "bird.image"));
     birdSpriteSwitch.setState("bird");
 
-    bird.addComponent(ColliderComponent.class);
+    bird.addComponent(Collider.class);
   }
 
 
@@ -60,16 +60,17 @@ public class DinosaurGameScene extends GameScene {
     tGround.setScaleX(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "ground.width"));
     tGround.setScaleY(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "ground.height"));
 
-    SpriteSwitcherComponent groundSpriteSwitch = ground.addComponent(SpriteSwitcherComponent.class);
-    groundSpriteSwitch.registerState("ground", ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "ground.image"));
+    SpriteSwitcher groundSpriteSwitch = ground.addComponent(SpriteSwitcher.class);
+    groundSpriteSwitch.registerState("ground",
+        ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "ground.image"));
     groundSpriteSwitch.setState("ground");
 
-    ground.addComponent(ColliderComponent.class);
+    ground.addComponent(Collider.class);
   }
 
 
   private Player makePlayerTest() {
-    Player player = instantiateObject(Player.class);
+    Player player = new Player("Dinosaur");
 
     Transform t = player.addComponent(Transform.class);
     t.setX(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "player.startX"));
@@ -77,27 +78,33 @@ public class DinosaurGameScene extends GameScene {
     t.setScaleX(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "player.width"));
     t.setScaleY(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "player.height"));
 
-    VelocityComponent vel = player.addComponent(VelocityComponent.class);
-    vel.setVelocityX(ResourceBundles.getDouble("oogasalad.dinosaur.dinosaur", "player.velocityX"));
+    BehaviorController controller = player.addComponent(BehaviorController.class);
 
-    AccelerationComponent ac = player.addComponent(AccelerationComponent.class);
-    ac.setAccelY(ResourceBundles.getDouble("oogasalad.dinosaur.dinosaur", "player.accelY"));
+    Behavior jumpBehavior = controller.addBehavior();
+
+    jumpBehavior.addConstraint(IsGroundedConstraint.class);
+    jumpBehavior.addAction(JumpAction.class).setParameter(200.0);
+    jumpBehavior.addConstraint(IsGroundedConstraint.class);
+
 
     InputHandler input = player.addComponent(InputHandler.class);
-    JumpAction jumpAction = new JumpAction();
-    jumpAction.registerConstraint(IsGroundedConstraint.class);
-    input.registerAction(KeyCode.UP, jumpAction.getClass());
+
+
+
 
     CrouchAction crouch = new CrouchAction();
     input.registerAction(KeyCode.DOWN, crouch.getClass());
 
-    SpriteSwitcherComponent spriteSwitcher = player.addComponent(SpriteSwitcherComponent.class);
-    spriteSwitcher.registerState("run", ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "player.image.run"));
-    spriteSwitcher.registerState("crouch", ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "player.image.crouch"));
-    spriteSwitcher.registerState("jump", ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "player.image.jump"));
+    SpriteSwitcher spriteSwitcher = player.addComponent(SpriteSwitcher.class);
+    spriteSwitcher.registerState("run",
+        ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "player.image.run"));
+    spriteSwitcher.registerState("crouch",
+        ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "player.image.crouch"));
+    spriteSwitcher.registerState("jump",
+        ResourceBundles.getString("oogasalad.dinosaur.dinosaur", "player.image.jump"));
     spriteSwitcher.setState("run");
 
-    ColliderComponent collider = player.addComponent(ColliderComponent.class);
+    Collider collider = player.addComponent(Collider.class);
 
     collider.registerCollisionBehavior(Base.class, groundUse -> {
       VelocityComponent velocity = player.getComponent(VelocityComponent.class);
@@ -115,6 +122,8 @@ public class DinosaurGameScene extends GameScene {
           "oogasalad.dinosaur.dinosaur", "collision.bird.velocityY"
       ));
     });
+
+    registerObject(player);
 
     return player;
   }

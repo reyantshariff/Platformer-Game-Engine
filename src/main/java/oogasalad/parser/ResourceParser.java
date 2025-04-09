@@ -1,6 +1,5 @@
 package oogasalad.parser;
 
-import static oogasalad.config.GameConfig.LOGGER;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -13,6 +12,7 @@ import java.util.Map;
  * @author Justin Aronwald
  */
 public class ResourceParser implements Parser<Map.Entry<String, String>> {
+
   private final ObjectMapper mapper = new ObjectMapper();
 
 
