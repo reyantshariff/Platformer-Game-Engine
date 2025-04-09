@@ -79,6 +79,36 @@ public class PhysicsHandler extends GameComponent {
   }
 
   /**
+   * Sets the accelerationX of the object.
+   */
+  public void setAccelerationX(double accelerationX) {
+    this.accelerationX = accelerationX;
+  }
+
+  /**
+   * Returns the accelerationX of the object.
+   */
+  public double getAccelerationX() {
+    return accelerationX;
+  }
+
+  /**
+   * Sets the accelerationY of the object.
+   */
+  public void setAccelerationY(double accelerationY) {
+    this.accelerationY = accelerationY;
+  }
+
+  /**
+   * Returns the accelerationY of the object.
+   */
+  public double getAccelerationY() {
+    return accelerationY;
+  }
+
+
+
+  /**
    * Applies an impulse to the object, changing its velocityX.
    * 
    * @param impulseX the impulse in the X direction

@@ -4,6 +4,7 @@ import javafx.scene.Scene;
 import oogasalad.ResourceBundles;
 import oogasalad.engine.base.architecture.GameScene;
 import oogasalad.engine.base.behavior.Behavior;
+import oogasalad.engine.component.PhysicsHandler;
 import oogasalad.engine.constraint.IsGroundedConstraint;
 import oogasalad.engine.action.JumpAction;
 import oogasalad.engine.base.enumerate.KeyCode;
@@ -12,6 +13,7 @@ import oogasalad.engine.component.Collider;
 import oogasalad.engine.component.InputHandler;
 import oogasalad.engine.component.Transform;
 import oogasalad.engine.constraint.KeyHoldConstraint;
+import oogasalad.engine.constraint.KeyPressConstraint;
 import oogasalad.engine.prefab.Player;
 import oogasalad.engine.prefab.dinosaur.Base;
 import oogasalad.engine.prefab.dinosaur.Bird;
@@ -23,11 +25,12 @@ public class DinosaurGameScene extends GameScene {
   public DinosaurGameScene(String name) {
     super(name);
     ResourceBundles.loadBundle("oogasalad.dinosaur.dinosaur");
+    onActivated();
   }
 
   @Override
   public void onActivated() {
-    Player player = makePlayerTest();
+    makePlayerTest();
     makeGroundTest();
     makeBirdTest();
   }
@@ -36,7 +39,7 @@ public class DinosaurGameScene extends GameScene {
   private void makeBirdTest() {
     Bird bird = new Bird("Bird");
 
-    Transform tBird = bird.addComponent(Transform.class);
+    Transform tBird = bird.getComponent(Transform.class);
     tBird.setX(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "bird.startX"));
     tBird.setY(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "bird.startY"));
     tBird.setScaleX(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "bird.width"));
@@ -52,7 +55,7 @@ public class DinosaurGameScene extends GameScene {
   private void makeGroundTest() {
     Base ground = new Base("Ground");
 
-    Transform tGround = ground.addComponent(Transform.class);
+    Transform tGround = ground.getComponent(Transform.class);
     tGround.setX(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "ground.startX"));
     tGround.setY(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "ground.startY"));
     tGround.setScaleX(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "ground.width"));
@@ -64,28 +67,33 @@ public class DinosaurGameScene extends GameScene {
   }
 
 
-  private Player makePlayerTest() {
+  private void makePlayerTest() {
     Player player = new Player("Dinosaur");
+    registerObject(player);
+    Transform t = player.getComponent(Transform.class);
 
-    Transform t = player.addComponent(Transform.class);
     t.setX(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "player.startX"));
     t.setY(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "player.startY"));
     t.setScaleX(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "player.width"));
     t.setScaleY(ResourceBundles.getInt("oogasalad.dinosaur.dinosaur", "player.height"));
 
+    Collider c = player.addComponent(Collider.class);
+
+
+
+    player.addComponent(InputHandler.class);
+
+    PhysicsHandler physicsHandler = player.addComponent(PhysicsHandler.class);
+
+    physicsHandler.setVelocityX(ResourceBundles.getDouble("oogasalad.dinosaur.dinosaur", "player.velocityX"));
+    physicsHandler.setAccelerationY(ResourceBundles.getDouble("oogasalad.dinosaur.dinosaur", "player.accelY"));
+
     BehaviorController controller = player.addComponent(BehaviorController.class);
 
     Behavior jumpBehavior = controller.addBehavior();
 
-    jumpBehavior.addConstraint(IsGroundedConstraint.class);
-    jumpBehavior.addAction(JumpAction.class).setParameter(200.0);
-    jumpBehavior.addConstraint(IsGroundedConstraint.class);
-    jumpBehavior.addConstraint(KeyHoldConstraint.class).setParameter(KeyCode.SPACE);
-
-
-    InputHandler input = player.addComponent(InputHandler.class);
-
-    return player;
+    jumpBehavior.addAction(JumpAction.class).setParameter(ResourceBundles.getDouble("oogasalad.dinosaur.dinosaur", "player.jumpPower"));
+    jumpBehavior.addConstraint(KeyPressConstraint.class).setParameter(KeyCode.SPACE);
   }
 
 

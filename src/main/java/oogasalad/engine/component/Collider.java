@@ -1,5 +1,6 @@
 package oogasalad.engine.component;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +28,7 @@ public class Collider extends GameComponent {
   @Override
   protected void awake() {
     transform = getComponent(Transform.class);
+    collidableTags = new ArrayList<>();
   }
 
   @Override

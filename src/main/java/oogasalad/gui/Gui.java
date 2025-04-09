@@ -1,6 +1,7 @@
 package oogasalad.gui;
 
 import javafx.scene.Group;
+import oogasalad.player.dinosaur.DinosaurGameScene;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import javafx.scene.Scene;
@@ -63,8 +64,8 @@ public class Gui {
     // Apply css styling
     scene.getStylesheets().add(getClass().getResource(ResourceBundles.getString("oogasalad.gui.general", "stylesheet")).toExternalForm());
 
-    //game.addScene(new MainMenuGameScene("Main Menu"));
-    // game.addScene(DinosaurGameScene.class, "Dinosaur");
+    DinosaurGameScene dinoScene = new DinosaurGameScene("DinoScene");
+    game.addScene(dinoScene);
     startGameLoop();
 
     stage.setTitle("OOGASalad Platformer");
@@ -74,7 +75,16 @@ public class Gui {
     scene.setOnKeyPressed(e -> {
       KeyCode key = mapToEngineKeyCode(e.getCode());
       if (key != null && game.getCurrentScene() != null) {
-        game.keyPressed(key.ordinal());
+        game.keyPressed(key.getValue());
+      } else if (game.getCurrentScene() == null) {
+        logger.error("Current Game Scene is null");
+      }
+    });
+
+    scene.setOnKeyReleased(e -> {
+      KeyCode key = mapToEngineKeyCode(e.getCode());
+      if (key != null && game.getCurrentScene() != null) {
+        game.keyReleased(key.getValue());
       } else if (game.getCurrentScene() == null) {
         logger.error("Current Game Scene is null");
       }

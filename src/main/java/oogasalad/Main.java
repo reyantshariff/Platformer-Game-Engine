@@ -33,12 +33,14 @@ public class Main extends Application {
   public void start(Stage stage) {
     game = new Game();
 
+    /**
     // Create an example builder UI
     BuilderView builderUI = new BuilderView(1400, 800);
     Scene builderScene = builderUI.getScene();
     Stage builderStage = new Stage();
     builderStage.setScene(builderScene);
     builderStage.show();
+     */
 
     // Init GUI
     Gui gui = new Gui(stage, game);
