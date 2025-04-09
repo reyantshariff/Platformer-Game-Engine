@@ -7,6 +7,13 @@ import oogasalad.model.engine.base.behavior.Behavior;
 import oogasalad.model.engine.base.enumerate.ComponentTag;
 import oogasalad.model.engine.base.serialization.SerializableField;
 
+/**
+ * The BehaviorController class is a component that manages the behaviors of a game object. It is
+ * responsible for executing the behaviors and managing the constraints and actions associated with
+ * each behavior.
+ *
+ */
+
 public final class BehaviorController extends GameComponent {
   @Override
   public ComponentTag componentTag() {

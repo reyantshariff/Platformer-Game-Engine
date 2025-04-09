@@ -79,7 +79,8 @@ public abstract class BehaviorConstraint<T> implements Serializable {
 
   /**
    * This method is called to get the component references.
-   * NOTE: This method should be override if needed.
    */
-  protected void awake() {}
+  protected void awake() {
+    // NOTE: This method should be overriden if needed
+  }
 }
