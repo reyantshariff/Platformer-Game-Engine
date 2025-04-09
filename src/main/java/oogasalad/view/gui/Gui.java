@@ -30,6 +30,7 @@ public class Gui {
   private GraphicsContext gc;
   private Timeline gameLoop;
   private GameObjectRenderer objectRenderer;
+  private static final String GENERAL_BUNDLE = "oogasalad.gui.general";
 
   /**
    * Constructs a new GUI instance for the given game and stage.
@@ -39,7 +40,7 @@ public class Gui {
    */
   public Gui(Stage stage, Game game) {
     this.game = game;
-    ResourceBundles.loadBundle("oogasalad.gui.general");
+    ResourceBundles.loadBundle(GENERAL_BUNDLE);
     generateGui(stage);
   }
 
@@ -52,8 +53,8 @@ public class Gui {
     logger.debug("Generating GUI...");
 
     Group root = new Group();
-    int windowWidth = ResourceBundles.getInt("oogasalad.gui.general", "windowWidth");
-    int windowHeight = ResourceBundles.getInt("oogasalad.gui.general", "windowHeight");
+    int windowWidth = ResourceBundles.getInt(GENERAL_BUNDLE, "windowWidth");
+    int windowHeight = ResourceBundles.getInt(GENERAL_BUNDLE, "windowHeight");
     Scene scene = new Scene(root, windowWidth, windowHeight);
     Canvas canvas = new Canvas(windowWidth, windowHeight);
 
@@ -64,7 +65,7 @@ public class Gui {
     root.getChildren().add(canvas);
 
     // Apply css styling
-    scene.getStylesheets().add(getClass().getResource(ResourceBundles.getString("oogasalad.gui.general", "stylesheet")).toExternalForm());
+    scene.getStylesheets().add(getClass().getResource(ResourceBundles.getString(GENERAL_BUNDLE, "stylesheet")).toExternalForm());
 
     DinosaurGameScene dinoScene = new DinosaurGameScene("DinoScene");
     game.addScene(dinoScene);
@@ -98,7 +99,7 @@ public class Gui {
       gameLoop.setCycleCount(Timeline.INDEFINITE);
       gameLoop.getKeyFrames().add(new KeyFrame(
           Duration.seconds(
-              1.0 / ResourceBundles.getDouble("oogasalad.gui.general", "framesPerSecond")),
+              1.0 / ResourceBundles.getDouble(GENERAL_BUNDLE, "framesPerSecond")),
           event -> step() // Call step method
       ));
       gameLoop.play();
@@ -110,7 +111,7 @@ public class Gui {
    */
   private void step() {
     if (game.getCurrentScene() != null) { // Check if scene is loaded
-      game.step(1.0 / ResourceBundles.getDouble("oogasalad.gui.general", "framesPerSecond"));
+      game.step(1.0 / ResourceBundles.getDouble(GENERAL_BUNDLE, "framesPerSecond"));
       objectRenderer.render(gc, game.getCurrentScene());
     } else {
       logger.debug("No game scene loaded. Skipping step.");
