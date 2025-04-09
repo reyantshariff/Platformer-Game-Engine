@@ -1,14 +1,19 @@
 package oogasalad.model.parser;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
+import oogasalad.model.engine.base.behavior.Behavior;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import oogasalad.model.parser.BehaviorParser;
-import oogasalad.model.parser.ParsingException;
+import oogasalad.model.engine.base.behavior.BehaviorConstraint;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,10 +24,19 @@ class BehaviorParserTest {
   String goodJsonString =
       """
           {
-            "Name": "TestBehaviour",
-            "Configurations": {
-              "startScene": "Example Main Scene"
-            }
+            "Name": "SceneChanger",
+            "constraints": [
+              {
+                "name": "KeyPressConstraint",
+                "parameter": "SPACE"
+              }
+            ],
+            "actions": [
+              {
+                "name": "ChangeSceneAction",
+                "parameter": "Example Main Scene"
+              }
+            ]
           }
           """;
 
@@ -30,7 +44,18 @@ class BehaviorParserTest {
   String badJsonString =
       """
           {
-            "Configurations": {}
+            "constraints": [
+              {
+                "name": "OnKeyPressed",
+                "parameter": "SPACE"
+              }
+            ],
+            "actions": [
+              {
+                "name": "ChangeSceneAction",
+                "parameter": "Example Main Scene"
+              }
+            ]
           }
           """;
 
@@ -43,14 +68,17 @@ class BehaviorParserTest {
   @Test
   void parse_validJson_success() throws JsonProcessingException, ParsingException {
     JsonNode node = myMapper.readTree(goodJsonString);
-    //Behavior behavior = myBehaviorParser.parse(node);
-    //assertNotNull(behavior); // Once we have actual behavior classes this should work
+    Behavior behavior = myBehaviorParser.parse(node);
+    assertNotNull(behavior); // Once we have actual behavior classes this should work
+    behavior
+        .getSerializedFields()
+        .forEach(Assertions::assertNotNull);
   }
 
   @Test
   void parse_invalidJson_failure() throws JsonProcessingException, ParsingException {
     JsonNode node = myMapper.readTree(badJsonString);
-    assertThrows(ParsingException.class, () -> myBehaviorParser.parse(node));
+    assertThrows(ParsingException.class, () -> myBehaviorParser.parse(node)); // TODO: Super weird error
   }
 
   // TODO: This test has similar structure to Component but we do not have concrete behaviors yet
