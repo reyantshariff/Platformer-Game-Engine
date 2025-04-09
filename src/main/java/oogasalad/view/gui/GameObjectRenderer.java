@@ -2,6 +2,7 @@ package oogasalad.view.gui;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Map;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -40,7 +41,7 @@ public class GameObjectRenderer {
   /**
    * Renders the game objects in the given scene onto the canvas.
    *
-   * @param gc    The graphics context of the canvas.
+   * @param gc The graphics context of the canvas.
    * @param scene The game scene to render.
    */
   public void render(GraphicsContext gc, GameScene scene) {
@@ -51,7 +52,8 @@ public class GameObjectRenderer {
     Double windowHeight = ResourceBundles.getDouble(baseName, "windowHeight");
     gc.clearRect(windowX, windowY, windowWidth, windowHeight);
 
-    for (GameObject obj : scene.getAllObjects()) {
+    Collection<GameObject> allObjects = scene.getAllObjectsInView();
+    for (GameObject obj : allObjects) {
       renderGameObject(gc, obj);
     }
   }
@@ -59,15 +61,18 @@ public class GameObjectRenderer {
   private void renderGameObject(GraphicsContext gc, GameObject obj) {
     boolean hasSprite = obj.hasComponent(SpriteRenderer.class);
 
-    for (Map.Entry<Class<? extends GameComponent>, GameComponent> entry : obj.getAllComponents().entrySet()) {
+    for (Map.Entry<Class<? extends GameComponent>, GameComponent> entry : obj.getAllComponents()
+        .entrySet()) {
       Class<? extends GameComponent> clazz = entry.getKey();
 
-      if (hasSprite && clazz.equals(Transform.class)) continue;
+      if (hasSprite && clazz.equals(Transform.class))
+        continue;
 
       GameComponent component = entry.getValue();
       try {
         String renderMethod = "render" + clazz.getSimpleName();
-        Method method = this.getClass().getDeclaredMethod(renderMethod, clazz, GraphicsContext.class);
+        Method method =
+            this.getClass().getDeclaredMethod(renderMethod, clazz, GraphicsContext.class);
         method.setAccessible(true);
         method.invoke(this, component, gc);
       } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
@@ -102,12 +107,9 @@ public class GameObjectRenderer {
 
     try {
       Image image = new Image(component.getImagePath());
-      gc.drawImage(
-          image,
-          transform.getX() + component.getOffsetX(),
-          transform.getY() + component.getOffsetY(),
-          transform.getScaleX(), // width (scale)
-          transform.getScaleY()  // height (scale)
+      gc.drawImage(image, transform.getX() + component.getOffsetX(),
+          transform.getY() + component.getOffsetY(), transform.getScaleX(), // width (scale)
+          transform.getScaleY() // height (scale)
       );
     } catch (Exception e) {
       logger.error("Failed to render image: " + component.getImagePath());
