@@ -1,4 +1,4 @@
-package oogasalad.parser;
+package oogasalad.model.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import java.awt.Dimension;

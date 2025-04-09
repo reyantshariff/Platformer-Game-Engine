@@ -1,4 +1,4 @@
-package oogasalad.parser;
+package oogasalad.model.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

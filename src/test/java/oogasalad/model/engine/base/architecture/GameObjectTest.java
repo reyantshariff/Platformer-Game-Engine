@@ -1,4 +1,4 @@
-package oogasalad.architecture;
+package oogasalad.model.engine.base.architecture;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
