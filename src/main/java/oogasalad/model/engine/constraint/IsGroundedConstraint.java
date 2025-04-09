@@ -5,9 +5,16 @@ import oogasalad.model.engine.base.enumerate.ComponentTag;
 import oogasalad.model.engine.base.serialization.SerializableField;
 import oogasalad.model.engine.component.Collider;
 
+/**
+ * The IsGroundedConstraint class is a constraint that checks if the object is grounded. It checks if
+ * the object is colliding with the ground.
+ */
+
 public class IsGroundedConstraint extends BehaviorConstraint<Void> {
   @SerializableField
   private double tolerance = 2.0;
+
+  private String groundTag = "Base";
 
   @Override
   public ComponentTag ConstraintType() {
@@ -17,6 +24,6 @@ public class IsGroundedConstraint extends BehaviorConstraint<Void> {
   @Override
   protected boolean check(Void unused) {
     Collider c = getComponent(Collider.class);
-    return c.collidesWith("Base") && c.touchingFromAbove("Base", tolerance) && c.horizontallyAligned("Base");
+    return c.collidesWith(groundTag) && c.touchingFromAbove(groundTag, tolerance) && c.horizontallyAligned(groundTag);
   }
 }
