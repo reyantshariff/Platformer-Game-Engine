@@ -43,6 +43,7 @@ public class DinosaurGameScene extends GameScene {
   public DinosaurGameScene(String name) {
     super(name);
     ResourceBundles.loadBundle(DINOSAUR_SCENE_BUNDLE);
+    onActivated();
   }
 
   @Override
