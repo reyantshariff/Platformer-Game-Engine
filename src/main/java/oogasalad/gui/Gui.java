@@ -64,7 +64,7 @@ public class Gui {
     // Apply css styling
     scene.getStylesheets().add(getClass().getResource(ResourceBundles.getString("oogasalad.gui.general", "stylesheet")).toExternalForm());
 
-    game.addScene(MainMenuGameScene.class, "Mainmenu");
+    game.addScene(new MainMenuGameScene("Main Menu"));
     // game.addScene(DinosaurGameScene.class, "Dinosaur");
     startGameLoop();
 
@@ -75,7 +75,7 @@ public class Gui {
     scene.setOnKeyPressed(e -> {
       KeyCode key = mapToEngineKeyCode(e.getCode());
       if (key != null && game.getCurrentScene() != null) {
-        game.getCurrentScene().subscribeInputKey(key);
+        game.keyPressed(key.ordinal());
       } else if (game.getCurrentScene() == null) {
         logger.error("Current Game Scene is null");
       }
