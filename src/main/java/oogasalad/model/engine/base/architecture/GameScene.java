@@ -119,6 +119,18 @@ public class GameScene {
     }
   }
 
+  public final Camera getCamera() {
+    try {
+      return (Camera) allComponents.get(ComponentTag.CAMERA).get(0);
+    } catch (IndexOutOfBoundsException e) {
+      LOGGER.error("No camera in scene");
+      throw new IllegalArgumentException("No camera in scene");
+    } catch (ClassCastException e) {
+      LOGGER.error("Camera is not a Camera component");
+      throw new IllegalArgumentException("Camera is not a Camera component");
+    }
+  }
+
   /**
    * Getter to return a Collection of all the GameComponents
    */
