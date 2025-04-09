@@ -2,6 +2,7 @@ package oogasalad.model.builder;
 
 import java.util.Deque;
 import java.util.ArrayDeque;
+import java.util.UUID;
 import oogasalad.model.builder.actions.DeleteObjectAction;
 import oogasalad.model.builder.actions.CreateObjectAction;
 import oogasalad.model.builder.actions.MoveObjectAction;
@@ -43,6 +44,10 @@ public class Builder {
   }
 
   private Deque<EditorAction> actionStack = new ArrayDeque<>();
+  public Builder(Game game)
+  {
+    this.game = game;
+  }
 
   /**
    Undoes Last User Action
@@ -84,22 +89,23 @@ public class Builder {
    *  Records when a game object has been selected to be dragged and dropped on the UI
    */
 
+  public void selectExistingObject(UUID id)
+  {
+    selectedObject= findObject(id);
+  }
+
   public void selectObject(String type, int x, int y) //type will change to file path
   {
     if (selectedObject != null) {
       selectedObject = null; //Front end should store the image  path and its Game ID. Front end should keep track of selected object.
     }
 
-    if (findObject(x, y) == null)
-    {
-      selectedObject = GameObjectFactory.create(type);
-      game.getCurrentScene().registerObject(selectedObject);
-      actionStack.push(new CreateObjectAction(game, selectedObject));
-    }
-    else
-    {
-      selectedObject = findObject(x, y); // Front end should pass in game object ID
-    }
+//    if (findObject() == null)
+//    {
+//      selectedObject = GameObjectFactory.create(type);
+//      game.getCurrentScene().registerObject(selectedObject);
+//      actionStack.push(new CreateObjectAction(game, selectedObject));
+//    }
   }
 
   /**
@@ -118,15 +124,18 @@ public class Builder {
   }
 
 
-  private GameObject findObject(int x, int y)
+  private GameObject findObject(UUID id)
   {
     for (GameObject object : game.getCurrentScene().getAllObjects())
     {
-      object.addComponent(Transform.class);
-      if (object.getComponent(Transform.class).getX() == x && object.getComponent(Transform.class).getY() == y)
+      if (object.getId() == id)
       {
         return object;
       }
+//      if (object.getComponent(Transform.class).getX() == x && object.getComponent(Transform.class).getY() == y)
+//      {
+//        return object;
+//      }
     }
     return null;
   }
@@ -137,7 +146,6 @@ public class Builder {
    */
   public void placeObject(double x, double y) {
     if (selectedObject != null) {
-      selectedObject.addComponent(Transform.class);
       actionStack.push(new MoveObjectAction(selectedObject, selectedObject.getComponent(Transform.class).getX(), selectedObject.getComponent(Transform.class).getY(), x, y));
       selectedObject.getComponent(Transform.class).setX(x);
       selectedObject.getComponent(Transform.class).setY(y);
