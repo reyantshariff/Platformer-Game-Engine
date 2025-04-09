@@ -9,7 +9,19 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * Creates the main JavaFX view for the main menu of the entire game.
+ *
+ * @author Justin Aronwald
+ */
 public class MainMenuView {
+
+  /**
+   *
+   * @param stage - the primary JavaFX stage that is being used
+   * @param onPlay - the function for the button that starts gameplay
+   * @return - a JavaFX scene
+   */
   public Scene createMainMenu(Stage stage, Runnable onPlay) {
     VBox root = new VBox(20);
     root.setAlignment(Pos.CENTER);
@@ -23,10 +35,10 @@ public class MainMenuView {
     playButton.setStyle("-fx-font-size: 20px;");
     playButton.setOnAction(e -> onPlay.run());
 
-    Button exitButton = new Button("Exit");
-    exitButton.setOnAction(e -> Platform.exit());
+    Button builderButton = new Button("Build Game");
+    playButton.setStyle("-fx-font-size: 20px;");
 
-    root.getChildren().addAll(title, playButton, exitButton);
+    root.getChildren().addAll(title, playButton, builderButton);
     return new Scene(root, 1280, 720);
   }
 }

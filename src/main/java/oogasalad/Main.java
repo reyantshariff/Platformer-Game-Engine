@@ -14,8 +14,6 @@ import oogasalad.view.screens.MainMenuView;
  */
 public class Main extends Application {
 
-  private Game game;
-
   /**
    * Start of the program.
    */
@@ -32,7 +30,7 @@ public class Main extends Application {
    */
   @Override
   public void start(Stage stage) {
-    game = new Game();
+    Game game = new Game();
     showMainMenu(game, stage);
 
     /**

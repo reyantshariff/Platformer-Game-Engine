@@ -25,6 +25,7 @@ import oogasalad.model.engine.base.architecture.Game;
 public class Gui {
 
   private static final Logger logger = LogManager.getLogger(Gui.class);
+  private final String GUI_GENERAL_PATH = "oogasalad.gui.general";
   private final Game game;
   private final Stage curStage;
   private GraphicsContext gc;
@@ -40,7 +41,7 @@ public class Gui {
   public Gui(Stage stage, Game game) {
     this.game = game;
     this.curStage = stage;
-    ResourceBundles.loadBundle("oogasalad.gui.general");
+    ResourceBundles.loadBundle(GUI_GENERAL_PATH);
     generateGui(stage);
   }
 
@@ -84,7 +85,7 @@ public class Gui {
       gameLoop.setCycleCount(Timeline.INDEFINITE);
       gameLoop.getKeyFrames().add(new KeyFrame(
           Duration.seconds(
-              1.0 / ResourceBundles.getDouble("oogasalad.gui.general", "framesPerSecond")),
+              1.0 / ResourceBundles.getDouble(GUI_GENERAL_PATH, "framesPerSecond")),
           event -> step() // Call step method
       ));
       gameLoop.play();
@@ -96,7 +97,7 @@ public class Gui {
    */
   private void step() {
     if (game.getCurrentScene() != null) { // Check if scene is loaded
-      game.step(1.0 / ResourceBundles.getDouble("oogasalad.gui.general", "framesPerSecond"));
+      game.step(1.0 / ResourceBundles.getDouble(GUI_GENERAL_PATH, "framesPerSecond"));
       objectRenderer.render(gc, game.getCurrentScene());
     } else {
       logger.debug("No game scene loaded. Skipping step.");
@@ -121,17 +122,17 @@ public class Gui {
   private Scene buildJavaFXScene(GameScene sceneToRender) {
     Group root = new Group();
     Scene fxScene = new Scene(root,
-        ResourceBundles.getInt("oogasalad.gui.general", "windowWidth"),
-        ResourceBundles.getInt("oogasalad.gui.general", "windowHeight"));
+        ResourceBundles.getInt(GUI_GENERAL_PATH, "windowWidth"),
+        ResourceBundles.getInt(GUI_GENERAL_PATH, "windowHeight"));
     Canvas canvas = new Canvas(
-        ResourceBundles.getInt("oogasalad.gui.general", "windowWidth"),
-        ResourceBundles.getInt("oogasalad.gui.general", "windowHeight"));
+        ResourceBundles.getInt(GUI_GENERAL_PATH, "windowWidth"),
+        ResourceBundles.getInt(GUI_GENERAL_PATH, "windowHeight"));
 
     gc = canvas.getGraphicsContext2D();
     root.getChildren().add(canvas);
 
     fxScene.getStylesheets().add(getClass()
-        .getResource(ResourceBundles.getString("oogasalad.gui.general", "stylesheet"))
+        .getResource(ResourceBundles.getString( GUI_GENERAL_PATH,"stylesheet"))
         .toExternalForm());
 
     fxScene.setOnKeyPressed(e -> {
