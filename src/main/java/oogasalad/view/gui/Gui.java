@@ -1,6 +1,7 @@
 package oogasalad.view.gui;
 
 import javafx.scene.Group;
+import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.view.player.dinosaur.DinosaurGameScene;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,8 +14,6 @@ import oogasalad.model.engine.base.enumerate.KeyCode;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
-import javafx.scene.input.KeyEvent;
-import java.util.function.BiConsumer;
 import oogasalad.model.engine.base.architecture.Game;
 
 /**
@@ -27,10 +26,10 @@ public class Gui {
 
   private static final Logger logger = LogManager.getLogger(Gui.class);
   private final Game game;
+  private final Stage curStage;
   private GraphicsContext gc;
   private Timeline gameLoop;
   private GameObjectRenderer objectRenderer;
-  private static final String GENERAL_BUNDLE = "oogasalad.gui.general";
 
   /**
    * Constructs a new GUI instance for the given game and stage.
@@ -40,8 +39,20 @@ public class Gui {
    */
   public Gui(Stage stage, Game game) {
     this.game = game;
-    ResourceBundles.loadBundle(GENERAL_BUNDLE);
+    this.curStage = stage;
+    ResourceBundles.loadBundle("oogasalad.gui.general");
     generateGui(stage);
+  }
+
+  /**
+   * Method to change the current scene you are on to a new one
+   *
+   * @param newScene - the new GameScene to push to
+   */
+  public void switchToScene(GameScene newScene) {
+    game.changeScene(newScene.getName());
+    Scene fxScene = buildJavaFXScene(newScene);
+    curStage.setScene(fxScene);
   }
 
   /**
@@ -52,44 +63,18 @@ public class Gui {
   private void generateGui(Stage stage) {
     logger.debug("Generating GUI...");
 
-    Group root = new Group();
-    int windowWidth = ResourceBundles.getInt(GENERAL_BUNDLE, "windowWidth");
-    int windowHeight = ResourceBundles.getInt(GENERAL_BUNDLE, "windowHeight");
-    Scene scene = new Scene(root, windowWidth, windowHeight);
-    Canvas canvas = new Canvas(windowWidth, windowHeight);
-
-    // Create the GameObject-to-JavaFX renderer for this scene
-    objectRenderer = new GameObjectRenderer(scene);
-
-    gc = canvas.getGraphicsContext2D();
-    root.getChildren().add(canvas);
-
-    // Apply css styling
-    scene.getStylesheets().add(getClass().getResource(ResourceBundles.getString(GENERAL_BUNDLE, "stylesheet")).toExternalForm());
-
     DinosaurGameScene dinoScene = new DinosaurGameScene("DinoScene");
     game.addScene(dinoScene);
-    startGameLoop();
+    game.changeScene(dinoScene.getName());
 
+    Scene newScene = buildJavaFXScene(dinoScene);
     stage.setTitle("OOGASalad Platformer");
-    stage.setScene(scene);
+    stage.setScene(newScene);
     stage.show();
 
-    scene.setOnKeyPressed(e -> handleKeyEvent(e, (g, k) -> g.keyPressed(k)));
-    scene.setOnKeyReleased(e -> handleKeyEvent(e, (g, k) -> g.keyReleased(k)));
-    
+    startGameLoop();
     logger.debug("GUI generated.");
   }
-
-  private void handleKeyEvent(KeyEvent e, BiConsumer<Game, Integer> action) {
-    KeyCode key = mapToEngineKeyCode(e.getCode());
-    if (key != null && game.getCurrentScene() != null) {
-        action.accept(game, key.getValue());
-    } else if (game.getCurrentScene() == null) {
-        logger.error("Current Game Scene is null");
-    }
-}
-
   /**
    * Starts the game loop, which updates and renders the game at a fixed frame rate.
    */
@@ -99,7 +84,7 @@ public class Gui {
       gameLoop.setCycleCount(Timeline.INDEFINITE);
       gameLoop.getKeyFrames().add(new KeyFrame(
           Duration.seconds(
-              1.0 / ResourceBundles.getDouble(GENERAL_BUNDLE, "framesPerSecond")),
+              1.0 / ResourceBundles.getDouble("oogasalad.gui.general", "framesPerSecond")),
           event -> step() // Call step method
       ));
       gameLoop.play();
@@ -111,7 +96,7 @@ public class Gui {
    */
   private void step() {
     if (game.getCurrentScene() != null) { // Check if scene is loaded
-      game.step(1.0 / ResourceBundles.getDouble(GENERAL_BUNDLE, "framesPerSecond"));
+      game.step(1.0 / ResourceBundles.getDouble("oogasalad.gui.general", "framesPerSecond"));
       objectRenderer.render(gc, game.getCurrentScene());
     } else {
       logger.debug("No game scene loaded. Skipping step.");
@@ -130,5 +115,36 @@ public class Gui {
     } catch (IllegalArgumentException e) {
       return null;
     }
+  }
+
+
+  private Scene buildJavaFXScene(GameScene sceneToRender) {
+    Group root = new Group();
+    Scene fxScene = new Scene(root,
+        ResourceBundles.getInt("oogasalad.gui.general", "windowWidth"),
+        ResourceBundles.getInt("oogasalad.gui.general", "windowHeight"));
+    Canvas canvas = new Canvas(
+        ResourceBundles.getInt("oogasalad.gui.general", "windowWidth"),
+        ResourceBundles.getInt("oogasalad.gui.general", "windowHeight"));
+
+    gc = canvas.getGraphicsContext2D();
+    root.getChildren().add(canvas);
+
+    fxScene.getStylesheets().add(getClass()
+        .getResource(ResourceBundles.getString("oogasalad.gui.general", "stylesheet"))
+        .toExternalForm());
+
+    fxScene.setOnKeyPressed(e -> {
+      KeyCode key = mapToEngineKeyCode(e.getCode());
+      if (key != null) game.keyPressed(key.getValue());
+    });
+
+    fxScene.setOnKeyReleased(e -> {
+      KeyCode key = mapToEngineKeyCode(e.getCode());
+      if (key != null) game.keyReleased(key.getValue());
+    });
+
+    objectRenderer = new GameObjectRenderer(fxScene);
+    return fxScene;
   }
 }

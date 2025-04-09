@@ -1,9 +1,12 @@
 package oogasalad;
 
 import javafx.application.Application;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.view.gui.Gui;
+import oogasalad.view.player.dinosaur.DinosaurGameScene;
+import oogasalad.view.screens.MainMenuView;
 
 /**
  * This is the main class of the OOGASalad Platformer Game Sandbox. Run the start method to open the
@@ -30,6 +33,7 @@ public class Main extends Application {
   @Override
   public void start(Stage stage) {
     game = new Game();
+    showMainMenu(game, stage);
 
     /**
     // Create an example builder UI
@@ -39,8 +43,21 @@ public class Main extends Application {
     builderStage.setScene(builderScene);
     builderStage.show();
      */
+  }
 
-    // Init GUI
+  private static void showMainMenu(Game curGame, Stage stage) {
+    MainMenuView menu = new MainMenuView();
+    Scene menuScene = menu.createMainMenu(stage, () -> launchGameScene(curGame, stage));
+
+    stage.setScene(menuScene);
+    stage.setTitle("OOGASalad Game");
+    stage.show();
+  }
+
+  private static void launchGameScene(Game game, Stage stage) {
+    DinosaurGameScene dinoScene = new DinosaurGameScene("Dinosaur");
+    game.addScene(dinoScene);
+    game.changeScene(dinoScene.getName());
     Gui gui = new Gui(stage, game);
   }
 }
