@@ -3,6 +3,7 @@ package oogasalad.view.gui.button;
 import javafx.animation.PauseTransition;
 import javafx.scene.control.Button;
 import javafx.util.Duration;
+import oogasalad.model.ResourceBundles;
 
 /**
  * DefaultButton is a class that extends the Button class to provide
@@ -11,8 +12,9 @@ import javafx.util.Duration;
 
 public class DefaultButton extends Button {
 
-  public static final String DEFAULT_BUTTON_FILL = "#FFFFFF"; // default base color
-  public static final int BUTTON_CLICK_COLOR_DURATION = 100;  // default color change duration (ms)
+  public static final String BUTTON_BUNDLE = "oogasalad.button.default";
+  public static final String DEFAULT_BUTTON_FILL = ResourceBundles.getString(BUTTON_BUNDLE, "defaultFill");
+  public static final int BUTTON_CLICK_COLOR_DURATION = ResourceBundles.getInt(BUTTON_BUNDLE, "clickColorDuration");  //(ms)
   public static final String BACKGROUND_COLOR_SETTER = "-fx-background-color: ";
 
   private String myIdleColor;
