@@ -69,11 +69,12 @@ public class Behavior implements Serializable {
    * @param constraintClass the constraint class specified
    * @param <T> the type of the constraint
    */
-  public <T extends BehaviorConstraint<?>> void addConstraint(Class<T> constraintClass) {
+  public <T extends BehaviorConstraint<?>> T addConstraint(Class<T> constraintClass) {
     try {
       T constraint = constraintClass.getDeclaredConstructor().newInstance();
       constraint.setBehavior(this);
       constraints.add(constraint);
+      return constraint;
     } catch (Exception e) {
       LOGGER.error("Failed to create constraint: {}", constraintClass.getName(), e);
       throw new RuntimeException("Failed to create constraint: " + constraintClass.getName(), e);
