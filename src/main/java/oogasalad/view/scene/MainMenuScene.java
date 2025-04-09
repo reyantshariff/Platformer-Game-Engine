@@ -12,6 +12,11 @@ import javafx.scene.text.Font;
  */
 public class MainMenuScene extends ViewScene {
 
+  /**
+   * Constructs a new MainMenuScene to display the main menu with game selection and builder options.
+   *
+   * @param manager The MainViewManager used to switch scenes.
+   */
   public MainMenuScene(MainViewManager manager) {
     super(new VBox(), 1280, 720);
 

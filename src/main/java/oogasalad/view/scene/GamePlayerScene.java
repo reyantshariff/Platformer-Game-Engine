@@ -1,6 +1,5 @@
 package oogasalad.view.scene;
 
-
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
@@ -14,6 +13,12 @@ import oogasalad.view.player.dinosaur.DinosaurGameScene;
  */
 public class GamePlayerScene extends ViewScene {
 
+  /**
+   * Constructs a new GamePlayerScene to display a game within a JavaFX scene.
+   *
+   * @param manager   The MainViewManager used to switch scenes.
+   * @param gameName  The name of the game to be displayed.
+   */
   public GamePlayerScene(MainViewManager manager, String gameName) {
     super(new StackPane(), 1280, 720);
 
