@@ -13,7 +13,7 @@ import oogasalad.view.BuilderView;
  */
 public class Main extends Application {
 
-  public static Game game;
+  private Game game;
 
   /**
    * Start of the program.
