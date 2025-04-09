@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyCode;
 import javafx.scene.text.Text;
 import oogasalad.ResourceBundles;
 import oogasalad.engine.base.architecture.GameComponent;
@@ -69,7 +70,7 @@ public class GameObjectRenderer {
    */
   private void renderTextComponent(Text component, GraphicsContext gc) {
     javafx.scene.text.Text text = new javafx.scene.text.Text(component.getText());
-    applyStyleSheet(text, component.getStyleClass());
+    applyStyleSheet(text, String.valueOf(component.getStyleClass()));
     WritableImage snapshot = text.snapshot(null, null);
     gc.drawImage(snapshot, component.getX(), component.getY());
   }

@@ -1,7 +1,6 @@
 package oogasalad.gui;
 
 import javafx.scene.Group;
-import oogasalad.player.dinosaur.MainMenuGameScene;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import javafx.scene.Scene;
@@ -64,7 +63,7 @@ public class Gui {
     // Apply css styling
     scene.getStylesheets().add(getClass().getResource(ResourceBundles.getString("oogasalad.gui.general", "stylesheet")).toExternalForm());
 
-    game.addScene(new MainMenuGameScene("Main Menu"));
+    //game.addScene(new MainMenuGameScene("Main Menu"));
     // game.addScene(DinosaurGameScene.class, "Dinosaur");
     startGameLoop();
 
