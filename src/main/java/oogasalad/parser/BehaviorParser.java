@@ -5,9 +5,7 @@ import static oogasalad.config.GameConfig.LOGGER;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import oogasalad.engine.base.architecture.GameComponent;
 import oogasalad.engine.base.behavior.Behavior;
 import oogasalad.engine.base.behavior.BehaviorAction;
 import oogasalad.engine.base.behavior.BehaviorConstraint;
@@ -21,10 +19,7 @@ import oogasalad.engine.base.serialization.SerializedField;
  * @author Justin Aronwald, Daniel Radriguez-Florido
  */
 public class BehaviorParser implements Parser<Behavior> {
-
-  private final ComponentParser componentParser = new ComponentParser();
   private final ObjectMapper mapper = new ObjectMapper();
-
   private static final String NAME = "Name";
 
   /**
