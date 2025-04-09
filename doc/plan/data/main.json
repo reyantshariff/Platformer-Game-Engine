@@ -57,6 +57,7 @@
             "BehaviorController": {
               "Behaviors": [
                 {
+                  "Name": "Example",
                   "constraints": [
                     {
                       "name": "OnKeyPressed",
