@@ -15,7 +15,7 @@ public class DefaultButton extends Button {
   public static final String BUTTON_BUNDLE = "oogasalad.button.default";
   public static final String DEFAULT_BUTTON_FILL = ResourceBundles.getString(BUTTON_BUNDLE, "defaultFill");
   public static final int BUTTON_CLICK_COLOR_DURATION = ResourceBundles.getInt(BUTTON_BUNDLE, "clickColorDuration");  //(ms)
-  public static final String BACKGROUND_COLOR_SETTER = "-fx-background-color: ";
+  private static final String BACKGROUND_COLOR_SETTER = "-fx-background-color: ";
 
   private String myIdleColor;
 
@@ -42,6 +42,7 @@ public class DefaultButton extends Button {
    * 
    * @param width the width to set
    */
+  @Override
   public void setWidth(double width) {
     this.setPrefWidth(width);
   }
@@ -51,6 +52,7 @@ public class DefaultButton extends Button {
    * 
    * @param height the height to set
    */
+  @Override
   public void setHeight(double height) {
     this.setPrefHeight(height);
   }

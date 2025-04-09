@@ -3,6 +3,10 @@ package oogasalad.view.gui.button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+/**
+ * ImageButton is a class that extends the StylizedButton class to provide buttons with images
+ */
+
 @Deprecated
 public class ImageButton extends StylizedButton {
 
@@ -10,6 +14,11 @@ public class ImageButton extends StylizedButton {
 
   private Image myImage;
 
+  /**
+   * Constructor for ImageButton
+   * 
+   * @param image the image to display on the button
+   */
   public ImageButton(Image image) {
     super("");
     setImage(image);
@@ -29,11 +38,21 @@ public class ImageButton extends StylizedButton {
                                                             // size
   }
 
+  /**
+   * Set the image for the button
+   * 
+   * @param image the image to set
+   */
   public void setImage(Image image) {
     myImage = image;
     getButton().setGraphic(getImageViewFromImage(image));
   }
 
+  /**
+   * Get the image for the button
+   * 
+   * @return the image
+   */
   public Image getImage() {
     return myImage;
   }
