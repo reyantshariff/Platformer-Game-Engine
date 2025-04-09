@@ -1,0 +1,79 @@
+package oogasalad.architecture;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import oogasalad.engine.base.architecture.GameObject;
+import oogasalad.engine.component.Transform;
+import oogasalad.engine.component.Follower;
+
+public class GameObjectTest {
+    
+    @Test
+    public void GameObject_SimpleObjectConstruction_returnsTrue() {
+        GameObject object = new GameObject("Object", "Tag");
+        assertEquals("Object", object.getName());
+        assertEquals("Tag", object.getTag());
+        assertNotNull(object.getId());
+    }
+
+    @Test
+    public void getComponent_retrievePresentComponent_returnsTrue() {
+        GameObject object = new GameObject("Object", "Tag");
+        assertNotNull(object.getComponent(Transform.class));
+    }
+
+    @Test
+    public void getComponent_retrieveAbsentComponent_throwsException() {
+        GameObject object = new GameObject("Object", "Tag");
+        assertThrows(IllegalArgumentException.class, () -> object.getComponent(Follower.class));
+    }
+
+    @Test
+    public void addComponent_addComponentToObjectByClass_returnsTrue() {
+        GameObject object = new GameObject("Object", "Tag");
+        object.addComponent(Follower.class);
+        assertNotNull(object.getComponent(Follower.class));
+    }
+
+    @Test
+    public void addComponent_addExistingComponentByClass_throwsException() {
+        GameObject object = new GameObject("Object", "Tag");
+        object.addComponent(Follower.class);
+        assertThrows(IllegalArgumentException.class, () -> object.addComponent(Follower.class));
+    }
+
+    @Test
+    public void addComponent_addComponentObject_returnsTrue() {
+        GameObject object = new GameObject("Object", "Tag");
+        Follower follower = new Follower();
+        object.addComponent(follower);
+        assertEquals(follower, object.getComponent(Follower.class));
+    }
+
+    @Test
+    public void addComponent_addExistingComponentObject_throwsException() {
+        GameObject object = new GameObject("Object", "Tag");
+        Follower follower = new Follower();
+        object.addComponent(follower);
+        assertThrows(IllegalArgumentException.class, () -> object.addComponent(follower));
+    }
+
+    @Test
+    public void getAllComponents_getAllComponentsFromObject_returnsTrue() {
+        GameObject object = new GameObject("Object", "Tag");
+        object.addComponent(Follower.class);
+        assertEquals(2, object.getAllComponents().size());
+    }
+
+    @Test
+    public void removeComponent_removeComponentFromObject_returnsTrue() {
+        GameObject object = new GameObject("Object", "Tag");
+        Follower follower = new Follower();
+        object.addComponent(follower);
+        assertEquals(follower, object.getComponent(Follower.class));
+        assertEquals(follower.getParent(), object);
+        object.removeComponent(Follower.class);
+        assertNull(follower.getParent());
+        assertThrows(IllegalArgumentException.class, () -> object.getComponent(Follower.class));
+    }
+}
