@@ -4,7 +4,6 @@ import java.util.*;
 import oogasalad.engine.component.Transform;
 
 import static oogasalad.config.GameConfig.LOGGER;
-import oogasalad.engine.component.Transform;
 
 /**
  * The GameObject class is the base class for all game objects. It is used to define the behavior of
@@ -64,7 +63,7 @@ public class GameObject {
     }
     try {
       T component = componentClass.getDeclaredConstructor().newInstance();
-      return configureParentAndPutComponent(component, componentClass);
+      return configureParentAndPutComponent(component);
     } catch (Exception e) {
       LOGGER.error("Could not add component {}", componentClass.getName());
       throw new RuntimeException("Failed to add component", e);
@@ -86,11 +85,10 @@ public class GameObject {
       throw new IllegalArgumentException("Component already exists");
     }
 
-    return configureParentAndPutComponent(component, componentClass);
+    return configureParentAndPutComponent(component);
   }
 
-  private <T extends GameComponent> T configureParentAndPutComponent(T component,
-      Class<? extends GameComponent> componentClass) {
+  private <T extends GameComponent> T configureParentAndPutComponent(T component) {
     component.setParent(this);
 
     if (parentScene == null) {
@@ -102,7 +100,7 @@ public class GameObject {
       parentScene.registerComponent(component);
     }
 
-    allComponents.put(componentClass, component);
+    allComponents.put(component.getClass(), component);
     return component;
   }
 
