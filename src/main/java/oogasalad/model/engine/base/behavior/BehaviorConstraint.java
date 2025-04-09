@@ -83,4 +83,9 @@ public abstract class BehaviorConstraint<T> implements Serializable {
   protected void awake() {
     // NOTE: This method should be overriden if needed
   }
+
+  public boolean equals(BehaviorConstraint<?> other) {
+    return this.getClass().equals(other.getClass());
+  }
+
 }
