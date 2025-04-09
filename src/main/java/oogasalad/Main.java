@@ -94,7 +94,8 @@ public class Main extends Application {
   }
 
   private static void switchToGamePlayer(Pane root, Game game, String selectedGame) {
-    switchToMode(root, game, selectedGame, Main::getSceneByName);
+    Game newGame = new Game();
+    switchToMode(root, newGame, selectedGame, Main::getSceneByName);
   }
 
 
@@ -108,20 +109,6 @@ public class Main extends Application {
       case "Dino Game" -> new DinosaurGameScene("Dino");
       default -> new DinosaurGameScene("");
     };
-  }
-
-  /**
-   * Maps a JavaFX KeyCode to an engine KeyCode.
-   *
-   * @param code The JavaFX KeyCode.
-   * @return The engine KeyCode, or null if the mapping fails.
-   */
-  private KeyCode mapToEngineKeyCode(javafx.scene.input.KeyCode code) {
-    try {
-      return KeyCode.valueOf(code.name());
-    } catch (IllegalArgumentException e) {
-      return null;
-    }
   }
 
 }
