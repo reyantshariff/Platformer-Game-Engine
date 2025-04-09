@@ -18,7 +18,6 @@ public class Builder {
   private String filepath = " ";
   private Game game; //Front end should pass a list of selected objects to the backend.
   private boolean fileSaved = false;
-//Add validation for placing objects
 
   //Add Backend boolean to keep track of whether user has saved Game.
   /**
@@ -92,9 +91,9 @@ public class Builder {
 
     if (findObject(x, y) == null)
     {
-      selectedObject = game.getCurrentScene().instantiateObject(GameObjectFactory.create(type)); //Change to Unique IDs
+      selectedObject = GameObjectFactory.create(type);
+      game.getCurrentScene().registerObject(selectedObject);
       actionStack.push(new CreateObjectAction(game, selectedObject));
-      game.getCurrentScene().registerObject(selectedObject); //Make an add object method
     }
     else
     {
