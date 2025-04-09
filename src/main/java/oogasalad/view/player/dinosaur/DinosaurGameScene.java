@@ -1,7 +1,7 @@
 package oogasalad.view.player.dinosaur;
 
 import javafx.scene.Scene;
-import oogasalad.ResourceBundles;
+import oogasalad.model.ResourceBundles;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.engine.base.behavior.Behavior;
 import oogasalad.model.engine.component.PhysicsHandler;

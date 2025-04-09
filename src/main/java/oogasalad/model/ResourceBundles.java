@@ -1,4 +1,4 @@
-package oogasalad;
+package oogasalad.model;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,7 +8,7 @@ import java.util.function.Function;
 import java.text.MessageFormat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import oogasalad.config.GameConfig;
+import oogasalad.model.config.GameConfig;
 /**
  * The ResourceBundles class reads and casts the value pairings of properties files.
  *
