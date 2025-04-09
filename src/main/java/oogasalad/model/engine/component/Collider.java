@@ -14,6 +14,8 @@ import oogasalad.model.engine.base.serialization.SerializableField;
  * type.
  */
 public class Collider extends GameComponent {
+  private static final double COLLISION_OFFSET =0.1;
+
   @Override
   public ComponentTag componentTag() {
     return ComponentTag.COLLISION;
@@ -25,6 +27,8 @@ public class Collider extends GameComponent {
   private final Set<Collider> collidedColliders = new HashSet<>();
   private Transform transform;
 
+
+
   @Override
   protected void awake() {
     transform = getComponent(Transform.class);
@@ -35,26 +39,58 @@ public class Collider extends GameComponent {
   protected void update(double deltaTime) {
     collidedColliders.clear();
     for (GameObject obj : getParent().getScene().getAllObjects()) {
-      processCollision(obj);
+      if(obj.hasComponent(Collider.class)){
+        processCollision(obj);
+      }
+    }
+    if(getParent().hasComponent(PhysicsHandler.class)){
+      resolveCollisions();
     }
   }
 
   private void processCollision(GameObject obj) {
-    Collider collider;
-
-    try {
-      collider = obj.getComponent(Collider.class);
-    } catch (IllegalArgumentException e) {
-      return;
-    }
+    Collider collider = obj.getComponent(Collider.class);
 
     if (collider == this || collidableTags.contains(collider.getParent().getTag())) {
       return;
     }
 
-    Transform collidedTransform = getComponent(Transform.class);
+    Transform collidedTransform = obj.getComponent(Transform.class);
     if (isOverlapping(collidedTransform)) {
       collidedColliders.add(collider);
+    }
+  }
+
+  private void resolveCollisions() {
+    for (Collider collider : collidedColliders) {
+      Transform other = collider.getComponent(Transform.class);
+
+      double thisLeft = transform.getX();
+      double thisRight = thisLeft + transform.getScaleX();
+      double thisTop = transform.getY();
+      double thisBottom = thisTop + transform.getScaleY();
+
+      double otherLeft = other.getX();
+      double otherRight = otherLeft + other.getScaleX();
+      double otherTop = other.getY();
+      double otherBottom = otherTop + other.getScaleY();
+
+      double overlapX = Math.min(thisRight, otherRight) - Math.max(thisLeft, otherLeft);
+      double overlapY = Math.min(thisBottom, otherBottom) - Math.max(thisTop, otherTop);
+
+      if (overlapX < overlapY) {
+        if (thisRight > otherLeft && thisLeft < otherLeft) {
+          transform.setX(transform.getX() - overlapX - COLLISION_OFFSET);
+        } else {
+          transform.setX(transform.getX() + overlapX + COLLISION_OFFSET);
+        }
+      } else {
+        if (thisBottom > otherTop && thisTop < otherTop) {
+          transform.setY(transform.getY() - overlapY - COLLISION_OFFSET);
+        } else {
+          transform.setY(transform.getY() + overlapY + COLLISION_OFFSET);
+        }
+      }
     }
   }
 
@@ -86,17 +122,34 @@ public class Collider extends GameComponent {
    * @return true if the collider is touching another collider from above, false otherwise
    */
   public boolean touchingFromAbove(String tag, double tolerance) {
-    Transform t = getComponent(Transform.class);
-    double selfBottom = t.getY() + t.getScaleY();
+    for (GameObject obj : getParent().getScene().getAllObjects()) {
+      if(!obj.hasComponent(Collider.class)) continue;
 
-    for (Collider collider : collidedColliders) {
-      if (collider.getParent().getTag().equals(tag)) {
-        Transform tOther = collider.getComponent(Transform.class);
-        return Math.abs(selfBottom - tOther.getY()) < tolerance;
+      Collider collider = obj.getComponent(Collider.class);
+
+      if (!collider.getParent().getTag().equals(tag)) continue;
+
+      Transform other = obj.getComponent(Transform.class);
+
+      double thisLeft = transform.getX();
+      double thisRight = thisLeft + transform.getScaleX();
+      double otherLeft = other.getX();
+      double otherRight = otherLeft + other.getScaleX();
+
+      boolean horizontalOverlap = thisRight > otherLeft || thisLeft < otherRight;
+
+      double thisBottom = transform.getY() + transform.getScaleY();
+      double otherTop = other.getY();
+
+      boolean verticallyAligned = Math.abs(thisBottom - otherTop) <= tolerance;
+
+      if (horizontalOverlap && verticallyAligned) {
+        return true;
       }
     }
     return false;
   }
+
 
   /**
    * Check if the collider is horizontally aligned with another collider.
