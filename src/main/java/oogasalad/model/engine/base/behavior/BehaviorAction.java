@@ -61,9 +61,9 @@ public abstract class BehaviorAction<T> implements Serializable {
   public abstract ComponentTag ActionType();
 
   /**
-   * Check if the constraint is met.
-   * @param parameter the parameter to check against
-   * @return true if the constraint is met, false otherwise
+   * This method is called to perform the action
+   * 
+   * @param parameter the parameter for the action
    */
   @SuppressWarnings("unchecked")
   final void onPerform(Object parameter) {
@@ -71,9 +71,9 @@ public abstract class BehaviorAction<T> implements Serializable {
   }
 
   /**
-   * Check if the constraint is met.
-   * @param parameter the parameter to check against
-   * @return true if the constraint is met, false otherwise
+   * Performs the action
+   * 
+   * @param parameter the parameter for the action
    */
   protected abstract void perform(T parameter);
 
