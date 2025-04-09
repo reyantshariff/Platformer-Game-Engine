@@ -38,10 +38,9 @@
               {
                 "Name": "Transform",
                 "Configurations": {
-                  "positionX": 0,
-                  "positionY": 0,
-                  "rotationX": 0,
-                  "rotationY": 0,
+                  "x": 0,
+                  "y": 0,
+                  "rotation": 0,
                   "scaleX": 1,
                   "scaleY": 1
                 }
@@ -51,20 +50,28 @@
                 "Configurations": {
                   "offsetX": 0,
                   "offsetY": 0,
-                  "sizeX": 1,
-                  "sizeY": 1,
-                  "sprite": "ExampleMenuBackgroundSprite.png"
+                  "imagePaths": ["ExampleMenuBackgroundSprite.png"]
                 }
               }
             ],
-            "Behaviors": [
-              {
-                "Name": "MenuController",
-                "Configurations": {
-                  "startScene": "Example Main Scene"
+            "BehaviorController": {
+              "Behaviors": [
+                {
+                  "constraints": [
+                    {
+                      "name": "OnKeyPressed",
+                      "parameter": "SPACE"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "ChangeSceneAction",
+                      "parameter": "Example Main Scene"
+                    }
+                  ]
                 }
-              }
-            ]
+              ]
+            }
           },
           {
             "Name": "Example Menu Start Button",
@@ -72,10 +79,9 @@
               {
                 "Name": "Transform",
                 "Configurations": {
-                  "positionX": 0,
-                  "positionY": 0,
-                  "rotationX": 0,
-                  "rotationY": 0,
+                  "x": 0,
+                  "y": 0,
+                  "rotation": 0,
                   "scaleX": 1,
                   "scaleY": 1
                 }
@@ -85,121 +91,7 @@
                 "Configurations": {
                   "offsetX": 0,
                   "offsetY": 0,
-                  "sizeX": 1,
-                  "sizeY": 1,
-                  "sprite": "ExampleMenuStartButtonSprite.png"
-                }
-              }
-            ],
-            "Behaviors": [
-              {
-                "Name": "ButtonController",
-                "Configurations": {}
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "Name": "Example Main Scene",
-        "GameObjects": [
-          {
-            "Name": "Example Player",
-            "Tag": "Player",
-            "Components": [
-              {
-                "Name": "Transform",
-                "Configurations": {
-                  "positionX": 0,
-                  "positionY": 0,
-                  "rotationX": 0,
-                  "rotationY": 0,
-                  "scaleX": 1,
-                  "scaleY": 1
-                }
-              },
-              {
-                "Name": "PhysicsHandler",
-                "Configurations": {
-                  "velocityX": 0,
-                  "velocityY": 0,
-                  "mass": 1,
-                  "applyGravity": true,
-                  "applyAirResistance": true
-                }
-              },
-              {
-                "Name": "CircleCollider",
-                "Configurations": {
-                  "offsetX": 0,
-                  "offsetY": 0,
-                  "sizeX": 1,
-                  "sizeY": 1
-                }
-              },
-              {
-                "Name": "SpriteRenderer",
-                "Configurations": {
-                  "offsetX": 0,
-                  "offsetY": 0,
-                  "sizeX": 1,
-                  "sizeY": 1,
-                  "sprite": "ExamplePlayerSprite.png"
-                }
-              }
-            ],
-            "Behaviors": [
-              {
-                "Name": "PlayerController",
-                "Configurations": {
-                  "speed": 5,
-                  "jumpForce": 10,
-                  "maxJumpCount": 2
-                }
-              }
-            ]
-          },
-          {
-            "Name": "Example Platform",
-            "Components": [
-              {
-                "Name": "Transform",
-                "Configurations": {
-                  "positionX": 0,
-                  "positionY": 0,
-                  "rotationX": 0,
-                  "rotationY": 0,
-                  "scaleX": 1,
-                  "scaleY": 1
-                }
-              },
-              {
-                "Name": "PhysicsHandler",
-                "Configurations": {
-                  "velocityX": 0,
-                  "velocityY": 0,
-                  "mass": 1,
-                  "applyGravity": false,
-                  "applyAirResistance": false
-                }
-              },
-              {
-                "Name": "BoxCollider",
-                "Configurations": {
-                  "offsetX": 0,
-                  "offsetY": 0,
-                  "sizeX": 1,
-                  "sizeY": 1
-                }
-              },
-              {
-                "Name": "SpriteRenderer",
-                "Configurations": {
-                  "offsetX": 0,
-                  "offsetY": 0,
-                  "sizeX": 1,
-                  "sizeY": 1,
-                  "sprite": "ExamplePlatformSprite.png"
+                  "imagePaths": ["ExampleMenuStartButtonSprite.png"]
                 }
               }
             ]
