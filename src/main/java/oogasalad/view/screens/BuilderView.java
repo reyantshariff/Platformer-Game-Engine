@@ -1,19 +1,22 @@
 package oogasalad.view.screens;
 
+import java.util.List;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import oogasalad.model.engine.base.architecture.GameScene;
-import oogasalad.view.ViewScene;
 import oogasalad.view.gui.GameObjectRenderer;
-import oogasalad.view.gui.button.StylizedButton;
+import oogasalad.view.gui.TemporaryImageLoader;
+import oogasalad.view.gui.button.BuilderSpriteOptionButton;
 import oogasalad.view.player.dinosaur.DinosaurGameScene;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,7 +33,7 @@ public class BuilderView extends Scene {
 
   private GameScene gameScene;
 
-  private GameObjectRenderer gameObjectRenderer;
+  private final GameObjectRenderer gameObjectRenderer;
 
   /**
    * Constructor for BuilderView
@@ -55,10 +58,10 @@ public class BuilderView extends Scene {
   private void initializeUI() {
     // Top bar
     HBox topBar = new HBox();
-    StylizedButton loadButton = new StylizedButton("Load");
-    StylizedButton saveButton = new StylizedButton("Save");
-    StylizedButton playtestButton = new StylizedButton("Playtest");
-    topBar.getChildren().addAll(loadButton.getButton(), saveButton.getButton(), playtestButton.getButton());
+    Button loadButton = new Button("Load");
+    Button saveButton = new Button("Save");
+    Button playtestButton = new Button("Playtest");
+    topBar.getChildren().addAll(loadButton, saveButton, playtestButton);
     myWindow.setTop(topBar);
 
     // Add layout for bottom button menus
@@ -114,33 +117,26 @@ public class BuilderView extends Scene {
     return bottomPanel;
   }
 
-  // TODO: make the buttons non-hardcoded
   private ScrollPane createSpriteButtonOptions() {
     // Create a TilePane that will automatically arrange children in 2 columns.
     TilePane tilePane = new TilePane();
-    tilePane.setPrefColumns(2); // set desired number of columns
-    tilePane.setHgap(10);
-    tilePane.setVgap(10);
+    tilePane.setPrefColumns(3); // set desired number of columns
+    tilePane.setHgap(this.getWidth()*0.02);
+    tilePane.setVgap(this.getHeight()*0.02);
 
-    // Create sprite buttons.
-    StylizedButton buttonSpriteA = new StylizedButton("Sprite A");
-    StylizedButton buttonSpriteB = new StylizedButton("Sprite B");
-    StylizedButton buttonSpriteC = new StylizedButton("Sprite C");
-    StylizedButton buttonSpriteD = new StylizedButton("Sprite D");
-
-    // Add buttons to the TilePane.
-    tilePane.getChildren().addAll(
-        buttonSpriteA.getButton(),
-        buttonSpriteB.getButton(),
-        buttonSpriteC.getButton(),
-        buttonSpriteD.getButton()
-    );
+    String imageDirectory = "src/main/resources/oogasalad/dinosaur/";
+    List<Image> images = TemporaryImageLoader.loadImages(imageDirectory);
+    // Create sprite buttons
+    for (Image image : images) {
+      tilePane.getChildren().add(new BuilderSpriteOptionButton(image, this.getWidth()*0.12, this.getHeight()*0.12));
+    }
 
     // Wrap the TilePane in a ScrollPane.
     ScrollPane spriteScrollPane = new ScrollPane(tilePane);
-    spriteScrollPane.setPrefHeight(150);
-    spriteScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-    spriteScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+    spriteScrollPane.setPrefHeight(this.getHeight()*0.25);
+    spriteScrollPane.setPrefWidth(this.getWidth()*0.45);
+    spriteScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // Disable horizontal scrolling
+    spriteScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS); // Enable vertical scrolling
 
     return spriteScrollPane;
   }
