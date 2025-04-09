@@ -81,6 +81,16 @@ public class Gui {
   }
 
   /**
+   * Stops an existing game loop
+   */
+  public void stop() {
+    if (gameLoop != null) {
+      gameLoop.stop();
+      gameLoop = null;
+    }
+  }
+
+  /**
    * Executes a single step of the game loop, updating the game state and rendering the scene.
    */
   private void step() {
