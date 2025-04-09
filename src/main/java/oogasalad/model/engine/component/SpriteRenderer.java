@@ -65,6 +65,15 @@ public class SpriteRenderer extends GameComponent {
     this.offsetY = y;
   }
 
+
+  /**
+   * @param imagePaths - List of all image paths for given object
+   */
+  public void setImagePaths(List<String> imagePaths) {
+    this.imagePaths = imagePaths;
+  }
+
+
   /**
    * Sets the index of the sprite to be rendered. If the index is out of bounds, it will be clamped
    */

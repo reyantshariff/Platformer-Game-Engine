@@ -11,6 +11,9 @@ import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.behavior.Behavior;
 import oogasalad.model.engine.component.BehaviorController;
+import oogasalad.model.engine.component.Transform;
+
+import static oogasalad.model.config.GameConfig.LOGGER;
 
 /**
  * This class parses and serializes gameObjects to and from a JSON
@@ -52,6 +55,12 @@ public class GameObjectParser implements Parser<GameObject> {
     handleAddingComponents(node, gameObject);
     handleAddingBehaviors(node, gameObject);
 
+    // By design, all components should have Transform components
+    if (!gameObject.getAllComponents().containsKey(Transform.class)) {
+      LOGGER.error("GameObject {} did not contain Transform Component", name);
+      throw new ParsingException("GameObject " + name + " did not contain Transform Component");
+    }
+
     return gameObject;
   }
 
@@ -83,8 +92,6 @@ public class GameObjectParser implements Parser<GameObject> {
       for (JsonNode component : componentsNode) {
         handleComponentParsing(gameObject, component);
       }
-    } else if (componentsNode.isObject()) {
-      handleComponentParsing(gameObject, componentsNode);
     }
   }
 

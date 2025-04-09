@@ -23,6 +23,7 @@ import oogasalad.model.engine.base.serialization.SerializedField;
 public class ComponentParser implements Parser<GameComponent>, Serializable {
 
   private static final String NAME = "Name";
+  private static final String CLASS_PATH = "oogasalad.model.engine.component.";
 
   private static final Map<Class<?>, Function<JsonNode, Object>> EXTRACTORS = new HashMap<>();
 
@@ -49,7 +50,7 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
 
     String name = componentNode.get(NAME).asText();
     try {
-      String fullClassName = "oogasalad.engine.component." + name;
+      String fullClassName = CLASS_PATH + name;
 
       Class<?> rawClass = getRawClass(fullClassName);
 

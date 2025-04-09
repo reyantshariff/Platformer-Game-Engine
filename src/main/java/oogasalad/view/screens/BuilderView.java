@@ -18,6 +18,7 @@ import oogasalad.view.gui.GameObjectRenderer;
 import oogasalad.view.gui.TemporaryImageLoader;
 import oogasalad.view.gui.button.BuilderSpriteOptionButton;
 import oogasalad.view.player.dinosaur.DinosaurGameScene;
+import oogasalad.view.scene.ViewScene;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

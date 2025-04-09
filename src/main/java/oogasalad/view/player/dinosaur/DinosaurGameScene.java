@@ -1,17 +1,24 @@
 package oogasalad.view.player.dinosaur;
 
+import java.util.ArrayList;
+import java.util.List;
 import javafx.scene.Scene;
 import oogasalad.model.ResourceBundles;
+import oogasalad.model.engine.action.VelocityYSetAction;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.engine.base.behavior.Behavior;
+import oogasalad.model.engine.component.Camera;
 import oogasalad.model.engine.component.PhysicsHandler;
 import oogasalad.model.engine.action.JumpAction;
 import oogasalad.model.engine.base.enumerate.KeyCode;
 import oogasalad.model.engine.component.BehaviorController;
 import oogasalad.model.engine.component.Collider;
 import oogasalad.model.engine.component.InputHandler;
+import oogasalad.model.engine.component.SpriteRenderer;
 import oogasalad.model.engine.component.Transform;
+import oogasalad.model.engine.constraint.CollidesWithConstraint;
 import oogasalad.model.engine.constraint.KeyPressConstraint;
+import oogasalad.model.engine.constraint.TouchingFromAboveConstraint;
 import oogasalad.model.engine.prefab.Player;
 import oogasalad.model.engine.prefab.dinosaur.Base;
 import oogasalad.model.engine.prefab.dinosaur.Bird;
@@ -22,6 +29,7 @@ import oogasalad.model.engine.prefab.dinosaur.Bird;
  */
 
 public class DinosaurGameScene extends GameScene {
+
 
   private static final String DINOSAUR_SCENE_BUNDLE = "oogasalad.dinosaur.dinosaur";
 
@@ -58,6 +66,9 @@ public class DinosaurGameScene extends GameScene {
 
     bird.addComponent(Collider.class);
 
+    SpriteRenderer spriteRenderer = bird.addComponent(SpriteRenderer.class);
+    spriteRenderer.setImagePaths(List.of("oogasalad/dinosaur/Bird1.png"));
+
     registerObject(bird);
   }
 
@@ -73,6 +84,9 @@ public class DinosaurGameScene extends GameScene {
 
     ground.addComponent(Collider.class);
 
+    SpriteRenderer spriteRenderer = ground.addComponent(SpriteRenderer.class);
+    spriteRenderer.setImagePaths(List.of("oogasalad/dinosaur/Track.png"));
+
     registerObject(ground);
   }
 
@@ -87,9 +101,7 @@ public class DinosaurGameScene extends GameScene {
     t.setScaleX(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "player.width"));
     t.setScaleY(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "player.height"));
 
-    Collider c = player.addComponent(Collider.class);
-
-
+    player.addComponent(Collider.class);
 
     player.addComponent(InputHandler.class);
 
@@ -104,6 +116,15 @@ public class DinosaurGameScene extends GameScene {
 
     jumpBehavior.addAction(JumpAction.class).setParameter(ResourceBundles.getDouble(DINOSAUR_SCENE_BUNDLE, "player.jumpPower"));
     jumpBehavior.addConstraint(KeyPressConstraint.class).setParameter(KeyCode.SPACE);
+    jumpBehavior.addConstraint(TouchingFromAboveConstraint.class).setParameter("base");
+
+    Behavior die = controller.addBehavior();
+
+    die.addAction(VelocityYSetAction.class).setParameter(ResourceBundles.getDouble(DINOSAUR_SCENE_BUNDLE, "player.die"));
+    die.addConstraint(CollidesWithConstraint.class).setParameter("bird");
+
+    SpriteRenderer spriteRenderer = player.addComponent(SpriteRenderer.class);
+    spriteRenderer.setImagePaths(List.of("oogasalad/dinosaur/DinoStart.png"));
   }
 
 

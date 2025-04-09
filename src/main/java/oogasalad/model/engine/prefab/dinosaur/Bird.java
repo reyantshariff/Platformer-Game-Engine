@@ -14,7 +14,7 @@ public class Bird extends GameObject {
    * @param name the name of the bird
    */
   public Bird(String name) {
-    super(name, "");
+    super(name, "bird");
   }
 
 }

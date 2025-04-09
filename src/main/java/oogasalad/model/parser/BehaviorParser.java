@@ -19,8 +19,11 @@ import oogasalad.model.engine.base.serialization.SerializedField;
  * @author Justin Aronwald, Daniel Radriguez-Florido
  */
 public class BehaviorParser implements Parser<Behavior> {
-  private final ObjectMapper mapper = new ObjectMapper();
   private static final String NAME = "Name";
+  private static final String ACTION_CLASS_PATH = "oogasalad.model.engine.action.";
+  private static final String CONSTRAINT_CLASS_PATH = "oogasalad.model.engine.constraint.";
+
+  private final ObjectMapper mapper = new ObjectMapper();
 
   /**
    * @param behaviorNode - the JSON node given to parse
@@ -55,9 +58,9 @@ public class BehaviorParser implements Parser<Behavior> {
       throws ParsingException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
     if (behaviorNode.has("actions")) {
       for (JsonNode actionNode : behaviorNode.get("actions")) {
-        Class<?> clazz = null;
+        Class<?> clazz;
         String aName = actionNode.get("name").asText();
-        String aFullClassName = "oogasalad.engine.behavior.action." + aName;
+        String aFullClassName = ACTION_CLASS_PATH + aName;
 
         try {
           clazz = Class.forName(aFullClassName);
@@ -91,7 +94,7 @@ public class BehaviorParser implements Parser<Behavior> {
       for (JsonNode constraintNode : behaviorNode.get("constraints")) {
         Class<?> clazz;
         String cName = constraintNode.get("name").asText();
-        String cFullClassName = "oogasalad.engine.behavior.constraint." + cName;
+        String cFullClassName = CONSTRAINT_CLASS_PATH + cName;
 
         try {
           clazz = Class.forName(cFullClassName);

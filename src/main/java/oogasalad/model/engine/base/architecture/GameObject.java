@@ -35,9 +35,6 @@ public class GameObject {
     this.allComponents = new HashMap<>();
     this.componentAwakeInitializer = new ArrayList<>();
     this.componentStartInitializer = new ArrayList<>();
-
-    // Add the Transform component by default
-    addComponent(Transform.class);
   }
 
   /**
@@ -127,6 +124,14 @@ public class GameObject {
       throw new IllegalArgumentException("Component does not exist");
     }
     return componentClass.cast(allComponents.get(componentClass));
+  }
+
+  /**
+   * @param componentClass - Component looking for
+   * @return - If current object has that component
+   */
+  public final boolean hasComponent(Class<? extends GameComponent> componentClass) {
+    return allComponents.containsKey(componentClass);
   }
 
   /**

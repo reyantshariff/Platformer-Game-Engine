@@ -45,8 +45,13 @@ public class Builder {
 
   private Deque<EditorAction> undoStack = new ArrayDeque<>();
   private Deque<EditorAction> redoStack = new ArrayDeque<>();
-  public Builder(Game game)
-  {
+
+  /**
+   * Constructs a new Builder instance with the specified Game.
+   *
+   * @param game The Game instance to be used by the builder.
+   */
+  public Builder(Game game) {
     this.game = game;
   }
 
@@ -92,25 +97,11 @@ public class Builder {
   /**
    *  Records when a game object has been selected to be dragged and dropped on the UI
    */
-
   public void selectExistingObject(UUID id)
   {
     selectedObject= findObject(id);
   }
 
-  public void selectObject(String type, int x, int y) //type will change to file path
-  {
-    if (selectedObject != null) {
-      selectedObject = null; //Front end should store the image  path and its Game ID. Front end should keep track of selected object.
-    }
-
-//    if (findObject() == null)
-//    {
-//      selectedObject = GameObjectFactory.create(type);
-//      game.getCurrentScene().registerObject(selectedObject);
-//      undoStack.push(new CreateObjectAction(game, selectedObject));
-//    }
-  }
 
   /**
    *  Records when two game objects overlap

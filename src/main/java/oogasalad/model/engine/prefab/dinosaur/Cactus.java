@@ -17,7 +17,7 @@ public class Cactus extends GameObject {
    * @param name the name of the cactus
    */
   public Cactus(String name) {
-    super(name, "");
+    super(name, "cactus");
   }
 
 }
