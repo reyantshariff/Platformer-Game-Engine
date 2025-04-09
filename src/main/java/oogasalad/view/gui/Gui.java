@@ -13,6 +13,8 @@ import oogasalad.model.engine.base.enumerate.KeyCode;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
+import javafx.scene.input.KeyEvent;
+import java.util.function.BiConsumer;
 import oogasalad.model.engine.base.architecture.Game;
 
 /**
@@ -50,10 +52,10 @@ public class Gui {
     logger.debug("Generating GUI...");
 
     Group root = new Group();
-    Scene scene = new Scene(root, ResourceBundles.getInt("oogasalad.gui.general", "windowWidth"),
-        ResourceBundles.getInt("oogasalad.gui.general", "windowHeight"));
-    Canvas canvas = new Canvas(ResourceBundles.getInt("oogasalad.gui.general", "windowWidth"),
-        ResourceBundles.getInt("oogasalad.gui.general", "windowHeight"));
+    int windowWidth = ResourceBundles.getInt("oogasalad.gui.general", "windowWidth");
+    int windowHeight = ResourceBundles.getInt("oogasalad.gui.general", "windowHeight");
+    Scene scene = new Scene(root, windowWidth, windowHeight);
+    Canvas canvas = new Canvas(windowWidth, windowHeight);
 
     // Create the GameObject-to-JavaFX renderer for this scene
     objectRenderer = new GameObjectRenderer(scene);
@@ -72,26 +74,20 @@ public class Gui {
     stage.setScene(scene);
     stage.show();
 
-    scene.setOnKeyPressed(e -> {
-      KeyCode key = mapToEngineKeyCode(e.getCode());
-      if (key != null && game.getCurrentScene() != null) {
-        game.keyPressed(key.getValue());
-      } else if (game.getCurrentScene() == null) {
-        logger.error("Current Game Scene is null");
-      }
-    });
-
-    scene.setOnKeyReleased(e -> {
-      KeyCode key = mapToEngineKeyCode(e.getCode());
-      if (key != null && game.getCurrentScene() != null) {
-        game.keyReleased(key.getValue());
-      } else if (game.getCurrentScene() == null) {
-        logger.error("Current Game Scene is null");
-      }
-    });
-
+    scene.setOnKeyPressed(e -> handleKeyEvent(e, (g, k) -> g.keyPressed(k)));
+    scene.setOnKeyReleased(e -> handleKeyEvent(e, (g, k) -> g.keyReleased(k)));
+    
     logger.debug("GUI generated.");
   }
+
+  private void handleKeyEvent(KeyEvent e, BiConsumer<Game, Integer> action) {
+    KeyCode key = mapToEngineKeyCode(e.getCode());
+    if (key != null && game.getCurrentScene() != null) {
+        action.accept(game, key.getValue());
+    } else if (game.getCurrentScene() == null) {
+        logger.error("Current Game Scene is null");
+    }
+}
 
   /**
    * Starts the game loop, which updates and renders the game at a fixed frame rate.
