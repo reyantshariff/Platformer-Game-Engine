@@ -23,6 +23,9 @@ public class Behavior implements Serializable {
 
   private BehaviorController controller;
 
+  /**
+   * Constructor of the Behavior class. This is used to create a new behavior object
+   */
   public Behavior() {
     // Empty to utilize default constructor when necessary
   }
@@ -41,6 +44,11 @@ public class Behavior implements Serializable {
     return controller;
   }
 
+  /**
+   * Sets the controller of the behavior
+   * 
+   * @param controller the controller to set
+   */
   public void setBehaviorController(BehaviorController controller) {
     this.controller = controller;
   }
