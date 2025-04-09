@@ -35,9 +35,6 @@ public class GameObject {
     this.allComponents = new HashMap<>();
     this.componentAwakeInitializer = new ArrayList<>();
     this.componentStartInitializer = new ArrayList<>();
-
-    // Add the Transform component by default
-    addComponent(Transform.class);
   }
 
   /**

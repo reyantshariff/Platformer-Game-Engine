@@ -89,6 +89,9 @@ public class Behavior implements Serializable {
   public <T extends BehaviorConstraint<?>> T addConstraint(Class<T> constraintClass) {
     try {
       T constraint = constraintClass.getDeclaredConstructor().newInstance();
+      if (isDuplicateConstraint(constraint)) {
+        return constraint; // Do not add if an instance of this action already exists
+      }
       constraint.setBehavior(this);
       constraint.awake();
       constraints.add(constraint);
@@ -104,6 +107,9 @@ public class Behavior implements Serializable {
    * @param constraintInstance the instance of the constraint we wish to add
    */
   public void addConstraint(BehaviorConstraint<?> constraintInstance) {
+    if (isDuplicateConstraint(constraintInstance)) {
+      return; // Do not add if an instance of this action already exists
+    }
     try {
       constraintInstance.setBehavior(this);
       constraints.add(constraintInstance);
@@ -111,6 +117,14 @@ public class Behavior implements Serializable {
       LOGGER.error("Failed to create constraint: {}", constraintInstance.getClass().getName());
       throw new RuntimeException("Failed to create constraint: " + constraintInstance.getClass().getName());
     }
+  }
+
+  private boolean isDuplicateConstraint(BehaviorConstraint<?> constraintInstance) {
+    if (constraints.contains(constraintInstance)) {
+      LOGGER.error("Constraint already exists: {}. Ignoring addition.", constraintInstance);
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -130,6 +144,10 @@ public class Behavior implements Serializable {
   public <T extends BehaviorAction<?>> T addAction(Class<T> actionClass) {
     try {
       T action = actionClass.getDeclaredConstructor().newInstance();
+
+      if (isDuplicateAction(action))
+        return action;
+
       action.setBehavior(this);
       action.awake();
       actions.add(action);
@@ -145,6 +163,9 @@ public class Behavior implements Serializable {
    * @param actionInstance the action instance we wish to add
    */
   public void addAction(BehaviorAction<?> actionInstance) {
+    if (isDuplicateAction(actionInstance)) {
+      return; // Do not add if an instance of this action already exists
+    }
     try {
       actionInstance.setBehavior(this);
       actions.add(actionInstance);
@@ -152,6 +173,15 @@ public class Behavior implements Serializable {
       LOGGER.error("Failed to add action: {}", actionInstance.getClass().getName());
       throw new RuntimeException("Failed to create action: " + actionInstance.getClass().getName());
     }
+  }
+
+  private boolean isDuplicateAction(BehaviorAction<?> actionInstance) {
+    if (actions.contains(actionInstance)) {
+      LOGGER.error("Action {} already exists in behavior. Ignoring addition.",
+          actionInstance);
+      return true;
+    }
+    return false;
   }
 
   /**
