@@ -59,23 +59,46 @@ public class GameObject {
     }
     try {
       T component = componentClass.getDeclaredConstructor().newInstance();
-      component.setParent(this);
-
-      if (parentScene == null) {
-        componentAwakeInitializer.add(component::awake);
-        componentStartInitializer.add(component::start);
-      } else {
-        component.awake();
-        parentScene.subscribeEvent(component::start);
-        parentScene.registerComponent(component);
-      }
-
-      allComponents.put(componentClass, component);
-      return component;
+      return configureParentAndPutComponent(component, componentClass);
     } catch (Exception e) {
       LOGGER.error("Could not add component {}", componentClass.getName());
       throw new RuntimeException("Failed to add component", e);
     }
+  }
+
+  /**
+   * Add a component to the gameObject that was parsed
+   *
+   * @apiNote Every component class should only have one instance per object.
+   * @param component the instantiated GameComponent you wish to add (with configured values)
+   * @return the added component instance
+   */
+
+  public final <T extends GameComponent> T addComponent(T component) {
+    Class<? extends GameComponent> componentClass = component.getClass();
+
+    if (allComponents.containsKey(componentClass)) {
+      throw new IllegalArgumentException("Component already exists");
+    }
+
+    return configureParentAndPutComponent(component, componentClass);
+  }
+
+  private <T extends GameComponent> T configureParentAndPutComponent(T component,
+      Class<? extends GameComponent> componentClass) {
+    component.setParent(this);
+
+    if (parentScene == null) {
+      componentAwakeInitializer.add(component::awake);
+      componentStartInitializer.add(component::start);
+    } else {
+      component.awake();
+      parentScene.subscribeEvent(component::start);
+      parentScene.registerComponent(component);
+    }
+
+    allComponents.put(componentClass, component);
+    return component;
   }
 
 
