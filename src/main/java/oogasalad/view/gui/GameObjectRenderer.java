@@ -3,8 +3,6 @@ package oogasalad.view.gui;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
-import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -26,16 +24,14 @@ import org.apache.logging.log4j.Logger;
 
 public class GameObjectRenderer {
   private static final Logger logger = LogManager.getLogger(GameObjectRenderer.class);
-  private final Scene myScene;
 
   /**
    * Constructor for GameObjectRenderer
-   * 
-   * @param scene the scene to render the game objects in
    */
-  public GameObjectRenderer(Scene scene) {
-    myScene = scene;
-  }
+  public GameObjectRenderer() {}
+
+  @Deprecated
+  public GameObjectRenderer(Scene scene) {}
 
   /**
    * Renders the game objects in the given scene onto the canvas.
@@ -81,7 +77,7 @@ public class GameObjectRenderer {
    */
   private void renderTextComponent(Text component, GraphicsContext gc) {
     javafx.scene.text.Text text = new javafx.scene.text.Text(component.getText());
-    applyStyleSheet(text, String.valueOf(component.getStyleClass()));
+    //applyStyleSheet(text, String.valueOf(component.getStyleClass()));
     WritableImage snapshot = text.snapshot(null, null);
     gc.drawImage(snapshot, component.getX(), component.getY());
   }
@@ -109,12 +105,13 @@ public class GameObjectRenderer {
     gc.fillRect(component.getX(), component.getY(), component.getScaleX(), component.getScaleY());
   }
 
-  private void applyStyleSheet(Node node, String styleSheet) {
-    node.getStyleClass().add(styleSheet);
-    Group tempRoot = new Group(node);
-    Scene tempScene = new Scene(tempRoot);
-    tempScene.getStylesheets().addAll(myScene.getStylesheets());
-  }
+  // TODO: repair stylesheet implementation
+//  private void applyStyleSheet(Node node, String styleSheet) {
+//    node.getStyleClass().add(styleSheet);
+//    Group tempRoot = new Group(node);
+//    Scene tempScene = new Scene(tempRoot);
+//    tempScene.getStylesheets().addAll(myScene.getStylesheets());
+//  }
 
   /**
    * Maps a JavaFX KeyCode to an engine KeyCode.
