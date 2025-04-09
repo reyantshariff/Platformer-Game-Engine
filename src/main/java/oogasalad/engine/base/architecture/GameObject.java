@@ -115,7 +115,7 @@ public class GameObject {
     if (!allComponents.containsKey(componentClass)) {
       throw new IllegalArgumentException("Component does not exist");
     }
-    return (T) allComponents.get(componentClass);
+    return componentClass.cast(allComponents.get(componentClass));
   }
 
   /**
