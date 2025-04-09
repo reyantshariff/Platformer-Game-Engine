@@ -19,14 +19,12 @@ public class Behavior implements Serializable {
   @SerializableField
   private List<BehaviorAction<?>> actions = new ArrayList<>();
 
-  private final BehaviorController controller;
+  private BehaviorController controller;
 
   /**
    * Constructor of the Behavior class. This is used to create a new behavior object
-   * @param controller the controller that the behavior belongs to
    */
-  public Behavior(BehaviorController controller) {
-    this.controller = controller;
+  public Behavior() {
   }
 
   /**
@@ -34,6 +32,10 @@ public class Behavior implements Serializable {
    */
   BehaviorController getController() {
     return controller;
+  }
+
+  public void setBehaviorController(BehaviorController controller) {
+    this.controller = controller;
   }
 
   /**

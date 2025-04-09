@@ -27,8 +27,18 @@ public final class BehaviorController extends GameComponent {
    * Add a behavior to the controller. This method is used to add a behavior to the controller.
    */
   public Behavior addBehavior() {
-    Behavior behavior = new Behavior(this);
+    Behavior behavior = new Behavior();
+    behavior.setBehaviorController(this);
     behaviors.add(behavior);
     return behavior;
   }
+
+  /**
+   * Overloaded behavior method to add
+   * @param behavior is the fully qualified behavior that is to be added to the behaviors list
+   */
+  public void addBehavior(Behavior behavior) {
+    behaviors.add(behavior);
+  }
+
 }

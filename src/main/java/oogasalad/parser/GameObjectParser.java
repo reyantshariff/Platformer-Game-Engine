@@ -10,6 +10,7 @@ import java.util.List;
 import oogasalad.engine.base.architecture.GameComponent;
 import oogasalad.engine.base.architecture.GameObject;
 import oogasalad.engine.base.behavior.Behavior;
+import oogasalad.engine.component.BehaviorController;
 
 /**
  * This class parses and serializes gameObjects to and from a JSON
@@ -23,7 +24,7 @@ public class GameObjectParser implements Parser<GameObject> {
   private final ObjectMapper mapper = new ObjectMapper();
 
   private static final String TAG = "Tag";
-  private static final String BEHAVIORS = "Behaviors";
+  private static final String BEHAVIORS = "BehaviorController";
   private static final String NAME = "Name";
   private static final String COMPONENTS = "Components";
   private static final String CONFIGURATIONS = "Configurations";
@@ -90,23 +91,18 @@ public class GameObjectParser implements Parser<GameObject> {
   private void handleComponentParsing(GameObject gameObject, JsonNode componentNode)
       throws ParsingException {
     GameComponent component = componentParser.parse(componentNode);
-    gameObject.addComponent(
-        component.getClass()); // TODO: Change to addComponent(Component) instead of component class
+    gameObject.addComponent(component);
   }
 
   private void parseBehaviors(GameObject gameObject, JsonNode behaviorsNode)
       throws ParsingException {
     if (behaviorsNode.isArray()) {
+      BehaviorController behaviorController = new BehaviorController();
       for (JsonNode behaviorNode : behaviorsNode) {
-        handleBehaviorParsing(gameObject, behaviorNode);
+        Behavior behavior = behaviorParser.parse(behaviorNode);
+        behaviorController.addBehavior(behavior);
       }
     }
-  }
-
-  private void handleBehaviorParsing(GameObject gameObject, JsonNode behaviorNode)
-      throws ParsingException {
-    Behavior behavior = behaviorParser.parse(behaviorNode);
-    gameObject.addComponent(behavior.getClass()); // TODO: Change to addComponent(Component) instead of component class
   }
 
   /**
@@ -138,8 +134,9 @@ public class GameObjectParser implements Parser<GameObject> {
   private static void divideComponentsAndBehaviors(GameObject data, List<Behavior> behaviors,
       List<GameComponent> components) {
     for (GameComponent component : data.getAllComponents().values()) {
-      if (Behavior.class.isAssignableFrom(component.getClass())) {
-        behaviors.add((Behavior) component);
+      if (component.getClass().isAssignableFrom(BehaviorController.class)) {
+        BehaviorController controller = (BehaviorController) component;
+        behaviors.addAll(((List<Behavior>) controller.getSerializedFields().get(0)));
       } else {
         components.add(component);
       }

@@ -36,15 +36,8 @@ public class BehaviorParser implements Parser<Behavior> {
 
     try {
       String name = behaviorNode.get(NAME).asText();
-      String fullClassName = "oogasalad.engine.component." + name;
 
-      Class<?> rawClass = Class.forName(fullClassName);
-      if (!Behavior.class.isAssignableFrom(rawClass)) {
-        throw new ParsingException("Class does not extend Behavior: " + fullClassName);
-      }
-
-      Class<? extends Behavior> behaviorClass = (Class<? extends Behavior>) rawClass;
-      Behavior behaviorInstance = behaviorClass.getDeclaredConstructor().newInstance();
+      Behavior behaviorInstance = new Behavior();
 
       parseConstraints(behaviorNode, behaviorInstance);
       parseActions(behaviorNode, behaviorInstance);
