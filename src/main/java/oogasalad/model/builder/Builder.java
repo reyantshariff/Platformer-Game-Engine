@@ -1,6 +1,7 @@
 package oogasalad.model.builder;
 
-import java.util.Stack;
+import java.util.Deque;
+import java.util.ArrayDeque;
 import oogasalad.model.builder.actions.DeleteObjectAction;
 import oogasalad.model.builder.actions.CreateObjectAction;
 import oogasalad.model.builder.actions.MoveObjectAction;
@@ -41,7 +42,7 @@ public class Builder {
     game = new Game();
   }
 
-  private Stack<EditorAction> actionStack = new Stack<>();
+  private Deque<EditorAction> actionStack = new ArrayDeque<>();
 
   /**
    Undoes Last User Action
