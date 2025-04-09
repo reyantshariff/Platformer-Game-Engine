@@ -57,7 +57,7 @@
             "BehaviorController": {
               "Behaviors": [
                 {
-                  "Name": "SceneChanger",
+                  "Name": "Example",
                   "constraints": [
                     {
                       "name": "OnKeyPressed",
