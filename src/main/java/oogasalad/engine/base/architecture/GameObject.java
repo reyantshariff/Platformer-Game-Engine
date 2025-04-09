@@ -24,9 +24,9 @@ public class GameObject {
   private String name;
   private String tag;
 
-  public GameObject(String name, String tag) {
+  public GameObject(String tag) {
     this.id = UUID.randomUUID();
-    this.name = name == null ? "" : this.getClass().getSimpleName() + "_" + this.id;
+    this.name = this.getClass().getSimpleName() + "_" + this.id;
     this.tag = tag;
     this.allComponents = new HashMap<>();
     this.componentAwakeInitializer = new ArrayList<>();
@@ -34,6 +34,11 @@ public class GameObject {
 
     // Add the Transform component by default
     addComponent(Transform.class);
+  }
+
+  public GameObject(String name, String tag) {
+    this(tag);
+    this.name = name;
   }
 
   final void wakeUp() {
