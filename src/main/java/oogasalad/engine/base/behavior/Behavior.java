@@ -82,6 +82,7 @@ public class Behavior implements Serializable {
     try {
       T constraint = constraintClass.getDeclaredConstructor().newInstance();
       constraint.setBehavior(this);
+      constraint.awake();
       constraints.add(constraint);
       return constraint;
     } catch (Exception e) {
@@ -122,6 +123,7 @@ public class Behavior implements Serializable {
     try {
       T action = actionClass.getDeclaredConstructor().newInstance();
       action.setBehavior(this);
+      action.awake();
       actions.add(action);
       return action;
     } catch (Exception e) {

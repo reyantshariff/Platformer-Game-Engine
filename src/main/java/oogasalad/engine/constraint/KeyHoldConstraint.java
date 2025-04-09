@@ -26,6 +26,6 @@ public class KeyHoldConstraint extends BehaviorConstraint<KeyCode> {
 
   @Override
   public boolean check(KeyCode parameter) {
-    return inputHandler.isKeyHold(parameter);
+    return inputHandler!= null && inputHandler.isKeyHold(parameter);
   }
 }

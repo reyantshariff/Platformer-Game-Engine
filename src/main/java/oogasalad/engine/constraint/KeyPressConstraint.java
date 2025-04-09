@@ -26,6 +26,6 @@ public class KeyPressConstraint extends BehaviorConstraint<KeyCode> {
 
   @Override
   public boolean check(KeyCode parameter) {
-    return inputHandler.isKeyPressed(parameter);
+    return inputHandler!= null && inputHandler.isKeyPressed(parameter);
   }
 }
