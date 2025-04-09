@@ -14,7 +14,7 @@ public class GameConfig {
 
   public static final Logger LOGGER = LogManager.getLogger(); // The logger for this program
   private static final String DEFAULT_LANGUAGE = "English";
-  private static final String LANGUAGE_FILE_PREFIX = "oogasalad.resources.oogasalad.languages.";
+  private static final String LANGUAGE_FILE_PREFIX = "oogasalad.languages.";
   private static ResourceBundle myMessages =
       ResourceBundle.getBundle(LANGUAGE_FILE_PREFIX + DEFAULT_LANGUAGE);
 
