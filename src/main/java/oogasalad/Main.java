@@ -1,11 +1,13 @@
 package oogasalad;
 
+import javafx.scene.canvas.Canvas;
 import java.util.function.Function;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.base.architecture.GameScene;
@@ -38,9 +40,8 @@ public class Main extends Application {
   public void start(Stage stage) {
     Game game = new Game();
     StackPane root = new StackPane();
-    Scene scene = new Scene(root, 1280, 720);
-
-    setKeyPressForGame(scene, game);
+    Scene scene = new Scene(root,
+        1280, 720);
 
     showMainMenu(root, game, stage, scene);
 
@@ -52,18 +53,6 @@ public class Main extends Application {
     builderStage.setScene(builderScene);
     builderStage.show();
      */
-  }
-
-  private void setKeyPressForGame(Scene scene, Game game) {
-    scene.setOnKeyPressed(e -> {
-      KeyCode key = mapToEngineKeyCode(e.getCode());
-      if (key != null) game.keyPressed(key.getValue());
-    });
-
-    scene.setOnKeyReleased(e -> {
-      KeyCode key = mapToEngineKeyCode(e.getCode());
-      if (key != null) game.keyReleased(key.getValue());
-    });
   }
 
   private static void showMainMenu(Pane root, Game curGame, Stage stage, Scene curScene) {
@@ -89,7 +78,19 @@ public class Main extends Application {
     GameScene scene = sceneProvider.apply(selectedGame);
     game.addScene(scene);
     game.changeScene(scene.getName());
+
     root.getChildren().setAll(gui.getCanvas());
+
+    createReturnButton(root, game);
+  }
+
+  private static void createReturnButton(Pane root, Game game) {
+    Button returnButton = new Button("Main Menu");
+    returnButton.setOnAction(e -> showMainMenu(root,
+        game, (Stage) root.getScene().getWindow(), root.getScene()));
+    StackPane.setAlignment(returnButton, Pos.TOP_RIGHT);
+    returnButton.setStyle("-fx-background-color: white; -fx-font-weight: bold;");
+    root.getChildren().add(returnButton);
   }
 
   private static void switchToGamePlayer(Pane root, Game game, String selectedGame) {
@@ -98,7 +99,6 @@ public class Main extends Application {
 
 
   private static void switchToBuilder(Pane root, Game game, String selectedGame) {
-
     //switchToMode(root, game, selectedGame, Main::getBuilderSceneByName);
   }
 

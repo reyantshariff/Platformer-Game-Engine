@@ -1,16 +1,13 @@
 package oogasalad.view.screens;
 
 import java.util.function.Consumer;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.stage.Stage;
 
 /**
  * Creates the main JavaFX view for the main menu of the entire game.
@@ -38,8 +35,8 @@ public class MainMenuView {
     gameSelector.getItems().addAll("Dinosaur Game", "Geometry Dash");
     gameSelector.setValue("Dino Game");
 
-    Button playButton = new Button("Player");
-    Button builderButton = new Button("Builder");
+    Button playButton = new Button("Play Game");
+    Button builderButton = new Button("Build Game");
 
     playButton.setOnAction(e -> onPlay.accept(gameSelector.getValue()));
     builderButton.setOnAction(e -> onBuilder.accept(gameSelector.getValue()));

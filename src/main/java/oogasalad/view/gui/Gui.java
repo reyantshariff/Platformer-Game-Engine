@@ -45,6 +45,11 @@ public class Gui {
         ResourceBundles.getInt(GUI_GENERAL_PATH, "windowWidth"),
         ResourceBundles.getInt(GUI_GENERAL_PATH, "windowHeight"));
 
+
+    canvas.setFocusTraversable(true);
+    canvas.setOnKeyPressed(this::handleKeyPressed);
+    canvas.setOnKeyReleased(this::handleKeyReleased);
+
     gc = canvas.getGraphicsContext2D();
     objectRenderer = new GameObjectRenderer(null);
 
