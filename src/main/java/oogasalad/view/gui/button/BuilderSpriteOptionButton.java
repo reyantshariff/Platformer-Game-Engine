@@ -1,0 +1,51 @@
+package oogasalad.view.gui.button;
+
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Glow;
+import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+
+public class BuilderSpriteOptionButton extends ImageButton {
+
+  public BuilderSpriteOptionButton(Image image, double width, double height) {
+    super(image);
+    applySizing(width, height);
+    applyStyling();
+  }
+
+  private void applySizing(double width, double height) {
+    // Set a large size for the button
+    this.setWidth(width);
+    this.setHeight(height);
+  }
+
+  /**
+   * Styles and sizes the button according to specific values
+   */
+  private void applyStyling() {
+
+    // Apply fun styling
+    this.setStyle("-fx-background-color: linear-gradient(to bottom, #ffcc00, #ff9900);"
+        + "-fx-background-radius: 15;"
+        + "-fx-border-color: #ffaa00;"
+        + "-fx-border-width: 3;"
+        + "-fx-border-radius: 15;");
+
+    // Add a glow effect on hover
+    this.setOnMouseEntered(event -> {
+      Glow glow = new Glow(0.5);
+      this.setEffect(glow);
+    });
+
+    // Remove the glow effect when the mouse exits
+    this.setOnMouseExited(event -> {
+      this.setEffect(null);
+    });
+
+    // Add a drop shadow to give depth
+    DropShadow dropShadow = new DropShadow();
+    dropShadow.setColor(Color.ORANGE);
+    dropShadow.setRadius(10);
+    this.setEffect(dropShadow);
+  }
+}
