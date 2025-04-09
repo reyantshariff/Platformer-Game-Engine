@@ -76,4 +76,10 @@ public class GameObjectTest {
         assertNull(follower.getParent());
         assertThrows(IllegalArgumentException.class, () -> object.getComponent(Follower.class));
     }
+
+    @Test
+    public void removeComponent_removeTransform_throwsException(){
+        GameObject object = new GameObject("Object", "Tag");
+        assertThrows(IllegalArgumentException.class, () -> object.removeComponent(Transform.class));
+    }
 }

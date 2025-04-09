@@ -13,6 +13,12 @@ public class DeleteObjectAction implements EditorAction {
   private final Game game;
   private final GameObject object;
 
+  /**
+   * Constructor for DeleteObjectAction
+   *
+   * @param game - Game that the object is being placed in
+   * @param object - GameObject that is being placed
+   */
   public DeleteObjectAction(Game game, GameObject object) {
     this.game = game;
     this.object = object;

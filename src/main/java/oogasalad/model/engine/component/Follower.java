@@ -25,6 +25,9 @@ public class Follower extends GameComponent {
   private double offsetY;
   private Transform myTransform;
 
+  /**
+   * Constructor for Follower. Sets default values for the offset and the follow object.
+   */
   public Follower() {
     super();
     this.followObject = null;

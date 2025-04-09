@@ -32,29 +32,34 @@ public abstract class GameComponent implements Serializable {
    * This method is called after all objects have been created and initialized. It is used to set up
    * references to other objects and components. If an object is made mid-game, this method is called
    * right after the constructor.
-   * NOTE: This method should be override if needed.
    */
-  protected void awake() {}
+  protected void awake() {
+    // NOTE: Override this method if references are needed
+  }
 
   /**
    * This method is called before the object calls its update method for the first time
-   * NOTE: This method should be override if needed.
    */
-  protected void start() {}
+  protected void start() {
+    //NOTE: This method should be overriden if needed
+  }
 
   /**
    * This method is called when the component is removed.
-   * NOTE: This method should be override if needed.
    */
-  public void onRemove() {}
+  public void onRemove() {
+    // NOTE: This method should be overriden if needed.
+
+  }
 
   /**
    * This method is called every frame. It is used to update the object and perform any necessary
    * game logic.
-   * NOTE: This method should be override if needed.
    * @param deltaTime The time since the last frame, in seconds.
    */
-  protected void update(double deltaTime) {}
+  protected void update(double deltaTime) {
+    // NOTE: This method should be overriden if needed.
+  }
 
   /**
    * Get the component based on

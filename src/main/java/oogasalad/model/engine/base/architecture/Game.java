@@ -107,7 +107,10 @@ public class Game {
    *
    * @param sceneName The name of the scene to reset
    */
-  public void resetScene(String sceneName) {}
+  public void resetScene(String sceneName) {
+    //TODO: Store the file paths and reload the scene with the parser or store original versions of all scenes
+  }
+  
 
   /**
    * Called externally when a key is pressed.

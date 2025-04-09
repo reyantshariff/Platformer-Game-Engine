@@ -4,6 +4,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import oogasalad.view.gui.GameObjectRenderer;
 
+/**
+ * Abstract class for a JavaFX window that uses a GameObjectRenderer to render game objects.
+ * This class is a template for creating different types of JavaFX windows
+ */
+
 public abstract class ViewScene {
   private final Scene myScene;
   private final GameObjectRenderer myObjectRenderer;

@@ -4,6 +4,13 @@ package oogasalad.model.builder;
  *@author Reyan Shariff
  */
 public interface EditorAction {
+  /**
+   * undoes the last action
+   */
   void undo();
+
+  /**
+   * redoes the last action
+   */
   void redo();
 }

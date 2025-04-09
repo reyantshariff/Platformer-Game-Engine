@@ -6,9 +6,9 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 import java.text.MessageFormat;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import oogasalad.model.config.GameConfig;
+import static oogasalad.model.config.GameConfig.LOGGER;
+
 /**
  * The ResourceBundles class reads and casts the value pairings of properties files.
  *
@@ -17,8 +17,8 @@ import oogasalad.model.config.GameConfig;
 public class ResourceBundles {
 
   private static final Map<String, ResourceBundle> bundles = new HashMap<>();
-  private static final Logger logger = LogManager.getLogger(ResourceBundles.class);
   private static String activeBundleBaseName = null;
+  private static final String SET_BUNDLE_KEY = "setBundle";
 
   private static final Map<Class<?>, Function<String, Object>> typeParsers = new HashMap<>();
 
@@ -42,7 +42,8 @@ public class ResourceBundles {
       ResourceBundle bundle = ResourceBundle.getBundle(baseName);
       bundles.put(baseName, bundle);
     } catch (MissingResourceException e) {
-      logger.error(MessageFormat.format(GameConfig.getText("bundleNotFound"), baseName));
+      LOGGER.error(MessageFormat.format(GameConfig.getText("bundleNotFound"), baseName));
+      throw e;
     }
   }
 
@@ -59,7 +60,7 @@ public class ResourceBundles {
       }
       activeBundleBaseName = baseName;
     } catch (MissingResourceException e) {
-      logger.error(MessageFormat.format(GameConfig.getText("bundleSetFailed"), baseName));
+      LOGGER.error(MessageFormat.format(GameConfig.getText("bundleSetFailed"), baseName));
     }
   }
 
@@ -86,7 +87,7 @@ public class ResourceBundles {
    */
   public static String getString(String key) {
     if (activeBundleBaseName == null) {
-      logger.error(GameConfig.getText("setBundle"));
+      LOGGER.error(GameConfig.getText(SET_BUNDLE_KEY));
     }
     return getString(activeBundleBaseName, key);
   }
@@ -106,7 +107,7 @@ public class ResourceBundles {
     try {
       return (int) cast(value, int.class);
     } catch (IllegalArgumentException e) {
-      logger.error(MessageFormat.format(GameConfig.getText("invalidKey"), key, baseName));
+      LOGGER.error(MessageFormat.format(GameConfig.getText("invalidKey"), key, baseName));
       return 0;
     }
   }
@@ -119,7 +120,7 @@ public class ResourceBundles {
    */
   public static int getInt(String key) {
     if (activeBundleBaseName == null) {
-      logger.error(GameConfig.getText("setBundle"));
+      LOGGER.error(GameConfig.getText(SET_BUNDLE_KEY));
     }
     return getInt(activeBundleBaseName, key);
   }
@@ -139,7 +140,7 @@ public class ResourceBundles {
     try {
       return (double) cast(value, double.class);
     } catch (IllegalArgumentException e) {
-      logger.error(MessageFormat.format(GameConfig.getText("invalidKey"), key, baseName));
+      LOGGER.error(MessageFormat.format(GameConfig.getText("invalidKey"), key, baseName));
       return 0.0;
     }
   }
@@ -152,7 +153,7 @@ public class ResourceBundles {
    */
   public static double getDouble(String key) {
     if (activeBundleBaseName == null) {
-      logger.error(GameConfig.getText("setBundle"));
+      LOGGER.error(GameConfig.getText(SET_BUNDLE_KEY));
     }
     return getDouble(activeBundleBaseName, key);
   }

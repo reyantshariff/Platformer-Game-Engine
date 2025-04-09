@@ -15,6 +15,10 @@ import oogasalad.view.player.dinosaur.DinosaurGameScene;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * BuilderView is the main view for the level editor
+ */
+
 public class BuilderView extends ViewScene {
 
   private static final Logger logger = LogManager.getLogger(BuilderView.class);
@@ -23,6 +27,12 @@ public class BuilderView extends ViewScene {
 
   private GameScene gameScene;
 
+  /**
+   * Constructor for BuilderView
+   *
+   * @param width  the width of the window
+   * @param height the height of the window
+   */
   public BuilderView(double width, double height) {
     // Create the BorderPane as the root
     super(new BorderPane(), width, height);

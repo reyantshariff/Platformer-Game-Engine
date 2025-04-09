@@ -20,10 +20,19 @@ import oogasalad.model.engine.component.Transform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * The GameObjectRenderer class is responsible for rendering game objects and their components
+ */
+
 public class GameObjectRenderer {
   private static final Logger logger = LogManager.getLogger(GameObjectRenderer.class);
   private final Scene myScene;
 
+  /**
+   * Constructor for GameObjectRenderer
+   * 
+   * @param scene the scene to render the game objects in
+   */
   public GameObjectRenderer(Scene scene) {
     myScene = scene;
   }
@@ -35,10 +44,12 @@ public class GameObjectRenderer {
    * @param scene The game scene to render.
    */
   public void render(GraphicsContext gc, GameScene scene) {
-    gc.clearRect(ResourceBundles.getInt("oogasalad.gui.general", "windowX"),
-        ResourceBundles.getInt("oogasalad.gui.general", "windowY"),
-        ResourceBundles.getDouble("oogasalad.gui.general", "windowWidth"),
-        ResourceBundles.getDouble("oogasalad.gui.general", "windowHeight"));
+    String baseName = "oogasalad.gui.general";
+    Integer windowX = ResourceBundles.getInt(baseName, "windowX");
+    Integer windowY = ResourceBundles.getInt(baseName, "windowY");
+    Double windowWidth = ResourceBundles.getDouble(baseName, "windowWidth");
+    Double windowHeight = ResourceBundles.getDouble(baseName, "windowHeight");
+    gc.clearRect(windowX, windowY, windowWidth, windowHeight);
 
     for (GameObject obj : scene.getAllObjects()) {
       renderGameObject(gc, obj);

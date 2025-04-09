@@ -21,6 +21,11 @@ public class GameScene {
   private String name;
   private Game game;
 
+  /**
+   * Constructor for GameScene
+   *
+   * @param name the name of the scene
+   */
   public GameScene(String name) {
     this.id = UUID.randomUUID();
     this.name = name;
@@ -32,6 +37,10 @@ public class GameScene {
     this.subscribedEvents = new LinkedList<>();
   }
 
+  /**
+   * Set the game that this scene belongs to.
+   * @param game the game that this scene belongs to
+   */
   final void setGame(Game game) {
     this.game = game;
   }
@@ -206,10 +215,14 @@ public class GameScene {
   /**
    * Event that will be called when the gameScene is set to active.
    */
-  public void onActivated() {};
+  public void onActivated() {
+    // NOTE: This method should be overriden if needed.
+  };
 
   /**
    * Event that will be called when the gameScene is set to inactive.
    */
-  public void onDeactivated() {};
+  public void onDeactivated() {
+    // NOTE: This method should be overriden if needed.
+  };
 }

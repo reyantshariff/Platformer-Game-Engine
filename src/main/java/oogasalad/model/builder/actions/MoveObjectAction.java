@@ -14,6 +14,15 @@ public class MoveObjectAction implements EditorAction {
   private final double fromX, fromY;
   private final double toX, toY;
 
+  /**
+   * Constructor for MoveObjectAction
+   *
+   * @param object - GameObject that is being moved
+   * @param fromX - X coordinate of the object before the move
+   * @param fromY - Y coordinate of the object before the move
+   * @param toX - X coordinate of the object after the move
+   * @param toY - Y coordinate of the object after the move
+   */
   public MoveObjectAction(GameObject object, double fromX, double fromY, double toX, double toY) {
     this.object = object;
     this.fromX = fromX;
