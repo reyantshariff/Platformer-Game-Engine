@@ -43,7 +43,8 @@ public class Builder {
     game = new Game();
   }
 
-  private Deque<EditorAction> actionStack = new ArrayDeque<>();
+  private Deque<EditorAction> undoStack = new ArrayDeque<>();
+  private Deque<EditorAction> redoStack = new ArrayDeque<>();
   public Builder(Game game)
   {
     this.game = game;
@@ -53,8 +54,10 @@ public class Builder {
    Undoes Last User Action
    * */
   public void undoLastAction() {
-    if (!actionStack.isEmpty()) {
-      actionStack.pop().undo();
+    if (!undoStack.isEmpty()) {
+      EditorAction action = undoStack.pop();
+      action.undo();
+      redoStack.push(action);
     }
   }
 
@@ -63,9 +66,10 @@ public class Builder {
    * */
   public void redoLastAction()
   {
-    if (!actionStack.isEmpty())
-    {
-      actionStack.pop().redo();
+    if (!redoStack.isEmpty()) {
+      EditorAction action = redoStack.pop();
+      action.redo();
+      undoStack.push(action);
     }
   }
 
@@ -104,7 +108,7 @@ public class Builder {
 //    {
 //      selectedObject = GameObjectFactory.create(type);
 //      game.getCurrentScene().registerObject(selectedObject);
-//      actionStack.push(new CreateObjectAction(game, selectedObject));
+//      undoStack.push(new CreateObjectAction(game, selectedObject));
 //    }
   }
 
@@ -146,7 +150,7 @@ public class Builder {
    */
   public void placeObject(double x, double y) {
     if (selectedObject != null) {
-      actionStack.push(new MoveObjectAction(selectedObject, selectedObject.getComponent(Transform.class).getX(), selectedObject.getComponent(Transform.class).getY(), x, y));
+      undoStack.push(new MoveObjectAction(selectedObject, selectedObject.getComponent(Transform.class).getX(), selectedObject.getComponent(Transform.class).getY(), x, y));
       selectedObject.getComponent(Transform.class).setX(x);
       selectedObject.getComponent(Transform.class).setY(y);
     }
@@ -167,7 +171,7 @@ public class Builder {
     if (selectedObject != null)
     {
       game.getCurrentScene().unregisterObject(selectedObject);
-      actionStack.push(new DeleteObjectAction(game, selectedObject));
+      undoStack.push(new DeleteObjectAction(game, selectedObject));
     }
   }
 
