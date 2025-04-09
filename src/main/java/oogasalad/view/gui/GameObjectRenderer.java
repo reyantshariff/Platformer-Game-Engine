@@ -57,20 +57,24 @@ public class GameObjectRenderer {
   }
 
   private void renderGameObject(GraphicsContext gc, GameObject obj) {
-    for (Map.Entry<Class<? extends GameComponent>, GameComponent> entry : obj.getAllComponents()
-        .entrySet()) {
-      GameComponent component = entry.getValue();
+    boolean hasSprite = obj.hasComponent(SpriteRenderer.class);
+
+    for (Map.Entry<Class<? extends GameComponent>, GameComponent> entry : obj.getAllComponents().entrySet()) {
       Class<? extends GameComponent> clazz = entry.getKey();
+
+      if (hasSprite && clazz.equals(Transform.class)) continue;
+
+      GameComponent component = entry.getValue();
       try {
         String renderMethod = "render" + clazz.getSimpleName();
-        Method method = this.getClass()
-            .getDeclaredMethod(renderMethod, clazz, GraphicsContext.class);
+        Method method = this.getClass().getDeclaredMethod(renderMethod, clazz, GraphicsContext.class);
         method.setAccessible(true);
         method.invoke(this, component, gc);
       } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
         logger.info("No such component render method exists: " + clazz.getSimpleName());
       }
     }
+
   }
 
   /**
@@ -92,11 +96,22 @@ public class GameObjectRenderer {
    * @param component
    * @param gc
    */
-  private void renderImageComponent(SpriteRenderer component, GraphicsContext gc) {
-    Image image = new Image(component.getImagePath());
-    Transform transform = component.getParent().getComponent(Transform.class);
-    gc.drawImage(image, transform.getX() + component.getOffsetX(),
-        transform.getY() + component.getOffsetY());
+  private void renderSpriteRenderer(SpriteRenderer component, GraphicsContext gc) {
+    GameObject obj = component.getParent();
+    Transform transform = obj.getComponent(Transform.class);
+
+    try {
+      Image image = new Image(component.getImagePath());
+      gc.drawImage(
+          image,
+          transform.getX() + component.getOffsetX(),
+          transform.getY() + component.getOffsetY(),
+          transform.getScaleX(), // width (scale)
+          transform.getScaleY()  // height (scale)
+      );
+    } catch (Exception e) {
+      logger.error("Failed to render image: " + component.getImagePath());
+    }
   }
 
   /**
@@ -114,19 +129,5 @@ public class GameObjectRenderer {
     Group tempRoot = new Group(node);
     Scene tempScene = new Scene(tempRoot);
     tempScene.getStylesheets().addAll(myScene.getStylesheets());
-  }
-
-  /**
-   * Maps a JavaFX KeyCode to an engine KeyCode.
-   *
-   * @param code The JavaFX KeyCode.
-   * @return The engine KeyCode, or null if the mapping fails.
-   */
-  private KeyCode mapToEngineKeyCode(javafx.scene.input.KeyCode code) {
-    try {
-      return KeyCode.valueOf(code.name());
-    } catch (IllegalArgumentException e) {
-      return null;
-    }
   }
 }

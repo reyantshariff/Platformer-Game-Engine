@@ -14,6 +14,6 @@ public class Base extends GameObject {
    * @param name the name of the base
    */
   public Base(String name) {
-    super(name, "");
+    super(name, "base");
   }
 }

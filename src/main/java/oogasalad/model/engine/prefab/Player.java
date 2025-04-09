@@ -14,6 +14,6 @@ public class Player extends GameObject {
    * @param name the name of the player
    */
   public Player(String name) {
-    super(name, "");
+    super(name, "player");
   }
 }

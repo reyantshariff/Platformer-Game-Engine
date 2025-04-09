@@ -130,6 +130,14 @@ public class GameObject {
   }
 
   /**
+   * @param componentClass - Component looking for
+   * @return - If current object has that component
+   */
+  public final boolean hasComponent(Class<? extends GameComponent> componentClass) {
+    return allComponents.containsKey(componentClass);
+  }
+
+  /**
    * Returns all the components
    *
    * @return - a Map of some extended gameComponent to the GameComponent, representing all components
