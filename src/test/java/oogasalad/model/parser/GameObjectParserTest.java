@@ -1,5 +1,6 @@
 package oogasalad.model.parser;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -20,84 +21,6 @@ class GameObjectParserTest {
   GameObjectParser myGameObjectParser;
   ObjectMapper myMapper;
 
-  String goodJsonString =
-      """
-          {
-            "Name": "ExampleMenuBackground",
-            "Tag": "Background",
-            "Components": [
-              {
-                "Name": "Transform",
-                "Configurations": {
-                  "x": 0,
-                  "y": 0,
-                  "rotation": 0,
-                  "scaleX": 1,
-                  "scaleY": 1
-                }
-              }
-            ],
-            "BehaviorController": {
-              "Behaviors": [
-                {
-                  "Name": "SceneChanger",
-                  "constraints": [
-                    {
-                      "name": "KeyPressConstraint",
-                      "parameter": "SPACE"
-                    }
-                  ],
-                  "actions": [
-                    {
-                      "name": "ChangeSceneAction",
-                      "parameter": "Example Main Scene"
-                    }
-                  ]
-                }
-              ]
-            }
-          }
-          """;
-
-  // The bad json string has no name, should return error
-  String badJsonString =
-      """
-          {
-            "Tag": "Background",
-            "Components": [
-              {
-                "Name": "Transform",
-                "Configurations": {
-                  "x": 0,
-                  "y": 0,
-                  "rotation": 0,
-                  "scaleX": 1,
-                  "scaleY": 1
-                }
-              }
-            ],
-            "BehaviorController": {
-              "Behaviors": [
-                {
-                  "Name": "SceneChanger",
-                  "constraints": [
-                    {
-                      "name": "KeyPressConstraint",
-                      "parameter": "SPACE"
-                    }
-                  ],
-                  "actions": [
-                    {
-                      "name": "ChangeSceneAction",
-                      "parameter": "Example Main Scene"
-                    }
-                  ]
-                }
-              ]
-            }
-          }
-          """;
-
   @BeforeEach
   void setUp() {
     myGameObjectParser = new GameObjectParser();
@@ -106,15 +29,135 @@ class GameObjectParserTest {
 
   @Test
   void parse_validJson_readsGameObject() throws JsonProcessingException, ParsingException {
+    String goodJsonString =
+        """
+            {
+              "Name": "ExampleMenuBackground",
+              "Tag": "Background",
+              "Components": [
+                {
+                  "Name": "Transform",
+                  "Configurations": {
+                    "x": 0,
+                    "y": 0,
+                    "rotation": 0,
+                    "scaleX": 1,
+                    "scaleY": 1
+                  }
+                }
+              ],
+              "BehaviorController": {
+                "Behaviors": [
+                  {
+                    "Name": "SceneChanger",
+                    "constraints": [
+                      {
+                        "name": "KeyPressConstraint",
+                        "parameter": "SPACE"
+                      }
+                    ],
+                    "actions": [
+                      {
+                        "name": "ChangeSceneAction",
+                        "parameter": "Example Main Scene"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+            """;
+
     JsonNode node = myMapper.readTree(goodJsonString);
     GameObject gameObject = myGameObjectParser.parse(node);
     assertNotNull(gameObject);
-//    assertTrue(gameObject.getName().contains("GameObject_"));
+    assertEquals("ExampleMenuBackground", gameObject.getName());
   }
 
   @Test
   void parse_invalidJson_throwsError() throws JsonProcessingException, ParsingException {
+// The bad json string has no name, should return error
+    String badJsonString =
+        """
+            {
+              "Tag": "Background",
+              "Components": [
+                {
+                  "Name": "Transform",
+                  "Configurations": {
+                    "x": 0,
+                    "y": 0,
+                    "rotation": 0,
+                    "scaleX": 1,
+                    "scaleY": 1
+                  }
+                }
+              ],
+              "BehaviorController": {
+                "Behaviors": [
+                  {
+                    "Name": "SceneChanger",
+                    "constraints": [
+                      {
+                        "name": "KeyPressConstraint",
+                        "parameter": "SPACE"
+                      }
+                    ],
+                    "actions": [
+                      {
+                        "name": "ChangeSceneAction",
+                        "parameter": "Example Main Scene"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+            """;
     JsonNode node = myMapper.readTree(badJsonString);
+    assertThrows(ParsingException.class, () -> myGameObjectParser.parse(node));
+  }
+
+  @Test
+  void parse_invalidJsonNoTransform_throwsError() throws JsonProcessingException, ParsingException {
+    String noTransformJsonString =
+        """
+            {
+              "Tag": "Background",
+              "Components": [
+                {
+                  "Name": "Transform",
+                  "Configurations": {
+                    "x": 0,
+                    "y": 0,
+                    "rotation": 0,
+                    "scaleX": 1,
+                    "scaleY": 1
+                  }
+                }
+              ],
+              "BehaviorController": {
+                "Behaviors": [
+                  {
+                    "Name": "SceneChanger",
+                    "constraints": [
+                      {
+                        "name": "KeyPressConstraint",
+                        "parameter": "SPACE"
+                      }
+                    ],
+                    "actions": [
+                      {
+                        "name": "ChangeSceneAction",
+                        "parameter": "Example Main Scene"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+            """;
+    JsonNode node = myMapper.readTree(noTransformJsonString);
     assertThrows(ParsingException.class, () -> myGameObjectParser.parse(node));
   }
 
@@ -128,11 +171,11 @@ class GameObjectParserTest {
       throw new IOException(e);
     }
     assertNotNull(node);
-    System.out.println(node);
+
     assertTrue(node.toString().contains("Name"));
     assertTrue(node.toString().contains("Bird"));
     assertTrue(node.toString().contains("Tag"));
     assertTrue(node.toString().contains("Components"));
-    assertTrue(node.toString().contains("Behaviors"));
+    assertTrue(node.toString().contains("BehaviorController"));
   }
 }
