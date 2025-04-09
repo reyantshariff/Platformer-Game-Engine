@@ -20,7 +20,7 @@ public class GameObjectFactory {
    * @return - Game object created using reflection
    */
   @SuppressWarnings("unchecked")
-  public static Class<? extends GameObject> create(String type) {
+  public static GameObject create(String type) {
     try {
       String className = GAME_OBJECT_PACKAGE + "." + type;
 
@@ -30,7 +30,7 @@ public class GameObjectFactory {
         throw new IllegalArgumentException(type + " is not a valid GameObject type");
       }
 
-      return (Class<? extends GameObject>) clazz;
+      return (GameObject) clazz.getDeclaredConstructor().newInstance();
 
 
     } catch (Exception e) {
