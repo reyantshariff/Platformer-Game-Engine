@@ -13,6 +13,12 @@ public class CreateObjectAction implements EditorAction {
   private GameObject placedObject;
   private Game game;
 
+  /**
+   * Constructor for CreateObjectAction
+   *
+   * @param game - Game that the object is being placed in
+   * @param obj - GameObject that is being placed
+   */
   public CreateObjectAction(Game game, GameObject obj) {
     this.game = game;
     this.placedObject = obj;
