@@ -1,6 +1,7 @@
-package oogasalad.view;
+package oogasalad.view.screens;
 
 import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
@@ -10,6 +11,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import oogasalad.model.engine.base.architecture.GameScene;
+import oogasalad.view.ViewScene;
+import oogasalad.view.gui.GameObjectRenderer;
 import oogasalad.view.gui.button.StylizedButton;
 import oogasalad.view.player.dinosaur.DinosaurGameScene;
 import org.apache.logging.log4j.LogManager;
@@ -19,7 +22,7 @@ import org.apache.logging.log4j.Logger;
  * BuilderView is the main view for the level editor
  */
 
-public class BuilderView extends ViewScene {
+public class BuilderView extends Scene {
 
   private static final Logger logger = LogManager.getLogger(BuilderView.class);
 
@@ -27,16 +30,19 @@ public class BuilderView extends ViewScene {
 
   private GameScene gameScene;
 
+  private GameObjectRenderer gameObjectRenderer;
+
   /**
    * Constructor for BuilderView
    *
    * @param width  the width of the window
    * @param height the height of the window
    */
-  public BuilderView(double width, double height) {
+  public BuilderView(double width, double height, GameObjectRenderer gameObjectRenderer) {
     // Create the BorderPane as the root
     super(new BorderPane(), width, height);
-    myWindow = (BorderPane) getScene().getRoot();
+    this.gameObjectRenderer = gameObjectRenderer;
+    myWindow = (BorderPane) getRoot();
     createDinoGameTest();
     initializeUI();
   }
@@ -140,6 +146,6 @@ public class BuilderView extends ViewScene {
   }
 
   private void renderInitialFrame(GraphicsContext gc, GameScene gameScene) {
-    getObjectRenderer().render(gc, gameScene);
+    gameObjectRenderer.render(gc, gameScene);
   }
 }
