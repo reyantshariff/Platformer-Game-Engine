@@ -23,6 +23,11 @@ public class GameObject {
   private String name;
   private String tag;
 
+  /**
+   * Constructor for GameObject
+   *
+   * @param tag the tag of the object
+   */
   public GameObject(String tag) {
     this.id = UUID.randomUUID();
     this.name = this.getClass().getSimpleName() + "_" + this.id;
@@ -35,6 +40,12 @@ public class GameObject {
     addComponent(Transform.class);
   }
 
+  /**
+   * Constructor for GameObject
+   *
+   * @param name the name of the object
+   * @param tag the tag of the object
+   */
   public GameObject(String name, String tag) {
     this(tag);
     this.name = name;
