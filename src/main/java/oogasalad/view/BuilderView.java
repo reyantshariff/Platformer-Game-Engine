@@ -26,7 +26,7 @@ public class BuilderView extends ViewScene {
   public BuilderView(double width, double height) {
     // Create the BorderPane as the root
     super(new BorderPane(), width, height);
-    myWindow = (BorderPane) super.myScene.getRoot();
+    myWindow = (BorderPane) getScene().getRoot();
     createDinoGameTest();
     initializeUI();
   }
@@ -130,6 +130,6 @@ public class BuilderView extends ViewScene {
   }
 
   private void renderInitialFrame(GraphicsContext gc, GameScene gameScene) {
-    myObjectRenderer.render(gc, gameScene);
+    getObjectRenderer().render(gc, gameScene);
   }
 }

@@ -5,8 +5,8 @@ import javafx.scene.Scene;
 import oogasalad.gui.GameObjectRenderer;
 
 public abstract class ViewScene {
-  protected final Scene myScene;
-  protected final GameObjectRenderer myObjectRenderer;
+  private final Scene myScene;
+  private final GameObjectRenderer myObjectRenderer;
 
   /**
    * Template for a program JavaFX window using a GameObjectRenderer
@@ -26,6 +26,14 @@ public abstract class ViewScene {
    */
   public Scene getScene() {
     return myScene;
+  }
+
+  /**
+   * Return this window's GameObjectRenderer object
+   * @return GameObjectRenderer object
+   */
+  public GameObjectRenderer getObjectRenderer() {
+    return myObjectRenderer;
   }
 
 }
