@@ -15,16 +15,23 @@ import oogasalad.engine.component.BehaviorController;
  */
 public class Behavior implements Serializable {
   @SerializableField
+  private String behaviorName;
+  @SerializableField
   private List<BehaviorConstraint<?>> constraints = new ArrayList<>();
   @SerializableField
   private List<BehaviorAction<?>> actions = new ArrayList<>();
 
   private BehaviorController controller;
 
+  public Behavior() {
+    // Empty to utilize default constructor when necessary
+  }
+
   /**
    * Constructor of the Behavior class. This is used to create a new behavior object
    */
-  public Behavior() {
+  public Behavior(String behaviorName) {
+    this.behaviorName = behaviorName;
   }
 
   /**
@@ -84,6 +91,20 @@ public class Behavior implements Serializable {
   }
 
   /**
+   * Add a constraint to the behavior. This method is used to add a constraint to the behavior.
+   * @param constraintInstance the instance of the constraint we wish to add
+   */
+  public void addConstraint(BehaviorConstraint<?> constraintInstance) {
+    try {
+      constraintInstance.setBehavior(this);
+      constraints.add(constraintInstance);
+    } catch (Exception e) {
+      LOGGER.error("Failed to create constraint: {}", constraintInstance.getClass().getName());
+      throw new RuntimeException("Failed to create constraint: " + constraintInstance.getClass().getName());
+    }
+  }
+
+  /**
    * Remove a constraint from the behavior. This method is used to remove a constraint from the
    * @param constraintClass the constraint class specified
    * @param <T> the type of the constraint
@@ -106,6 +127,20 @@ public class Behavior implements Serializable {
     } catch (Exception e) {
       LOGGER.error("Failed to create action: {}", actionClass.getName(), e);
       throw new RuntimeException("Failed to create action: " + actionClass.getName(), e);
+    }
+  }
+
+  /**
+   * Add an already instantiated action to the actions list
+   * @param actionInstance the action instance we wish to add
+   */
+  public void addAction(BehaviorAction<?> actionInstance) {
+    try {
+      actionInstance.setBehavior(this);
+      actions.add(actionInstance);
+    } catch (Exception e) {
+      LOGGER.error("Failed to add action: {}", actionInstance.getClass().getName());
+      throw new RuntimeException("Failed to create action: " + actionInstance.getClass().getName());
     }
   }
 

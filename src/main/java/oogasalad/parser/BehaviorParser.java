@@ -37,34 +37,33 @@ public class BehaviorParser implements Parser<Behavior> {
     try {
       String name = behaviorNode.get(NAME).asText();
 
-      Behavior behaviorInstance = new Behavior();
+      Behavior behaviorInstance = new Behavior(name);
 
       parseConstraints(behaviorNode, behaviorInstance);
       parseActions(behaviorNode, behaviorInstance);
 
       return behaviorInstance;
-
-    } catch (ClassNotFoundException e) {
-      LOGGER.error("Behavior class not found: {}", behaviorNode.get("Name").asText(), e);
     } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
              NoSuchMethodException e) {
-      LOGGER.error("Could not instantiate Behavior class: {}", behaviorNode.get("Name").asText(),
-          e);
+      LOGGER.error("Could not instantiate Behavior class: {}",
+          behaviorNode.get("Name").asText());
+      throw new ParsingException("Could not instantiate Behavior class.");
     }
-    LOGGER.error("Could not instantiate Behavior class: {}", behaviorNode.get("Name").asText());
-    return null;
   }
 
   private void parseActions(JsonNode behaviorNode, Behavior behaviorInstance)
-      throws ClassNotFoundException, ParsingException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+      throws ParsingException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
     if (behaviorNode.has("actions")) {
       for (JsonNode actionNode : behaviorNode.get("actions")) {
+        Class<?> clazz = null;
         String aName = actionNode.get("name").asText();
         String aFullClassName = "oogasalad.engine.behavior.action." + aName;
-        Class<?> clazz = Class.forName(aFullClassName);
 
-        if (!BehaviorAction.class.isAssignableFrom(clazz)) {
-          throw new ParsingException("Invalid action class: " + aFullClassName);
+        try {
+          clazz = Class.forName(aFullClassName);
+        } catch (ClassNotFoundException e) {
+          LOGGER.error("Could not parse action. Class {} does not exist.", aFullClassName);
+          throw new ParsingException("Failed to parse action: " + actionNode, e);
         }
 
         createAndAddAction(behaviorInstance, actionNode, clazz);
@@ -73,7 +72,8 @@ public class BehaviorParser implements Parser<Behavior> {
   }
 
   private void createAndAddAction(Behavior behaviorInstance, JsonNode actionNode, Class<?> clazz)
-      throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+      throws InstantiationException, IllegalAccessException,
+      InvocationTargetException, NoSuchMethodException {
     BehaviorAction<?> action = (BehaviorAction<?>) clazz.getDeclaredConstructor().newInstance();
     action.setBehavior(behaviorInstance);
     JsonNode config = actionNode.get("parameter");
@@ -82,18 +82,21 @@ public class BehaviorParser implements Parser<Behavior> {
         .getSerializedFields()
         .forEach(field -> setFieldFromConfig(config, field));
 
-    behaviorInstance.addAction(action.getClass());
+    behaviorInstance.addAction(action);
   }
 
   private void parseConstraints(JsonNode behaviorNode, Behavior behaviorInstance)
-      throws ClassNotFoundException, ParsingException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+      throws ParsingException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
     if (behaviorNode.has("constraints")) {
       for (JsonNode constraintNode : behaviorNode.get("constraints")) {
+        Class<?> clazz;
         String cName = constraintNode.get("name").asText();
         String cFullClassName = "oogasalad.engine.behavior.constraint." + cName;
-        Class<?> clazz = Class.forName(cFullClassName);
 
-        if (!BehaviorConstraint.class.isAssignableFrom(clazz)) {
+        try {
+          clazz = Class.forName(cFullClassName);
+        } catch (ClassNotFoundException e) {
+          LOGGER.error("Could not find constraint class {}", cFullClassName);
           throw new ParsingException("Invalid constraint class: " + cFullClassName);
         }
 
@@ -112,27 +115,7 @@ public class BehaviorParser implements Parser<Behavior> {
         .getSerializedFields()
         .forEach(field -> setFieldFromConfig(config, field));
 
-    behaviorInstance.addConstraint(constraint.getClass());
-  }
-
-  /**
-   * Generates a serialized object to place into JSON
-   *
-   * @param data - the data object to serialize
-   * @return JsonNode to append to the parent node
-   */
-  @Override
-  public JsonNode write(Behavior data) throws IOException {
-    // Todo write this method
-    return new ObjectMapper().valueToTree(data);
-  }
-
-  /**
-   * Needed help from ChatGPT to generate this
-   */
-  @SuppressWarnings("unchecked")
-  private <T> void setGenericParameter(BehaviorConstraint<T> constraint, Object value) {
-    constraint.setParameter((T) value);
+    behaviorInstance.addConstraint(constraint);
   }
 
   private void setFieldFromConfig(JsonNode config, SerializedField<?> serializedField) {
@@ -146,9 +129,21 @@ public class BehaviorParser implements Parser<Behavior> {
       Object value = mapper.convertValue(valueNode, fieldType);
       ((SerializedField<Object>) serializedField).setValue(value);
     } catch (IllegalArgumentException | ClassCastException e) {
-      throw new IllegalStateException(
+      throw new IllegalArgumentException(
           "Failed to set field '" + fieldName + "' with value: " + valueNode, e);
     }
+  }
+
+  /**
+   * Generates a serialized object to place into JSON
+   *
+   * @param data - the data object to serialize
+   * @return JsonNode to append to the parent node
+   */
+  @Override
+  public JsonNode write(Behavior data) throws IOException {
+    // Todo write this method
+    return new ObjectMapper().valueToTree(data);
   }
 
 }
