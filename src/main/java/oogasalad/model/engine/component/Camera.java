@@ -31,7 +31,7 @@ public class Camera extends GameComponent {
 
   @Override
   public ComponentTag componentTag() {
-    return ComponentTag.NONE;
+    return ComponentTag.CAMERA;
   }
 
   /**
