@@ -96,7 +96,12 @@ public class Gui {
     GameScene current = game.getCurrentScene();
     if (current != null) {
       game.step(1.0 / ResourceBundles.getDouble(GUI_GENERAL_PATH, "framesPerSecond"));
-      objectRenderer.renderWithCamera(gc, current);
+      if (current.hasCamera()) {
+        objectRenderer.renderWithCamera(gc, current);
+      } else {
+        objectRenderer.renderWithoutCamera(gc, current);
+      }
+
     } else {
       logger.debug("No game scene loaded. Skipping step.");
     }
