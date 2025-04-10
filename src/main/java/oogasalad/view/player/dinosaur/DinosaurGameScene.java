@@ -3,7 +3,7 @@ package oogasalad.view.player.dinosaur;
 import java.util.List;
 import javafx.scene.Scene;
 import oogasalad.model.ResourceBundles;
-import oogasalad.model.engine.action.VelocityYSetAction;
+import oogasalad.model.engine.action.ChangeSceneAction;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.engine.base.behavior.Behavior;
 import oogasalad.model.engine.component.Camera;
@@ -31,11 +31,7 @@ import oogasalad.model.engine.base.architecture.GameObject;
  */
 
 public class DinosaurGameScene extends GameScene {
-
-
   private static final String DINOSAUR_SCENE_BUNDLE = "oogasalad.dinosaur.dinosaur";
-
-  private Scene scene;
 
   /**
    * Constructor for DinosaurGameScene
@@ -45,7 +41,6 @@ public class DinosaurGameScene extends GameScene {
   public DinosaurGameScene(String name) {
     super(name);
     ResourceBundles.loadBundle(DINOSAUR_SCENE_BUNDLE);
-    onActivated();
   }
 
   @Override
@@ -129,8 +124,7 @@ public class DinosaurGameScene extends GameScene {
 
     Behavior die = controller.addBehavior();
 
-    die.addAction(VelocityYSetAction.class)
-        .setParameter(ResourceBundles.getDouble(DINOSAUR_SCENE_BUNDLE, "player.die"));
+    die.addAction(ChangeSceneAction.class).setParameter("main");
     die.addConstraint(CollidesWithConstraint.class).setParameter("bird");
 
     SpriteRenderer spriteRenderer = player.addComponent(SpriteRenderer.class);
@@ -157,7 +151,6 @@ public class DinosaurGameScene extends GameScene {
 
   @Override
   public void onDeactivated() {
-    // Remove Components
-    //
+    //TODO: deactivation behavior
   }
 }

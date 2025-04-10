@@ -40,7 +40,7 @@ public class Behavior implements Serializable {
   /**
    * Get the controller of the behavior. This is used to get the controller that the behavior
    */
-  BehaviorController getController() {
+  public BehaviorController getController() {
     return controller;
   }
 

@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 public class MainViewManager {
 
   private final Stage stage;
+  private static MainViewManager instance;
 
   /**
    * Constructs the MainViewManager with the given primary stage
@@ -20,6 +21,17 @@ public class MainViewManager {
    */
   public MainViewManager(Stage stage) {
     this.stage = stage;
+    instance = this;
+  }
+
+
+  /**
+   * Get instance - necessary for view scene switching
+   *
+   * @return - the main view manager object
+   */
+  public static MainViewManager getInstance() {
+    return instance;
   }
 
   /**
