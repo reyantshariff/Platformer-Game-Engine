@@ -11,6 +11,10 @@ import oogasalad.view.gui.GameObjectRenderer;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * ObjectDragger manages mouse drag and drop
+ * @author Reyan Shariff
+ */
 public class ObjectDragger {
 
   private final Canvas canvas;
@@ -31,6 +35,10 @@ public class ObjectDragger {
     this.renderer = renderer;
     setupListeners();
   }
+
+  /**
+   * Sets up mouse inputs
+   * **/
 
   private void setupListeners() {
     canvas.setOnMousePressed(this::handlePressedIfInBounds);
@@ -59,6 +67,11 @@ public class ObjectDragger {
     return x >= 0 && x <= canvas.getWidth() &&
         y >= 0 && y <= canvas.getHeight();
   }
+
+  /**
+   * Checks if mouse is touching sprite and then records it as selected
+   * @param e is the event click
+   * */
 
   private void handlePressed(MouseEvent e) {
     double x = e.getX(), y = e.getY();
