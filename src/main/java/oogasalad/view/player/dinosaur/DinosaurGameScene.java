@@ -31,6 +31,7 @@ import oogasalad.model.engine.base.architecture.GameObject;
 
 public class DinosaurGameScene extends GameScene {
 
+
   private static final String DINOSAUR_SCENE_BUNDLE = "oogasalad.dinosaur.dinosaur";
 
   /**
@@ -54,6 +55,7 @@ public class DinosaurGameScene extends GameScene {
   private void makeBirdTest() {
     Bird bird = new Bird("Bird");
     bird.addComponent(Transform.class);
+
     Transform tBird = bird.getComponent(Transform.class);
     tBird.setX(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "bird.startX"));
     tBird.setY(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "bird.startY"));
