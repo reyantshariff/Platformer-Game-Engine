@@ -1,0 +1,101 @@
+package oogasalad.model.engine.component;
+
+import static oogasalad.model.config.GameConfig.LOGGER;
+import oogasalad.model.engine.base.architecture.GameComponent;
+import oogasalad.model.engine.base.architecture.GameObject;
+import oogasalad.model.engine.base.enumerate.ComponentTag;
+import oogasalad.model.engine.base.serialization.SerializableField;
+
+/**
+ * The FollowBehavior class is used to make a game object follow another game object with a
+ * specified offset.
+ */
+
+public class Follower extends GameComponent {
+  @Override
+  public ComponentTag componentTag() {
+    return ComponentTag.TRANSFORM;
+  }
+
+  @SerializableField
+  private GameObject followObject;
+  @SerializableField
+  private double offsetX;
+  @SerializableField
+  private double offsetY;
+  private Transform myTransform;
+
+  /**
+   * Constructor for Follower. Sets default values for the offset and the follow object.
+   */
+  public Follower() {
+    super();
+    this.followObject = null;
+    this.offsetX = 0;
+    this.offsetY = 0;
+  }
+
+  @Override
+  public void awake() {
+    myTransform = getParent().getComponent(Transform.class);
+  }
+
+  @Override
+  public void update(double deltaTime) {
+    try {
+      Transform targetTransform = followObject.getComponent(Transform.class);
+      myTransform.setX(targetTransform.getX() + offsetX);
+      myTransform.setY(targetTransform.getY() + offsetY);
+    } catch (NullPointerException e) {
+      LOGGER.error("Missing Transform Component");
+      throw new RuntimeException("Missing Transform Component", e);
+    }
+  }
+
+  /**
+   * Sets the object to follow.
+   *
+   * @param followObject the object to follow
+   */
+  public void setFollowObject(GameObject followObject) {
+    this.followObject = followObject;
+  }
+
+  /**
+   * Sets the offset for the follower.
+   *
+   * @param offsetX the x offset
+   * @param offsetY the y offset
+   */
+  public void setOffset(double offsetX, double offsetY) {
+    this.offsetX = offsetX;
+    this.offsetY = offsetY;
+  }
+
+  /**
+   * Gets the object to follow.
+   *
+   * @return the object to follow
+   */
+  public GameObject getFollowObject() {
+    return followObject;
+  }
+
+  /**
+   * Gets the x offset.
+   *
+   * @return the x offset
+   */
+  public double getOffsetX() {
+    return offsetX;
+  }
+
+  /**
+   * Gets the y offset.
+   *
+   * @return the y offset
+   */
+  public double getOffsetY() {
+    return offsetY;
+  }
+}

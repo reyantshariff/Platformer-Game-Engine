@@ -1,12 +1,8 @@
 package oogasalad;
 
-import java.io.IOException;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import oogasalad.engine.base.architecture.Game;
-import oogasalad.gui.Gui;
-import oogasalad.parser.ParsingException;
-// import oogasalad.view.DinosaurGameBuilderView;
+import oogasalad.view.scene.MainViewManager;
 
 /**
  * This is the main class of the OOGASalad Platformer Game Sandbox. Run the start method to open the
@@ -14,10 +10,8 @@ import oogasalad.parser.ParsingException;
  */
 public class Main extends Application {
 
-  public static Game game;
-
   /**
-   * Start of the program.
+   * Start of the program
    */
   public static void main(String[] args) {
     launch(args);
@@ -31,17 +25,17 @@ public class Main extends Application {
    *              stages.
    */
   @Override
-  public void start(Stage stage) throws ParsingException, IOException {
-    game = new Game();
-
-    // Create the editor UI, passing in the ECS scene
-    //DinosaurGameBuilderView editorUI = new DinosaurGameBuilderView();
-    // Wrap it in a JavaFX Scene and display
-    //Scene fxScene = new Scene(editorUI, 1400, 800);
-    //stage.setScene(fxScene);
-    //stage.show();
-
-    // Init GUI
-    Gui gui = new Gui(stage, game);
+  public void start(Stage stage) {
+    MainViewManager viewManager = new MainViewManager(stage);
+    viewManager.switchToMainMenu();
+    /**
+    // Create an example builder UI
+    BuilderView builderUI = new BuilderView(1400, 800);
+    Scene builderScene = builderUI.getScene();
+    Stage builderStage = new Stage();
+    builderStage.setScene(builderScene);
+    builderStage.show();
+     */
   }
+
 }
