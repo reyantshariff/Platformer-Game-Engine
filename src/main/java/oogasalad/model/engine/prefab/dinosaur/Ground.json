@@ -1,0 +1,30 @@
+{
+  "Name": "Ground",
+  "Tag": "Ground",
+  "Components": [
+    {
+      "Name": "Transform",
+      "Configurations": {
+        "x": 0,
+        "y": 680,
+        "rotation": 0,
+        "scaleX": 1280,
+        "scaleY": 40
+      }
+    },
+    {
+      "Name": "SpriteRenderer",
+      "Configurations": {
+        "offsetX": 0,
+        "offsetY": 0,
+        "imagePaths": ["oogasalad/dinosaur/Track.png"]
+      }
+    },
+    {
+      "Name": "Collider",
+      "Configurations": {
+        "collidableTags": ["Player", "Obstacle"]
+      }
+    }
+  ]
+}

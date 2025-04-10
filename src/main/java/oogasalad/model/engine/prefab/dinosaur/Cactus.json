@@ -1,0 +1,59 @@
+{
+  "Name": "Cactus",
+  "Tag": "Obstacle",
+  "Components": [
+    {
+      "Name": "Transform",
+      "Configurations": {
+        "x": 1280,
+        "y": 660,
+        "rotation": 0,
+        "scaleX": 30,
+        "scaleY": 60
+      }
+    },
+    {
+      "Name": "SpriteRenderer",
+      "Configurations": {
+        "offsetX": 0,
+        "offsetY": 0,
+        "imagePaths": ["oogasalad/dinosaur/LargeCactus1.png"]
+      }
+    },
+    {
+      "Name": "Collider",
+      "Configurations": {
+        "collidableTags": ["Player", "Ground"]
+      }
+    },
+    {
+      "Name": "PhysicsHandler",
+      "Configurations": {
+        "mass": 1,
+        "velocityX": -200,
+        "velocityY": 0,
+        "accelerationX": 0,
+        "accelerationY": 0
+      }
+    }
+  ],
+  "BehaviorController": {
+    "Behaviors": [
+      {
+        "Name": "ResetOnHit",
+        "constraints": [
+          {
+            "name": "CollidesWithConstraint",
+            "parameter": "Player"
+          }
+        ],
+        "actions": [
+          {
+            "name": "ChangeSceneAction",
+            "parameter": "MainGame"
+          }
+        ]
+      }
+    ]
+  }
+}
