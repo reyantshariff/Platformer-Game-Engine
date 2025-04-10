@@ -1,7 +1,6 @@
 package oogasalad.view.player.dinosaur;
 
 import java.util.List;
-import javafx.scene.Scene;
 import oogasalad.model.ResourceBundles;
 import oogasalad.model.engine.action.VelocityYSetAction;
 import oogasalad.model.engine.base.architecture.GameScene;
@@ -49,9 +48,8 @@ public class DinosaurGameScene extends GameScene {
     makePlayerTest();
     makeGroundTest();
     makeBirdTest();
-    //makeCameraTest();
+    makeCameraTest();
   }
-
 
   private void makeBirdTest() {
     Bird bird = new Bird("Bird");
@@ -134,8 +132,6 @@ public class DinosaurGameScene extends GameScene {
   private void makeCameraTest() {
     CameraObj camera = new CameraObj("Camera");
     camera.addComponent(Transform.class);
-    registerObject(camera);
-    camera.addComponent(Transform.class);
     Transform tCamera = camera.getComponent(Transform.class);
     tCamera.setScaleX(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "camera.width"));
     tCamera.setScaleY(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "camera.height"));
@@ -147,6 +143,8 @@ public class DinosaurGameScene extends GameScene {
     double offsetY = ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "camera.offsetY");
     follower.setOffset(offsetX, offsetY);
     camera.addComponent(follower);
+
+    registerObject(camera);
   }
 
 
