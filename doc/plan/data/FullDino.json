@@ -12,15 +12,15 @@
     "Resources": [
       {
         "Name": "DinoSprite",
-        "Path": "Resources/DinoSprite.png"
+        "Path": "oogasalad/dinosaur/DinoStart.png"
       },
       {
         "Name": "GroundSprite",
-        "Path": "Resources/GroundSprite.png"
+        "Path": "oogasalad/dinosaur/Track.png"
       },
       {
         "Name": "CactusSprite",
-        "Path": "Resources/CactusSprite.png"
+        "Path": "oogasalad/dinosaur/Bird1.png"
       }
     ],
     "Scene": [
@@ -46,16 +46,14 @@
                 "Configurations": {
                   "offsetX": 0,
                   "offsetY": 0,
-                  "imagePaths": [
-                    "GroundSprite.png"
-                  ]
+                  "imagePaths": ["oogasalad/dinosaur/Track.png"]
                 }
               },
               {
                 "Name": "Collider",
                 "Configurations": {
                   "collidableTags": [
-                    "Player",
+                    "player",
                     "Obstacle"
                   ]
                 }
@@ -64,7 +62,7 @@
           },
           {
             "Name": "Dino",
-            "Tag": "Player",
+            "Tag": "player",
             "Components": [
               {
                 "Name": "Transform",
@@ -81,9 +79,7 @@
                 "Configurations": {
                   "offsetX": 0,
                   "offsetY": 0,
-                  "imagePaths": [
-                    "DinoSprite.png"
-                  ]
+                  "imagePaths": ["oogasalad/dinosaur/DinoStart.png"]
                 }
               },
               {
@@ -99,7 +95,7 @@
                 "Name": "PhysicsHandler",
                 "Configurations": {
                   "mass": 1,
-                  "velocityX": 0,
+                  "velocityX": 150,
                   "velocityY": 0,
                   "accelerationX": 0,
                   "accelerationY": 980
@@ -153,16 +149,14 @@
                 "Configurations": {
                   "offsetX": 0,
                   "offsetY": 0,
-                  "imagePaths": [
-                    "CactusSprite.png"
-                  ]
+                  "imagePaths": ["oogasalad/dinosaur/Bird1.png"]
                 }
               },
               {
                 "Name": "Collider",
                 "Configurations": {
                   "collidableTags": [
-                    "Player",
+                    "player",
                     "Ground"
                   ]
                 }
@@ -185,7 +179,7 @@
                   "constraints": [
                     {
                       "name": "CollidesWithConstraint",
-                      "parameter": "Player"
+                      "parameter": "player"
                     }
                   ],
                   "actions": [

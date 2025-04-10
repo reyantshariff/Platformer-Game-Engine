@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,21 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
     EXTRACTORS.put(boolean.class, JsonNode::asBoolean);
     EXTRACTORS.put(Boolean.class, JsonNode::asBoolean);
     EXTRACTORS.put(String.class, JsonNode::asText);
+
+    // Handle List<String>
+    EXTRACTORS.put(List.class, node -> {
+      if (!node.isArray()) {
+        throw new IllegalArgumentException("Expected JSON array for List<String> but got: " + node);
+      }
+      List<String> list = new ArrayList<>();
+      for (JsonNode element : node) {
+        if (!element.isTextual()) {
+          throw new IllegalArgumentException("Expected string in List<String>, but found: " + element);
+        }
+        list.add(element.asText());
+      }
+      return list;
+    });
   }
 
   /**

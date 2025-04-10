@@ -32,6 +32,7 @@ public class GameSceneParser implements Parser<GameScene> {
    * @return - a fully configured GameScene
    * @throws ParsingException - error thrown if reflection or parsing fails
    */
+  /*
   @Override
   public GameScene parse(JsonNode node) throws ParsingException {
     validateGameSceneName(node);
@@ -55,6 +56,37 @@ public class GameSceneParser implements Parser<GameScene> {
     }
 
     return null;
+  }
+   */
+
+  @Override
+  public GameScene parse(JsonNode node) throws ParsingException {
+    validateGameSceneName(node);
+    String name = node.get(NAME).asText();
+    String fullClassName = "oogasalad.scene." + name;
+
+    try {
+      Class<?> sceneClass = Class.forName(fullClassName);
+      if (!GameScene.class.isAssignableFrom(sceneClass)) {
+        throw new ParsingException(name + " is not a GameScene subclass.");
+      }
+
+      return getGameScene(node, (Class<? extends GameScene>) sceneClass);
+
+    } catch (ClassNotFoundException e) {
+      LOGGER.warn("{} is not a GameScene subclass. Defaulting to plain GameScene.", name);
+      // FALLBACK TO GENERIC SCENE
+      GameScene scene = new GameScene(name);
+      handleGameObjectParsing(node, scene);
+      return scene;
+
+    } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+      LOGGER.warn("{} could not be instantiated. Defaulting to plain GameScene.", name);
+      // FALLBACK TO GENERIC SCENE ON INSTANTIATION FAILURE
+      GameScene scene = new GameScene(name);
+      handleGameObjectParsing(node, scene);
+      return scene;
+    }
   }
 
   private GameScene getGameScene(JsonNode node, Class<? extends GameScene> sceneClass)
