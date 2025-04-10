@@ -33,13 +33,14 @@ public class MainMenuScene extends ViewScene {
 
     Button playButton = new Button("Play Game");
     Button buildButton = new Button("Build Game");
-    Button dinoButton = new Button("Dino Game");
+    // Button dinoButton = new Button("Dino Game");
 
     playButton.setOnAction(e ->
         manager.switchTo(new GamePlayerScene(manager, gameSelector.getValue()))
     );
 
-
+    buildButton.setOnAction(e -> manager.switchTo(new BuilderView(manager))
+    );
 
     root.getChildren().addAll(title, gameSelector, playButton, buildButton);
   }
