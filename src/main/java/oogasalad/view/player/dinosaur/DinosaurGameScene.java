@@ -108,9 +108,9 @@ public class DinosaurGameScene extends GameScene {
     PhysicsHandler physicsHandler = player.addComponent(PhysicsHandler.class);
 
     physicsHandler
-        .setVelocityX(ResourceBundles.getDouble(DINOSAUR_SCENE_BUNDLE, "player.velocityX"));
+        .setVelocityX(ResourceBundles.getDouble(DINOSAUR_SCENE_BUNDLE, "player.velocityX") + 100);
     physicsHandler
-        .setAccelerationY(ResourceBundles.getDouble(DINOSAUR_SCENE_BUNDLE, "player.accelY"));
+        .setAccelerationY(ResourceBundles.getDouble(DINOSAUR_SCENE_BUNDLE, "player.accelY") + 100);
 
     BehaviorController controller = player.addComponent(BehaviorController.class);
 
@@ -133,6 +133,7 @@ public class DinosaurGameScene extends GameScene {
 
   private void makeCameraTest() {
     CameraObj camera = new CameraObj("Camera");
+    camera.addComponent(Transform.class);
     registerObject(camera);
     camera.addComponent(Transform.class);
     Transform tCamera = camera.getComponent(Transform.class);
