@@ -2,7 +2,7 @@ package oogasalad.model.engine.action;
 
 import oogasalad.model.engine.base.behavior.BehaviorAction;
 import oogasalad.model.engine.base.enumerate.ComponentTag;
-import oogasalad.model.engine.component.Transform;
+import oogasalad.view.scene.MainViewManager;
 
 /**
  * ChangeSceneAction is a class that extends BehaviorAction and is used to change the scene.
@@ -15,15 +15,16 @@ public class ChangeSceneAction extends BehaviorAction<String> {
     return ComponentTag.TRANSFORM;
   }
 
-  private Transform transform;
+  private MainViewManager mainViewManager;
 
   @Override
   protected void awake() {
-    transform = getComponent(Transform.class);
+    mainViewManager = MainViewManager.getInstance();
   }
 
   @Override
   protected void perform(String parameter) {
-    transform.changeScene(parameter);
+    mainViewManager.switchToMainMenu();
+    getBehavior().getController().getParent().getScene().getGame().changeScene(parameter);
   }
 }
