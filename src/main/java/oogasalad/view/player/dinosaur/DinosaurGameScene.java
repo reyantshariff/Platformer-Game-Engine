@@ -42,6 +42,7 @@ public class DinosaurGameScene extends GameScene {
   public DinosaurGameScene(String name) {
     super(name);
     ResourceBundles.loadBundle(DINOSAUR_SCENE_BUNDLE);
+    onActivated();
   }
 
   @Override
@@ -49,13 +50,14 @@ public class DinosaurGameScene extends GameScene {
     makePlayerTest();
     makeGroundTest();
     makeBirdTest();
-    //makeCameraTest();
+    makeCameraTest();
   }
 
 
   private void makeBirdTest() {
     Bird bird = new Bird("Bird");
     bird.addComponent(Transform.class);
+
     Transform tBird = bird.getComponent(Transform.class);
     tBird.setX(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "bird.startX"));
     tBird.setY(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "bird.startY"));
@@ -75,6 +77,7 @@ public class DinosaurGameScene extends GameScene {
   private void makeGroundTest() {
     Base ground = new Base("Ground");
     ground.addComponent(Transform.class);
+
     Transform tGround = ground.getComponent(Transform.class);
     tGround.setX(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "ground.startX"));
     tGround.setY(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "ground.startY"));
@@ -108,9 +111,9 @@ public class DinosaurGameScene extends GameScene {
     PhysicsHandler physicsHandler = player.addComponent(PhysicsHandler.class);
 
     physicsHandler
-        .setVelocityX(ResourceBundles.getDouble(DINOSAUR_SCENE_BUNDLE, "player.velocityX"));
+        .setVelocityX(ResourceBundles.getDouble(DINOSAUR_SCENE_BUNDLE, "player.velocityX") + 100);
     physicsHandler
-        .setAccelerationY(ResourceBundles.getDouble(DINOSAUR_SCENE_BUNDLE, "player.accelY"));
+        .setAccelerationY(ResourceBundles.getDouble(DINOSAUR_SCENE_BUNDLE, "player.accelY") + 100);
 
     BehaviorController controller = player.addComponent(BehaviorController.class);
 
@@ -133,8 +136,8 @@ public class DinosaurGameScene extends GameScene {
 
   private void makeCameraTest() {
     CameraObj camera = new CameraObj("Camera");
-    registerObject(camera);
     camera.addComponent(Transform.class);
+    registerObject(camera);
     Transform tCamera = camera.getComponent(Transform.class);
     tCamera.setScaleX(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "camera.width"));
     tCamera.setScaleY(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "camera.height"));
