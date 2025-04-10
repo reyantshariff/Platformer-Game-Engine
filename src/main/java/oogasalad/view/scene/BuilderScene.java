@@ -35,8 +35,8 @@ public class BuilderScene extends ViewScene {
   public static final double GAME_PREVIEW_HEIGHT = 800;
 
   public static final double ZOOM_FACTOR = 1.05;
-  public static final double MAX_ZOOM = 4.0;
-  public static final double MIN_ZOOM = 0.25;
+  public static final double MAX_ZOOM = 2.0;
+  public static final double MIN_ZOOM = 0.5;
 
   private static final Logger logger = LogManager.getLogger(BuilderScene.class);
 
@@ -64,6 +64,7 @@ public class BuilderScene extends ViewScene {
 
   private void createDinoGameTest() {
     gameScene = new DinosaurGameScene("LevelEditTest");
+    gameScene.onActivated();
     builder = new Builder(gameScene);
   }
 
