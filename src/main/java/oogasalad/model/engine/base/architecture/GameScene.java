@@ -151,6 +151,19 @@ public class GameScene {
   }
 
   /**
+   * @return - Returns whether current scene has a camera or not
+   */
+  public boolean hasCamera() {
+    try {
+      getCamera();
+      return true;
+    } catch (IllegalArgumentException e) {
+      return false;
+    }
+  }
+
+
+  /**
    * Getter to return a Collection of all the GameComponents
    */
   public final Map<ComponentTag, List<GameComponent>> getAllComponents() {

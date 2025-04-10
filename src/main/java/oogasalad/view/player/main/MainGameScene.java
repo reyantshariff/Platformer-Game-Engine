@@ -1,8 +1,10 @@
 package oogasalad.view.player.main;
 
+
 import oogasalad.model.engine.base.architecture.GameScene;
 
 public class MainGameScene extends GameScene {
+  private static final String DINOSAUR_SCENE_BUNDLE = "oogasalad.dinosaur.dinosaur";
 
   /**
    * Constructor for GameScene
