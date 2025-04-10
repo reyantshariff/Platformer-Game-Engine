@@ -81,7 +81,7 @@ public class BuilderScene extends ViewScene {
   public void updateGamePreview() {
     GraphicsContext gc = myGameCanvas.getGraphicsContext2D();
     gc.clearRect(0, 0, myGameCanvas.getWidth(), myGameCanvas.getHeight());
-    myObjectRenderer.render(gc, gameScene);
+    myObjectRenderer.renderWithoutCamera(gc, gameScene);
   }
 
   private ScrollPane createGamePreview() {

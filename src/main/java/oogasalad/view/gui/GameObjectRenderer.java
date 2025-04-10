@@ -57,7 +57,7 @@ public class GameObjectRenderer {
       logger.warn("No camera found in scene");
     }
 
-    render(gc, scene);
+    renderWithoutCamera(gc, scene);
   }
 
   /**
@@ -66,7 +66,7 @@ public class GameObjectRenderer {
    * @param gc    The graphics context of the canvas.
    * @param scene The game scene to render.
    */
-  public void render(GraphicsContext gc, GameScene scene) {
+  public void renderWithoutCamera(GraphicsContext gc, GameScene scene) {
     String baseName = "oogasalad.gui.general";
     int windowX = ResourceBundles.getInt(baseName, "windowX");
     int windowY = ResourceBundles.getInt(baseName, "windowY");

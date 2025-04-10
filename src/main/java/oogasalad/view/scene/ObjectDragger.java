@@ -99,7 +99,7 @@ public class ObjectDragger {
       double newX = e.getX() - dragOffsetX;
       double newY = e.getY() - dragOffsetY;
       builder.moveObject(newX, newY);
-      renderer.render(canvas.getGraphicsContext2D(), gameScene);
+      renderer.renderWithoutCamera(canvas.getGraphicsContext2D(), gameScene);
     }
 
     builderScene.updateGamePreview();  // refresh all sprite visuals in the canvas
@@ -109,7 +109,7 @@ public class ObjectDragger {
     if (isInCanvas(e) && dragging && builder.objectIsSelected()) {
       builder.placeObject(e.getX(), e.getY());
       dragging = false;
-      renderer.render(canvas.getGraphicsContext2D(), gameScene);
+      renderer.renderWithoutCamera(canvas.getGraphicsContext2D(), gameScene);
     }
 
     builderScene.updateGamePreview();  // refresh all sprite visuals in the canvas
