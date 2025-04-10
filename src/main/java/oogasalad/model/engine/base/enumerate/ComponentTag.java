@@ -7,11 +7,5 @@ package oogasalad.model.engine.base.enumerate;
  * @author Hsuan-Kai Liao
  */
 public enum ComponentTag {
-  NONE,
-  INPUT,
-  TRANSFORM,
-  PHYSICS,
-  COLLISION,
-  BEHAVIOR,
-  RENDER
+  NONE, INPUT, TRANSFORM, PHYSICS, COLLISION, BEHAVIOR, RENDER, CAMERA
 }

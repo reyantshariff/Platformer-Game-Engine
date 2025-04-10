@@ -4,6 +4,7 @@ import static oogasalad.model.config.GameConfig.LOGGER;
 
 import java.util.*;
 import oogasalad.model.engine.base.enumerate.ComponentTag;
+import oogasalad.model.engine.component.Camera;
 
 /**
  * The GameScene class is the base class for all game scenes. It manages the game objects and
@@ -39,6 +40,7 @@ public class GameScene {
 
   /**
    * Set the game that this scene belongs to.
+   * 
    * @param game the game that this scene belongs to
    */
   final void setGame(Game game) {
@@ -102,6 +104,31 @@ public class GameScene {
    */
   public final Collection<GameObject> getAllObjects() {
     return Collections.unmodifiableCollection(allObjects.values());
+  }
+
+  public final Collection<GameObject> getAllObjectsInView() {
+    try {
+      Camera camera = (Camera) allComponents.get(ComponentTag.CAMERA).get(0);
+      return camera.getObjectsInView();
+    } catch (IndexOutOfBoundsException e) {
+      LOGGER.error("No camera in scene");
+      throw new IllegalArgumentException("No camera in scene");
+    } catch (ClassCastException e) {
+      LOGGER.error("Camera is not a Camera component");
+      throw new IllegalArgumentException("Camera is not a Camera component");
+    }
+  }
+
+  public final Camera getCamera() {
+    try {
+      return (Camera) allComponents.get(ComponentTag.CAMERA).get(0);
+    } catch (IndexOutOfBoundsException e) {
+      LOGGER.error("No camera in scene");
+      throw new IllegalArgumentException("No camera in scene");
+    } catch (ClassCastException e) {
+      LOGGER.error("Camera is not a Camera component");
+      throw new IllegalArgumentException("Camera is not a Camera component");
+    }
   }
 
   /**

@@ -51,4 +51,51 @@ public class Follower extends GameComponent {
       throw new RuntimeException("Missing Transform Component", e);
     }
   }
+
+  /**
+   * Sets the object to follow.
+   *
+   * @param followObject the object to follow
+   */
+  public void setFollowObject(GameObject followObject) {
+    this.followObject = followObject;
+  }
+
+  /**
+   * Sets the offset for the follower.
+   *
+   * @param offsetX the x offset
+   * @param offsetY the y offset
+   */
+  public void setOffset(double offsetX, double offsetY) {
+    this.offsetX = offsetX;
+    this.offsetY = offsetY;
+  }
+
+  /**
+   * Gets the object to follow.
+   *
+   * @return the object to follow
+   */
+  public GameObject getFollowObject() {
+    return followObject;
+  }
+
+  /**
+   * Gets the x offset.
+   *
+   * @return the x offset
+   */
+  public double getOffsetX() {
+    return offsetX;
+  }
+
+  /**
+   * Gets the y offset.
+   *
+   * @return the y offset
+   */
+  public double getOffsetY() {
+    return offsetY;
+  }
 }
