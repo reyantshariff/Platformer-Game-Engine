@@ -24,6 +24,7 @@ public class JumpAction extends BehaviorAction<Double> {
 
   @Override
   protected void perform(Double jumpForce) {
+    System.out.println("JumpAction triggered with power: " + jumpForce);
     physicsHandler.setVelocityY(-jumpForce);
   }
 }

@@ -75,5 +75,6 @@ public class GamePlayerScene extends ViewScene {
     returnButton.setStyle("-fx-background-color: white; -fx-font-weight: bold;");
 
     root.getChildren().addAll(gui.getCanvas(), returnButton);
+    gui.getCanvas().requestFocus();
   }
 }
