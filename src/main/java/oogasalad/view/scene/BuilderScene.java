@@ -1,5 +1,6 @@
 package oogasalad.view.scene;
 
+import java.io.File;
 import java.util.List;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
@@ -13,8 +14,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import oogasalad.model.builder.Builder;
+import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
-import oogasalad.view.gui.TemporaryImageLoader;
+import oogasalad.model.parser.PrefabLoader;
 import oogasalad.view.gui.button.BuilderSpriteOptionButton;
 import oogasalad.view.player.dinosaur.DinosaurGameScene;
 import org.apache.logging.log4j.LogManager;
@@ -176,11 +178,25 @@ public class BuilderScene extends ViewScene {
     tilePane.setHgap(getScene().getWidth()*0.02);
     tilePane.setVgap(getScene().getHeight()*0.02);
 
-    String imageDirectory = "src/main/resources/oogasalad/dinosaur/";
-    List<Image> images = TemporaryImageLoader.loadImages(imageDirectory);
-    // Create sprite buttons
-    for (Image image : images) {
-      tilePane.getChildren().add(new BuilderSpriteOptionButton(image, getScene().getWidth()*0.12, getScene().getHeight()*0.12));
+    // Load the prefab GameObjects
+    List<GameObject> prefabObjects = PrefabLoader.loadAvailablePrefabs("dinosaur"); // TODO: remove hardcoded game type
+    for (GameObject prefab : prefabObjects) {
+      // Assume the prefab has a SpriteRenderer component.
+      // You can add a method in GameObject or via a helper to retrieve the preview image path.
+      String previewImagePath = getPreviewImagePath(prefab);
+      if (previewImagePath != null) {
+        // Convert the preview image path to a JavaFX Image
+        try {
+          Image previewImage = new Image(new File(previewImagePath).toURI().toURL().toString());
+          tilePane.getChildren().add(new BuilderSpriteOptionButton(
+              previewImage,
+              getScene().getWidth()*0.12,
+              getScene().getHeight()*0.12,
+              prefab));
+        } catch (Exception e) {
+          System.err.println("Error loading preview image from: " + previewImagePath);
+        }
+      }
     }
 
     // Wrap the TilePane in a ScrollPane.
@@ -191,5 +207,18 @@ public class BuilderScene extends ViewScene {
     spriteScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS); // Enable vertical scrolling
 
     return spriteScrollPane;
+  }
+
+  private String getPreviewImagePath(GameObject prefab) {
+    try {
+      var spriteRenderer = prefab.getComponent(oogasalad.model.engine.component.SpriteRenderer.class);
+      String imagePath = spriteRenderer.getImagePath();
+      if (imagePath != null && !imagePath.isEmpty()) {
+        return "src/main/resources/" + imagePath;
+      }
+    } catch (Exception e) {
+      System.err.println("Error getting preview image from prefab " + prefab.getName());
+    }
+    return null;
   }
 }
