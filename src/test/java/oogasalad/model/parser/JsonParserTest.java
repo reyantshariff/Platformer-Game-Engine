@@ -25,8 +25,7 @@ class JsonParserTest {
     parser = new JsonParser("Dinosaur1");
     Game myGame = new Game();
     myGame.setGameInfo(new GameInfo("NAME1", "DESCRIPTION1", "RODFLO", new Dimension(0, 0)));
-    GameScene newScene = new DinosaurGameScene("Game1");
-//    myGame.addScene("Game1"); // TODO: Finish class once this function is done
+ // TODO: Finish class once this function is done
   }
 
   @Test

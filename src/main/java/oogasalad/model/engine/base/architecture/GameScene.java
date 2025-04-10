@@ -1,8 +1,9 @@
 package oogasalad.model.engine.base.architecture;
 
 import static oogasalad.model.config.GameConfig.LOGGER;
-
+import java.text.MessageFormat;
 import java.util.*;
+import oogasalad.model.config.GameConfig;
 import oogasalad.model.engine.base.enumerate.ComponentTag;
 import oogasalad.model.engine.component.Camera;
 
@@ -21,6 +22,9 @@ public class GameScene {
 
   private String name;
   private Game game;
+
+  private static final String NO_CAMERA_KEY = "noCamera";
+  private static final String CAST_FAILED_KEY = "castFailed";
 
   /**
    * Constructor for GameScene
@@ -95,8 +99,9 @@ public class GameScene {
         return object;
       }
     }
-    LOGGER.error("Could not find object with name {}", name);
-    throw new IllegalArgumentException("No such object with name " + name);
+    LOGGER.error(MessageFormat.format(GameConfig.getText("noSuchObject"), name));
+    throw new IllegalArgumentException(
+        MessageFormat.format(GameConfig.getText("noSuchObject"), name));
   }
 
   /**
@@ -106,28 +111,42 @@ public class GameScene {
     return Collections.unmodifiableCollection(allObjects.values());
   }
 
+  /**
+   * Get all the objects in the view of the camera
+   * 
+   * @return a collection of all the objects in the view of the camera
+   */
   public final Collection<GameObject> getAllObjectsInView() {
     try {
       Camera camera = (Camera) allComponents.get(ComponentTag.CAMERA).get(0);
       return camera.getObjectsInView();
     } catch (IndexOutOfBoundsException e) {
-      LOGGER.error("No camera in scene");
-      throw new IllegalArgumentException("No camera in scene");
+      LOGGER.error(GameConfig.getText(NO_CAMERA_KEY));
+      throw new IllegalArgumentException(GameConfig.getText(NO_CAMERA_KEY));
     } catch (ClassCastException e) {
-      LOGGER.error("Camera is not a Camera component");
-      throw new IllegalArgumentException("Camera is not a Camera component");
+      LOGGER
+          .error(MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), "GameObject", "Camera"));
+      throw new IllegalArgumentException(
+          MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), "GameObject", "Camera"));
     }
   }
 
+  /**
+   * Get the camera in the scene
+   * 
+   * @return the camera in the scene
+   */
   public final Camera getCamera() {
     try {
       return (Camera) allComponents.get(ComponentTag.CAMERA).get(0);
     } catch (IndexOutOfBoundsException e) {
-      LOGGER.error("No camera in scene");
-      throw new IllegalArgumentException("No camera in scene");
+      LOGGER.error(GameConfig.getText(NO_CAMERA_KEY));
+      throw new IllegalArgumentException(GameConfig.getText(NO_CAMERA_KEY));
     } catch (ClassCastException e) {
-      LOGGER.error("Camera is not a Camera component");
-      throw new IllegalArgumentException("Camera is not a Camera component");
+      LOGGER
+          .error(MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), "GameObject", "Camera"));
+      throw new IllegalArgumentException(
+          MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), "GameObject", "Camera"));
     }
   }
 
@@ -198,7 +217,8 @@ public class GameScene {
    */
   public final void registerObject(GameObject gameObject) {
     if (allObjects.containsKey(gameObject.getId())) {
-      throw new IllegalArgumentException("gameObject already added!");
+      throw new IllegalArgumentException(
+          MessageFormat.format(GameConfig.getText("duplicateGameObject"), gameObject.getName()));
     }
 
     // Register components
