@@ -1,18 +1,22 @@
-package oogasalad.view;
+package oogasalad.view.scene;
 
+import java.util.List;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import oogasalad.model.builder.Builder;
 import oogasalad.model.engine.base.architecture.GameScene;
-import oogasalad.view.gui.button.StylizedButton;
+import oogasalad.view.gui.TemporaryImageLoader;
+import oogasalad.view.gui.button.BuilderSpriteOptionButton;
 import oogasalad.view.player.dinosaur.DinosaurGameScene;
-import oogasalad.view.scene.ViewScene;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,23 +24,24 @@ import org.apache.logging.log4j.Logger;
  * BuilderView is the main view for the level editor
  */
 
-public class BuilderView extends ViewScene {
+public class BuilderScene extends ViewScene {
 
-  private static final Logger logger = LogManager.getLogger(BuilderView.class);
+  private static final Logger logger = LogManager.getLogger(BuilderScene.class);
 
   private final BorderPane myWindow;
+  private Canvas myGameCanvas;
 
   private GameScene gameScene;
 
+  private Builder builder;
+
   /**
    * Constructor for BuilderView
-   *
-   * @param width  the width of the window
-   * @param height the height of the window
+   * the height of the window
    */
-  public BuilderView(double width, double height) {
+  public BuilderScene(MainViewManager manager) {
     // Create the BorderPane as the root
-    super(new BorderPane(), width, height);
+    super(new BorderPane(), 1280, 720);
     myWindow = (BorderPane) getScene().getRoot();
     createDinoGameTest();
     initializeUI();
@@ -44,16 +49,17 @@ public class BuilderView extends ViewScene {
 
   private void createDinoGameTest() {
     gameScene = new DinosaurGameScene("LevelEditTest");
+    builder = new Builder(gameScene);
     gameScene.onActivated();
   }
 
   private void initializeUI() {
     // Top bar
     HBox topBar = new HBox();
-    StylizedButton loadButton = new StylizedButton("Load");
-    StylizedButton saveButton = new StylizedButton("Save");
-    StylizedButton playtestButton = new StylizedButton("Playtest");
-    topBar.getChildren().addAll(loadButton.getButton(), saveButton.getButton(), playtestButton.getButton());
+    Button loadButton = new Button("Load");
+    Button saveButton = new Button("Save");
+    Button playtestButton = new Button("Playtest");
+    topBar.getChildren().addAll(loadButton, saveButton, playtestButton);
     myWindow.setTop(topBar);
 
     // Add layout for bottom button menus
@@ -68,14 +74,23 @@ public class BuilderView extends ViewScene {
     myWindow.setRight(propertiesPanel);
   }
 
+  /**
+   * Updates game preview window by rendering all current GameObjects in the GameScene in their
+   * current position
+   */
+  public void updateGamePreview() {
+    GraphicsContext gc = myGameCanvas.getGraphicsContext2D();
+    gc.clearRect(0, 0, myGameCanvas.getWidth(), myGameCanvas.getHeight());
+    myObjectRenderer.renderWithoutCamera(gc, gameScene);
+  }
+
   private ScrollPane createGamePreview() {
     // Create and set up the canvas and zoomable group:
-    Canvas canvas = new Canvas(1000, 600);
-    GraphicsContext gc = canvas.getGraphicsContext2D();
-    renderInitialFrame(gc, gameScene);
+    myGameCanvas = new Canvas(1000, 600);
+    updateGamePreview();
 
     // Wrap canvas in Group for scaling
-    Group zoomableGroup = new Group(canvas);
+    Group zoomableGroup = new Group(myGameCanvas);
     // Use a ScrollPane for handling zoom transformation
     ScrollPane scrollPane = new ScrollPane(zoomableGroup);
     scrollPane.setFitToWidth(true);
@@ -84,6 +99,9 @@ public class BuilderView extends ViewScene {
     // Disable scroll bars
     scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
     scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+    ObjectDragger dragger = new ObjectDragger(myGameCanvas, builder, this, gameScene,
+        myObjectRenderer);
 
     // Add zoom handling
     scrollPane.setOnScroll(event -> {
@@ -109,38 +127,27 @@ public class BuilderView extends ViewScene {
     return bottomPanel;
   }
 
-  // TODO: make the buttons non-hardcoded
   private ScrollPane createSpriteButtonOptions() {
     // Create a TilePane that will automatically arrange children in 2 columns.
     TilePane tilePane = new TilePane();
-    tilePane.setPrefColumns(2); // set desired number of columns
-    tilePane.setHgap(10);
-    tilePane.setVgap(10);
+    tilePane.setPrefColumns(3); // set desired number of columns
+    tilePane.setHgap(getScene().getWidth()*0.02);
+    tilePane.setVgap(getScene().getHeight()*0.02);
 
-    // Create sprite buttons.
-    StylizedButton buttonSpriteA = new StylizedButton("Sprite A");
-    StylizedButton buttonSpriteB = new StylizedButton("Sprite B");
-    StylizedButton buttonSpriteC = new StylizedButton("Sprite C");
-    StylizedButton buttonSpriteD = new StylizedButton("Sprite D");
-
-    // Add buttons to the TilePane.
-    tilePane.getChildren().addAll(
-        buttonSpriteA.getButton(),
-        buttonSpriteB.getButton(),
-        buttonSpriteC.getButton(),
-        buttonSpriteD.getButton()
-    );
+    String imageDirectory = "src/main/resources/oogasalad/dinosaur/";
+    List<Image> images = TemporaryImageLoader.loadImages(imageDirectory);
+    // Create sprite buttons
+    for (Image image : images) {
+      tilePane.getChildren().add(new BuilderSpriteOptionButton(image, getScene().getWidth()*0.12, getScene().getHeight()*0.12));
+    }
 
     // Wrap the TilePane in a ScrollPane.
     ScrollPane spriteScrollPane = new ScrollPane(tilePane);
-    spriteScrollPane.setPrefHeight(150);
-    spriteScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-    spriteScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+    spriteScrollPane.setPrefHeight(getScene().getHeight()*0.25);
+    spriteScrollPane.setPrefWidth(getScene().getWidth()*0.45);
+    spriteScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // Disable horizontal scrolling
+    spriteScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS); // Enable vertical scrolling
 
     return spriteScrollPane;
-  }
-
-  private void renderInitialFrame(GraphicsContext gc, GameScene gameScene) {
-    getObjectRenderer().render(gc, gameScene);
   }
 }

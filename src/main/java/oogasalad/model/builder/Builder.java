@@ -8,6 +8,7 @@ import oogasalad.model.builder.actions.CreateObjectAction;
 import oogasalad.model.builder.actions.MoveObjectAction;
 import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.base.architecture.GameObject;
+import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.engine.component.Transform;
 
 /**
@@ -20,6 +21,7 @@ public class Builder {
   private String filepath = " ";
   private Game game; //Front end should pass a list of selected objects to the backend.
   private boolean fileSaved = false;
+  private GameScene gameScene;
 
   //Add Backend boolean to keep track of whether user has saved Game.
   /**
@@ -41,6 +43,8 @@ public class Builder {
   public Builder()
   {
     game = new Game();
+    this.gameScene = new GameScene("new GameScene");
+    game.addScene(gameScene);
   }
 
   private Deque<EditorAction> undoStack = new ArrayDeque<>();
@@ -49,10 +53,13 @@ public class Builder {
   /**
    * Constructs a new Builder instance with the specified Game.
    *
-   * @param game The Game instance to be used by the builder.
+   * @param scene The GameScene instance to be used by the builder.
    */
-  public Builder(Game game) {
-    this.game = game;
+  public Builder(GameScene scene) {
+    game = new Game();
+    gameScene = scene;
+    game.addScene(gameScene);
+    game.changeScene(scene.getName());
   }
 
   /**
@@ -97,9 +104,9 @@ public class Builder {
   /**
    *  Records when a game object has been selected to be dragged and dropped on the UI
    */
-  public void selectExistingObject(UUID id)
+  public void selectExistingObject(GameObject object)
   {
-    selectedObject= findObject(id);
+    selectedObject= object;
   }
 
 
@@ -110,7 +117,7 @@ public class Builder {
   {
     for (GameObject object : game.getCurrentScene().getAllObjects())
     {
-      if (object.getComponent(Transform.class).getX() == currentObject.getComponent(Transform.class).getX() && object.getComponent(Transform.class).getY() == currentObject.getComponent(Transform.class).getY() && currentObject.getId() != object.getId())
+      if (object.hasComponent(Transform.class) && object.getComponent(Transform.class).getX() == currentObject.getComponent(Transform.class).getX() && object.getComponent(Transform.class).getY() == currentObject.getComponent(Transform.class).getY() && currentObject.getId() != object.getId())
       {
         return true;
       }
@@ -140,12 +147,12 @@ public class Builder {
    *  Game object should be instantiated after mouse is released
    */
   public void placeObject(double x, double y) {
-    if (selectedObject != null) {
+    if (selectedObject != null && selectedObject.hasComponent(Transform.class)) {
       undoStack.push(new MoveObjectAction(selectedObject, selectedObject.getComponent(Transform.class).getX(), selectedObject.getComponent(Transform.class).getY(), x, y));
       selectedObject.getComponent(Transform.class).setX(x);
       selectedObject.getComponent(Transform.class).setY(y);
     }
-    selectedObject = null;
+    selectedObject = null; //should I add exception?
   }
 
   /**
@@ -153,6 +160,15 @@ public class Builder {
    */
   public boolean objectIsSelected() {
     return selectedObject != null;
+  }
+
+  public void moveObject(double x, double y)
+  {
+    if (selectedObject != null && selectedObject.hasComponent(Transform.class))
+    {
+      selectedObject.getComponent(Transform.class).setX(x);
+      selectedObject.getComponent(Transform.class).setY(y);
+    }
   }
 
   /**
@@ -165,5 +181,4 @@ public class Builder {
       undoStack.push(new DeleteObjectAction(game, selectedObject));
     }
   }
-
 }

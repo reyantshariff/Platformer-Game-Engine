@@ -16,7 +16,6 @@ import org.apache.logging.log4j.Logger;
  * The GUI class manages the canvas-based graphical rendering of the OOGASalad game engine.
  * It is meant to be embedded inside a larger JavaFX UI layout, allowing game rendering to happen
  * alongside JavaFX UI controls.
- *
  * This class handles rendering game scenes, processing input, and running the game loop.
  *
  * @author Jack F. Regan and Logan Dracos
@@ -97,7 +96,7 @@ public class Gui {
     GameScene current = game.getCurrentScene();
     if (current != null) {
       game.step(1.0 / ResourceBundles.getDouble(GUI_GENERAL_PATH, "framesPerSecond"));
-      objectRenderer.render(gc, current);
+      objectRenderer.renderWithCamera(gc, current);
     } else {
       logger.debug("No game scene loaded. Skipping step.");
     }
