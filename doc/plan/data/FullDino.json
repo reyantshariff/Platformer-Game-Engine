@@ -35,10 +35,10 @@
                 "Name": "Transform",
                 "Configurations": {
                   "x": 0,
-                  "y": 680,
+                  "y": 700,
                   "rotation": 0,
                   "scaleX": 1280,
-                  "scaleY": 40
+                  "scaleY": 20
                 }
               },
               {
@@ -214,8 +214,8 @@
                 "Name": "Follower",
                 "Configurations": {
                   "followObjectName": "Dino",
-                  "offsetX": 200,
-                  "offsetY": 200
+                  "offsetX": -200,
+                  "offsetY": -300
                 }
               }
             ]

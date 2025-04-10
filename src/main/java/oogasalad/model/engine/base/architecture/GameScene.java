@@ -221,13 +221,14 @@ public class GameScene {
           MessageFormat.format(GameConfig.getText("duplicateGameObject"), gameObject.getName()));
     }
 
+    gameObject.setScene(this);
+
     // Register components
     for (GameComponent component : gameObject.getAllComponents().values()) {
       registerComponent(component);
     }
 
     gameObject.wakeUp();
-    gameObject.setScene(this);
     allObjects.put(gameObject.getId(), gameObject);
   }
 

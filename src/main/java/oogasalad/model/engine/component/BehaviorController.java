@@ -51,4 +51,12 @@ public final class BehaviorController extends GameComponent {
     behaviors.add(behavior);
   }
 
+  @Override
+  public void awake() {
+    for (Behavior behavior : behaviors) {
+      behavior.setBehaviorController(this);
+      behavior.awake();
+    }
+  }
+
 }
