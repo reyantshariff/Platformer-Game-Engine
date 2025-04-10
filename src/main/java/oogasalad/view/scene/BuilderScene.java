@@ -5,7 +5,6 @@ import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.image.Image;
@@ -13,7 +12,6 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
 import oogasalad.model.builder.Builder;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.view.gui.TemporaryImageLoader;
@@ -36,7 +34,7 @@ public class BuilderScene extends ViewScene {
   private GameScene gameScene;
 
   private Builder builder;
-  private MainViewManager viewManager;
+  private final MainViewManager viewManager;
 
   /**
    * Constructor for BuilderView
@@ -54,19 +52,18 @@ public class BuilderScene extends ViewScene {
   private void createDinoGameTest() {
     gameScene = new DinosaurGameScene("LevelEditTest");
     builder = new Builder(gameScene);
-    gameScene.onActivated();
   }
 
   private void initializeUI() {
     // Top bar
-    /**
+    /*
     HBox topBar = new HBox();
     Button loadButton = new Button("Load");
     Button saveButton = new Button("Save");
     Button playtestButton = new Button("Playtest");
     topBar.getChildren().addAll(loadButton, saveButton, playtestButton);
     myWindow.setTop(topBar);
-    **/
+    */
     Button returnButton = new Button("Main Menu");
     returnButton.setOnAction(e -> {
       viewManager.switchToMainMenu();
@@ -80,11 +77,11 @@ public class BuilderScene extends ViewScene {
     myWindow.setCenter(createGamePreview());
 
     // Right properties panel
-    /**
+    /*
     VBox propertiesPanel = new VBox();
     propertiesPanel.getChildren().add(new Label("Properties"));
     myWindow.setRight(propertiesPanel);
-     **/
+    */
 
   }
 
