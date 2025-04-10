@@ -32,10 +32,7 @@ import oogasalad.model.engine.base.architecture.GameObject;
 
 public class DinosaurGameScene extends GameScene {
 
-
   private static final String DINOSAUR_SCENE_BUNDLE = "oogasalad.dinosaur.dinosaur";
-
-  private Scene scene;
 
   /**
    * Constructor for DinosaurGameScene
@@ -52,7 +49,7 @@ public class DinosaurGameScene extends GameScene {
     makePlayerTest();
     makeGroundTest();
     makeBirdTest();
-    makeCameraTest();
+    //makeCameraTest();
   }
 
 

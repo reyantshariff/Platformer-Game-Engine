@@ -42,7 +42,26 @@ public class GameObjectRenderer {
   }
 
   /**
-   * Renders the game objects in the given scene onto the canvas.
+   * For scenes that have a camera: renders the game objects in the given scene onto the canvas
+   *
+   * @param gc    The graphics context of the canvas.
+   * @param scene The game scene to render.
+   */
+  public void renderWithCamera(GraphicsContext gc, GameScene scene) {
+    try {
+      Camera camera = scene.getCamera();
+      Transform cameraTransform = camera.getComponent(Transform.class);
+      relativeX = cameraTransform.getX();
+      relativeY = cameraTransform.getY();
+    } catch (NullPointerException | IllegalArgumentException e) {
+      logger.warn("No camera found in scene");
+    }
+
+    render(gc, scene);
+  }
+
+  /**
+   * For scenes WITHOUT a camera: renders the game objects in the given scene onto the canvas.
    *
    * @param gc    The graphics context of the canvas.
    * @param scene The game scene to render.
@@ -55,17 +74,16 @@ public class GameObjectRenderer {
     double windowHeight = ResourceBundles.getDouble(baseName, "windowHeight");
     gc.clearRect(windowX, windowY, windowWidth, windowHeight);
 
+    Collection<GameObject> objects;
     try {
-      Camera camera = scene.getCamera();
-      Transform cameraTransform = camera.getComponent(Transform.class);
-      Collection<GameObject> allObjects = scene.getAllObjectsInView();
-      relativeX = cameraTransform.getX();
-      relativeY = cameraTransform.getY();
-      for (GameObject obj : allObjects) {
-        renderGameObject(gc, obj);
-      }
+      scene.getCamera(); // get only objects in view of camera if camera exists
+      objects = scene.getAllObjectsInView();
     } catch (NullPointerException | IllegalArgumentException e) {
-      logger.warn("No camera found in scene");
+      objects = scene.getAllObjects(); // if no camera component in scene, get all objects in scene
+    }
+
+    for (GameObject obj : objects) {
+      renderGameObject(gc, obj);
     }
   }
 
