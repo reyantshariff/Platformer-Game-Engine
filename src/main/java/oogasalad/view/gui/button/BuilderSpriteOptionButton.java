@@ -4,13 +4,20 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import oogasalad.model.engine.base.architecture.GameObject;
 
 public class BuilderSpriteOptionButton extends ImageButton {
+  GameObject prefab = null;
 
-  public BuilderSpriteOptionButton(Image image, double width, double height) {
+  public BuilderSpriteOptionButton(Image image, double width, double height, GameObject prefab) {
     super(image);
     applySizing(width, height);
     applyStyling();
+    this.prefab = prefab;
+  }
+
+  public GameObject getPrefab() {
+    return prefab;
   }
 
   private void applySizing(double width, double height) {
