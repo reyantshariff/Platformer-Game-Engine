@@ -74,18 +74,18 @@ public class GameObjectRenderer {
 
   }
 
-  /**
-   * renders a javaFX Text object
-   *
-   * @param component
-   * @param gc
-   */
-  private void renderTextComponent(Text component, GraphicsContext gc) {
-    javafx.scene.text.Text text = new javafx.scene.text.Text(component.getText());
-    applyStyleSheet(text, String.valueOf(component.getStyleClass()));
-    WritableImage snapshot = text.snapshot(null, null);
-    gc.drawImage(snapshot, component.getX(), component.getY());
-  }
+//  /**
+//   * renders a javaFX Text object
+//   *
+//   * @param component
+//   * @param gc
+//   */
+//  private void renderTextComponent(Text component, GraphicsContext gc) {
+//    javafx.scene.text.Text text = new javafx.scene.text.Text(component.getText());
+//   // applyStyleSheet(text, String.valueOf(component.getStyleClass()));
+//    WritableImage snapshot = text.snapshot(null, null);
+//    gc.drawImage(snapshot, component.getX(), component.getY());
+//  }
 
   /**
    * renders a javaFX Image object
@@ -121,10 +121,10 @@ public class GameObjectRenderer {
     gc.fillRect(component.getX(), component.getY(), component.getScaleX(), component.getScaleY());
   }
 
-  private void applyStyleSheet(Node node, String styleSheet) {
-    node.getStyleClass().add(styleSheet);
-    Group tempRoot = new Group(node);
-    Scene tempScene = new Scene(tempRoot);
-    tempScene.getStylesheets().addAll(myScene.getStylesheets());
-  }
+//  private void applyStyleSheet(Node node, String styleSheet) {
+//    node.getStyleClass().add(styleSheet);
+//    Group tempRoot = new Group(node);
+//    Scene tempScene = new Scene(tempRoot);
+//    tempScene.getStylesheets().addAll(myScene.getStylesheets());
+//  }
 }
