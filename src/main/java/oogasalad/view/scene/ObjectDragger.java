@@ -5,6 +5,7 @@ import javafx.scene.input.MouseEvent;
 import oogasalad.model.builder.Builder;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
+import oogasalad.model.engine.component.Camera;
 import oogasalad.model.engine.component.Transform;
 import oogasalad.view.gui.GameObjectRenderer;
 
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ObjectDragger manages mouse drag and drop
+ * ObjectDragger manages mouse drag and drop for Builder pages
  * @author Reyan Shariff
  */
 public class ObjectDragger {
@@ -76,6 +77,7 @@ public class ObjectDragger {
   private void handlePressed(MouseEvent e) {
     double x = e.getX(), y = e.getY();
     List<GameObject> objects = new ArrayList<>(gameScene.getAllObjects());
+    objects = removeCamerasFromObjects(objects);
 
     for (GameObject obj : objects) {
       if (!obj.hasComponent(Transform.class)) continue;
@@ -113,5 +115,23 @@ public class ObjectDragger {
     }
 
     builderScene.updateGamePreview();  // refresh all sprite visuals in the canvas
+  }
+
+  private List<GameObject> removeCamerasFromObjects(List<GameObject> objects) {
+    // remove any camera objects so they cannot be "pressed"
+    List<GameObject> camerasToRemove = new ArrayList<>();
+    for (GameObject object : objects) {
+      try {
+        object.getComponent(Camera.class);
+        camerasToRemove.add(object);
+      } catch (IllegalArgumentException e) {
+        continue;
+      }
+    }
+    for (GameObject cameraObj : camerasToRemove) {
+      objects.remove(cameraObj);
+    }
+
+    return objects;
   }
 }
