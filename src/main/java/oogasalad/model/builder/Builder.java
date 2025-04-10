@@ -104,9 +104,9 @@ public class Builder {
   /**
    *  Records when a game object has been selected to be dragged and dropped on the UI
    */
-  public void selectExistingObject(UUID id)
+  public void selectExistingObject(GameObject object)
   {
-    selectedObject= findObject(id);
+    selectedObject= object;
   }
 
 
@@ -173,4 +173,7 @@ public class Builder {
     }
   }
 
+  public GameObject getSelectedObject() {
+    return selectedObject;
+  }
 }
