@@ -16,6 +16,7 @@ import javafx.scene.layout.TilePane;
 import oogasalad.model.builder.Builder;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
+import oogasalad.model.engine.component.Transform;
 import oogasalad.model.parser.PrefabLoader;
 import oogasalad.view.gui.button.BuilderSpriteOptionButton;
 import oogasalad.view.player.dinosaur.DinosaurGameScene;
@@ -28,10 +29,15 @@ import org.apache.logging.log4j.Logger;
 
 public class BuilderScene extends ViewScene {
 
+  // Static constants defining the size of the level-preview window within the builder scene
+  public static final double GAME_PREVIEW_WIDTH = 1000;
+  public static final double GAME_PREVIEW_HEIGHT = 800;
+
   private static final Logger logger = LogManager.getLogger(BuilderScene.class);
 
   private final BorderPane myWindow;
   private Canvas myGameCanvas;
+  private ScrollPane levelViewScrollPane; // ScrollPane containing the game Canvas
 
   private GameScene gameScene;
 
@@ -104,34 +110,34 @@ public class BuilderScene extends ViewScene {
 
     Group canvasGroup = new Group(myGameCanvas);
 
-    ScrollPane previewScrollPane = new ScrollPane(canvasGroup);
+    levelViewScrollPane = new ScrollPane(canvasGroup);
 
     // Canvas viewport size within builder window
-    previewScrollPane.setPrefViewportWidth(1000); // TODO: replace these hardcoded values
-    previewScrollPane.setPrefViewportHeight(800);
+    levelViewScrollPane.setPrefViewportWidth(GAME_PREVIEW_WIDTH); // TODO: replace these hardcoded values
+    levelViewScrollPane.setPrefViewportHeight(GAME_PREVIEW_HEIGHT);
 
     // Disable vertical scroll bar
-    previewScrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
+    levelViewScrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
 
-    previewScrollPane.setFocusTraversable(true);
-    previewScrollPane.requestFocus();
+    levelViewScrollPane.setFocusTraversable(true);
+    levelViewScrollPane.requestFocus();
 
     // Pan the view using arrow keys
-    previewScrollPane.setOnKeyPressed(event -> {
+    levelViewScrollPane.setOnKeyPressed(event -> {
       double delta = 0.05;
       switch (event.getCode()) {
         case LEFT:
-          previewScrollPane.setHvalue(Math.max(previewScrollPane.getHvalue() - delta, 0));
+          levelViewScrollPane.setHvalue(Math.max(levelViewScrollPane.getHvalue() - delta, 0));
           break;
         case RIGHT:
-          previewScrollPane.setHvalue(Math.min(previewScrollPane.getHvalue() + delta, 1));
+          levelViewScrollPane.setHvalue(Math.min(levelViewScrollPane.getHvalue() + delta, 1));
           break;
         // Optionally, handle UP/DOWN if vertical panning is needed:
         case UP:
-          previewScrollPane.setVvalue(Math.max(previewScrollPane.getVvalue() - delta, 0));
+          levelViewScrollPane.setVvalue(Math.max(levelViewScrollPane.getVvalue() - delta, 0));
           break;
         case DOWN:
-          previewScrollPane.setVvalue(Math.min(previewScrollPane.getVvalue() + delta, 1));
+          levelViewScrollPane.setVvalue(Math.min(levelViewScrollPane.getVvalue() + delta, 1));
           break;
         default:
           break;
@@ -143,7 +149,7 @@ public class BuilderScene extends ViewScene {
         myObjectRenderer);
 
     // Add zoom handling
-    previewScrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
+    levelViewScrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
       // Only process the event for zooming, ignore its vertical scrolling aspect.
       double zoomFactor = 1.1;
       double currentScale = canvasGroup.getScaleX(); // assuming uniform scale
@@ -156,12 +162,12 @@ public class BuilderScene extends ViewScene {
       canvasGroup.setScaleY(currentScale);
 
       // Ensure the vertical scroll value remains fixed
-      previewScrollPane.setVvalue(0);
+      levelViewScrollPane.setVvalue(0);
 
       event.consume();  // Prevent the default vertical panning
     });
 
-    return previewScrollPane;
+    return levelViewScrollPane;
   }
 
   private HBox createBottomPanel() {
@@ -188,11 +194,33 @@ public class BuilderScene extends ViewScene {
         // Convert the preview image path to a JavaFX Image
         try {
           Image previewImage = new Image(new File(previewImagePath).toURI().toURL().toString());
-          tilePane.getChildren().add(new BuilderSpriteOptionButton(
+          Button newSpriteButton = new BuilderSpriteOptionButton(
               previewImage,
               getScene().getWidth()*0.12,
               getScene().getHeight()*0.12,
-              prefab));
+              prefab);
+          newSpriteButton.setOnAction(event -> {
+            GameObject newObject = prefab.clone();  // or a deep copy via serialization
+
+            // Retrieve the Transform component
+            Transform t = newObject.getComponent(Transform.class);
+            if (t != null) {
+              // Calculate center based on preview or scene dimensions.
+              double previewHorizontalMidpoint = levelViewScrollPane.getHvalue()*GAME_PREVIEW_WIDTH + (GAME_PREVIEW_WIDTH / 2);
+              double previewVerticalMidpoint = levelViewScrollPane.getVvalue()*GAME_PREVIEW_HEIGHT + (GAME_PREVIEW_HEIGHT / 2);
+              double objectWidth = t.getScaleX();
+              double objectHeight = t.getScaleY();
+
+              // Center the object
+              t.setX(previewHorizontalMidpoint - (objectWidth / 2));
+              t.setY(previewVerticalMidpoint - (objectHeight / 2));
+            }
+            // Register new object to the scene
+            gameScene.registerObject(newObject);
+            // Update the game preview so the new object appears
+            updateGamePreview();
+          });
+          tilePane.getChildren().add(newSpriteButton);
         } catch (Exception e) {
           System.err.println("Error loading preview image from: " + previewImagePath);
         }

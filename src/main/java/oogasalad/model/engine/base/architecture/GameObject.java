@@ -171,6 +171,24 @@ public class GameObject {
   }
 
   /**
+   * Create a new GameObject that has identical components to this GameObject
+   *
+   * @return new GameObject with same components but different UUID
+   */
+  public GameObject clone() {
+
+    GameObject copy = new GameObject(this.getName(), this.getTag());
+
+    for (GameComponent comp : this.getAllComponents().values()) {
+      // Assuming each component implements a deepCopy method.
+      GameComponent compCopy = comp.copy();
+      copy.addComponent(compCopy);
+    }
+
+    return copy;
+  }
+
+  /**
    * Change the scene to the specified scene name.
    *
    * @param sceneName the name of the scene to be changed to
