@@ -32,6 +32,7 @@ import oogasalad.model.engine.base.architecture.GameObject;
 
 public class DinosaurGameScene extends GameScene {
 
+
   private static final String DINOSAUR_SCENE_BUNDLE = "oogasalad.dinosaur.dinosaur";
 
   /**
@@ -42,7 +43,6 @@ public class DinosaurGameScene extends GameScene {
   public DinosaurGameScene(String name) {
     super(name);
     ResourceBundles.loadBundle(DINOSAUR_SCENE_BUNDLE);
-    onActivated();
   }
 
   @Override
@@ -77,7 +77,6 @@ public class DinosaurGameScene extends GameScene {
   private void makeGroundTest() {
     Base ground = new Base("Ground");
     ground.addComponent(Transform.class);
-
     Transform tGround = ground.getComponent(Transform.class);
     tGround.setX(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "ground.startX"));
     tGround.setY(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "ground.startY"));
@@ -138,6 +137,7 @@ public class DinosaurGameScene extends GameScene {
     CameraObj camera = new CameraObj("Camera");
     camera.addComponent(Transform.class);
     registerObject(camera);
+    camera.addComponent(Transform.class);
     Transform tCamera = camera.getComponent(Transform.class);
     tCamera.setScaleX(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "camera.width"));
     tCamera.setScaleY(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "camera.height"));
