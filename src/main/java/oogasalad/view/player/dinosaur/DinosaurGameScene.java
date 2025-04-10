@@ -59,6 +59,7 @@ public class DinosaurGameScene extends GameScene {
 
   private void makeBirdTest() {
     Bird bird = new Bird("Bird");
+    bird.addComponent(Transform.class);
 
     Transform tBird = bird.getComponent(Transform.class);
     tBird.setX(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "bird.startX"));
@@ -78,6 +79,7 @@ public class DinosaurGameScene extends GameScene {
 
   private void makeGroundTest() {
     Base ground = new Base("Ground");
+    ground.addComponent(Transform.class);
 
     Transform tGround = ground.getComponent(Transform.class);
     tGround.setX(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "ground.startX"));
@@ -97,6 +99,7 @@ public class DinosaurGameScene extends GameScene {
   private void makePlayerTest() {
     Player player = new Player(ResourceBundles.getString(DINOSAUR_SCENE_BUNDLE, "player.name"));
     registerObject(player);
+    player.addComponent(Transform.class);
     Transform t = player.getComponent(Transform.class);
 
     t.setX(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "player.startX"));
@@ -111,9 +114,9 @@ public class DinosaurGameScene extends GameScene {
     PhysicsHandler physicsHandler = player.addComponent(PhysicsHandler.class);
 
     physicsHandler
-        .setVelocityX(ResourceBundles.getDouble(DINOSAUR_SCENE_BUNDLE, "player.velocityX"));
+        .setVelocityX(ResourceBundles.getDouble(DINOSAUR_SCENE_BUNDLE, "player.velocityX") + 100);
     physicsHandler
-        .setAccelerationY(ResourceBundles.getDouble(DINOSAUR_SCENE_BUNDLE, "player.accelY"));
+        .setAccelerationY(ResourceBundles.getDouble(DINOSAUR_SCENE_BUNDLE, "player.accelY") + 100);
 
     BehaviorController controller = player.addComponent(BehaviorController.class);
 
@@ -136,6 +139,7 @@ public class DinosaurGameScene extends GameScene {
 
   private void makeCameraTest() {
     CameraObj camera = new CameraObj("Camera");
+    camera.addComponent(Transform.class);
     registerObject(camera);
     Transform tCamera = camera.getComponent(Transform.class);
     tCamera.setScaleX(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "camera.width"));
