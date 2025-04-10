@@ -8,7 +8,7 @@ import oogasalad.model.engine.base.architecture.GameObject;
  *
  * @author Reyan Shariff
  */
-
+@Deprecated
 public class Cactus extends GameObject {
 
   /**

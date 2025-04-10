@@ -5,7 +5,6 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.base.architecture.GameScene;
-import oogasalad.model.parser.GameParser;
 import oogasalad.view.gui.Gui;
 import oogasalad.view.player.dinosaur.DinosaurGameScene;
 import oogasalad.view.player.main.MainGameScene;
@@ -14,6 +13,8 @@ import oogasalad.view.player.main.MainGameScene;
  * Displays the game using a GUI canvas inside a JavaFX scene
  */
 public class GamePlayerScene extends ViewScene {
+  Gui gui;
+
   /**
    * Constructs a new GamePlayerScene to display a game within a JavaFX scene.
    *
@@ -26,7 +27,7 @@ public class GamePlayerScene extends ViewScene {
     StackPane root = (StackPane) getScene().getRoot();
 
     Game game = new Game();
-    Gui gui = new Gui(game);
+    gui = new Gui(game);
 
     GameScene scene = new DinosaurGameScene("Dino");
     GameScene main = new MainGameScene("main");
@@ -37,7 +38,7 @@ public class GamePlayerScene extends ViewScene {
 
     Button returnButton = new Button("Main Menu");
     returnButton.setOnAction(e -> {
-      gui.stop();
+      deactivate();
       manager.switchToMainMenu();
     });
 
@@ -45,5 +46,17 @@ public class GamePlayerScene extends ViewScene {
     returnButton.setStyle("-fx-background-color: white; -fx-font-weight: bold;");
 
     root.getChildren().addAll(gui.getCanvas(), returnButton);
+  }
+
+  /**
+   * Deactivates the game engine for this scene.
+   */
+  @Override
+  public void deactivate() {
+    try {
+      gui.stop();
+    } catch (Exception e) {
+      throw new RuntimeException("Error deactivating scene: " + e.getMessage());
+    }
   }
 }

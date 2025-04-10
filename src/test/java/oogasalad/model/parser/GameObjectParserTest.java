@@ -11,8 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.prefab.dinosaur.Bird;
-import oogasalad.model.parser.GameObjectParser;
-import oogasalad.model.parser.ParsingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

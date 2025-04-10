@@ -13,6 +13,7 @@ public class MainViewManager {
 
   private final Stage stage;
   private static MainViewManager instance;
+  private ViewScene currentScene;
 
   /**
    * Constructs the MainViewManager with the given primary stage
@@ -40,7 +41,14 @@ public class MainViewManager {
    * @param viewScene the new scene to display
    */
   public void switchTo(ViewScene viewScene) {
+    // Stop current scene, if applicable
+    if (currentScene != null) {
+      currentScene.deactivate();
+    }
+
+    // Set new scene
     stage.setScene(viewScene.getScene());
+    currentScene = viewScene;
     stage.show();
   }
 
