@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -113,12 +114,25 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
   }
 
   private Object extractFieldValue(Class<?> fieldType, JsonNode valueNode) {
+    // Check if the field is a List (for example, a List<String>)
+    if (List.class.isAssignableFrom(fieldType)) {
+      // Create a list and populate it by iterating over the array node.
+      List<String> list = new ArrayList<>();
+      if (valueNode.isArray()) {
+        for (JsonNode element : valueNode) {
+          list.add(element.asText());
+        }
+      }
+      return list;
+    }
+
     Function<JsonNode, Object> extractor = EXTRACTORS.get(fieldType);
     if (extractor == null) {
       throw new IllegalArgumentException("Unsupported field type: " + fieldType);
     }
     return extractor.apply(valueNode);
   }
+
 
   /**
    * Serializes a gameComponent into a JSON node
