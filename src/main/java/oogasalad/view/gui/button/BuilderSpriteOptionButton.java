@@ -22,8 +22,8 @@ public class BuilderSpriteOptionButton extends ImageButton {
 
   private void applySizing(double width, double height) {
     // Set a large size for the button
-    this.setWidth(width);
-    this.setHeight(height);
+    this.setPrefWidth(width);
+    this.setPrefHeight(height);
   }
 
   /**

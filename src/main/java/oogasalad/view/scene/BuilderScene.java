@@ -12,6 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import oogasalad.model.builder.Builder;
 import oogasalad.model.engine.base.architecture.GameObject;
@@ -173,22 +174,25 @@ public class BuilderScene extends ViewScene {
   private HBox createBottomPanel() {
     HBox bottomPanel = new HBox();
     bottomPanel.setSpacing(10);
-    bottomPanel.getChildren().add(createSpriteButtonOptions());
+    bottomPanel.getChildren().add(createAddSpriteButtonOptions());
     return bottomPanel;
   }
 
-  private ScrollPane createSpriteButtonOptions() {
-    // Create a TilePane that will automatically arrange children in 2 columns.
-    TilePane tilePane = new TilePane();
-    tilePane.setPrefColumns(3); // set desired number of columns
-    tilePane.setHgap(getScene().getWidth()*0.02);
-    tilePane.setVgap(getScene().getHeight()*0.02);
+  private ScrollPane createAddSpriteButtonOptions() {
+    // Define width and height of the sprite button panel
+    double spriteButtonPaneWidth = getScene().getWidth()*0.45;
+    double spriteButtonPaneHeight = getScene().getHeight()*0.25;
+
+    // Organize the button layout via TilePane
+    TilePane tilePane = createSpriteButtonTilePane(spriteButtonPaneWidth);
+
+    // Create a ScrollPane to hold the buttons
+    ScrollPane spriteScrollPane = createSpriteButtonScrollPane(spriteButtonPaneWidth, spriteButtonPaneHeight, tilePane);
 
     // Load the prefab GameObjects
     List<GameObject> prefabObjects = PrefabLoader.loadAvailablePrefabs("dinosaur"); // TODO: remove hardcoded game type
     for (GameObject prefab : prefabObjects) {
       // Assume the prefab has a SpriteRenderer component.
-      // You can add a method in GameObject or via a helper to retrieve the preview image path.
       String previewImagePath = getPreviewImagePath(prefab);
       if (previewImagePath != null) {
         // Convert the preview image path to a JavaFX Image
@@ -196,8 +200,8 @@ public class BuilderScene extends ViewScene {
           Image previewImage = new Image(new File(previewImagePath).toURI().toURL().toString());
           Button newSpriteButton = new BuilderSpriteOptionButton(
               previewImage,
-              getScene().getWidth()*0.12,
-              getScene().getHeight()*0.12,
+              tilePane.getPrefWidth()*0.25,
+              tilePane.getPrefHeight()*0.25,
               prefab);
           newSpriteButton.setOnAction(event -> {
             GameObject newObject = prefab.clone();  // or a deep copy via serialization
@@ -227,14 +231,36 @@ public class BuilderScene extends ViewScene {
       }
     }
 
-    // Wrap the TilePane in a ScrollPane.
-    ScrollPane spriteScrollPane = new ScrollPane(tilePane);
-    spriteScrollPane.setPrefHeight(getScene().getHeight()*0.25);
-    spriteScrollPane.setPrefWidth(getScene().getWidth()*0.45);
-    spriteScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // Disable horizontal scrolling
-    spriteScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS); // Enable vertical scrolling
+    // TODO: TilePane and its buttons should immediately be correctly sized without requiring mouse movement
+    tilePane.setOnMouseMoved(event -> {
+      tilePane.setPrefWidth(spriteScrollPane.getPrefWidth());
+    });
 
     return spriteScrollPane;
+  }
+
+  private ScrollPane createSpriteButtonScrollPane(double width, double height, Pane contents) {
+    ScrollPane spriteScrollPane = new ScrollPane(contents);
+    spriteScrollPane.setPrefWidth(width);
+    spriteScrollPane.setPrefHeight(height);
+    spriteScrollPane.setHbarPolicy(ScrollBarPolicy.NEVER); // Disable horizontal scrolling
+    spriteScrollPane.setVbarPolicy(ScrollBarPolicy.ALWAYS); // Enable vertical scrolling
+    spriteScrollPane.setFitToWidth(true);
+    spriteScrollPane.setFitToHeight(true);
+    return spriteScrollPane;
+  }
+
+  private TilePane createSpriteButtonTilePane(double width) {
+    // Create a TilePane that will automatically arrange the sprite buttons in a tile/grid layout
+    TilePane tilePane = new TilePane();
+    tilePane.setPrefColumns(2); // Desired number of columns
+    tilePane.setHgap(getScene().getWidth()*0.02);
+    tilePane.setVgap(getScene().getHeight()*0.02);
+    // Define TilePane size
+    tilePane.setPrefWidth(width);
+    tilePane.setMinWidth(width);
+    tilePane.setMaxWidth(width);
+    return tilePane;
   }
 
   private String getPreviewImagePath(GameObject prefab) {
