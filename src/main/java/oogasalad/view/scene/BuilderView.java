@@ -14,7 +14,6 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import oogasalad.model.builder.Builder;
 import oogasalad.model.engine.base.architecture.GameScene;
-import oogasalad.view.gui.GameObjectRenderer;
 import oogasalad.view.gui.TemporaryImageLoader;
 import oogasalad.view.gui.button.BuilderSpriteOptionButton;
 import oogasalad.view.player.dinosaur.DinosaurGameScene;
@@ -34,19 +33,15 @@ public class BuilderView extends ViewScene {
 
   private GameScene gameScene;
 
-  private final GameObjectRenderer gameObjectRenderer;
-
   private Builder builder;
 
   /**
    * Constructor for BuilderView
-   *
    * the height of the window
    */
   public BuilderView(MainViewManager manager) {
     // Create the BorderPane as the root
     super(new BorderPane(), 1280, 720);
-    this.gameObjectRenderer = new GameObjectRenderer(getScene());
     myWindow = (BorderPane) getScene().getRoot();
     createDinoGameTest();
     initializeUI();
@@ -86,7 +81,7 @@ public class BuilderView extends ViewScene {
   public void updateGamePreview() {
     GraphicsContext gc = myGameCanvas.getGraphicsContext2D();
     gc.clearRect(0, 0, myGameCanvas.getWidth(), myGameCanvas.getHeight());
-    gameObjectRenderer.render(gc, gameScene);
+    myObjectRenderer.render(gc, gameScene);
   }
 
   private ScrollPane createGamePreview() {
@@ -105,7 +100,8 @@ public class BuilderView extends ViewScene {
     scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
     scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-    ObjectDragger dragger = new ObjectDragger(myGameCanvas, builder, this, gameScene, gameObjectRenderer);
+    ObjectDragger dragger = new ObjectDragger(myGameCanvas, builder, this, gameScene,
+        myObjectRenderer);
 
     // Add zoom handling
     scrollPane.setOnScroll(event -> {
