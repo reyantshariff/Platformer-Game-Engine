@@ -77,7 +77,7 @@ public class ObjectDragger {
   private void handlePressed(MouseEvent e) {
     double x = e.getX(), y = e.getY();
     List<GameObject> objects = new ArrayList<>(gameScene.getAllObjects());
-    objects = removeCamerasFromObjects(objects);
+    objects = removeCamerasFromObjects(objects);  // FOR THE BUILDER: remove all cameras
 
     for (GameObject obj : objects) {
       if (!obj.hasComponent(Transform.class)) continue;
@@ -109,7 +109,6 @@ public class ObjectDragger {
 
   private void handleReleased(MouseEvent e) {
     if (isInCanvas(e) && dragging && builder.objectIsSelected()) {
-      builder.placeObject(e.getX(), e.getY());
       dragging = false;
       renderer.renderWithoutCamera(canvas.getGraphicsContext2D(), gameScene);
     }
