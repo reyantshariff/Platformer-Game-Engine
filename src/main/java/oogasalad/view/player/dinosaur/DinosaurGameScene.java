@@ -1,6 +1,7 @@
 package oogasalad.view.player.dinosaur;
 
 import java.util.List;
+import javafx.scene.Scene;
 import oogasalad.model.ResourceBundles;
 import oogasalad.model.engine.action.VelocityYSetAction;
 import oogasalad.model.engine.base.architecture.GameScene;
@@ -34,6 +35,8 @@ public class DinosaurGameScene extends GameScene {
 
   private static final String DINOSAUR_SCENE_BUNDLE = "oogasalad.dinosaur.dinosaur";
 
+  private Scene scene;
+
   /**
    * Constructor for DinosaurGameScene
    *
@@ -42,6 +45,7 @@ public class DinosaurGameScene extends GameScene {
   public DinosaurGameScene(String name) {
     super(name);
     ResourceBundles.loadBundle(DINOSAUR_SCENE_BUNDLE);
+    onActivated();
   }
 
   @Override
@@ -51,6 +55,7 @@ public class DinosaurGameScene extends GameScene {
     makeBirdTest();
     makeCameraTest();
   }
+
 
   private void makeBirdTest() {
     Bird bird = new Bird("Bird");
@@ -75,6 +80,7 @@ public class DinosaurGameScene extends GameScene {
   private void makeGroundTest() {
     Base ground = new Base("Ground");
     ground.addComponent(Transform.class);
+
     Transform tGround = ground.getComponent(Transform.class);
     tGround.setX(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "ground.startX"));
     tGround.setY(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "ground.startY"));
@@ -108,9 +114,9 @@ public class DinosaurGameScene extends GameScene {
     PhysicsHandler physicsHandler = player.addComponent(PhysicsHandler.class);
 
     physicsHandler
-        .setVelocityX(ResourceBundles.getDouble(DINOSAUR_SCENE_BUNDLE, "player.velocityX") + 100);
+        .setVelocityX(ResourceBundles.getDouble(DINOSAUR_SCENE_BUNDLE, "player.velocityX"));
     physicsHandler
-        .setAccelerationY(ResourceBundles.getDouble(DINOSAUR_SCENE_BUNDLE, "player.accelY") + 100);
+        .setAccelerationY(ResourceBundles.getDouble(DINOSAUR_SCENE_BUNDLE, "player.accelY"));
 
     BehaviorController controller = player.addComponent(BehaviorController.class);
 
@@ -134,6 +140,7 @@ public class DinosaurGameScene extends GameScene {
   private void makeCameraTest() {
     CameraObj camera = new CameraObj("Camera");
     camera.addComponent(Transform.class);
+    registerObject(camera);
     Transform tCamera = camera.getComponent(Transform.class);
     tCamera.setScaleX(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "camera.width"));
     tCamera.setScaleY(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "camera.height"));
@@ -145,8 +152,6 @@ public class DinosaurGameScene extends GameScene {
     double offsetY = ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "camera.offsetY");
     follower.setOffset(offsetX, offsetY);
     camera.addComponent(follower);
-
-    registerObject(camera);
   }
 
 
