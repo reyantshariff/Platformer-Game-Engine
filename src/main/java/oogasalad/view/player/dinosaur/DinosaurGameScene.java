@@ -43,7 +43,6 @@ public class DinosaurGameScene extends GameScene {
   public DinosaurGameScene(String name) {
     super(name);
     ResourceBundles.loadBundle(DINOSAUR_SCENE_BUNDLE);
-    onActivated();
   }
 
   @Override
@@ -56,7 +55,7 @@ public class DinosaurGameScene extends GameScene {
 
   private void makeBirdTest() {
     Bird bird = new Bird("Bird");
-
+    bird.addComponent(Transform.class);
     Transform tBird = bird.getComponent(Transform.class);
     tBird.setX(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "bird.startX"));
     tBird.setY(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "bird.startY"));
@@ -75,7 +74,7 @@ public class DinosaurGameScene extends GameScene {
 
   private void makeGroundTest() {
     Base ground = new Base("Ground");
-
+    ground.addComponent(Transform.class);
     Transform tGround = ground.getComponent(Transform.class);
     tGround.setX(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "ground.startX"));
     tGround.setY(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "ground.startY"));
@@ -94,6 +93,7 @@ public class DinosaurGameScene extends GameScene {
   private void makePlayerTest() {
     Player player = new Player("Dinosaur");
     registerObject(player);
+    player.addComponent(Transform.class);
     Transform t = player.getComponent(Transform.class);
 
     t.setX(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "player.startX"));
