@@ -46,13 +46,18 @@
                 "Configurations": {
                   "offsetX": 0,
                   "offsetY": 0,
-                  "imagePaths": ["GroundSprite.png"]
+                  "imagePaths": [
+                    "GroundSprite.png"
+                  ]
                 }
               },
               {
                 "Name": "Collider",
                 "Configurations": {
-                  "collidableTags": ["Player", "Obstacle"]
+                  "collidableTags": [
+                    "Player",
+                    "Obstacle"
+                  ]
                 }
               }
             ]
@@ -76,13 +81,18 @@
                 "Configurations": {
                   "offsetX": 0,
                   "offsetY": 0,
-                  "imagePaths": ["DinoSprite.png"]
+                  "imagePaths": [
+                    "DinoSprite.png"
+                  ]
                 }
               },
               {
                 "Name": "Collider",
                 "Configurations": {
-                  "collidableTags": ["Ground", "Obstacle"]
+                  "collidableTags": [
+                    "Ground",
+                    "Obstacle"
+                  ]
                 }
               },
               {
@@ -143,13 +153,18 @@
                 "Configurations": {
                   "offsetX": 0,
                   "offsetY": 0,
-                  "imagePaths": ["CactusSprite.png"]
+                  "imagePaths": [
+                    "CactusSprite.png"
+                  ]
                 }
               },
               {
                 "Name": "Collider",
                 "Configurations": {
-                  "collidableTags": ["Player", "Ground"]
+                  "collidableTags": [
+                    "Player",
+                    "Ground"
+                  ]
                 }
               },
               {
@@ -182,6 +197,34 @@
                 }
               ]
             }
+          },
+          {
+            "Name": "Camera",
+            "Tag": "Camera",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 0,
+                  "y": 0,
+                  "rotation": 0,
+                  "scaleX": 1300,
+                  "scaleY": 800
+                }
+              },
+              {
+                "Name": "Camera",
+                "Configurations": {}
+              },
+              {
+                "Name": "Follower",
+                "Configurations": {
+                  "followObjectName": "Dino",
+                  "offsetX": 200,
+                  "offsetY": 200
+                }
+              }
+            ]
           }
         ]
       }
