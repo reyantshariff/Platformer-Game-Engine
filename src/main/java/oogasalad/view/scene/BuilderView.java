@@ -1,8 +1,7 @@
-package oogasalad.view.screens;
+package oogasalad.view.scene;
 
 import java.util.List;
 import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -13,12 +12,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import oogasalad.model.builder.Builder;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.view.gui.GameObjectRenderer;
 import oogasalad.view.gui.TemporaryImageLoader;
 import oogasalad.view.gui.button.BuilderSpriteOptionButton;
 import oogasalad.view.player.dinosaur.DinosaurGameScene;
-import oogasalad.view.scene.ViewScene;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,33 +25,36 @@ import org.apache.logging.log4j.Logger;
  * BuilderView is the main view for the level editor
  */
 
-public class BuilderView extends Scene {
+public class BuilderView extends ViewScene {
 
   private static final Logger logger = LogManager.getLogger(BuilderView.class);
 
   private final BorderPane myWindow;
+  private Canvas myGameCanvas;
 
   private GameScene gameScene;
 
   private final GameObjectRenderer gameObjectRenderer;
 
+  private Builder builder;
+
   /**
    * Constructor for BuilderView
    *
-   * @param width  the width of the window
-   * @param height the height of the window
+   * the height of the window
    */
-  public BuilderView(double width, double height, GameObjectRenderer gameObjectRenderer) {
+  public BuilderView(MainViewManager manager) {
     // Create the BorderPane as the root
-    super(new BorderPane(), width, height);
-    this.gameObjectRenderer = gameObjectRenderer;
-    myWindow = (BorderPane) getRoot();
+    super(new BorderPane(), 1280, 720);
+    this.gameObjectRenderer = new GameObjectRenderer(getScene());
+    myWindow = (BorderPane) getScene().getRoot();
     createDinoGameTest();
     initializeUI();
   }
 
   private void createDinoGameTest() {
     gameScene = new DinosaurGameScene("LevelEditTest");
+    builder = new Builder(gameScene);
     gameScene.onActivated();
   }
 
@@ -77,14 +79,23 @@ public class BuilderView extends Scene {
     myWindow.setRight(propertiesPanel);
   }
 
+  /**
+   * Updates game preview window by rendering all current GameObjects in the GameScene in their
+   * current position
+   */
+  public void updateGamePreview() {
+    GraphicsContext gc = myGameCanvas.getGraphicsContext2D();
+    gc.clearRect(0, 0, myGameCanvas.getWidth(), myGameCanvas.getHeight());
+    gameObjectRenderer.render(gc, gameScene);
+  }
+
   private ScrollPane createGamePreview() {
     // Create and set up the canvas and zoomable group:
-    Canvas canvas = new Canvas(1000, 600);
-    GraphicsContext gc = canvas.getGraphicsContext2D();
-    renderInitialFrame(gc, gameScene);
+    myGameCanvas = new Canvas(1000, 600);
+    updateGamePreview();
 
     // Wrap canvas in Group for scaling
-    Group zoomableGroup = new Group(canvas);
+    Group zoomableGroup = new Group(myGameCanvas);
     // Use a ScrollPane for handling zoom transformation
     ScrollPane scrollPane = new ScrollPane(zoomableGroup);
     scrollPane.setFitToWidth(true);
@@ -93,6 +104,8 @@ public class BuilderView extends Scene {
     // Disable scroll bars
     scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
     scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+    ObjectDragger dragger = new ObjectDragger(myGameCanvas, builder, this, gameScene, gameObjectRenderer);
 
     // Add zoom handling
     scrollPane.setOnScroll(event -> {
@@ -122,27 +135,23 @@ public class BuilderView extends Scene {
     // Create a TilePane that will automatically arrange children in 2 columns.
     TilePane tilePane = new TilePane();
     tilePane.setPrefColumns(3); // set desired number of columns
-    tilePane.setHgap(this.getWidth()*0.02);
-    tilePane.setVgap(this.getHeight()*0.02);
+    tilePane.setHgap(getScene().getWidth()*0.02);
+    tilePane.setVgap(getScene().getHeight()*0.02);
 
     String imageDirectory = "src/main/resources/oogasalad/dinosaur/";
     List<Image> images = TemporaryImageLoader.loadImages(imageDirectory);
     // Create sprite buttons
     for (Image image : images) {
-      tilePane.getChildren().add(new BuilderSpriteOptionButton(image, this.getWidth()*0.12, this.getHeight()*0.12));
+      tilePane.getChildren().add(new BuilderSpriteOptionButton(image, getScene().getWidth()*0.12, getScene().getHeight()*0.12));
     }
 
     // Wrap the TilePane in a ScrollPane.
     ScrollPane spriteScrollPane = new ScrollPane(tilePane);
-    spriteScrollPane.setPrefHeight(this.getHeight()*0.25);
-    spriteScrollPane.setPrefWidth(this.getWidth()*0.45);
+    spriteScrollPane.setPrefHeight(getScene().getHeight()*0.25);
+    spriteScrollPane.setPrefWidth(getScene().getWidth()*0.45);
     spriteScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // Disable horizontal scrolling
     spriteScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS); // Enable vertical scrolling
 
     return spriteScrollPane;
-  }
-
-  private void renderInitialFrame(GraphicsContext gc, GameScene gameScene) {
-    gameObjectRenderer.render(gc, gameScene);
   }
 }
