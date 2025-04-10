@@ -8,6 +8,7 @@ import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.parser.GameParser;
 import oogasalad.view.gui.Gui;
 import oogasalad.view.player.dinosaur.DinosaurGameScene;
+import oogasalad.view.player.main.MainGameScene;
 
 /**
  * Displays the game using a GUI canvas inside a JavaFX scene
@@ -27,11 +28,10 @@ public class GamePlayerScene extends ViewScene {
     Game game = new Game();
     Gui gui = new Gui(game);
 
-    GameScene scene = switch (gameName) {
-      case "Dino Game" -> new DinosaurGameScene("Dino");
-      default -> new DinosaurGameScene("Default");
-    };
+    GameScene scene = new DinosaurGameScene("Dino");
+    GameScene main = new MainGameScene("main");
 
+    game.addScene(main);
     game.addScene(scene);
     game.changeScene(scene.getName());
 
