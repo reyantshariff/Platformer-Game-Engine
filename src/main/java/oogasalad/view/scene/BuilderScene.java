@@ -24,9 +24,9 @@ import org.apache.logging.log4j.Logger;
  * BuilderView is the main view for the level editor
  */
 
-public class BuilderView extends ViewScene {
+public class BuilderScene extends ViewScene {
 
-  private static final Logger logger = LogManager.getLogger(BuilderView.class);
+  private static final Logger logger = LogManager.getLogger(BuilderScene.class);
 
   private final BorderPane myWindow;
   private Canvas myGameCanvas;
@@ -39,7 +39,7 @@ public class BuilderView extends ViewScene {
    * Constructor for BuilderView
    * the height of the window
    */
-  public BuilderView(MainViewManager manager) {
+  public BuilderScene(MainViewManager manager) {
     // Create the BorderPane as the root
     super(new BorderPane(), 1280, 720);
     myWindow = (BorderPane) getScene().getRoot();

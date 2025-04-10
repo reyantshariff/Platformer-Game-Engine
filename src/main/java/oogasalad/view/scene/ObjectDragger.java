@@ -19,7 +19,7 @@ public class ObjectDragger {
 
   private final Canvas canvas;
   private final Builder builder;
-  private final BuilderView builderView;
+  private final BuilderScene builderScene;
   private final GameScene gameScene;
   private final GameObjectRenderer renderer;
 
@@ -27,10 +27,10 @@ public class ObjectDragger {
   private double dragOffsetX = 0;
   private double dragOffsetY = 0;
 
-  public ObjectDragger(Canvas canvas, Builder builder, BuilderView builderView, GameScene gameScene, GameObjectRenderer renderer) {
+  public ObjectDragger(Canvas canvas, Builder builder, BuilderScene builderScene, GameScene gameScene, GameObjectRenderer renderer) {
     this.canvas = canvas;
     this.builder = builder;
-    this.builderView = builderView;
+    this.builderScene = builderScene;
     this.gameScene = gameScene;
     this.renderer = renderer;
     setupListeners();
@@ -91,7 +91,7 @@ public class ObjectDragger {
       }
     }
 
-    builderView.updateGamePreview();  // refresh all sprite visuals in the canvas
+    builderScene.updateGamePreview();  // refresh all sprite visuals in the canvas
   }
 
   private void handleDragged(MouseEvent e) {
@@ -102,7 +102,7 @@ public class ObjectDragger {
       renderer.render(canvas.getGraphicsContext2D(), gameScene);
     }
 
-    builderView.updateGamePreview();  // refresh all sprite visuals in the canvas
+    builderScene.updateGamePreview();  // refresh all sprite visuals in the canvas
   }
 
   private void handleReleased(MouseEvent e) {
@@ -112,6 +112,6 @@ public class ObjectDragger {
       renderer.render(canvas.getGraphicsContext2D(), gameScene);
     }
 
-    builderView.updateGamePreview();  // refresh all sprite visuals in the canvas
+    builderScene.updateGamePreview();  // refresh all sprite visuals in the canvas
   }
 }
