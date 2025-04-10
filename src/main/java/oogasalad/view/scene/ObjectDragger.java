@@ -85,9 +85,7 @@ public class ObjectDragger {
     if (dragging && builder.objectIsSelected()) {
       double newX = e.getX() - dragOffsetX;
       double newY = e.getY() - dragOffsetY;
-      GameObject selected = builder.getSelectedObject();
-      selected.getComponent(Transform.class).setX(newX);
-      selected.getComponent(Transform.class).setY(newY);
+      builder.moveObject(newX, newY);
       renderer.render(canvas.getGraphicsContext2D(), gameScene);
     }
 

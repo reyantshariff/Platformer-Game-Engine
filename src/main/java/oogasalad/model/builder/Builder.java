@@ -162,6 +162,15 @@ public class Builder {
     return selectedObject != null;
   }
 
+  public void moveObject(double x, double y)
+  {
+    if (selectedObject != null && selectedObject.hasComponent(Transform.class))
+    {
+      selectedObject.getComponent(Transform.class).setX(x);
+      selectedObject.getComponent(Transform.class).setY(y);
+    }
+  }
+
   /**
    *  Deletes selected game object from the screen
    */
@@ -171,9 +180,5 @@ public class Builder {
       game.getCurrentScene().unregisterObject(selectedObject);
       undoStack.push(new DeleteObjectAction(game, selectedObject));
     }
-  }
-
-  public GameObject getSelectedObject() {
-    return selectedObject;
   }
 }
