@@ -34,6 +34,10 @@ public class BuilderScene extends ViewScene {
   public static final double GAME_PREVIEW_WIDTH = 1000;
   public static final double GAME_PREVIEW_HEIGHT = 800;
 
+  public static final double ZOOM_FACTOR = 1.05;
+  public static final double MAX_ZOOM = 4.0;
+  public static final double MIN_ZOOM = 0.25;
+
   private static final Logger logger = LogManager.getLogger(BuilderScene.class);
 
   private final BorderPane myWindow;
@@ -152,12 +156,13 @@ public class BuilderScene extends ViewScene {
     // Add zoom handling
     levelViewScrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
       // Only process the event for zooming, ignore its vertical scrolling aspect.
-      double zoomFactor = 1.1;
       double currentScale = canvasGroup.getScaleX(); // assuming uniform scale
       if (event.getDeltaY() < 0) {
-        currentScale /= zoomFactor;
+        if (currentScale / ZOOM_FACTOR >= MIN_ZOOM)
+          currentScale /= ZOOM_FACTOR;
       } else {
-        currentScale *= zoomFactor;
+        if (currentScale * ZOOM_FACTOR <= MAX_ZOOM)
+          currentScale *= ZOOM_FACTOR;
       }
       canvasGroup.setScaleX(currentScale);
       canvasGroup.setScaleY(currentScale);
