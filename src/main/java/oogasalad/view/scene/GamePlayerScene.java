@@ -13,13 +13,14 @@ import oogasalad.view.player.main.MainGameScene;
  * Displays the game using a GUI canvas inside a JavaFX scene
  */
 public class GamePlayerScene extends ViewScene {
-  Gui gui;
+
+  private final Gui gui;
 
   /**
    * Constructs a new GamePlayerScene to display a game within a JavaFX scene.
    *
-   * @param manager   The MainViewManager used to switch scenes.
-   * @param gameName  The name of the game to be displayed.
+   * @param manager  The MainViewManager used to switch scenes.
+   * @param gameName The name of the game to be displayed.
    */
   public GamePlayerScene(MainViewManager manager, String gameName) {
     super(new StackPane(), 1280, 720);
