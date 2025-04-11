@@ -129,12 +129,25 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
   }
 
   private Object extractFieldValue(Class<?> fieldType, JsonNode valueNode) {
+    // Check if the field is a List (for example, a List<String>)
+    if (List.class.isAssignableFrom(fieldType)) {
+      // Create a list and populate it by iterating over the array node.
+      List<String> list = new ArrayList<>();
+      if (valueNode.isArray()) {
+        for (JsonNode element : valueNode) {
+          list.add(element.asText());
+        }
+      }
+      return list;
+    }
+
     Function<JsonNode, Object> extractor = EXTRACTORS.get(fieldType);
     if (extractor == null) {
       throw new IllegalArgumentException("Unsupported field type: " + fieldType);
     }
     return extractor.apply(valueNode);
   }
+
 
   /**
    * Serializes a gameComponent into a JSON node

@@ -8,10 +8,8 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.TreeTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.KeyCode;
 import javafx.scene.text.Text;
 import oogasalad.model.ResourceBundles;
 import oogasalad.model.engine.base.architecture.GameComponent;
@@ -28,6 +26,7 @@ import org.apache.logging.log4j.Logger;
  */
 
 public class GameObjectRenderer {
+
   private static final Logger logger = LogManager.getLogger(GameObjectRenderer.class);
   private final Scene myScene;
   private double relativeX;
@@ -35,7 +34,7 @@ public class GameObjectRenderer {
 
   /**
    * Constructor for GameObjectRenderer
-   * 
+   *
    * @param scene the scene to render the game objects in
    */
   public GameObjectRenderer(Scene scene) {
@@ -43,30 +42,48 @@ public class GameObjectRenderer {
   }
 
   /**
-   * Renders the game objects in the given scene onto the canvas.
+   * For scenes that have a camera: renders the game objects in the given scene onto the canvas
    *
-   * @param gc The graphics context of the canvas.
+   * @param gc    The graphics context of the canvas.
    * @param scene The game scene to render.
    */
-  public void render(GraphicsContext gc, GameScene scene) {
-    String baseName = "oogasalad.gui.general";
-    Integer windowX = ResourceBundles.getInt(baseName, "windowX");
-    Integer windowY = ResourceBundles.getInt(baseName, "windowY");
-    Double windowWidth = ResourceBundles.getDouble(baseName, "windowWidth");
-    Double windowHeight = ResourceBundles.getDouble(baseName, "windowHeight");
-    gc.clearRect(windowX, windowY, windowWidth, windowHeight);
-
+  public void renderWithCamera(GraphicsContext gc, GameScene scene) {
     try {
       Camera camera = scene.getCamera();
       Transform cameraTransform = camera.getComponent(Transform.class);
-      Collection<GameObject> allObjects = scene.getAllObjectsInView();
       relativeX = cameraTransform.getX();
       relativeY = cameraTransform.getY();
-      for (GameObject obj : allObjects) {
-        renderGameObject(gc, obj);
-      }
     } catch (NullPointerException | IllegalArgumentException e) {
       logger.warn("No camera found in scene");
+    }
+
+    renderWithoutCamera(gc, scene);
+  }
+
+  /**
+   * For scenes WITHOUT a camera: renders the game objects in the given scene onto the canvas.
+   *
+   * @param gc    The graphics context of the canvas.
+   * @param scene The game scene to render.
+   */
+  public void renderWithoutCamera(GraphicsContext gc, GameScene scene) {
+    String baseName = "oogasalad.gui.general";
+    int windowX = ResourceBundles.getInt(baseName, "windowX");
+    int windowY = ResourceBundles.getInt(baseName, "windowY");
+    double windowWidth = ResourceBundles.getDouble(baseName, "windowWidth");
+    double windowHeight = ResourceBundles.getDouble(baseName, "windowHeight");
+    gc.clearRect(windowX, windowY, windowWidth, windowHeight);
+
+    Collection<GameObject> objects;
+    try {
+      scene.getCamera(); // get only objects in view of camera if camera exists
+      objects = scene.getAllObjectsInView();
+    } catch (NullPointerException | IllegalArgumentException e) {
+      objects = scene.getAllObjects(); // if no camera component in scene, get all objects in scene
+    }
+
+    for (GameObject obj : objects) {
+      renderGameObject(gc, obj);
     }
   }
 
@@ -81,8 +98,9 @@ public class GameObjectRenderer {
         .entrySet()) {
       Class<? extends GameComponent> clazz = entry.getKey();
 
-      if (hasSprite && clazz.equals(Transform.class))
+      if (hasSprite && clazz.equals(Transform.class)) {
         continue;
+      }
 
       GameComponent component = entry.getValue();
       try {
@@ -100,9 +118,6 @@ public class GameObjectRenderer {
 
   /**
    * renders a javaFX Text object
-   *
-   * @param component
-   * @param gc
    */
   private void renderTextComponent(Text component, GraphicsContext gc) {
     javafx.scene.text.Text text = new javafx.scene.text.Text(component.getText());
@@ -113,9 +128,6 @@ public class GameObjectRenderer {
 
   /**
    * renders a javaFX Image object
-   *
-   * @param component
-   * @param gc
    */
   private void renderSpriteRenderer(SpriteRenderer component, GraphicsContext gc) {
     GameObject obj = component.getParent();
@@ -125,7 +137,7 @@ public class GameObjectRenderer {
       Image image = new Image(component.getImagePath());
       gc.drawImage(image, transform.getX() + component.getOffsetX() - relativeX,
           transform.getY() + component.getOffsetY() - relativeY, transform.getScaleX(), // width
-                                                                                        // (scale)
+          // (scale)
           transform.getScaleY() // height (scale)
       );
     } catch (Exception e) {
@@ -135,9 +147,6 @@ public class GameObjectRenderer {
 
   /**
    * renders a javafx Rectangle object
-   *
-   * @param component
-   * @param gc
    */
   private void renderTransform(Transform component, GraphicsContext gc) {
     gc.fillRect(component.getX() - relativeX, component.getY() - relativeY, component.getScaleX(),
@@ -145,6 +154,11 @@ public class GameObjectRenderer {
   }
 
   private void applyStyleSheet(Node node, String styleSheet) {
+    if (myScene == null) {
+      logger.error("Could not apply stylesheet: scene is null.");
+      return;
+    }
+
     node.getStyleClass().add(styleSheet);
     Group tempRoot = new Group(node);
     Scene tempScene = new Scene(tempRoot);

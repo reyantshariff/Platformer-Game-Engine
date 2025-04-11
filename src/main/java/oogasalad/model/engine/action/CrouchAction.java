@@ -1,5 +1,6 @@
 package oogasalad.model.engine.action;
 
+import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.behavior.BehaviorAction;
 import oogasalad.model.engine.base.enumerate.ComponentTag;
 import oogasalad.model.engine.component.Transform;

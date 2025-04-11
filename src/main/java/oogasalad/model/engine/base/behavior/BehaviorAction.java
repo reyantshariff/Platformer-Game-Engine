@@ -27,6 +27,13 @@ public abstract class BehaviorAction<T> implements Serializable {
   }
 
   /**
+   * @return - Parent behavior
+   */
+  public Behavior getBehavior() {
+    return behavior;
+  }
+
+  /**
    * Get the parameter of the constraint. This is used to get the parameter that the constraint will
    */
   public final T getParameter() {

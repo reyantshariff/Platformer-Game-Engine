@@ -54,7 +54,7 @@ public class GamePlayerScene extends ViewScene {
 
     Button returnButton = new Button("Main Menu");
     returnButton.setOnAction(e -> {
-      gui.stop();
+      deactivate();
       manager.switchToMainMenu();
     });
 
@@ -63,5 +63,17 @@ public class GamePlayerScene extends ViewScene {
 
     root.getChildren().addAll(gui.getCanvas(), returnButton);
     gui.getCanvas().requestFocus();
+  }
+
+  /**
+   * Deactivates the game engine for this scene.
+   */
+  @Override
+  public void deactivate() {
+    try {
+      gui.stop();
+    } catch (Exception e) {
+      throw new RuntimeException("Error deactivating scene: " + e.getMessage());
+    }
   }
 }
