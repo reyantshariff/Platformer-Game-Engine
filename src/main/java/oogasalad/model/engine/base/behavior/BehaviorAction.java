@@ -94,6 +94,12 @@ public abstract class BehaviorAction<T> implements Serializable {
     // NOTE: Override this method if needed
   }
 
+  /**
+   * Returns whether the action is equal to another action
+   * 
+   * @param other the other action to compare to
+   * @return true if the actions are equal, false otherwise
+   */
   public boolean equals(BehaviorAction<?> other) {
     return this.getClass().equals(other.getClass());
   }

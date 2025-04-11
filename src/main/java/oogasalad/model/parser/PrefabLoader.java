@@ -9,6 +9,13 @@ import java.util.List;
 import oogasalad.model.engine.base.architecture.GameObject;
 import static oogasalad.model.config.GameConfig.LOGGER;
 
+/**
+ * PrefabLoader is responsible for loading prefab JSON files from a specified directory.
+ * It parses the JSON files and creates GameObject instances based on the parsed data.
+ * This class is used to load prefabs that can be placed in the game.
+ *
+ */
+
 public class PrefabLoader {
 
   // Directory where prefab JSON files are located

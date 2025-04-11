@@ -60,6 +60,9 @@ public class JsonParser implements Parser<Game> {
     return myGame = GAME_PARSER.parse(rootNode);
   }
 
+  /**
+   * @return The game object that was parsed
+   */
   public Game getGame() {
     return myGame;
   }

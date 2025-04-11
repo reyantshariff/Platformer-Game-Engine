@@ -30,6 +30,9 @@ public interface Serializable {
     return serializedFields;
   }
 
+  /**
+   * Get the field annotated @SerializableField in the parent class.
+   */
   default SerializedField<?> getParentSerializableField() {
     Class<?> superClass = this.getClass().getSuperclass();
 
