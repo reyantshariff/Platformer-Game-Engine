@@ -51,7 +51,7 @@ public class Camera extends GameComponent {
         }
       }
       return objectsInView;
-    } catch (NullPointerException e) {
+    } catch (IllegalArgumentException | NullPointerException e) {
       LOGGER.warn("Missing GameScene or Transform Component");
       return new ArrayList<>();
     }

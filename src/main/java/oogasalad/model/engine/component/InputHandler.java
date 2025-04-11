@@ -29,9 +29,28 @@ public final class InputHandler extends GameComponent {
   }
 
   /**
+   * @return - Current keys being pressed
+   */
+  public Set<Integer> getPressedKeys() {
+    return currentKeys;
+  }
+
+  /**
+   * Method for testing functinoality of inputHandler without having to set up
+   * an entire game
+   *
+   * @param pressedKeys - Keys to be pressed
+   */
+  void setPressedKeys(Set<Integer> pressedKeys) {
+    this.currentKeys.clear();
+    this.currentKeys.addAll(pressedKeys);
+  }
+
+  /**
    * Returns true if the key was just pressed this frame.
    */
   public boolean isKeyPressed(KeyCode keyCode) {
+    if (keyCode == null) return false;
     return currentKeys.contains(keyCode.getValue()) && !previousKeys.contains(keyCode.getValue());
   }
 
@@ -39,6 +58,7 @@ public final class InputHandler extends GameComponent {
    * Returns true if the key is being held down.
    */
   public boolean isKeyHold(KeyCode keyCode) {
+    if (keyCode == null) return false;
     return currentKeys.contains(keyCode.getValue());
   }
 
@@ -46,6 +66,15 @@ public final class InputHandler extends GameComponent {
    * Returns true if the key was just released this frame.
    */
   public boolean isKeyReleased(KeyCode keyCode) {
+    if (keyCode == null) return false;
     return !currentKeys.contains(keyCode.getValue()) && previousKeys.contains(keyCode.getValue());
+  }
+
+  /**
+   * Method to clear all previous and current keys (inputs)
+   */
+  public void resetInputState() {
+    currentKeys.clear();
+    previousKeys.clear();
   }
 }
