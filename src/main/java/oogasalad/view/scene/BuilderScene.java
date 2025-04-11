@@ -24,6 +24,7 @@ import oogasalad.view.scene.BuilderUserControl.ObjectDragger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+
 /**
  * BuilderView is the main view for the level editor
  */
@@ -131,7 +132,27 @@ public class BuilderScene extends ViewScene {
   private HBox createBottomPanel() {
     HBox bottomPanel = new HBox();
     bottomPanel.setSpacing(10);
-    bottomPanel.getChildren().add(createAddSpriteButtonOptions());
+
+    Button undoButton = new Button("Undo");
+    undoButton.setOnAction(event -> {
+      builder.undoLastAction();
+      updateGamePreview();
+    });
+
+    Button redoButton = new Button("Redo");
+    redoButton.setOnAction(event -> {
+      builder.redoLastAction();
+      updateGamePreview();
+    });
+
+    Button deleteButton = new Button("Delete");
+    deleteButton.setOnAction(event -> {
+      builder.deleteSelectedObject();
+      updateGamePreview();
+    });
+
+    bottomPanel.getChildren().addAll(createAddSpriteButtonOptions(), undoButton, redoButton, deleteButton);
+
     return bottomPanel;
   }
 
@@ -183,6 +204,7 @@ public class BuilderScene extends ViewScene {
     return spriteScrollPane;
   }
 
+
   private ScrollPane createSpriteButtonScrollPane(double width, double height, Pane contents) {
     ScrollPane spriteScrollPane = new ScrollPane(contents);
     spriteScrollPane.setPrefWidth(width);
@@ -219,4 +241,5 @@ public class BuilderScene extends ViewScene {
     }
     return null;
   }
+
 }

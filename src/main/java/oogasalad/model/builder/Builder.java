@@ -23,6 +23,8 @@ public class Builder {
   private Game game; //Front end should pass a list of selected objects to the backend.
   private boolean fileSaved = false;
   private GameScene currentScene;
+  private double selectedObjectprevX;
+  private double selectedObjectprevY;
 
   //Add Backend boolean to keep track of whether user has saved Game.
   /**
@@ -109,6 +111,11 @@ public class Builder {
    */
   public void selectExistingObject(GameObject object)
   {
+    if (object.hasComponent(Transform.class))
+    {
+      selectedObjectprevX = object.getComponent(Transform.class).getX();
+      selectedObjectprevY = object.getComponent(Transform.class).getY();
+    }
     selectedObject=object;
   }
 
@@ -152,7 +159,7 @@ public class Builder {
    */
   public void placeObject(double x, double y) {
     if (selectedObject != null && selectedObject.hasComponent(Transform.class)) {
-      undoStack.push(new MoveObjectAction(selectedObject, selectedObject.getComponent(Transform.class).getX(), selectedObject.getComponent(Transform.class).getY(), x, y));
+      undoStack.push(new MoveObjectAction(selectedObject, selectedObjectprevX, selectedObjectprevY, x, y));
       selectedObject.getComponent(Transform.class).setX(x);
       selectedObject.getComponent(Transform.class).setY(y);
     }

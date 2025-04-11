@@ -1,4 +1,4 @@
-package oogasalad.view.scene.BuilderUI;
+package oogasalad.view.scene.BuilderUserControl;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseEvent;
@@ -28,6 +28,9 @@ public class ObjectDragger {
   private boolean dragging = false;
   private double dragOffsetX = 0;
   private double dragOffsetY = 0;
+
+  private double oldX = 0;
+  private double oldY = 0;
 
   public ObjectDragger(Canvas canvas, Builder builder, BuilderScene builderScene, GameObjectRenderer renderer) {
     this.canvas = canvas;
@@ -75,7 +78,8 @@ public class ObjectDragger {
    * */
 
   private void handlePressed(MouseEvent e) {
-    double x = e.getX(), y = e.getY();
+    oldX = e.getX();
+    oldY = e.getY();
     List<GameObject> objects = new ArrayList<>(gameScene.getAllObjects());
     objects = removeCamerasFromObjects(objects);  // FOR THE BUILDER: remove all cameras
 
@@ -84,10 +88,10 @@ public class ObjectDragger {
       Transform t = obj.getComponent(Transform.class);
       double w = obj.getComponent(Transform.class).getScaleX(), h = obj.getComponent(Transform.class).getScaleY();
 
-      if (x >= t.getX() && x <= t.getX() + w && y >= t.getY() && y <= t.getY() + h) {
+      if (oldX >= t.getX() && oldX <= t.getX() + w && oldY >= t.getY() && oldY <= t.getY() + h) {
         builder.selectExistingObject(obj);
-        dragOffsetX = x - t.getX();
-        dragOffsetY = y - t.getY();
+        dragOffsetX = oldX - t.getX();
+        dragOffsetY = oldY - t.getY();
         dragging = true;
         break;
       }
@@ -110,6 +114,9 @@ public class ObjectDragger {
   private void handleReleased(MouseEvent e) {
     if (isInCanvas(e) && dragging && builder.objectIsSelected()) {
       dragging = false;
+      double newX = e.getX() - dragOffsetX;
+      double newY = e.getY() - dragOffsetY;
+      builder.placeObject(newX, newY);
       renderer.renderWithoutCamera(canvas.getGraphicsContext2D(), gameScene);
     }
 
