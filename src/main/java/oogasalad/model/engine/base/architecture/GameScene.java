@@ -26,6 +26,8 @@ public class GameScene {
 
   private static final String NO_CAMERA_KEY = "noCamera";
   private static final String CAST_FAILED_KEY = "castFailed";
+  private static final String GAME_OBJECT = "GameObject";
+  private static final String CAMERA = "Camera";
 
   /**
    * Constructor for GameScene
@@ -127,9 +129,9 @@ public class GameScene {
       throw new IllegalArgumentException(GameConfig.getText(NO_CAMERA_KEY));
     } catch (ClassCastException e) {
       LOGGER
-          .error(MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), "GameObject", "Camera"));
+          .error(MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), GAME_OBJECT, CAMERA));
       throw new IllegalArgumentException(
-          MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), "GameObject", "Camera"));
+          MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), GAME_OBJECT, CAMERA));
     }
   }
 
@@ -146,9 +148,9 @@ public class GameScene {
       throw new IllegalArgumentException(GameConfig.getText(NO_CAMERA_KEY));
     } catch (ClassCastException e) {
       LOGGER
-          .error(MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), "GameObject", "Camera"));
+          .error(MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), GAME_OBJECT, CAMERA));
       throw new IllegalArgumentException(
-          MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), "GameObject", "Camera"));
+          MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), GAME_OBJECT, CAMERA));
     }
   }
 
