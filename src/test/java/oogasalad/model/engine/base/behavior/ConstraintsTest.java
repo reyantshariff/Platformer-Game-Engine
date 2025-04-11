@@ -8,10 +8,12 @@ import oogasalad.model.engine.component.BehaviorController;
 import oogasalad.model.engine.component.Collider;
 import oogasalad.model.engine.component.Transform;
 import oogasalad.model.engine.base.architecture.GameScene;
+import oogasalad.model.engine.base.architecture.Game;
 
 
 public abstract class ConstraintsTest<T extends BehaviorConstraint> {
 
+    private Game game;
     private GameScene scene;
     private GameObject obj1;
     private GameObject obj2;
@@ -38,6 +40,8 @@ public abstract class ConstraintsTest<T extends BehaviorConstraint> {
         scene = new GameScene("Scene");
         scene.registerObject(obj1);
         scene.registerObject(obj2);
+        game = new Game();
+        game.addScene(scene);
         customSetUp();
     }
 
@@ -65,6 +69,10 @@ public abstract class ConstraintsTest<T extends BehaviorConstraint> {
 
     protected void setConstraint(T constraint) {
         this.constraint = constraint;
+    }
+
+    protected Game getGame() {
+        return game;
     }
 
     protected void step() {
