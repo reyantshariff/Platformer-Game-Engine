@@ -118,7 +118,7 @@ class BehaviorControllerTest {
 
     Behavior behavior = controller.addBehavior();
     behavior.addAction(action);
-    behavior.addConstraint(new TestConstraint(false)); // fail the constraint
+    behavior.addConstraint(new TestConstraint(false));
 
     controller.update(1.0);
 
@@ -130,7 +130,7 @@ class BehaviorControllerTest {
     FlagAction action = new FlagAction();
 
     Behavior behavior = controller.addBehavior();
-    behavior.addAction(action); // no constraint
+    behavior.addAction(action);
 
     controller.update(1.0);
 
@@ -142,13 +142,35 @@ class BehaviorControllerTest {
     Behavior behavior = new Behavior("shared");
     behavior.setBehaviorController(controller);
     controller.addBehavior(behavior);
-    controller.addBehavior(behavior); // duplicate add
+    controller.addBehavior(behavior);
 
     FlagAction action = new FlagAction();
     behavior.addAction(action);
 
     controller.update(1.0);
 
-    assertTrue(action.wasExecuted()); // but only once
+    assertTrue(action.wasExecuted());
+  }
+
+  @Test
+  void awake_WithPreAttachedBehavior_InitializesBehaviorControllerAndAwakens() {
+    // Setup flag to track if awake was called
+    class AwakeTrackingBehavior extends Behavior {
+      boolean awakened = false;
+
+      @Override
+      public void awake() {
+        awakened = true;
+      }
+    }
+
+    AwakeTrackingBehavior behavior = new AwakeTrackingBehavior();
+    controller.addBehavior(behavior);
+
+    // Now manually call awake
+    controller.awake();
+
+    assertTrue(behavior.awakened, "Behavior.awake() should have been called");
+    assertEquals(controller, behavior.getController(), "BehaviorController should be set");
   }
 }
