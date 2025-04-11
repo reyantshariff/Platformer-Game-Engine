@@ -96,9 +96,7 @@ class FollowerTest {
     Follower follower = followerObj.addComponent(Follower.class);
     follower.setFollowObjectName("Target");
 
-    assertDoesNotThrow(() -> {
-      scene.registerObject(followerObj);
-    });
+    assertDoesNotThrow(() -> scene.registerObject(followerObj));
   }
 
   @Test
@@ -112,9 +110,8 @@ class FollowerTest {
     Follower follower = followerObj.addComponent(Follower.class);
     follower.setFollowObjectName("NonExistent");
 
-    RuntimeException ex = assertThrows(RuntimeException.class, () -> {
-      scene.registerObject(followerObj);
-    });
+    RuntimeException ex = assertThrows(RuntimeException.class, () -> scene.registerObject(followerObj));
+
 
     assertTrue(ex.getMessage().contains("No such Object with name NonExistent"));
   }
