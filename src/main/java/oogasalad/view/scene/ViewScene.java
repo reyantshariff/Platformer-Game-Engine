@@ -12,7 +12,7 @@ import oogasalad.view.gui.GameObjectRenderer;
 public abstract class ViewScene {
 
   private final Scene myScene;
-  protected final GameObjectRenderer myObjectRenderer;
+  private final GameObjectRenderer myObjectRenderer;
 
   /**
    * Template for a program JavaFX window using a GameObjectRenderer
@@ -41,6 +41,15 @@ public abstract class ViewScene {
    * Run all necessary actions when exiting a scene. Should be implemented by subclasses.
    */
   public void deactivate() {
+  }
+
+  /**
+   * Return the GameObjectRenderer for this scene
+   *
+   * @return GameObjectRenderer object
+   */
+  protected GameObjectRenderer getObjectRenderer() {
+    return myObjectRenderer;
   }
 
 }

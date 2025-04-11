@@ -117,7 +117,7 @@ public class BuilderScene extends ViewScene {
   public void updateGamePreview() {
     GraphicsContext gc = myGameCanvas.getGraphicsContext2D();
     gc.clearRect(0, 0, myGameCanvas.getWidth(), myGameCanvas.getHeight());
-    myObjectRenderer.renderWithoutCamera(gc, gameScene);
+    getObjectRenderer().renderWithoutCamera(gc, gameScene);
   }
 
   private ScrollPane createGamePreview() {
@@ -158,7 +158,7 @@ public class BuilderScene extends ViewScene {
     });
 
     ObjectDragger dragger = new ObjectDragger(myGameCanvas, builder, this, gameScene,
-        myObjectRenderer);
+        getObjectRenderer());
 
     // Add zoom handling
     levelViewScrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
