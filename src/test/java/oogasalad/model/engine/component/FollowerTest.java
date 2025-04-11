@@ -29,15 +29,28 @@ class FollowerTest {
     GameObject followerObj = new GameObject("Follower", "tag");
     followerTransform = followerObj.addComponent(Transform.class);
     follower = followerObj.addComponent(Follower.class);
+    follower.setFollowObjectName("Target");
     scene.registerObject(followerObj);
 
-    follower.awake();
   }
 
   @Test
   void setFollowObject_ValidObject_ObjectStored() {
     follower.setFollowObject(targetObj);
     assertEquals(targetObj, follower.getFollowObject());
+  }
+
+  @Test
+  void getFollowObjectName_NameSetBeforeAwake_ReturnsCorrectName() {
+    Follower follower = new Follower();
+    follower.setFollowObjectName("Target");
+    assertEquals("Target", follower.getFollowObjectName());
+  }
+
+  @Test
+  void getFollowObjectName_NameNeverSet_ReturnsNull() {
+    Follower follower = new Follower();
+    assertNull(follower.getFollowObjectName());
   }
 
   @Test
@@ -67,6 +80,45 @@ class FollowerTest {
     RuntimeException ex = assertThrows(RuntimeException.class, () -> follower.update(0.016));
     assertTrue(ex.getMessage().contains("Missing Transform Component"));
   }
+
+  @Test
+  void awake_ValidFollowObjectName_SetsFollowObjectWithoutError() {
+    Game game = new Game();
+    GameScene scene = new GameScene("FollowerScene");
+    game.addScene(scene);
+
+    GameObject target = new GameObject("Target", "tag");
+    target.addComponent(Transform.class);
+    scene.registerObject(target);
+
+    GameObject followerObj = new GameObject("Follower", "tag");
+    followerObj.addComponent(Transform.class);
+    Follower follower = followerObj.addComponent(Follower.class);
+    follower.setFollowObjectName("Target");
+
+    assertDoesNotThrow(() -> {
+      scene.registerObject(followerObj);
+    });
+  }
+
+  @Test
+  void awake_InvalidFollowObjectName_ThrowsRuntimeException() {
+    Game game = new Game();
+    GameScene scene = new GameScene("FollowerScene");
+    game.addScene(scene);
+
+    GameObject followerObj = new GameObject("Follower", "tag");
+    followerObj.addComponent(Transform.class);
+    Follower follower = followerObj.addComponent(Follower.class);
+    follower.setFollowObjectName("NonExistent");
+
+    RuntimeException ex = assertThrows(RuntimeException.class, () -> {
+      scene.registerObject(followerObj);
+    });
+
+    assertTrue(ex.getMessage().contains("No such Object with name NonExistent"));
+  }
+
 
   @Test
   void componentTag_Always_ReturnsTransformTag() {

@@ -39,12 +39,7 @@ public class Follower extends GameComponent {
   @Override
   public void awake() {
     myTransform = getParent().getComponent(Transform.class);
-    try {
-      followObject = getParent().getScene().getObject(followObjectName);
-    } catch (NullPointerException e) {
-      LOGGER.error("Missing GameObject with name: " + followObjectName);
-      throw new RuntimeException("Missing GameObject with name: " + followObjectName, e);
-    }
+    followObject = getParent().getScene().getObject(followObjectName);
   }
 
   @Override
