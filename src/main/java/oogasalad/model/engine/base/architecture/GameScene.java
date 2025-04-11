@@ -179,37 +179,48 @@ public class GameScene {
    */
   public final void step(double deltaTime) {
 
-    if (awakeList.contains(getCamera().getParent())) {
-      getCamera().getParent().wakeUp();
-      awakeList.remove(getCamera().getParent());
-    }
+    wakeObject(getCamera().getParent());
 
-    // Update with the following sequence
-    // 1. Handle all the subscribed events
-    while (!subscribedEvents.isEmpty()) {
-      subscribedEvents.poll().run();
-    }
+    runSubscribedEvents();
 
     // 2. Get all objects in view
     Collection<GameObject> objectsInView = getAllObjectsInView();
 
     // 3. Update the components of objects in view based on the order
-    for (ComponentTag order : ComponentTag.values()) {
-      if (order == ComponentTag.NONE)
-        continue;
-      for (GameObject object : objectsInView) {
-        if (awakeList.contains(object)) {
-          object.wakeUp();
-          awakeList.remove(object);
-        }
-        for (GameComponent component : object.getComponents(order)) {
-          component.update(deltaTime);
-        }
-      }
-    }
+    updateComponents(objectsInView, deltaTime);
 
     // 4. Update the scene actions
     // TODO: Handle Change Scene Action Here
+  }
+
+  private void runSubscribedEvents() {
+    while (!subscribedEvents.isEmpty()) {
+      subscribedEvents.poll().run();
+    }
+  }
+
+  private void updateComponents(Collection<GameObject> objectsInView, double deltaTime) {
+    for (ComponentTag order : ComponentTag.values()) {
+      if (order == ComponentTag.NONE)
+        continue;
+        updateObjects(order, objectsInView, deltaTime);
+    }
+  }
+
+  private void updateObjects(ComponentTag order, Collection<GameObject> objectsInView, double deltaTime) {
+    for (GameObject object : objectsInView) {
+      wakeObject(object);
+      for (GameComponent component : object.getComponents(order)) {
+        component.update(deltaTime);
+      }
+    }
+  }
+
+  private void wakeObject(GameObject object) {
+    if (awakeList.contains(object)) {
+      object.wakeUp();
+      awakeList.remove(object);
+    }
   }
 
   /**
