@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import oogasalad.model.engine.component.Transform;
 
 
-public abstract class ConstraintsTest<T extends BehaviorConstraint> extends BehaviorTest {
+public abstract class ConstraintsTest<T extends BehaviorConstraint> extends BehaviorBaseTest {
     private T constraint;
 
     public abstract void customSetUp();
