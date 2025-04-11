@@ -20,6 +20,9 @@ import oogasalad.model.engine.base.serialization.SerializedField;
  */
 public class BehaviorParser implements Parser<Behavior> {
   private static final String NAME = "Name";
+  private static final String ACTIONS = "actions";
+  private static final String PARAMETER_TYPE = "parameterType";
+  private static final String CONSTRAINTS = "constraints";
   private static final String ACTION_CLASS_PATH = "oogasalad.model.engine.action.";
   private static final String CONSTRAINT_CLASS_PATH = "oogasalad.model.engine.constraint.";
 
@@ -50,14 +53,14 @@ public class BehaviorParser implements Parser<Behavior> {
              NoSuchMethodException e) {
       LOGGER.error("Could not instantiate Behavior class: {}",
           behaviorNode.get("Name").asText());
-      throw new ParsingException("Could not instantiate Behavior class.");
+      throw new ParsingException("Could not instantiate Behavior class." + e);
     }
   }
 
   private void parseActions(JsonNode behaviorNode, Behavior behaviorInstance)
       throws ParsingException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
-    if (behaviorNode.has("actions")) {
-      for (JsonNode actionNode : behaviorNode.get("actions")) {
+    if (behaviorNode.has(ACTIONS  )) {
+      for (JsonNode actionNode : behaviorNode.get(ACTIONS)) {
         Class<?> clazz;
         String aName = actionNode.get("name").asText();
         String aFullClassName = ACTION_CLASS_PATH + aName;
@@ -95,8 +98,8 @@ public class BehaviorParser implements Parser<Behavior> {
 
   private void parseConstraints(JsonNode behaviorNode, Behavior behaviorInstance)
       throws ParsingException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
-    if (behaviorNode.has("constraints")) {
-      for (JsonNode constraintNode : behaviorNode.get("constraints")) {
+    if (behaviorNode.has(CONSTRAINTS)) {
+      for (JsonNode constraintNode : behaviorNode.get(CONSTRAINTS)) {
         Class<?> clazz;
         String cName = constraintNode.get("name").asText();
         String cFullClassName = CONSTRAINT_CLASS_PATH + cName;
@@ -105,7 +108,7 @@ public class BehaviorParser implements Parser<Behavior> {
           clazz = Class.forName(cFullClassName);
         } catch (ClassNotFoundException e) {
           LOGGER.error("Could not find constraint class {}", cFullClassName);
-          throw new ParsingException("Invalid constraint class: " + cFullClassName);
+          throw new ParsingException("Invalid constraint class: " + cFullClassName + e);
         }
 
         createAndAddConstraint(behaviorInstance, constraintNode, clazz);
@@ -132,7 +135,8 @@ public class BehaviorParser implements Parser<Behavior> {
     behaviorInstance.addConstraint(constraint);
   }
 
-  private void setFieldFromValue(SerializedField<?> field, JsonNode valueNode, Class<?> type)      throws ParsingException {
+  private void setFieldFromValue(SerializedField<?> field, JsonNode valueNode, Class<?> type)
+      throws ParsingException {
     
     try {
       Object value;
@@ -175,11 +179,11 @@ public class BehaviorParser implements Parser<Behavior> {
 
   //unsure how to handle this without using switch
   private Class<?> getParameterType(JsonNode node, Class<?> defaultType) throws ParsingException {
-    if (!node.has("parameterType")) {
+    if (!node.has(PARAMETER_TYPE)) {
       return defaultType; 
     }
 
-    String typeName = node.get("parameterType").asText();
+    String typeName = node.get(PARAMETER_TYPE).asText();
     return switch (typeName) {
       case "KeyCode" -> oogasalad.model.engine.base.enumerate.KeyCode.class;
       case "String" -> String.class;

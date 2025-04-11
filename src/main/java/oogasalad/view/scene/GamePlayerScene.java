@@ -41,7 +41,7 @@ public class GamePlayerScene extends ViewScene {
       game = (Game) parser.parse(newNode);
 
     } catch (ParsingException e) {
-      throw new RuntimeException("Failed to parse game JSON file: " + e.getMessage(), e);
+      throw new IllegalStateException("Failed to parse game JSON file: " + e.getMessage(), e);
     }
 
     // Automatically activate the first available scene

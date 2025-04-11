@@ -18,7 +18,7 @@ import org.apache.logging.log4j.Level;
  * Author: Daniel Rodriguez-Florido
  */
 
-public class JsonParser implements Parser {
+public class JsonParser implements Parser<Game> {
 
   private static final String FILE_PATH = "./src/main/gameFiles/";
   private static final GameParser GAME_PARSER = new GameParser();
@@ -51,10 +51,10 @@ public class JsonParser implements Parser {
       rootNode = mapper.readTree(new File(fileName));
     } catch (FileNotFoundException e) {
       LOGGER.error("Could not parse file {}. File was not found.", fileName);
-      throw new ParsingException("Could not parse file " + fileName);
+      throw new ParsingException("Could not parse file " + fileName, e);
     } catch (IOException e) {
       LOGGER.error("Could not parse file {}. Is a file corrupted?", fileName);
-      throw new ParsingException("Could not parse file " + fileName);
+      throw new ParsingException("Could not parse file " + fileName, e);
     }
 
     return myGame = GAME_PARSER.parse(rootNode);
@@ -65,13 +65,12 @@ public class JsonParser implements Parser {
   }
 
   /**
-   * @param data - the Game object that we wish to write to JSON
+   * @param game - the Game object that we wish to write to JSON
    * @return JsonNode of the game, indicating success
    * @throws IOException - exception for failed input or output
    */
   @Override
-  public JsonNode write(Object data) throws IOException {
-    Game game = (Game) data;
+  public JsonNode write(Game game) throws IOException {
     JsonNode gameNode = null;
 
     try {
@@ -85,7 +84,6 @@ public class JsonParser implements Parser {
     handleNullGameNode(gameNode);
 
     LOGGER.log(Level.INFO, "Created game file {}.", fileName);
-
     return gameNode;
   }
 

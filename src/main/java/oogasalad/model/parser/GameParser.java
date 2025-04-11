@@ -104,7 +104,7 @@ public class GameParser implements Parser<Game> {
     ObjectNode dataNode = mapper.createObjectNode();
 
     handleInformationWriting(data, root);
-    handleResourceWriting(data, dataNode);
+    //handleResourceWriting(data, dataNode);
     handleSceneWriting(data, dataNode);
 
     root.set(DATA, dataNode);
@@ -124,11 +124,11 @@ public class GameParser implements Parser<Game> {
     dataNode.set(SCENE, sceneArray);
   }
 
-  private void handleResourceWriting(Game data, ObjectNode dataNode) throws IOException {
-//    ArrayNode resourceArray = mapper.createArrayNode();
-//    for (Map.Entry<String, String> entry : data.getAllResources.entrySet()) {
-//      resourceArray.add(resourceParser.write(entry));
-//    }
-//    dataNode.set("Resources", resourceArray);
-  }
+//  private void handleResourceWriting(Game data, ObjectNode dataNode) throws IOException {
+////    ArrayNode resourceArray = mapper.createArrayNode();
+////    for (Map.Entry<String, String> entry : data.getAllResources.entrySet()) {
+////      resourceArray.add(resourceParser.write(entry));
+////    }
+////    dataNode.set("Resources", resourceArray);
+//  }
 }

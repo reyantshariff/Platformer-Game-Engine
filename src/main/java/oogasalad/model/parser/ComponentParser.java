@@ -86,7 +86,7 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
     } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
              NoSuchMethodException e) {
       LOGGER.error("Error instantiating component: {}", name);
-      throw new RuntimeException(e);
+      throw new ParsingException("Error instantiating component", e);
     }
   }
 
