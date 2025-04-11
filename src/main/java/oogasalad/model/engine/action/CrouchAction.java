@@ -10,7 +10,7 @@ import oogasalad.model.engine.component.Transform;
  * position.
  */
 
-public class CrouchAction extends BehaviorAction {
+public class CrouchAction extends BehaviorAction<Object> {
 
   private boolean isCrouched = false;
 
