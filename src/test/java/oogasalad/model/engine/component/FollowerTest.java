@@ -1,0 +1,75 @@
+package oogasalad.model.engine.component;
+
+import oogasalad.model.engine.base.architecture.Game;
+import oogasalad.model.engine.base.architecture.GameObject;
+import oogasalad.model.engine.base.architecture.GameScene;
+import oogasalad.model.engine.base.enumerate.ComponentTag;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class FollowerTest {
+
+  private GameObject targetObj;
+  private Follower follower;
+  private Transform targetTransform;
+  private Transform followerTransform;
+
+  @BeforeEach
+  void setup() {
+    Game game = new Game();
+    GameScene scene = new GameScene("TestScene");
+    game.addScene(scene);
+
+    targetObj = new GameObject("Target", "tag");
+    targetTransform = targetObj.addComponent(Transform.class);
+    scene.registerObject(targetObj);
+
+    GameObject followerObj = new GameObject("Follower", "tag");
+    followerTransform = followerObj.addComponent(Transform.class);
+    follower = followerObj.addComponent(Follower.class);
+    scene.registerObject(followerObj);
+
+    follower.awake();
+  }
+
+  @Test
+  void setFollowObject_ValidObject_ObjectStored() {
+    follower.setFollowObject(targetObj);
+    assertEquals(targetObj, follower.getFollowObject());
+  }
+
+  @Test
+  void setOffset_ValidValues_OffsetsStored() {
+    follower.setOffset(5.0, -3.0);
+    assertEquals(5.0, follower.getOffsetX());
+    assertEquals(-3.0, follower.getOffsetY());
+  }
+
+  @Test
+  void update_FollowingTarget_UpdatesPositionCorrectly() {
+    follower.setFollowObject(targetObj);
+    follower.setOffset(10.0, -5.0);
+
+    targetTransform.setX(100);
+    targetTransform.setY(50);
+
+    follower.update(0.016);
+
+    assertEquals(110.0, followerTransform.getX());
+    assertEquals(45.0, followerTransform.getY());
+  }
+
+  @Test
+  void update_NoFollowObject_ThrowsRuntimeException() {
+    follower.setFollowObject(null);
+    RuntimeException ex = assertThrows(RuntimeException.class, () -> follower.update(0.016));
+    assertTrue(ex.getMessage().contains("Missing Transform Component"));
+  }
+
+  @Test
+  void componentTag_Always_ReturnsTransformTag() {
+    assertEquals(ComponentTag.TRANSFORM, follower.componentTag());
+  }
+}
