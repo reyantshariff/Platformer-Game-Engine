@@ -94,6 +94,11 @@ public class MainViewManager {
    * reflection in String
    */
   public static class SceneSwitchException extends RuntimeException {
+    /**
+     * Constructor for SceneSwitchException
+     * @param message exception messages
+     * @param cause the cause of the exception
+     */
     public SceneSwitchException(String message, Throwable cause) {
       super(message, cause);
     }

@@ -41,6 +41,7 @@ public abstract class ViewScene {
    * Run all necessary actions when exiting a scene. Should be implemented by subclasses.
    */
   public void deactivate() {
+    // Implement if necessary
   }
 
   /**
