@@ -185,6 +185,7 @@ public class GameObject {
    *
    * @return new GameObject with same components but different UUID
    */
+  @Override
   public GameObject clone() {
 
     GameObject copy = new GameObject(this.getName(), this.getTag());
