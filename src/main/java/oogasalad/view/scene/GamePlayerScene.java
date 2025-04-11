@@ -30,7 +30,8 @@ public class GamePlayerScene extends ViewScene {
     super(new StackPane(), 1280, 720);
 
     StackPane root = (StackPane) getScene().getRoot();
-
+    Game game = new Game();
+    /*
     String correctGameName = gameName.replaceAll("\\s+","");
 
 
@@ -50,17 +51,16 @@ public class GamePlayerScene extends ViewScene {
     }
 
     game.goToScene(game.getLevelOrder().getFirst());
-
+    */
     gui = new Gui(game);
 
-    Button returnButton = new Button("Main Menu");
+    Button returnButton = new Button("MAIN MENU");
+    returnButton.setId("returnButton");
     returnButton.setOnAction(e -> {
       deactivate();
       manager.switchToMainMenu();
     });
-
     StackPane.setAlignment(returnButton, Pos.TOP_RIGHT);
-    returnButton.setStyle("-fx-background-color: white; -fx-font-weight: bold;");
 
     root.getChildren().addAll(gui.getCanvas(), returnButton);
     gui.getCanvas().requestFocus();
