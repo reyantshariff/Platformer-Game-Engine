@@ -124,19 +124,33 @@ class ColliderTest {
   }
 
   @Test
-  void resolveCollisionY_FromAbove_ResolvesUpward() {
+  void resolveCollisionY_NoOverlapFromAbove_NoResolution() {
+    playerTransform.setY(70); // fully below platform (bottom = 80, platform top = 60)
     player.addComponent(PhysicsHandler.class).awake();
+    player.getComponent(PhysicsHandler.class).setVelocityY(-5);
+
+    double originalY = playerTransform.getY();
+
     playerCollider.update(1.0);
-    assertTrue(playerTransform.getY() < 60);
+
+    // Should not have moved or zeroed velocity
+    assertEquals(originalY, playerTransform.getY(), 0.01);
+    assertEquals(-5, player.getComponent(PhysicsHandler.class).getVelocityY(), 0.01);
   }
 
   @Test
-  void resolveCollisionY_FromBelow_ResolvesDownward() {
-    playerTransform.setY(65);
+  void resolveCollisionY_FromAbove_ResolvesToTopOfPlatform() {
+    playerTransform.setY(59); // bottom = 69
     player.addComponent(PhysicsHandler.class).awake();
+    player.getComponent(PhysicsHandler.class).setVelocityY(-5);
+
     playerCollider.update(1.0);
-    assertTrue(playerTransform.getY() > 65);
+
+    // Platform top = 60, player height = 10, expected y = 50
+    assertEquals(50, playerTransform.getY(), 0.01);
+    assertEquals(0, player.getComponent(PhysicsHandler.class).getVelocityY(), 0.01);
   }
+
 
   @Test
   void resolveCollisionX_FromLeft_ResolvesLeftward() {
