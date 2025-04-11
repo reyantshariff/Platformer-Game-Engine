@@ -1,4 +1,4 @@
-package oogasalad.view.scene;
+package oogasalad.view.scene.BuilderUI;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseEvent;
@@ -11,6 +11,7 @@ import oogasalad.view.gui.GameObjectRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
+import oogasalad.view.scene.BuilderScene;
 
 /**
  * ObjectDragger manages mouse drag and drop for Builder pages
