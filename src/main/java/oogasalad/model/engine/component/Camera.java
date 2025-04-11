@@ -3,6 +3,7 @@ package oogasalad.model.engine.component;
 import static oogasalad.model.config.GameConfig.LOGGER;
 import java.util.ArrayList;
 import java.util.List;
+import java.awt.Dimension;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
@@ -27,6 +28,9 @@ public class Camera extends GameComponent {
   @Override
   public void awake() {
     transform = getParent().getComponent(Transform.class);
+    Dimension screenDimensions = getParent().getScene().getGame().getGameInfo().resolution();
+    transform.setScaleX(screenDimensions.getWidth());
+    transform.setScaleY(screenDimensions.getHeight());
   }
 
   @Override
