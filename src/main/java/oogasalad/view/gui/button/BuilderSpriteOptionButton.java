@@ -6,9 +6,21 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import oogasalad.model.engine.base.architecture.GameObject;
 
-public class BuilderSpriteOptionButton extends ImageButton {
-  GameObject prefab = null;
+/**
+ * A button that represents a sprite option in the builder.
+ */
 
+public class BuilderSpriteOptionButton extends ImageButton {
+  private GameObject prefab = null;
+
+  /**
+   * Constructor for BuilderSpriteOptionButton
+   *
+   * @param image the image to be displayed on the button
+   * @param width the width of the button
+   * @param height the height of the button
+   * @param prefab the prefab associated with this button
+   */
   public BuilderSpriteOptionButton(Image image, double width, double height, GameObject prefab) {
     super(image);
     applySizing(width, height);
@@ -16,6 +28,11 @@ public class BuilderSpriteOptionButton extends ImageButton {
     this.prefab = prefab;
   }
 
+  /**
+   * Get the prefab associated with this button
+   * 
+   * @return the prefab associated with this button
+   */
   public GameObject getPrefab() {
     return prefab;
   }

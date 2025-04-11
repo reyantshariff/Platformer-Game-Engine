@@ -161,7 +161,11 @@ public class Game {
     return myGameInfo;
   }
 
-
+  /**
+   * Setter for the order of the levels
+   *
+   * @param levelOrder - a list of strings containing the ordering of levels by name
+   */
   public void setLevelOrder(List<String> levelOrder) {
     this.levelOrder = levelOrder;
   }

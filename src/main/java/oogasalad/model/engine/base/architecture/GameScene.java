@@ -26,6 +26,8 @@ public class GameScene {
 
   private static final String NO_CAMERA_KEY = "noCamera";
   private static final String CAST_FAILED_KEY = "castFailed";
+  private static final String GAME_OBJECT = "GameObject";
+  private static final String CAMERA = "Camera";
 
   /**
    * Constructor for GameScene
@@ -127,9 +129,9 @@ public class GameScene {
       throw new IllegalArgumentException(GameConfig.getText(NO_CAMERA_KEY));
     } catch (ClassCastException e) {
       LOGGER
-          .error(MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), "GameObject", "Camera"));
+          .error(MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), GAME_OBJECT, CAMERA));
       throw new IllegalArgumentException(
-          MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), "GameObject", "Camera"));
+          MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), GAME_OBJECT, CAMERA));
     }
   }
 
@@ -146,9 +148,9 @@ public class GameScene {
       throw new IllegalArgumentException(GameConfig.getText(NO_CAMERA_KEY));
     } catch (ClassCastException e) {
       LOGGER
-          .error(MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), "GameObject", "Camera"));
+          .error(MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), GAME_OBJECT, CAMERA));
       throw new IllegalArgumentException(
-          MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), "GameObject", "Camera"));
+          MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), GAME_OBJECT, CAMERA));
     }
   }
 
@@ -179,37 +181,48 @@ public class GameScene {
    */
   public final void step(double deltaTime) {
 
-    if (awakeList.contains(getCamera().getParent())) {
-      getCamera().getParent().wakeUp();
-      awakeList.remove(getCamera().getParent());
-    }
+    wakeObject(getCamera().getParent());
 
-    // Update with the following sequence
-    // 1. Handle all the subscribed events
-    while (!subscribedEvents.isEmpty()) {
-      subscribedEvents.poll().run();
-    }
+    runSubscribedEvents();
 
     // 2. Get all objects in view
     Collection<GameObject> objectsInView = getAllObjectsInView();
 
     // 3. Update the components of objects in view based on the order
-    for (ComponentTag order : ComponentTag.values()) {
-      if (order == ComponentTag.NONE)
-        continue;
-      for (GameObject object : objectsInView) {
-        if (awakeList.contains(object)) {
-          object.wakeUp();
-          awakeList.remove(object);
-        }
-        for (GameComponent component : object.getComponents(order)) {
-          component.update(deltaTime);
-        }
-      }
-    }
+    updateComponents(objectsInView, deltaTime);
 
     // 4. Update the scene actions
     // TODO: Handle Change Scene Action Here
+  }
+
+  private void runSubscribedEvents() {
+    while (!subscribedEvents.isEmpty()) {
+      subscribedEvents.poll().run();
+    }
+  }
+
+  private void updateComponents(Collection<GameObject> objectsInView, double deltaTime) {
+    for (ComponentTag order : ComponentTag.values()) {
+      if (order == ComponentTag.NONE)
+        continue;
+        updateObjects(order, objectsInView, deltaTime);
+    }
+  }
+
+  private void updateObjects(ComponentTag order, Collection<GameObject> objectsInView, double deltaTime) {
+    for (GameObject object : objectsInView) {
+      wakeObject(object);
+      for (GameComponent component : object.getComponents(order)) {
+        component.update(deltaTime);
+      }
+    }
+  }
+
+  private void wakeObject(GameObject object) {
+    if (awakeList.contains(object)) {
+      object.wakeUp();
+      awakeList.remove(object);
+    }
   }
 
   /**

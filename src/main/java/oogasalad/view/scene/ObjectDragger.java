@@ -28,6 +28,15 @@ public class ObjectDragger {
   private double dragOffsetX = 0;
   private double dragOffsetY = 0;
 
+  /**
+   * Constructor for ObjectDragger
+   *
+   * @param canvas the canvas to draw on
+   * @param builder the builder instance
+   * @param builderScene the builder scene instance
+   * @param gameScene the game scene instance
+   * @param renderer the game object renderer instance
+   */
   public ObjectDragger(Canvas canvas, Builder builder, BuilderScene builderScene, GameScene gameScene, GameObjectRenderer renderer) {
     this.canvas = canvas;
     this.builder = builder;
