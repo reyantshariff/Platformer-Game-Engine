@@ -47,19 +47,7 @@ public class GamePlayerScene extends ViewScene {
         .orElseThrow(() -> new IllegalStateException("No scenes found in the parsed game."));
     game.changeScene(firstScene.getName());
 
-    // Display the game using Gui
     Gui gui = new Gui(game);
-
-    /*
-    GameScene scene = switch (gameName) {
-      case "Dino Game" -> new DinosaurGameScene("Dino");
-      default -> new DinosaurGameScene("Default");
-    };
-
-
-    game.addScene(scene);
-    game.changeScene(scene.getName());
-    */
 
     Button returnButton = new Button("Main Menu");
     returnButton.setOnAction(e -> {

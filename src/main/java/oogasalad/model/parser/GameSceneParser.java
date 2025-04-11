@@ -22,40 +22,6 @@ public class GameSceneParser implements Parser<GameScene> {
   private static final String NAME = "Name";
 
 
-  /**
-   * Parses a JSON node into a GameScene instance
-   *
-   * @param node - the JSON node given to parse
-   * @return - a fully configured GameScene
-   * @throws ParsingException - error thrown if reflection or parsing fails
-   */
-  /*
-  @Override
-  public GameScene parse(JsonNode node) throws ParsingException {
-    validateGameSceneName(node);
-
-    String name = node.get(NAME).asText();
-    String fullClassName = "oogasalad.scene." + name;
-
-    try {
-      Class<?> sceneClass = Class.forName(fullClassName);
-      if (!GameScene.class.isAssignableFrom(sceneClass)) {
-        throw new ParsingException(name + " is not a GameScene subclass.");
-      }
-
-      return getGameScene(node,
-          (Class<? extends GameScene>) sceneClass);
-    } catch (ClassNotFoundException e) {
-      LOGGER.warn("{} is not a GameScene subclass.", name);
-    } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
-             NoSuchMethodException e) {
-      LOGGER.warn("{} could not be instantiated.", name);
-    }
-
-    return null;
-  }
-   */
-
   @Override
   public GameScene parse(JsonNode node) throws ParsingException {
     validateGameSceneName(node);
