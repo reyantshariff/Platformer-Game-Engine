@@ -64,9 +64,15 @@ public class Follower extends GameComponent {
    */
   public void setFollowObject(GameObject followObject) {
     this.followObject = followObject;
-    Transform attachTransform = followObject.getComponent(Transform.class);
-    offsetX = myTransform.getX() - attachTransform.getX();
-    offsetY = myTransform.getY() - attachTransform.getY();
+    try {
+      Transform attachTransform = followObject.getComponent(Transform.class);
+      myTransform = getParent().getComponent(Transform.class);
+      offsetX = myTransform.getX() - attachTransform.getX();
+      offsetY = myTransform.getY() - attachTransform.getY();
+    } catch (NullPointerException e) {
+      LOGGER.error("Follow Object Missing Transform Component");
+      throw new RuntimeException("Follow Object Missing Transform Component", e);
+    }
   }
 
   /**

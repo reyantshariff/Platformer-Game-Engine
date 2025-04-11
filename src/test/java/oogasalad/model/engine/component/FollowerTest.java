@@ -1,9 +1,12 @@
 package oogasalad.model.engine.component;
 
+import java.awt.Dimension;
+
 import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.engine.base.enumerate.ComponentTag;
+import oogasalad.model.engine.base.architecture.GameInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -76,9 +79,9 @@ class FollowerTest {
 
   @Test
   void update_NoFollowObject_ThrowsRuntimeException() {
-    follower.setFollowObject(null);
-    RuntimeException ex = assertThrows(RuntimeException.class, () -> follower.update(0.016));
-    assertTrue(ex.getMessage().contains("Missing Transform Component"));
+    RuntimeException ex =
+        assertThrows(RuntimeException.class, () -> follower.setFollowObject(null));
+    assertTrue(ex.getMessage().contains("Follow Object Missing Transform Component"));
   }
 
   @Test
@@ -102,15 +105,25 @@ class FollowerTest {
   @Test
   void awake_InvalidFollowObjectName_ThrowsRuntimeException() {
     Game game = new Game();
+    game.setGameInfo(new GameInfo("", "", "", new Dimension(1000, 1000)));
     GameScene scene = new GameScene("FollowerScene");
     game.addScene(scene);
 
+    GameObject camera = new GameObject("Camera", "tag");
+    camera.addComponent(Transform.class);
+    camera.addComponent(Camera.class);
+    scene.registerObject(camera);
+    camera.getComponent(Camera.class).awake();
+
     GameObject followerObj = new GameObject("Follower", "tag");
-    followerObj.addComponent(Transform.class);
+    Transform followTransfom = followerObj.addComponent(Transform.class);
+    followTransfom.setX(10);
+    followTransfom.setY(10);
     Follower follower = followerObj.addComponent(Follower.class);
     follower.setFollowObjectName("NonExistent");
+    scene.registerObject(followerObj);
 
-    RuntimeException ex = assertThrows(RuntimeException.class, () -> scene.registerObject(followerObj));
+    RuntimeException ex = assertThrows(RuntimeException.class, () -> scene.step(1));
 
 
     assertTrue(ex.getMessage().contains("No such Object with name NonExistent"));

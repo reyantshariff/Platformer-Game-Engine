@@ -62,8 +62,8 @@ class CameraTest {
   void getObjectsInView_ObjectOutsideBounds_IsExcluded() {
     GameObject obj = new GameObject("Invisible", "tag");
     Transform t = obj.addComponent(Transform.class);
-    t.setX(200); // far outside
-    t.setY(200);
+    t.setX(-200); // far outside
+    t.setY(-200);
     t.setScaleX(10);
     t.setScaleY(10);
 
@@ -85,8 +85,8 @@ class CameraTest {
 
     GameObject outOfView = new GameObject("Invisible", "tag");
     Transform outT = outOfView.addComponent(Transform.class);
-    outT.setX(150);
-    outT.setY(150);
+    outT.setX(-150);
+    outT.setY(-150);
     outT.setScaleX(10);
     outT.setScaleY(10);
     scene.registerObject(outOfView);
@@ -106,14 +106,12 @@ class CameraTest {
   }
 
   @Test
-  void getObjectsInView_MissingScene_ReturnsEmptyList() {
+  void getObjectsInView_MissingScene_throwsException() {
     GameObject rogueCameraObj = new GameObject("Camera2", "camera");
     rogueCameraObj.addComponent(Transform.class).setScaleX(100);
     rogueCameraObj.getComponent(Transform.class).setScaleY(100);
 
     Camera cam = rogueCameraObj.addComponent(Camera.class);
-    cam.awake();
-
-    assertTrue(cam.getObjectsInView().isEmpty());
+    assertThrows(RuntimeException.class, () -> cam.awake());
   }
 }
