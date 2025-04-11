@@ -215,45 +215,7 @@ public class BuilderScene extends ViewScene {
     List<GameObject> prefabObjects = PrefabLoader.loadAvailablePrefabs(
         "dinosaur"); // TODO: remove hardcoded game type
     for (GameObject prefab : prefabObjects) {
-      // Assume the prefab has a SpriteRenderer component.
-      String previewImagePath = getPreviewImagePath(prefab);
-      if (previewImagePath != null) {
-        // Convert the preview image path to a JavaFX Image
-        try {
-          Image previewImage = new Image(new File(previewImagePath).toURI().toURL().toString());
-          Button newSpriteButton = new BuilderSpriteOptionButton(
-              previewImage,
-              tilePane.getPrefWidth() * 0.25,
-              tilePane.getPrefHeight() * 0.25,
-              prefab);
-          newSpriteButton.setOnAction(event -> {
-            GameObject newObject = prefab.clone();  // or a deep copy via serialization
-
-            // Retrieve the Transform component
-            Transform t = newObject.getComponent(Transform.class);
-            if (t != null) {
-              // Calculate center based on preview or scene dimensions.
-              double previewHorizontalMidpoint =
-                  levelViewScrollPane.getHvalue() * GAME_PREVIEW_WIDTH + (GAME_PREVIEW_WIDTH / 2);
-              double previewVerticalMidpoint =
-                  levelViewScrollPane.getVvalue() * GAME_PREVIEW_HEIGHT + (GAME_PREVIEW_HEIGHT / 2);
-              double objectWidth = t.getScaleX();
-              double objectHeight = t.getScaleY();
-
-              // Center the object
-              t.setX(previewHorizontalMidpoint - (objectWidth / 2));
-              t.setY(previewVerticalMidpoint - (objectHeight / 2));
-            }
-            // Register new object to the scene
-            gameScene.registerObject(newObject);
-            // Update the game preview so the new object appears
-            updateGamePreview();
-          });
-          tilePane.getChildren().add(newSpriteButton);
-        } catch (Exception e) {
-          logger.error("Error loading preview image from: " + previewImagePath);
-        }
-      }
+     createObject(prefab, tilePane);
     }
 
     // TODO: TilePane and its buttons should immediately be correctly sized without requiring mouse movement
@@ -262,6 +224,52 @@ public class BuilderScene extends ViewScene {
     });
 
     return spriteScrollPane;
+  }
+
+  private void alignObject(Transform t) {
+    // Calculate center based on preview or scene dimensions.
+    double previewHorizontalMidpoint =
+    levelViewScrollPane.getHvalue() * GAME_PREVIEW_WIDTH + (GAME_PREVIEW_WIDTH / 2);
+    double previewVerticalMidpoint =
+        levelViewScrollPane.getVvalue() * GAME_PREVIEW_HEIGHT + (GAME_PREVIEW_HEIGHT / 2);
+    double objectWidth = t.getScaleX();
+    double objectHeight = t.getScaleY();
+
+    // Center the object
+    t.setX(previewHorizontalMidpoint - (objectWidth / 2));
+    t.setY(previewVerticalMidpoint - (objectHeight / 2));
+  }
+
+  private void createObject(GameObject prefab, TilePane tilePane) {
+    // Assume the prefab has a SpriteRenderer component.
+    String previewImagePath = getPreviewImagePath(prefab);
+    // Convert the preview image path to a JavaFX Image
+    try {
+      Image previewImage = new Image(new File(previewImagePath).toURI().toURL().toString());
+      Button newSpriteButton = new BuilderSpriteOptionButton(
+          previewImage,
+          tilePane.getPrefWidth() * 0.25,
+          tilePane.getPrefHeight() * 0.25,
+          prefab);
+      newSpriteButton.setOnAction(event -> {
+        GameObject newObject = prefab.clone();  // or a deep copy via serialization
+
+        // Retrieve the Transform component
+        Transform t = newObject.getComponent(Transform.class);
+        try {
+          alignObject(t);
+        } catch (NullPointerException e) {
+          logger.error("Error getting Transform component from prefab " + prefab.getName());
+        }
+        // Register new object to the scene
+        gameScene.registerObject(newObject);
+        // Update the game preview so the new object appears
+        updateGamePreview();
+      });
+      tilePane.getChildren().add(newSpriteButton);
+    } catch (Exception e) {
+      logger.error("Error loading preview image from: " + previewImagePath);
+    }
   }
 
   private ScrollPane createSpriteButtonScrollPane(double width, double height, Pane contents) {
