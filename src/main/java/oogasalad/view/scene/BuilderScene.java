@@ -305,7 +305,7 @@ public class BuilderScene extends ViewScene {
         return "src/main/resources/" + imagePath;
       }
     } catch (Exception e) {
-      System.err.println("Error getting preview image from prefab " + prefab.getName());
+      logger.error("Error getting preview image from prefab " + prefab.getName());
     }
     return null;
   }
