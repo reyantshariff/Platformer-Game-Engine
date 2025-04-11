@@ -54,7 +54,6 @@ public class MainViewManager {
 
   /**
    * Switches to the given ViewScene
-   *
    * TODO: Deprecate this method to only use reflection above
    *
    * @param viewScene the new scene to display

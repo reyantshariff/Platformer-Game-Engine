@@ -22,8 +22,6 @@ public class Collider extends GameComponent {
     return ComponentTag.COLLISION;
   }
 
-  @SerializableField
-  private List<String> collidableTags;
 
   private final Set<Collider> collidedColliders = new HashSet<>();
   private Transform transform;
@@ -33,7 +31,6 @@ public class Collider extends GameComponent {
   @Override
   protected void awake() {
     transform = getComponent(Transform.class);
-    collidableTags = new ArrayList<>();
   }
 
   @Override
@@ -52,7 +49,7 @@ public class Collider extends GameComponent {
   private void processCollision(GameObject obj) {
     Collider collider = obj.getComponent(Collider.class);
 
-    if (collider == this || collidableTags.contains(collider.getParent().getTag())) {
+    if (collider == this) {
       return;
     }
 
