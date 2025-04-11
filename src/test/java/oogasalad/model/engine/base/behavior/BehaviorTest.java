@@ -1,103 +1,90 @@
 package oogasalad.model.engine.base.behavior;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.testfx.framework.junit5.ApplicationTest;
-import javafx.stage.Stage;
-import oogasalad.model.engine.base.architecture.GameObject;
-import oogasalad.model.engine.component.BehaviorController;
-import oogasalad.model.engine.component.Collider;
-import oogasalad.model.engine.component.Transform;
-import oogasalad.view.scene.MainViewManager;
-import oogasalad.model.engine.base.architecture.GameScene;
-import oogasalad.model.engine.base.architecture.Game;
-import javafx.application.Platform;
-import java.util.concurrent.CountDownLatch;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
-public abstract class BehaviorTest extends ApplicationTest {
+import oogasalad.model.engine.action.VelocityXSetAction;
+import oogasalad.model.engine.constraint.KeyPressConstraint;
+import oogasalad.model.engine.base.enumerate.KeyCode;
+import oogasalad.model.engine.component.PhysicsHandler;
+import oogasalad.model.engine.component.InputHandler;
 
-    private Game game;
-    private GameScene scene1;
-    private GameScene scene2;
-    private GameObject obj1;
-    private GameObject obj2;
-    private Behavior behavior1;
-    private Behavior behavior2;
+
+public class BehaviorTest extends BehaviorBaseTest {
 
     @Override
-    public void start(Stage stage) {
-        MainViewManager viewManager = new MainViewManager(stage);
-        viewManager.switchToMainMenu();
+    public void customSetUp() {
+        getObj1().addComponent(PhysicsHandler.class);
+        getObj1().addComponent(InputHandler.class);
     }
 
-    @BeforeEach
-    public void generalSetUp() {
-        obj1 = new GameObject("Object1");
-        obj2 = new GameObject("Object2");
-        Transform transform1 = obj1.addComponent(Transform.class);
-        Transform transform2 = obj2.addComponent(Transform.class);
-        transform1.setScaleX(100);
-        transform1.setScaleY(100);
-        transform2.setScaleX(100);
-        transform2.setScaleY(100);
-        obj1.addComponent(BehaviorController.class);
-        obj2.addComponent(BehaviorController.class);
-        obj1.addComponent(Collider.class);
-        obj2.addComponent(Collider.class);
-        behavior1 = obj1.getComponent(BehaviorController.class).addBehavior();
-        behavior2 = obj2.getComponent(BehaviorController.class).addBehavior();
-        scene1 = new GameScene("Scene1");
-        scene2 = new GameScene("Scene2");
-        scene1.registerObject(obj1);
-        scene1.registerObject(obj2);
-        game = new Game();
-        game.addScene(scene1);
-        game.addScene(scene2);
-        customSetUp();
+    @Test
+    public void execute_passesConstraints_executeBehavior() {
+        getBehavior1().addAction(VelocityXSetAction.class).setParameter(10.0);
+        getBehavior1().addConstraint(KeyPressConstraint.class).setParameter(KeyCode.A);
+        getGame().keyPressed(KeyCode.A.getValue());
+        step();
+        assertEquals(getObj1().getComponent(PhysicsHandler.class).getVelocityX(), 10.0);
     }
 
-    public abstract void customSetUp();
-
-    protected GameObject getObj1() {
-        return obj1;
+    @Test
+    public void execute_doesNotPassConstraints_doesNotExecuteBehavior() {
+        getBehavior1().addAction(VelocityXSetAction.class).setParameter(10.0);
+        getBehavior1().addConstraint(KeyPressConstraint.class).setParameter(KeyCode.A);
+        getGame().keyPressed(KeyCode.D.getValue());
+        step();
+        assertNotEquals(getObj1().getComponent(PhysicsHandler.class).getVelocityX(), 10.0);
     }
 
-    protected GameObject getObj2() {
-        return obj2;
+    @Test
+    public void addConstraint_addByClass_addsConstraint() {
+        KeyPressConstraint constraint = getBehavior1().addConstraint(KeyPressConstraint.class);
+        assertNotNull(constraint);
+        assertEquals(getBehavior1().getConstraints().size(), 1);
+        assertTrue(getBehavior1().getConstraints().contains(constraint));
     }
 
-    protected Behavior getBehavior1() {
-        return behavior1;
+    @Test
+    public void addConstraint_addByInstance_addsConstraint() {
+        KeyPressConstraint constraint = new KeyPressConstraint();
+        getBehavior1().addConstraint(constraint);
+        assertNotNull(constraint);
+        assertEquals(getBehavior1().getConstraints().size(), 1);
+        assertTrue(getBehavior1().getConstraints().contains(constraint));
     }
 
-    protected Behavior getBehavior2() {
-        return behavior2;
+    @Test
+    public void removeConstraint_removeByClass_removesConstraint() {
+        KeyPressConstraint constraint = getBehavior1().addConstraint(KeyPressConstraint.class);
+        assertNotNull(constraint);
+        assertEquals(getBehavior1().getConstraints().size(), 1);
+        getBehavior1().removeConstraint(KeyPressConstraint.class);
+        assertEquals(getBehavior1().getConstraints().size(), 0);
     }
 
-    protected Game getGame() {
-        return game;
+    @Test
+    public void addAction_addByClass_addsAction() {
+        VelocityXSetAction action = getBehavior1().addAction(VelocityXSetAction.class);
+        assertNotNull(action);
+        assertEquals(getBehavior1().getActions().size(), 1);
+        assertTrue(getBehavior1().getActions().contains(action));
     }
 
-    protected GameScene getScene1() {
-        return scene1;
+    @Test
+    public void addAction_addByInstance_addsAction() {
+        VelocityXSetAction action = new VelocityXSetAction();
+        getBehavior1().addAction(action);
+        assertNotNull(action);
+        assertEquals(getBehavior1().getActions().size(), 1);
+        assertTrue(getBehavior1().getActions().contains(action));
     }
 
-    protected GameScene getScene2() {
-        return scene2;
-    }
-
-    protected void step() {
-        CountDownLatch latch = new CountDownLatch(1);
-        Platform.runLater(() -> {
-            try {
-                game.getCurrentScene().step(1);
-            } finally {
-                latch.countDown();
-            }
-        });
-        try {
-            latch.await(); // Wait for the JavaFX thread to complete
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+    @Test
+    public void removeAction_removeByClass_removesAction() {
+        VelocityXSetAction action = getBehavior1().addAction(VelocityXSetAction.class);
+        assertNotNull(action);
+        assertEquals(getBehavior1().getActions().size(), 1);
+        getBehavior1().removeAction(VelocityXSetAction.class);
+        assertEquals(getBehavior1().getActions().size(), 0);
     }
 }
