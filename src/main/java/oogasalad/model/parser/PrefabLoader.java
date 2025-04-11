@@ -30,6 +30,7 @@ public class PrefabLoader {
       parseFiles(files, mapper, parser, validPrefabs);
     } catch (NullPointerException e) {
       LOGGER.error("Prefab directory not found or empty: " + PREFAB_DIRECTORY);
+      throw new NullPointerException("Prefab directory not found or empty: " + PREFAB_DIRECTORY);
     }
     return validPrefabs;
   }
