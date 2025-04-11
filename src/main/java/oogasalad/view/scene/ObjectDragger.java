@@ -34,14 +34,13 @@ public class ObjectDragger {
     this.builderScene = builderScene;
     this.gameScene = gameScene;
     this.renderer = renderer;
-    setupListeners();
   }
 
   /**
    * Sets up mouse inputs
    * **/
 
-  private void setupListeners() {
+  public void setupListeners() {
     canvas.setOnMousePressed(this::handlePressedIfInBounds);
     canvas.setOnMouseDragged(this::handleDraggedIfInBounds);
     canvas.setOnMouseReleased(this::handleReleasedIfInBounds);
