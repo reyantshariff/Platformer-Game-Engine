@@ -2,6 +2,8 @@ package oogasalad.view.scene;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
@@ -40,16 +42,14 @@ public class GamePlayerScene extends ViewScene {
       ObjectMapper mapper = new ObjectMapper();
       JsonNode newNode = mapper.createObjectNode();
       game = (Game) parser.parse(newNode);
+      System.out.println(game.getAllScenes().values().stream().findFirst().getClass());
+
 
     } catch (ParsingException e) {
       throw new IllegalStateException("Failed to parse game JSON file: " + e.getMessage(), e);
     }
 
-    // Automatically activate the first available scene
-    GameScene firstScene = game.getAllScenes().values().stream()
-        .findFirst()
-        .orElseThrow(() -> new IllegalStateException("No scenes found in the parsed game."));
-    game.changeScene(firstScene.getName());
+    game.goToScene(game.getLevelOrder().getFirst());
 
     gui = new Gui(game);
 
