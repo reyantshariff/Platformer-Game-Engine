@@ -59,4 +59,13 @@ public final class BehaviorController extends GameComponent {
     }
   }
 
+  /**
+   * Getter for the behavior objects
+   *
+   * @return - a list of behavior objects
+   */
+  public List<Behavior> getBehaviors() {
+    return behaviors;
+  }
+
 }

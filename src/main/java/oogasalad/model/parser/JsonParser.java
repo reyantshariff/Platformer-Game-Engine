@@ -26,6 +26,8 @@ public class JsonParser implements Parser {
   private final ObjectMapper mapper;
   private final String fileName;
 
+  private Game myGame;
+
   /**
    * Constructor to create parser that can read and write.
    *
@@ -33,7 +35,7 @@ public class JsonParser implements Parser {
    *                 saved. Automatically appended .json at end.
    */
   public JsonParser(String fileName) {
-    this.fileName = FILE_PATH + fileName + ".json";
+    this.fileName = fileName;
     mapper = new ObjectMapper();
   }
 
@@ -55,7 +57,11 @@ public class JsonParser implements Parser {
       throw new ParsingException("Could not parse file " + fileName);
     }
 
-    return GAME_PARSER.parse(rootNode);
+    return myGame = GAME_PARSER.parse(rootNode);
+  }
+
+  public Game getGame() throws ParsingException {
+    return myGame;
   }
 
   /**

@@ -30,6 +30,22 @@ public interface Serializable {
     return serializedFields;
   }
 
+  default SerializedField<?> getParentSerializableField() {
+    Class<?> superClass = this.getClass().getSuperclass();
+
+    while (superClass != null) {
+      for (Field field : superClass.getDeclaredFields()) {
+        if (field.isAnnotationPresent(SerializableField.class)) {
+          field.setAccessible(true);
+          return createSerializedField(superClass, field);
+        }
+      }
+      superClass = superClass.getSuperclass();
+    }
+
+    throw new IllegalStateException("No @SerializableField found in parent class for: " + this.getClass().getSimpleName());
+  }
+
   private SerializedField<?> createSerializedField(Class<?> clazz, Field field) {
     String fieldName = field.getName();
     String capitalized = Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
