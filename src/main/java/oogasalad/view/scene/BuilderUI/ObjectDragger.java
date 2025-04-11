@@ -29,11 +29,11 @@ public class ObjectDragger {
   private double dragOffsetX = 0;
   private double dragOffsetY = 0;
 
-  public ObjectDragger(Canvas canvas, Builder builder, BuilderScene builderScene, GameScene gameScene, GameObjectRenderer renderer) {
+  public ObjectDragger(Canvas canvas, Builder builder, BuilderScene builderScene, GameObjectRenderer renderer) {
     this.canvas = canvas;
     this.builder = builder;
     this.builderScene = builderScene;
-    this.gameScene = gameScene;
+    this.gameScene = builder.getCurrentScene();
     this.renderer = renderer;
   }
 

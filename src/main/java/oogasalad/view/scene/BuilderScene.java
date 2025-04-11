@@ -9,7 +9,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.image.Image;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -17,10 +16,11 @@ import javafx.scene.layout.TilePane;
 import oogasalad.model.builder.Builder;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
-import oogasalad.model.engine.component.Transform;
 import oogasalad.model.parser.PrefabLoader;
 import oogasalad.view.gui.button.BuilderSpriteOptionButton;
 import oogasalad.view.player.dinosaur.DinosaurGameScene;
+import oogasalad.view.scene.BuilderUI.LevelViewScrollController;
+import oogasalad.view.scene.BuilderUI.ObjectDragger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -68,6 +68,7 @@ public class BuilderScene extends ViewScene {
     gameScene = new DinosaurGameScene("LevelEditTest");
     gameScene.onActivated();
     builder = new Builder(gameScene);
+//    builder = new Builder();
   }
 
   private void initializeUI() {
@@ -108,7 +109,7 @@ public class BuilderScene extends ViewScene {
   public void updateGamePreview() {
     GraphicsContext gc = myGameCanvas.getGraphicsContext2D();
     gc.clearRect(0, 0, myGameCanvas.getWidth(), myGameCanvas.getHeight());
-    myObjectRenderer.renderWithoutCamera(gc, gameScene);
+    myObjectRenderer.renderWithoutCamera(gc, builder.getCurrentScene());
   }
 
   private ScrollPane createGamePreview() {
@@ -116,7 +117,7 @@ public class BuilderScene extends ViewScene {
     myGameCanvas = new Canvas(3000, 600);
     updateGamePreview(); // render GameObjects to canvas
 
-    ObjectDragger dragger = new ObjectDragger(myGameCanvas, builder, this, gameScene,
+    ObjectDragger dragger = new ObjectDragger(myGameCanvas, builder, this,
         myObjectRenderer);
     dragger.setupListeners();
     Group canvasGroup = new Group(myGameCanvas);

@@ -10,6 +10,7 @@ import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.engine.component.Transform;
+import oogasalad.view.player.dinosaur.DinosaurGameScene;
 
 /**
  * Builder API that manages drag/drop and delete functions of the Editor UI
@@ -21,7 +22,7 @@ public class Builder {
   private String filepath = " ";
   private Game game; //Front end should pass a list of selected objects to the backend.
   private boolean fileSaved = false;
-  private GameScene gameScene;
+  private GameScene currentScene;
 
   //Add Backend boolean to keep track of whether user has saved Game.
   /**
@@ -43,8 +44,10 @@ public class Builder {
   public Builder()
   {
     game = new Game();
-    this.gameScene = new GameScene("new GameScene");
-    game.addScene(gameScene);
+    this.currentScene = new DinosaurGameScene("new GameScene");
+    currentScene.onActivated();
+    game.addScene(currentScene);
+    game.changeScene("new GameScene");
   }
 
   private Deque<EditorAction> undoStack = new ArrayDeque<>();
@@ -57,8 +60,8 @@ public class Builder {
    */
   public Builder(GameScene scene) {
     game = new Game();
-    gameScene = scene;
-    game.addScene(gameScene);
+    currentScene = scene;
+    game.addScene(currentScene);
     game.changeScene(scene.getName());
   }
 
@@ -106,7 +109,7 @@ public class Builder {
    */
   public void selectExistingObject(GameObject object)
   {
-    selectedObject= object;
+    selectedObject=object;
   }
 
 
@@ -192,7 +195,7 @@ public class Builder {
       double objectHeight = object.getComponent(Transform.class).getScaleY();
       object.getComponent(Transform.class).setX(previewHorizontalMidpoint - (objectWidth / 2));
       object.getComponent(Transform.class).setY(previewVerticalMidpoint - (objectHeight / 2));
-      gameScene.registerObject(object);
+      currentScene.registerObject(object);
       undoStack.add(new CreateObjectAction(game, object));
     }
   }
@@ -206,5 +209,10 @@ public class Builder {
       game.getCurrentScene().unregisterObject(selectedObject);
       undoStack.push(new DeleteObjectAction(game, selectedObject));
     }
+  }
+
+  public GameScene getCurrentScene()
+  {
+    return currentScene;
   }
 }
