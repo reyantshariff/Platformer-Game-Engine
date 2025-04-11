@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,21 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
     EXTRACTORS.put(boolean.class, JsonNode::asBoolean);
     EXTRACTORS.put(Boolean.class, JsonNode::asBoolean);
     EXTRACTORS.put(String.class, JsonNode::asText);
+
+    // Handle List<String>
+    EXTRACTORS.put(List.class, node -> {
+      if (!node.isArray()) {
+        throw new IllegalArgumentException("Expected JSON array for List<String> but got: " + node);
+      }
+      List<String> list = new ArrayList<>();
+      for (JsonNode element : node) {
+        if (!element.isTextual()) {
+          throw new IllegalArgumentException("Expected string in List<String>, but found: " + element);
+        }
+        list.add(element.asText());
+      }
+      return list;
+    });
   }
 
   /**
@@ -70,7 +86,7 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
     } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
              NoSuchMethodException e) {
       LOGGER.error("Error instantiating component: {}", name);
-      throw new RuntimeException(e);
+      throw new ParsingException("Error instantiating component", e);
     }
   }
 
@@ -113,12 +129,25 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
   }
 
   private Object extractFieldValue(Class<?> fieldType, JsonNode valueNode) {
+    // Check if the field is a List (for example, a List<String>)
+    if (List.class.isAssignableFrom(fieldType)) {
+      // Create a list and populate it by iterating over the array node.
+      List<String> list = new ArrayList<>();
+      if (valueNode.isArray()) {
+        for (JsonNode element : valueNode) {
+          list.add(element.asText());
+        }
+      }
+      return list;
+    }
+
     Function<JsonNode, Object> extractor = EXTRACTORS.get(fieldType);
     if (extractor == null) {
       throw new IllegalArgumentException("Unsupported field type: " + fieldType);
     }
     return extractor.apply(valueNode);
   }
+
 
   /**
    * Serializes a gameComponent into a JSON node

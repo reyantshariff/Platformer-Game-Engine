@@ -5,7 +5,7 @@ import oogasalad.model.engine.base.architecture.GameObject;
 /**
  * This class is a prefab for the base object. It is used to create a base object in the game.
  */
-
+@Deprecated
 public class Base extends GameObject {
 
   /**

@@ -1,9 +1,11 @@
 package oogasalad.view.player.dinosaur;
 
 import java.util.List;
+import java.util.Random;
 import javafx.scene.Scene;
 import oogasalad.model.ResourceBundles;
-import oogasalad.model.engine.action.VelocityYSetAction;
+import oogasalad.model.engine.action.ChangeSceneAction;
+import oogasalad.model.engine.action.CrouchAction;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.engine.base.behavior.Behavior;
 import oogasalad.model.engine.component.Camera;
@@ -45,7 +47,6 @@ public class DinosaurGameScene extends GameScene {
   public DinosaurGameScene(String name) {
     super(name);
     ResourceBundles.loadBundle(DINOSAUR_SCENE_BUNDLE);
-    onActivated();
   }
 
   @Override
@@ -58,23 +59,36 @@ public class DinosaurGameScene extends GameScene {
 
 
   private void makeBirdTest() {
-    Bird bird = new Bird("Bird");
-    bird.addComponent(Transform.class);
+    int startX = ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "bird.startX");
+    int startY = ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "bird.startY");
+    int width = ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "bird.width");
+    int height = ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "bird.height");
 
-    Transform tBird = bird.getComponent(Transform.class);
-    tBird.setX(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "bird.startX"));
-    tBird.setY(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "bird.startY"));
-    tBird.setScaleX(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "bird.width"));
-    tBird.setScaleY(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "bird.height"));
+    int spacing = ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "bird.spacing");
+    int heightVariance = ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "bird.heightVariance");
 
+    Random rand = new Random();
 
-    bird.addComponent(Collider.class);
+    for (int i = 0; i < 10; i++) {
+      Bird bird = new Bird("Bird" + i);
+      bird.addComponent(Transform.class);
 
-    SpriteRenderer spriteRenderer = bird.addComponent(SpriteRenderer.class);
-    spriteRenderer.setImagePaths(List.of("oogasalad/dinosaur/Bird1.png"));
+      Transform tBird = bird.getComponent(Transform.class);
+      int offsetY = rand.nextInt(heightVariance * 2 + 1) - heightVariance;
+      tBird.setX(startX + i * spacing);
+      tBird.setY(startY + offsetY);
+      tBird.setScaleX(width);
+      tBird.setScaleY(height);
 
-    registerObject(bird);
+      bird.addComponent(Collider.class);
+
+      SpriteRenderer spriteRenderer = bird.addComponent(SpriteRenderer.class);
+      spriteRenderer.setImagePaths(List.of("oogasalad/dinosaur/Bird1.png"));
+
+      registerObject(bird);
+    }
   }
+
 
 
   private void makeGroundTest() {
@@ -91,6 +105,7 @@ public class DinosaurGameScene extends GameScene {
 
     SpriteRenderer spriteRenderer = ground.addComponent(SpriteRenderer.class);
     spriteRenderer.setImagePaths(List.of("oogasalad/dinosaur/Track.png"));
+    spriteRenderer.setOffsetY(ResourceBundles.getInt(DINOSAUR_SCENE_BUNDLE, "ground.offsetY"));
 
     registerObject(ground);
   }
@@ -115,6 +130,7 @@ public class DinosaurGameScene extends GameScene {
 
     physicsHandler
         .setVelocityX(ResourceBundles.getDouble(DINOSAUR_SCENE_BUNDLE, "player.velocityX"));
+    physicsHandler.setAccelerationX(ResourceBundles.getDouble(DINOSAUR_SCENE_BUNDLE, "player.accelX"));
     physicsHandler
         .setAccelerationY(ResourceBundles.getDouble(DINOSAUR_SCENE_BUNDLE, "player.accelY"));
 
@@ -129,12 +145,16 @@ public class DinosaurGameScene extends GameScene {
 
     Behavior die = controller.addBehavior();
 
-    die.addAction(VelocityYSetAction.class)
-        .setParameter(ResourceBundles.getDouble(DINOSAUR_SCENE_BUNDLE, "player.die"));
+    die.addAction(ChangeSceneAction.class).setParameter("main");
     die.addConstraint(CollidesWithConstraint.class).setParameter("bird");
 
+    Behavior crouch = controller.addBehavior();
+    crouch.addAction(CrouchAction.class);
+    crouch.addConstraint(KeyPressConstraint.class).setParameter(KeyCode.DOWN);
+    crouch.addConstraint(TouchingFromAboveConstraint.class).setParameter("base");
+
     SpriteRenderer spriteRenderer = player.addComponent(SpriteRenderer.class);
-    spriteRenderer.setImagePaths(List.of("oogasalad/dinosaur/DinoStart.png"));
+    spriteRenderer.setImagePaths(List.of("oogasalad/dinosaur/DinoRun1.png"));
   }
 
   private void makeCameraTest() {
@@ -157,7 +177,6 @@ public class DinosaurGameScene extends GameScene {
 
   @Override
   public void onDeactivated() {
-    // Remove Components
-    //
+    //TODO: deactivation behavior
   }
 }

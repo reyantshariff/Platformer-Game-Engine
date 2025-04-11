@@ -28,14 +28,6 @@ public class Main extends Application {
   public void start(Stage stage) {
     MainViewManager viewManager = new MainViewManager(stage);
     viewManager.switchToMainMenu();
-    /**
-    // Create an example builder UI
-    BuilderView builderUI = new BuilderView(1400, 800);
-    Scene builderScene = builderUI.getScene();
-    Stage builderStage = new Stage();
-    builderStage.setScene(builderScene);
-    builderStage.show();
-     */
   }
 
 }

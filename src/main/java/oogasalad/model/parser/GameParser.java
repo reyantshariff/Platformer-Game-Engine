@@ -7,7 +7,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.base.architecture.GameInfo;
@@ -32,6 +34,9 @@ public class GameParser implements Parser<Game> {
   private static final String SCENE = "Scene";
   private static final String RESOURCES = "Resources";
 
+  private final List<String> levelOrder = new ArrayList<>();
+
+
   /**
    * Parses a JSON node into a Game instance
    *
@@ -52,6 +57,8 @@ public class GameParser implements Parser<Game> {
     handleInformationParsing(data, newGame);
     handleResourceParsing(data);
     handleSceneParsing(data, newGame);
+
+    newGame.setLevelOrder(levelOrder);
 
     return newGame;
   }
@@ -85,6 +92,8 @@ public class GameParser implements Parser<Game> {
     GameScene gameScene = sceneParser.parse(sceneNode);
     if (gameScene != null) {
       newGame.addScene(gameScene);
+      String sceneName = sceneNode.get(NAME).asText();
+      levelOrder.add(sceneName);
     } else {
       LOGGER.error("Scene with name {} not found and therefore will not be added "
           + "to Game.", sceneNode.get(NAME));
@@ -104,7 +113,7 @@ public class GameParser implements Parser<Game> {
     ObjectNode dataNode = mapper.createObjectNode();
 
     handleInformationWriting(data, root);
-    handleResourceWriting(data, dataNode);
+    //handleResourceWriting(data, dataNode);
     handleSceneWriting(data, dataNode);
 
     root.set(DATA, dataNode);
@@ -124,11 +133,11 @@ public class GameParser implements Parser<Game> {
     dataNode.set(SCENE, sceneArray);
   }
 
-  private void handleResourceWriting(Game data, ObjectNode dataNode) throws IOException {
-//    ArrayNode resourceArray = mapper.createArrayNode();
-//    for (Map.Entry<String, String> entry : data.getAllResources.entrySet()) {
-//      resourceArray.add(resourceParser.write(entry));
-//    }
-//    dataNode.set("Resources", resourceArray);
-  }
+//  private void handleResourceWriting(Game data, ObjectNode dataNode) throws IOException {
+////    ArrayNode resourceArray = mapper.createArrayNode();
+////    for (Map.Entry<String, String> entry : data.getAllResources.entrySet()) {
+////      resourceArray.add(resourceParser.write(entry));
+////    }
+////    dataNode.set("Resources", resourceArray);
+//  }
 }

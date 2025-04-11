@@ -1,0 +1,30 @@
+{
+  "Name": "Bird",
+  "Tag": "Enemy",
+  "Components": [
+    {
+      "Name": "Transform",
+      "Configurations": {
+        "x": 600,
+        "y": 200,
+        "rotation": 0,
+        "scaleX": 50,
+        "scaleY": 50
+      }
+    },
+    {
+      "Name": "SpriteRenderer",
+      "Configurations": {
+        "offsetX": 0,
+        "offsetY": 0,
+        "imagePaths": ["oogasalad/dinosaur/Bird1.png"]
+      }
+    },
+    {
+      "Name": "Collider",
+      "Configurations": {
+        "collidableTags": ["Player", "Obstacle"]
+      }
+    }
+  ]
+}

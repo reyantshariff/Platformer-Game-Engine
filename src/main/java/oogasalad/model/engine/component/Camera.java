@@ -3,6 +3,7 @@ package oogasalad.model.engine.component;
 import static oogasalad.model.config.GameConfig.LOGGER;
 import java.util.ArrayList;
 import java.util.List;
+import java.awt.Dimension;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
@@ -26,7 +27,15 @@ public class Camera extends GameComponent {
 
   @Override
   public void awake() {
-    transform = getParent().getComponent(Transform.class);
+    try {
+      transform = getParent().getComponent(Transform.class);
+      Dimension screenDimensions = getParent().getScene().getGame().getGameInfo().resolution();
+      transform.setScaleX(screenDimensions.getWidth());
+      transform.setScaleY(screenDimensions.getHeight());
+    } catch (NullPointerException e) {
+      LOGGER.error("Missing Transform Component or Parent");
+      throw new RuntimeException("Missing Transform Component or Parent", e);
+    }
   }
 
   @Override
@@ -51,7 +60,7 @@ public class Camera extends GameComponent {
         }
       }
       return objectsInView;
-    } catch (NullPointerException e) {
+    } catch (IllegalArgumentException | NullPointerException e) {
       LOGGER.warn("Missing GameScene or Transform Component");
       return new ArrayList<>();
     }

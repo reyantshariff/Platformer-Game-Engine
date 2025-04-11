@@ -2,9 +2,6 @@ package oogasalad.model.engine.base.architecture;
 
 import static oogasalad.model.config.GameConfig.LOGGER;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import java.util.Map;
-import java.util.function.Function;
 import oogasalad.model.engine.base.enumerate.ComponentTag;
 import oogasalad.model.engine.base.serialization.Serializable;
 import oogasalad.model.engine.base.serialization.SerializedField;
@@ -49,6 +46,40 @@ public abstract class GameComponent implements Serializable {
   protected void update(double deltaTime) {
     // NOTE: This method should be override if needed.
   }
+
+  /**
+   * Return a copy of this GameComponent and its parameters
+   *
+   * @return new GameComponent object with same characteristics
+   */
+  public GameComponent copy() {
+    try {
+      // Create a new instance of the same class using its no-arg constructor.
+      GameComponent copy = this.getClass().getDeclaredConstructor().newInstance();
+
+      // Iterate over each serialized field in the original.
+      for (SerializedField<?> field : this.getSerializedFields()) {
+        String fieldName = field.getFieldName();
+        Object value = field.getValue();
+        // Get the corresponding field in the copy.
+        // (We assume that getSerializedFields() returns a mutable list that you can iterate for the same order.)
+        for (SerializedField<?> copyField : copy.getSerializedFields()) {
+          if (copyField.getFieldName().equals(fieldName) &&
+              copyField.getFieldType().equals(field.getFieldType())) {
+            // For immutable types (e.g. primitives, Strings) a simple assignment is enough.
+            // If the field value is mutable and requires further deep copying,
+            // you'll need to handle that separately.
+            ((SerializedField<Object>) copyField).setValue(value);
+            break;
+          }
+        }
+      }
+      return copy;
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to deep copy component: " + this.getClass().getSimpleName(), e);
+    }
+  }
+
 
   /**
    * Get the component based on

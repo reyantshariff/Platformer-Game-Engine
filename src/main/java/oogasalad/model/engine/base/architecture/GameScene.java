@@ -19,6 +19,7 @@ public class GameScene {
   private final Map<UUID, GameObject> allObjects;
   private final Map<ComponentTag, List<GameComponent>> allComponents;
   private final Queue<Runnable> subscribedEvents;
+  private Set<GameObject> awakeList;
 
   private String name;
   private Game game;
@@ -40,6 +41,7 @@ public class GameScene {
       allComponents.put(tag, new ArrayList<>());
     }
     this.subscribedEvents = new LinkedList<>();
+    this.awakeList = new HashSet<>();
   }
 
   /**
@@ -151,6 +153,19 @@ public class GameScene {
   }
 
   /**
+   * @return - Returns whether current scene has a camera or not
+   */
+  public boolean hasCamera() {
+    try {
+      getCamera();
+      return true;
+    } catch (IllegalArgumentException e) {
+      return false;
+    }
+  }
+
+
+  /**
    * Getter to return a Collection of all the GameComponents
    */
   public final Map<ComponentTag, List<GameComponent>> getAllComponents() {
@@ -162,19 +177,34 @@ public class GameScene {
    * 
    * @param deltaTime the elapsed time between two frames
    */
-  final void step(double deltaTime) {
+  public final void step(double deltaTime) {
+
+    if (awakeList.contains(getCamera().getParent())) {
+      getCamera().getParent().wakeUp();
+      awakeList.remove(getCamera().getParent());
+    }
+
     // Update with the following sequence
     // 1. Handle all the subscribed events
     while (!subscribedEvents.isEmpty()) {
       subscribedEvents.poll().run();
     }
 
-    // 3. Update the components based on the order
+    // 2. Get all objects in view
+    Collection<GameObject> objectsInView = getAllObjectsInView();
+
+    // 3. Update the components of objects in view based on the order
     for (ComponentTag order : ComponentTag.values()) {
       if (order == ComponentTag.NONE)
         continue;
-      for (GameComponent component : allComponents.get(order)) {
-        component.update(deltaTime);
+      for (GameObject object : objectsInView) {
+        if (awakeList.contains(object)) {
+          object.wakeUp();
+          awakeList.remove(object);
+        }
+        for (GameComponent component : object.getComponents(order)) {
+          component.update(deltaTime);
+        }
       }
     }
 
@@ -221,13 +251,14 @@ public class GameScene {
           MessageFormat.format(GameConfig.getText("duplicateGameObject"), gameObject.getName()));
     }
 
+    gameObject.setScene(this);
+
     // Register components
     for (GameComponent component : gameObject.getAllComponents().values()) {
       registerComponent(component);
     }
 
-    gameObject.wakeUp();
-    gameObject.setScene(this);
+    awakeList.add(gameObject);
     allObjects.put(gameObject.getId(), gameObject);
   }
 

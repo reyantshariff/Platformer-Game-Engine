@@ -18,12 +18,11 @@ public class Follower extends GameComponent {
   }
 
   @SerializableField
-  private GameObject followObject;
-  @SerializableField
+  private String followObjectName;
   private double offsetX;
-  @SerializableField
   private double offsetY;
   private Transform myTransform;
+  private GameObject followObject;
 
   /**
    * Constructor for Follower. Sets default values for the offset and the follow object.
@@ -38,6 +37,10 @@ public class Follower extends GameComponent {
   @Override
   public void awake() {
     myTransform = getParent().getComponent(Transform.class);
+    followObject = getParent().getScene().getObject(followObjectName);
+    Transform attachTransform = followObject.getComponent(Transform.class);
+    offsetX = myTransform.getX() - attachTransform.getX();
+    offsetY = myTransform.getY() - attachTransform.getY();
   }
 
   @Override
@@ -56,9 +59,20 @@ public class Follower extends GameComponent {
    * Sets the object to follow.
    *
    * @param followObject the object to follow
+   * 
+   * @apiNote Use this method if the awake method for this component has already been called.
    */
   public void setFollowObject(GameObject followObject) {
     this.followObject = followObject;
+    try {
+      Transform attachTransform = followObject.getComponent(Transform.class);
+      myTransform = getParent().getComponent(Transform.class);
+      offsetX = myTransform.getX() - attachTransform.getX();
+      offsetY = myTransform.getY() - attachTransform.getY();
+    } catch (NullPointerException e) {
+      LOGGER.error("Follow Object Missing Transform Component");
+      throw new RuntimeException("Follow Object Missing Transform Component", e);
+    }
   }
 
   /**
@@ -97,5 +111,25 @@ public class Follower extends GameComponent {
    */
   public double getOffsetY() {
     return offsetY;
+  }
+
+  /**
+   * Sets the name of the object to follow.
+   *
+   * @param followObjectName the name of the object to follow
+   * 
+   * @apiNote Use this method if the awake method for this component has not been called yet.
+   */
+  public void setFollowObjectName(String followObjectName) {
+    this.followObjectName = followObjectName;
+  }
+
+  /**
+   * Gets the name of the object to follow.
+   *
+   * @return the name of the object to follow
+   */
+  public String getFollowObjectName() {
+    return followObjectName;
   }
 }
