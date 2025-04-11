@@ -119,6 +119,12 @@ public class GameObject {
     return componentClass.cast(allComponents.get(componentClass));
   }
 
+  /**
+   * Get the components based on the input component tag.
+   *
+   * @param tag the component tag specified
+   * @return the components
+   */
   public final Collection<GameComponent> getComponents(ComponentTag tag) {
     List<GameComponent> components = new ArrayList<>();
     for (GameComponent component : allComponents.values()) {

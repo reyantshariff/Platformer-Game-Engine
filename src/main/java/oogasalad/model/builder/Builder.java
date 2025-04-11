@@ -165,6 +165,9 @@ public class Builder {
     return selectedObject != null;
   }
 
+  /**
+   *  Moves the game object to a new location
+   */
   public void moveObject(double x, double y)
   {
     if (selectedObject != null && selectedObject.hasComponent(Transform.class))
