@@ -1,15 +1,18 @@
 package oogasalad.model.builder;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import java.io.IOException;
 import java.util.Deque;
 import java.util.ArrayDeque;
 import java.util.UUID;
 import oogasalad.model.builder.actions.DeleteObjectAction;
-import oogasalad.model.builder.actions.CreateObjectAction;
 import oogasalad.model.builder.actions.MoveObjectAction;
 import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.engine.component.Transform;
+import oogasalad.model.parser.JsonParser;
+import oogasalad.model.parser.ParsingException;
 
 /**
  * Builder API that manages drag/drop and delete functions of the Editor UI
@@ -179,6 +182,32 @@ public class Builder {
     {
       game.getCurrentScene().unregisterObject(selectedObject);
       undoStack.push(new DeleteObjectAction(game, selectedObject));
+    }
+  }
+
+  /**
+   * Save the currently loaded Game object as a JSON file using the JsonParser
+   * @param filepath location of JSON file
+   */
+  public JsonNode saveGameAs(String filepath) {
+    JsonParser parser = new JsonParser(filepath);
+    try {
+      return parser.write(game);
+    } catch (IOException e) {
+      throw new RuntimeException("Error saving game to JSON: " + e.getMessage());
+      // TODO: replace with custom exception class
+    }
+  }
+
+  /**
+   * Load a new Game into the Builder via a JSON file node
+   */
+  public void loadGame(JsonNode node) {
+    JsonParser parser = new JsonParser(filepath);
+    try {
+      game = parser.parse(node);
+    } catch (ParsingException e) {
+      throw new RuntimeException("Error loading game from JSON: " + e.getMessage());
     }
   }
 }
