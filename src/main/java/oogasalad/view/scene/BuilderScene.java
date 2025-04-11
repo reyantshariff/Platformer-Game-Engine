@@ -19,8 +19,8 @@ import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.parser.PrefabLoader;
 import oogasalad.view.gui.button.BuilderSpriteOptionButton;
 import oogasalad.view.player.dinosaur.DinosaurGameScene;
-import oogasalad.view.scene.BuilderUI.LevelViewScrollController;
-import oogasalad.view.scene.BuilderUI.ObjectDragger;
+import oogasalad.view.scene.BuilderUserControl.LevelViewScrollController;
+import oogasalad.view.scene.BuilderUserControl.ObjectDragger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -89,6 +89,9 @@ public class BuilderScene extends ViewScene {
 
     // Add layout for bottom button menus
     myWindow.setBottom(createBottomPanel());
+
+    levelViewScrollPane = createGamePreview();
+
 
     // Add level-view segment of window
     myWindow.setCenter(createGamePreview());
