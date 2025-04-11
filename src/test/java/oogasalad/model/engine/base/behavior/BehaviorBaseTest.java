@@ -1,0 +1,103 @@
+package oogasalad.model.engine.base.behavior;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.testfx.framework.junit5.ApplicationTest;
+import javafx.stage.Stage;
+import oogasalad.model.engine.base.architecture.GameObject;
+import oogasalad.model.engine.component.BehaviorController;
+import oogasalad.model.engine.component.Collider;
+import oogasalad.model.engine.component.Transform;
+import oogasalad.view.scene.MainViewManager;
+import oogasalad.model.engine.base.architecture.GameScene;
+import oogasalad.model.engine.base.architecture.Game;
+import javafx.application.Platform;
+import java.util.concurrent.CountDownLatch;
+
+public abstract class BehaviorBaseTest extends ApplicationTest {
+
+    private Game game;
+    private GameScene scene1;
+    private GameScene scene2;
+    private GameObject obj1;
+    private GameObject obj2;
+    private Behavior behavior1;
+    private Behavior behavior2;
+
+    @Override
+    public void start(Stage stage) {
+        MainViewManager viewManager = new MainViewManager(stage);
+        viewManager.switchToMainMenu();
+    }
+
+    @BeforeEach
+    public void generalSetUp() {
+        obj1 = new GameObject("Object1");
+        obj2 = new GameObject("Object2");
+        Transform transform1 = obj1.addComponent(Transform.class);
+        Transform transform2 = obj2.addComponent(Transform.class);
+        transform1.setScaleX(100);
+        transform1.setScaleY(100);
+        transform2.setScaleX(100);
+        transform2.setScaleY(100);
+        obj1.addComponent(BehaviorController.class);
+        obj2.addComponent(BehaviorController.class);
+        obj1.addComponent(Collider.class);
+        obj2.addComponent(Collider.class);
+        behavior1 = obj1.getComponent(BehaviorController.class).addBehavior();
+        behavior2 = obj2.getComponent(BehaviorController.class).addBehavior();
+        scene1 = new GameScene("Scene1");
+        scene2 = new GameScene("Scene2");
+        scene1.registerObject(obj1);
+        scene1.registerObject(obj2);
+        game = new Game();
+        game.addScene(scene1);
+        game.addScene(scene2);
+        customSetUp();
+    }
+
+    public abstract void customSetUp();
+
+    protected GameObject getObj1() {
+        return obj1;
+    }
+
+    protected GameObject getObj2() {
+        return obj2;
+    }
+
+    protected Behavior getBehavior1() {
+        return behavior1;
+    }
+
+    protected Behavior getBehavior2() {
+        return behavior2;
+    }
+
+    protected Game getGame() {
+        return game;
+    }
+
+    protected GameScene getScene1() {
+        return scene1;
+    }
+
+    protected GameScene getScene2() {
+        return scene2;
+    }
+
+    protected void step() {
+        CountDownLatch latch = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            try {
+                game.getCurrentScene().step(1);
+            } finally {
+                latch.countDown();
+            }
+        });
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+}

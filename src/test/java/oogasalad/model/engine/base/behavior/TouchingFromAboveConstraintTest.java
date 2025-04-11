@@ -12,13 +12,15 @@ public class TouchingFromAboveConstraintTest extends ConstraintsTest<TouchingFro
 
     @Override
     public void customSetUp() {
-        TouchingFromAboveConstraint constraint = getBehavior1().addConstraint(TouchingFromAboveConstraint.class);
+        TouchingFromAboveConstraint constraint =
+                getBehavior1().addConstraint(TouchingFromAboveConstraint.class);
         setConstraint(constraint);
         transform1 = getObj1().getComponent(Transform.class);
         transform2 = getObj2().getComponent(Transform.class);
     }
 
-    @Override @Test
+    @Override
+    @Test
     public void check_checkPosotive_returnsTrue() {
         transform1.setX(transform2.getX());
         transform1.setY(transform2.getY() - 99);
@@ -26,7 +28,8 @@ public class TouchingFromAboveConstraintTest extends ConstraintsTest<TouchingFro
         assertTrue(getConstraint().onCheck(getObj2().getTag()));
     }
 
-    @Override @Test
+    @Override
+    @Test
     public void check_checkNegative_returnsFalse() {
         transform1.setX(0);
         transform1.setY(0);
@@ -40,5 +43,5 @@ public class TouchingFromAboveConstraintTest extends ConstraintsTest<TouchingFro
         step();
         assertFalse(getConstraint().onCheck(getObj2().getTag()));
     }
-    
+
 }

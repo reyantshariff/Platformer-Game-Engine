@@ -15,14 +15,16 @@ public class KeyPressConstraintTest extends ConstraintsTest<KeyPressConstraint> 
         setConstraint(constraint);
     }
 
-    @Override @Test
+    @Override
+    @Test
     public void check_checkPosotive_returnsTrue() {
         getGame().keyPressed(KeyCode.A.getValue());
         step();
         assertTrue(getConstraint().onCheck(KeyCode.A));
     }
 
-    @Override @Test
+    @Override
+    @Test
     public void check_checkNegative_returnsFalse() {
         step();
         assertFalse(getConstraint().onCheck(KeyCode.D));

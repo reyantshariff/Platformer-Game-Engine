@@ -10,16 +10,18 @@ public class CollidesWithConstraintTest extends ConstraintsTest<CollidesWithCons
 
     private Transform transform1;
     private Transform transform2;
-    
+
     @Override
     public void customSetUp() {
-        CollidesWithConstraint constraint = getBehavior1().addConstraint(CollidesWithConstraint.class);
+        CollidesWithConstraint constraint =
+                getBehavior1().addConstraint(CollidesWithConstraint.class);
         setConstraint(constraint);
         transform1 = getObj1().getComponent(Transform.class);
         transform2 = getObj2().getComponent(Transform.class);
     }
 
-    @Override @Test
+    @Override
+    @Test
     public void check_checkPosotive_returnsTrue() {
         transform1.setX(transform2.getX());
         transform1.setY(transform2.getY());
@@ -27,7 +29,8 @@ public class CollidesWithConstraintTest extends ConstraintsTest<CollidesWithCons
         assertTrue(getConstraint().onCheck(getObj2().getTag()));
     }
 
-    @Override @Test
+    @Override
+    @Test
     public void check_checkNegative_returnsFalse() {
         transform1.setX(0);
         transform1.setY(0);
