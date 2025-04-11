@@ -1,11 +1,14 @@
 package oogasalad.view.scene;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.image.Image;
@@ -13,6 +16,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import oogasalad.model.builder.Builder;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
@@ -89,7 +93,8 @@ public class BuilderScene extends ViewScene {
 
     // Add layout for bottom button menus
     myWindow.setBottom(createBottomPanel());
-
+    // Add layout for widget panel
+    myWindow.setRight(createComponentPanel());
     // Add level-view segment of window
     myWindow.setCenter(createGamePreview());
 
@@ -102,6 +107,50 @@ public class BuilderScene extends ViewScene {
 
   }
 
+  private VBox createComponentPanel() {
+    ComboBox<String> componentSelector = new ComboBox<>();
+    componentSelector.setValue("Select A Component");
+    String directoryPath = "src/main/java/oogasalad/model/engine/component";
+    String packageClass = "oogasalad.model.engine.component.";
+    List<Class<?>> componentList = new ArrayList<>(getClassesInDirectory(directoryPath, packageClass));
+
+    componentSelector.getItems().addAll(
+        componentList.stream()
+            .map(Class::getSimpleName)  // Convert each Class<?> to its simple name
+            .collect(Collectors.toList())  // Collect the names into a List
+    );
+    componentSelector.setOnAction(e -> {
+      // createComponentWidget(componentSelector.getValue());
+    });
+
+    return new VBox(componentSelector);
+  }
+
+  private List<Class<?>> getClassesInDirectory(String directoryPath, String classPackage) {
+    List<Class<?>> classes = new ArrayList<>();
+    File directory = new File(directoryPath);
+
+    if (directory.exists() && directory.isDirectory()) {
+      // Get all .class files in the directory
+      File[] files = directory.listFiles((dir, name) -> name.endsWith(".java"));
+      if (files != null) {
+        for (File file : files) {
+          System.out.println(file.getAbsolutePath());
+          String className = file.getName().replace(".java", "");
+          try {
+            // Load the class dynamically
+            Class<?> clazz = Class.forName(classPackage + className);
+            classes.add(clazz); // Add to list
+          } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+          }
+        }
+      }
+    }
+    return classes;
+  }
+
+  // private
   /**
    * Updates game preview window by rendering all current GameObjects in the GameScene in their
    * current position
