@@ -59,24 +59,26 @@ public abstract class GameComponent implements Serializable {
 
       // Iterate over each serialized field in the original.
       for (SerializedField<?> field : this.getSerializedFields()) {
-        String fieldName = field.getFieldName();
-        Object value = field.getValue();
-        // Get the corresponding field in the copy.
-        // (We assume that getSerializedFields() returns a mutable list that you can iterate for the same order.)
-        for (SerializedField<?> copyField : copy.getSerializedFields()) {
-          if (copyField.getFieldName().equals(fieldName) &&
-              copyField.getFieldType().equals(field.getFieldType())) {
-            // For immutable types (e.g. primitives, Strings) a simple assignment is enough.
-            // If the field value is mutable and requires further deep copying,
-            // you'll need to handle that separately.
-            ((SerializedField<Object>) copyField).setValue(value);
-            break;
-          }
-        }
+        setCopyField(copy, field);
       }
       return copy;
     } catch (Exception e) {
       throw new RuntimeException("Failed to deep copy component: " + this.getClass().getSimpleName(), e);
+    }
+  }
+
+  private void setCopyField(GameComponent copy, SerializedField<?> field) {
+    String fieldName = field.getFieldName();
+    Object value = field.getValue();
+    for (SerializedField<?> copyField : copy.getSerializedFields()) {
+      if (copyField.getFieldName().equals(fieldName) &&
+          copyField.getFieldType().equals(field.getFieldType())) {
+        // For immutable types (e.g. primitives, Strings) a simple assignment is enough.
+        // If the field value is mutable and requires further deep copying,
+        // you'll need to handle that separately.
+        ((SerializedField<Object>) copyField).setValue(value);
+        break;
+      }
     }
   }
 
