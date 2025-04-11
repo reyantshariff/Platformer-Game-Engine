@@ -76,15 +76,20 @@ public class BehaviorParser implements Parser<Behavior> {
 
   private void createAndAddAction(Behavior behaviorInstance, JsonNode actionNode, Class<?> clazz)
       throws InstantiationException, IllegalAccessException,
-      InvocationTargetException, NoSuchMethodException {
+      InvocationTargetException, NoSuchMethodException, ParsingException {
     BehaviorAction<?> action = (BehaviorAction<?>) clazz.getDeclaredConstructor().newInstance();
     action.setBehavior(behaviorInstance);
-    JsonNode config = actionNode.get("parameter");
 
-    action
-        .getSerializedFields()
-        .forEach(field -> setFieldFromConfig(config, field));
+    SerializedField<?> paramField = action.getParentSerializableField();
+    JsonNode valueNode = actionNode.get("parameter");
 
+    if (valueNode == null) {
+      throw new IllegalArgumentException("Missing parameter field");
+    }
+    
+    Class<?> parameterType = getParameterType(actionNode, paramField.getFieldType());
+    setFieldFromValue(paramField, valueNode, parameterType);
+    
     behaviorInstance.addAction(action);
   }
 
@@ -109,32 +114,50 @@ public class BehaviorParser implements Parser<Behavior> {
   }
 
   private void createAndAddConstraint(Behavior behaviorInstance, JsonNode constraintNode, Class<?> clazz)
-      throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+      throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ParsingException {
+
     BehaviorConstraint<?> constraint = (BehaviorConstraint<?>) clazz.getDeclaredConstructor().newInstance();
     constraint.setBehavior(behaviorInstance);
-    JsonNode config = constraintNode.get("parameter");
 
-    constraint
-        .getSerializedFields()
-        .forEach(field -> setFieldFromConfig(config, field));
+    SerializedField<?> paramField = constraint.getParentSerializableField();
+    JsonNode valueNode = constraintNode.get("parameter");
+
+    if (valueNode == null) {
+      throw new IllegalArgumentException("Missing parameter field");
+    }
+
+    Class<?> parameterType = getParameterType(constraintNode, paramField.getFieldType());
+    setFieldFromValue(paramField, valueNode, parameterType);
 
     behaviorInstance.addConstraint(constraint);
   }
 
-  private void setFieldFromConfig(JsonNode config, SerializedField<?> serializedField) {
-    String fieldName = serializedField.getFieldName();
-    if (!config.has(fieldName)) return;
-
-    JsonNode valueNode = config.get(fieldName);
-    Class<?> fieldType = serializedField.getFieldType();
-
+  private void setFieldFromValue(SerializedField<?> field, JsonNode valueNode, Class<?> type)      throws ParsingException {
+    
     try {
-      Object value = mapper.convertValue(valueNode, fieldType);
-      ((SerializedField<Object>) serializedField).setValue(value);
-    } catch (IllegalArgumentException | ClassCastException e) {
-      throw new IllegalArgumentException(
-          "Failed to set field '" + fieldName + "' with value: " + valueNode, e);
+      Object value;
+
+      value = getValueFromMapper(valueNode, type);
+
+      SerializedField<Object> typedField = (SerializedField<Object>) field;
+      typedField.setValue(value);
+
+    } catch (IllegalArgumentException e) {
+      throw new ParsingException("Invalid value for enum field '" + field.getFieldName() + "': " + valueNode.asText(), e);
+    } catch (ClassCastException e) {
+      throw new ParsingException("Type mismatch for field '" + field.getFieldName() + "' — expected " + type.getSimpleName(), e);
     }
+  }
+
+  private Object getValueFromMapper(JsonNode valueNode, Class<?> type) {
+    Object value;
+    if (type.isEnum()) {
+      Class<? extends Enum<?>> enumType = (Class<? extends Enum<?>>) type;
+      value = Enum.valueOf((Class) enumType, valueNode.asText());
+    } else {
+      value = mapper.convertValue(valueNode, type);
+    }
+    return value;
   }
 
   /**
@@ -147,6 +170,23 @@ public class BehaviorParser implements Parser<Behavior> {
   public JsonNode write(Behavior data) throws IOException {
     // Todo write this method
     return new ObjectMapper().valueToTree(data);
+  }
+
+
+  //unsure how to handle this without using switch
+  private Class<?> getParameterType(JsonNode node, Class<?> defaultType) throws ParsingException {
+    if (!node.has("parameterType")) {
+      return defaultType; 
+    }
+
+    String typeName = node.get("parameterType").asText();
+    return switch (typeName) {
+      case "KeyCode" -> oogasalad.model.engine.base.enumerate.KeyCode.class;
+      case "String" -> String.class;
+      case "Integer" -> Integer.class;
+      case "Double" -> Double.class;
+      default -> throw new ParsingException("Unknown parameterType: " + typeName);
+    };
   }
 
 }

@@ -60,14 +60,14 @@ public class JsonParser implements Parser {
     return myGame = GAME_PARSER.parse(rootNode);
   }
 
-  public Game getGame() throws ParsingException {
+  public Game getGame() {
     return myGame;
   }
 
   /**
    * @param data - the Game object that we wish to write to JSON
    * @return JsonNode of the game, indicating success
-   * @throws IOException
+   * @throws IOException - exception for failed input or output
    */
   @Override
   public JsonNode write(Object data) throws IOException {

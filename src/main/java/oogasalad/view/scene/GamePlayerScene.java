@@ -2,23 +2,20 @@ package oogasalad.view.scene;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.io.IOException;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.base.architecture.GameScene;
-import oogasalad.model.parser.GameParser;
+import oogasalad.model.parser.JsonParser;
+import oogasalad.model.parser.Parser;
 import oogasalad.model.parser.ParsingException;
 import oogasalad.view.gui.Gui;
-import oogasalad.view.player.dinosaur.DinosaurGameScene;
 
 /**
  * Displays the game using a GUI canvas inside a JavaFX scene
  */
 public class GamePlayerScene extends ViewScene {
-  private final GameParser gameParser = new GameParser();
   /**
    * Constructs a new GamePlayerScene to display a game within a JavaFX scene.
    *
@@ -35,13 +32,12 @@ public class GamePlayerScene extends ViewScene {
     String jsonPath = "doc/plan/data/FullDino.json";
     Game game;
     try {
+      Parser<?> parser = new JsonParser(jsonPath);
       ObjectMapper mapper = new ObjectMapper();
-      JsonNode rootNode = mapper.readTree(new File(jsonPath));
-      GameParser parser = new GameParser();
-      game = parser.parse(rootNode);
+      JsonNode newNode = mapper.createObjectNode();
+      game = (Game) parser.parse(newNode);
 
-
-    } catch (IOException | ParsingException e) {
+    } catch (ParsingException e) {
       throw new RuntimeException("Failed to parse game JSON file: " + e.getMessage(), e);
     }
 
