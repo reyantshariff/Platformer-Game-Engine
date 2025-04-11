@@ -59,9 +59,14 @@ public class Follower extends GameComponent {
    * Sets the object to follow.
    *
    * @param followObject the object to follow
+   * 
+   * @apiNote Use this method if the awake method for this component has already been called.
    */
   public void setFollowObject(GameObject followObject) {
     this.followObject = followObject;
+    Transform attachTransform = followObject.getComponent(Transform.class);
+    offsetX = myTransform.getX() - attachTransform.getX();
+    offsetY = myTransform.getY() - attachTransform.getY();
   }
 
   /**
@@ -106,6 +111,8 @@ public class Follower extends GameComponent {
    * Sets the name of the object to follow.
    *
    * @param followObjectName the name of the object to follow
+   * 
+   * @apiNote Use this method if the awake method for this component has not been called yet.
    */
   public void setFollowObjectName(String followObjectName) {
     this.followObjectName = followObjectName;
