@@ -16,6 +16,7 @@ import oogasalad.view.gui.Gui;
  * Displays the game using a GUI canvas inside a JavaFX scene
  */
 public class GamePlayerScene extends ViewScene {
+  private final Gui gui;
   private static final String JSON_PATH_PREFIX = "data/GameJsons/";
   /**
    * Constructs a new GamePlayerScene to display a game within a JavaFX scene.
@@ -50,7 +51,7 @@ public class GamePlayerScene extends ViewScene {
         .orElseThrow(() -> new IllegalStateException("No scenes found in the parsed game."));
     game.changeScene(firstScene.getName());
 
-    Gui gui = new Gui(game);
+    gui = new Gui(game);
 
     Button returnButton = new Button("Main Menu");
     returnButton.setOnAction(e -> {
