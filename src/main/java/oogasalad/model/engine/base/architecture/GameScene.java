@@ -175,7 +175,7 @@ public class GameScene {
    * 
    * @param deltaTime the elapsed time between two frames
    */
-  final void step(double deltaTime) {
+  public final void step(double deltaTime) {
     // Update with the following sequence
     // 1. Handle all the subscribed events
     while (!subscribedEvents.isEmpty()) {
