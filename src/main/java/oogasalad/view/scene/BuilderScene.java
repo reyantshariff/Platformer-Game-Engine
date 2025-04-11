@@ -1,5 +1,6 @@
 package oogasalad.view.scene;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import java.io.File;
 import java.util.List;
 import javafx.scene.Group;
@@ -51,15 +52,16 @@ public class BuilderScene extends ViewScene {
 
   /**
    * Constructor for BuilderView
-   * the height of the window
+   *
+   * @param manager the view manager which this scene will use to navigate to other screens
    */
   public BuilderScene(MainViewManager manager) {
     // Create the BorderPane as the root
     super(new BorderPane(), 1280, 720);
+    viewManager = manager;
     myWindow = (BorderPane) getScene().getRoot();
     createDinoGameTest();
     initializeUI();
-    viewManager = manager;
   }
 
   private void createDinoGameTest() {
@@ -70,19 +72,18 @@ public class BuilderScene extends ViewScene {
 
   private void initializeUI() {
     // Top bar
-    /*
     HBox topBar = new HBox();
-    Button loadButton = new Button("Load");
-    Button saveButton = new Button("Save");
-    Button playtestButton = new Button("Playtest");
-    topBar.getChildren().addAll(loadButton, saveButton, playtestButton);
-    myWindow.setTop(topBar);
-    */
-    Button returnButton = new Button("Main Menu");
-    returnButton.setOnAction(e -> {
-      viewManager.switchToMainMenu();
+    Button mainMenuButton = new Button("Main Menu");
+    mainMenuButton.setOnAction(e -> viewManager.switchToMainMenu());
+    Button previewLevelButton = new Button("Preview Level");
+    previewLevelButton.setOnAction(e -> {
+      JsonNode gameNode = builder.saveGameAs("test.json");
+      viewManager.switchTo(
+          new LevelPreviewScene(viewManager, this, gameNode));
+
     });
-    myWindow.setTop(returnButton);
+    topBar.getChildren().addAll(mainMenuButton, previewLevelButton);
+    myWindow.setTop(topBar);
 
     // Add layout for bottom button menus
     myWindow.setBottom(createBottomPanel());
@@ -119,7 +120,8 @@ public class BuilderScene extends ViewScene {
     levelViewScrollPane = new ScrollPane(canvasGroup);
 
     // Canvas viewport size within builder window
-    levelViewScrollPane.setPrefViewportWidth(GAME_PREVIEW_WIDTH); // TODO: replace these hardcoded values
+    levelViewScrollPane.setPrefViewportWidth(
+        GAME_PREVIEW_WIDTH); // TODO: replace these hardcoded values
     levelViewScrollPane.setPrefViewportHeight(GAME_PREVIEW_HEIGHT);
 
     // Disable vertical scroll bar
@@ -159,11 +161,13 @@ public class BuilderScene extends ViewScene {
       // Only process the event for zooming, ignore its vertical scrolling aspect.
       double currentScale = canvasGroup.getScaleX(); // assuming uniform scale
       if (event.getDeltaY() < 0) {
-        if (currentScale / ZOOM_FACTOR >= MIN_ZOOM)
+        if (currentScale / ZOOM_FACTOR >= MIN_ZOOM) {
           currentScale /= ZOOM_FACTOR;
+        }
       } else {
-        if (currentScale * ZOOM_FACTOR <= MAX_ZOOM)
+        if (currentScale * ZOOM_FACTOR <= MAX_ZOOM) {
           currentScale *= ZOOM_FACTOR;
+        }
       }
       canvasGroup.setScaleX(currentScale);
       canvasGroup.setScaleY(currentScale);
@@ -186,17 +190,19 @@ public class BuilderScene extends ViewScene {
 
   private ScrollPane createAddSpriteButtonOptions() {
     // Define width and height of the sprite button panel
-    double spriteButtonPaneWidth = getScene().getWidth()*0.45;
-    double spriteButtonPaneHeight = getScene().getHeight()*0.25;
+    double spriteButtonPaneWidth = getScene().getWidth() * 0.45;
+    double spriteButtonPaneHeight = getScene().getHeight() * 0.25;
 
     // Organize the button layout via TilePane
     TilePane tilePane = createSpriteButtonTilePane(spriteButtonPaneWidth);
 
     // Create a ScrollPane to hold the buttons
-    ScrollPane spriteScrollPane = createSpriteButtonScrollPane(spriteButtonPaneWidth, spriteButtonPaneHeight, tilePane);
+    ScrollPane spriteScrollPane = createSpriteButtonScrollPane(spriteButtonPaneWidth,
+        spriteButtonPaneHeight, tilePane);
 
     // Load the prefab GameObjects
-    List<GameObject> prefabObjects = PrefabLoader.loadAvailablePrefabs("dinosaur"); // TODO: remove hardcoded game type
+    List<GameObject> prefabObjects = PrefabLoader.loadAvailablePrefabs(
+        "dinosaur"); // TODO: remove hardcoded game type
     for (GameObject prefab : prefabObjects) {
       // Assume the prefab has a SpriteRenderer component.
       String previewImagePath = getPreviewImagePath(prefab);
@@ -206,8 +212,8 @@ public class BuilderScene extends ViewScene {
           Image previewImage = new Image(new File(previewImagePath).toURI().toURL().toString());
           Button newSpriteButton = new BuilderSpriteOptionButton(
               previewImage,
-              tilePane.getPrefWidth()*0.25,
-              tilePane.getPrefHeight()*0.25,
+              tilePane.getPrefWidth() * 0.25,
+              tilePane.getPrefHeight() * 0.25,
               prefab);
           newSpriteButton.setOnAction(event -> {
             GameObject newObject = prefab.clone();  // or a deep copy via serialization
@@ -216,8 +222,10 @@ public class BuilderScene extends ViewScene {
             Transform t = newObject.getComponent(Transform.class);
             if (t != null) {
               // Calculate center based on preview or scene dimensions.
-              double previewHorizontalMidpoint = levelViewScrollPane.getHvalue()*GAME_PREVIEW_WIDTH + (GAME_PREVIEW_WIDTH / 2);
-              double previewVerticalMidpoint = levelViewScrollPane.getVvalue()*GAME_PREVIEW_HEIGHT + (GAME_PREVIEW_HEIGHT / 2);
+              double previewHorizontalMidpoint =
+                  levelViewScrollPane.getHvalue() * GAME_PREVIEW_WIDTH + (GAME_PREVIEW_WIDTH / 2);
+              double previewVerticalMidpoint =
+                  levelViewScrollPane.getVvalue() * GAME_PREVIEW_HEIGHT + (GAME_PREVIEW_HEIGHT / 2);
               double objectWidth = t.getScaleX();
               double objectHeight = t.getScaleY();
 
@@ -260,8 +268,8 @@ public class BuilderScene extends ViewScene {
     // Create a TilePane that will automatically arrange the sprite buttons in a tile/grid layout
     TilePane tilePane = new TilePane();
     tilePane.setPrefColumns(2); // Desired number of columns
-    tilePane.setHgap(getScene().getWidth()*0.02);
-    tilePane.setVgap(getScene().getHeight()*0.02);
+    tilePane.setHgap(getScene().getWidth() * 0.02);
+    tilePane.setVgap(getScene().getHeight() * 0.02);
     // Define TilePane size
     tilePane.setPrefWidth(width);
     tilePane.setMinWidth(width);
@@ -271,7 +279,8 @@ public class BuilderScene extends ViewScene {
 
   private String getPreviewImagePath(GameObject prefab) {
     try {
-      var spriteRenderer = prefab.getComponent(oogasalad.model.engine.component.SpriteRenderer.class);
+      var spriteRenderer = prefab.getComponent(
+          oogasalad.model.engine.component.SpriteRenderer.class);
       String imagePath = spriteRenderer.getImagePath();
       if (imagePath != null && !imagePath.isEmpty()) {
         return "src/main/resources/" + imagePath;

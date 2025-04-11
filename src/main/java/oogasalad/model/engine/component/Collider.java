@@ -71,7 +71,7 @@ public class Collider extends GameComponent {
       if (overlapX < overlapY) {
         resolveCollisionX(transform, other, overlapX);
       } else {
-        resolveCollisionY(transform, other, overlapY);
+        resolveCollisionY(transform, other);
       }
     }
   }
@@ -106,15 +106,18 @@ public class Collider extends GameComponent {
     }
   }
 
-  private void resolveCollisionY(Transform thisTransform, Transform otherTransform, double overlapY) {
+
+  private void resolveCollisionY(Transform thisTransform, Transform otherTransform) {
     double thisBottom = thisTransform.getY() + thisTransform.getScaleY();
-    double thisTop = thisTransform.getY();
     double otherTop = otherTransform.getY();
 
-    if (thisBottom > otherTop && thisTop < otherTop) {
-      thisTransform.setY(thisTransform.getY() - overlapY - COLLISION_OFFSET);
-    } else {
-      thisTransform.setY(thisTransform.getY() + overlapY + COLLISION_OFFSET);
+    if (thisBottom > otherTop && thisTransform.getY() < otherTop) {
+      thisTransform.setY(otherTop - thisTransform.getScaleY());
+
+      if (getParent().hasComponent(PhysicsHandler.class)) {
+        PhysicsHandler physics = getParent().getComponent(PhysicsHandler.class);
+        physics.setVelocityY(0);
+      }
     }
   }
 

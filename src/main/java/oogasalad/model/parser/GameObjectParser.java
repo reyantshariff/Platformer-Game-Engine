@@ -30,7 +30,6 @@ public class GameObjectParser implements Parser<GameObject> {
   private static final String BEHAVIORS = "BehaviorController";
   private static final String NAME = "Name";
   private static final String COMPONENTS = "Components";
-  private static final String CONFIGURATIONS = "Configurations";
 
 
   /**
@@ -103,12 +102,14 @@ public class GameObjectParser implements Parser<GameObject> {
 
   private void parseBehaviors(GameObject gameObject, JsonNode behaviorsNode)
       throws ParsingException {
-    if (behaviorsNode.isArray()) {
+    JsonNode behaviorsArrayNode = behaviorsNode.get("Behaviors");
+    if (behaviorsArrayNode != null && behaviorsArrayNode.isArray()) {
       BehaviorController behaviorController = new BehaviorController();
-      for (JsonNode behaviorNode : behaviorsNode) {
+      for (JsonNode behaviorNode : behaviorsArrayNode) {
         Behavior behavior = behaviorParser.parse(behaviorNode);
         behaviorController.addBehavior(behavior);
       }
+      gameObject.addComponent(behaviorController);
     }
   }
 
@@ -143,7 +144,7 @@ public class GameObjectParser implements Parser<GameObject> {
     for (GameComponent component : data.getAllComponents().values()) {
       if (component.getClass().isAssignableFrom(BehaviorController.class)) {
         BehaviorController controller = (BehaviorController) component;
-        behaviors.addAll(((List<Behavior>) controller.getSerializedFields().get(0)));
+        behaviors.addAll(((List<Behavior>) controller.getSerializedFields().getFirst()));
       } else {
         components.add(component);
       }

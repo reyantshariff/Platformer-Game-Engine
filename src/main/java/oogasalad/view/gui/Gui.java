@@ -49,6 +49,7 @@ public class Gui {
     canvas.setOnKeyPressed(this::handleKeyPressed);
     canvas.setOnKeyReleased(this::handleKeyReleased);
 
+    canvas.requestFocus();
     gc = canvas.getGraphicsContext2D();
     objectRenderer = new GameObjectRenderer(null);
 

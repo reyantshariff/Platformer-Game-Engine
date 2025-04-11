@@ -54,6 +54,24 @@ public class Behavior implements Serializable {
   }
 
   /**
+   * Getter for the constraints
+   *
+   * @return - a list of the behavior constraints
+   */
+  public List<BehaviorConstraint<?>> getConstraints() {
+    return constraints;
+  }
+
+  /**
+   * Getter for the actions
+   *
+   * @return - a list of behavior actions
+   */
+  public List<BehaviorAction<?>> getActions() {
+    return actions;
+  }
+
+  /**
    * Execute the behavior. This method checks all the constraints and performs the actions if all
    * the constraints are met.
    */
@@ -192,6 +210,7 @@ public class Behavior implements Serializable {
   public <T extends BehaviorAction<?>> void removeAction(Class<T> actionClass) {
     actions.removeIf(action -> action.getClass().equals(actionClass));
   }
+
 
 }
 
