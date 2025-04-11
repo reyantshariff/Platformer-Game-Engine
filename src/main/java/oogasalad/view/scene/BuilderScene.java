@@ -116,7 +116,7 @@ public class BuilderScene extends ViewScene {
 
     Group canvasGroup = new Group(myGameCanvas);
 
-    levelViewScrollPane = new ScrollPane(canvasGroup);
+    levelViewScrollPane = new ScrollPane(canvasGroup); //Make less passive. REFACTOR TO RECORDS. USE EXPLICIT IMMUTABILITY
 
     // Canvas viewport size within builder window
     levelViewScrollPane.setPrefViewportWidth(GAME_PREVIEW_WIDTH); // TODO: replace these hardcoded values
@@ -209,27 +209,14 @@ public class BuilderScene extends ViewScene {
               tilePane.getPrefWidth()*0.25,
               tilePane.getPrefHeight()*0.25,
               prefab);
+
           newSpriteButton.setOnAction(event -> {
-            GameObject newObject = prefab.clone();  // or a deep copy via serialization
-
-            // Retrieve the Transform component
-            Transform t = newObject.getComponent(Transform.class);
-            if (t != null) {
-              // Calculate center based on preview or scene dimensions.
-              double previewHorizontalMidpoint = levelViewScrollPane.getHvalue()*GAME_PREVIEW_WIDTH + (GAME_PREVIEW_WIDTH / 2);
-              double previewVerticalMidpoint = levelViewScrollPane.getVvalue()*GAME_PREVIEW_HEIGHT + (GAME_PREVIEW_HEIGHT / 2);
-              double objectWidth = t.getScaleX();
-              double objectHeight = t.getScaleY();
-
-              // Center the object
-              t.setX(previewHorizontalMidpoint - (objectWidth / 2));
-              t.setY(previewVerticalMidpoint - (objectHeight / 2));
-            }
-            // Register new object to the scene
-            gameScene.registerObject(newObject);
-            // Update the game preview so the new object appears
+            double previewHorizontalMidpoint = levelViewScrollPane.getHvalue() * GAME_PREVIEW_WIDTH + (GAME_PREVIEW_WIDTH / 2);
+            double previewVerticalMidpoint = levelViewScrollPane.getVvalue() * GAME_PREVIEW_HEIGHT + (GAME_PREVIEW_HEIGHT / 2);
+            builder.addObject(prefab.clone(), previewHorizontalMidpoint, previewVerticalMidpoint);
             updateGamePreview();
           });
+
           tilePane.getChildren().add(newSpriteButton);
         } catch (Exception e) {
           System.err.println("Error loading preview image from: " + previewImagePath);

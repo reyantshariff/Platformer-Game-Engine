@@ -162,12 +162,38 @@ public class Builder {
     return selectedObject != null;
   }
 
+  /**
+   * Tracks coordinates of the object as its dragged
+   * @x tracks the x position of the object
+   * @y tracks the y position of the object
+   * */
+
   public void moveObject(double x, double y)
   {
     if (selectedObject != null && selectedObject.hasComponent(Transform.class))
     {
       selectedObject.getComponent(Transform.class).setX(x);
       selectedObject.getComponent(Transform.class).setY(y);
+    }
+  }
+
+  /**
+   * Loads new objects into the scene
+   * @param object prefabricated game object
+   * @param previewHorizontalMidpoint horizontal midpoint of the screen
+   * @param previewVerticalMidpoint vertical midpoint of the screen.
+   * */
+  public void addObject(GameObject object, double previewHorizontalMidpoint, double previewVerticalMidpoint)
+  {
+    Transform t = object.getComponent(Transform.class);
+    if (t != null)
+    {
+      double objectWidth = object.getComponent(Transform.class).getScaleX();
+      double objectHeight = object.getComponent(Transform.class).getScaleY();
+      object.getComponent(Transform.class).setX(previewHorizontalMidpoint - (objectWidth / 2));
+      object.getComponent(Transform.class).setY(previewVerticalMidpoint - (objectHeight / 2));
+      gameScene.registerObject(object);
+      undoStack.add(new CreateObjectAction(game, object));
     }
   }
 
