@@ -23,6 +23,8 @@ public abstract class ViewScene {
    */
   public ViewScene(Parent root, double width, double height) {
     myScene = new Scene(root, width, height);
+
+    myScene.getStylesheets().add(getClass().getResource("/oogasalad/view/stylesheets/style.css").toExternalForm());
     myObjectRenderer = new GameObjectRenderer(myScene);
   }
 
