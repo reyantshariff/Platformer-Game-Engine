@@ -1,6 +1,7 @@
 package oogasalad.view.scene;
 
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.stage.Stage;
@@ -39,16 +40,26 @@ public class MainViewManager {
   }
 
 
+  /**
+   * Function that uses reflection to either create or switch to a ViewScene
+   *
+   * @param viewSceneName - Name of view scene to be switchted to - must match class name
+   */
   public void switchTo(String viewSceneName) {
     try {
       if (!viewScenes.containsKey(viewSceneName)) {
         Class<?> clazz = Class.forName("oogasalad.view.scene." + viewSceneName);
-        ViewScene viewScene = (ViewScene) clazz.getDeclaredConstructor(MainViewManager.class).newInstance(this);
+        ViewScene viewScene = (ViewScene)
+            clazz.getDeclaredConstructor(MainViewManager.class).newInstance(this);
         viewScenes.put(viewSceneName, viewScene);
       }
       switchTo(viewScenes.get(viewSceneName));
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to switch to scene: " + viewSceneName, e);
+    } catch (ClassNotFoundException |
+        NoSuchMethodException |
+        InstantiationException |
+        IllegalAccessException |
+             InvocationTargetException e) {
+      throw new SceneSwitchException("Failed to switch to scene: " + viewSceneName, e);
     }
   }
 
@@ -77,4 +88,15 @@ public class MainViewManager {
   public void switchToMainMenu() {
     switchTo("MainMenuScene");
   }
+
+  /**
+   * Custom exception for any issues with scene switching. Especially for the
+   * reflection in String
+   */
+  public static class SceneSwitchException extends RuntimeException {
+    public SceneSwitchException(String message, Throwable cause) {
+      super(message, cause);
+    }
+  }
+
 }

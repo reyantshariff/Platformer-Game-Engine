@@ -1,13 +1,10 @@
 package oogasalad.model.engine.component;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.enumerate.ComponentTag;
-import oogasalad.model.engine.base.serialization.SerializableField;
 
 /**
  * A physics component responsible for detecting collisions and executing behaviors based on object
