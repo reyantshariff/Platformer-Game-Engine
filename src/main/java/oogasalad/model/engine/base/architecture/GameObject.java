@@ -2,6 +2,7 @@ package oogasalad.model.engine.base.architecture;
 
 import java.util.*;
 import oogasalad.model.engine.component.Transform;
+import oogasalad.model.engine.base.enumerate.ComponentTag;
 
 import static oogasalad.model.config.GameConfig.LOGGER;
 
@@ -17,7 +18,6 @@ public class GameObject {
   private final UUID id;
   private final Map<Class<? extends GameComponent>, GameComponent> allComponents;
   private final List<Runnable> componentAwakeInitializer;
-  private final List<Runnable> componentStartInitializer;
 
   private GameScene parentScene;
   private String name;
@@ -34,7 +34,6 @@ public class GameObject {
     this.tag = tag;
     this.allComponents = new HashMap<>();
     this.componentAwakeInitializer = new ArrayList<>();
-    this.componentStartInitializer = new ArrayList<>();
   }
 
   /**
@@ -51,11 +50,6 @@ public class GameObject {
   final void wakeUp() {
     componentAwakeInitializer.forEach(Runnable::run);
     componentAwakeInitializer.clear();
-  }
-
-  final void startUp() {
-    componentStartInitializer.forEach(Runnable::run);
-    componentStartInitializer.clear();
   }
 
   /**
@@ -101,7 +95,6 @@ public class GameObject {
 
     if (parentScene == null) {
       componentAwakeInitializer.add(component::awake);
-      componentStartInitializer.add(component::start);
     } else {
       component.awake();
       parentScene.subscribeEvent(component::start);
@@ -126,6 +119,16 @@ public class GameObject {
     return componentClass.cast(allComponents.get(componentClass));
   }
 
+  public final Collection<GameComponent> getComponents(ComponentTag tag) {
+    List<GameComponent> components = new ArrayList<>();
+    for (GameComponent component : allComponents.values()) {
+      if (component.componentTag() == tag) {
+        components.add(component);
+      }
+    }
+    return components;
+  }
+
   /**
    * @param componentClass - Component looking for
    * @return - If current object has that component
@@ -137,7 +140,8 @@ public class GameObject {
   /**
    * Returns all the components
    *
-   * @return - a Map of some extended gameComponent to the GameComponent, representing all components
+   * @return - a Map of some extended gameComponent to the GameComponent, representing all
+   *         components
    */
   public final Map<Class<? extends GameComponent>, GameComponent> getAllComponents() {
     return allComponents;
