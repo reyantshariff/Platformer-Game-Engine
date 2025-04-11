@@ -126,7 +126,7 @@
                     {
                       "name": "JumpAction",
                       "parameter": 500,
-                      "parameterType": "Integer"
+                      "parameterType": "Double"
                     }
                   ]
                 }
