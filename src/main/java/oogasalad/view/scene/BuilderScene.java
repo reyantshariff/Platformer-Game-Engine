@@ -121,64 +121,6 @@ public class BuilderScene extends ViewScene {
     Group canvasGroup = new Group(myGameCanvas);
     levelViewController = new LevelViewScrollController(canvasGroup, GAME_PREVIEW_WIDTH, GAME_PREVIEW_HEIGHT);
     return levelViewController.scrollPane();
-
-
-//    levelViewScrollPane = new ScrollPane(canvasGroup); //Make less passive. REFACTOR TO RECORDS. USE EXPLICIT IMMUTABILITY
-//
-//    // Canvas viewport size within builder window
-//    levelViewScrollPane.setPrefViewportWidth(GAME_PREVIEW_WIDTH); // TODO: replace these hardcoded values
-//    levelViewScrollPane.setPrefViewportHeight(GAME_PREVIEW_HEIGHT);
-//
-//    // Disable vertical scroll bar
-//    levelViewScrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
-//
-//    levelViewScrollPane.setFocusTraversable(true);
-//    levelViewScrollPane.requestFocus();
-//
-//    // Pan the view using arrow keys
-//    levelViewScrollPane.setOnKeyPressed(event -> {
-//      double delta = 0.05;
-//      switch (event.getCode()) {
-//        case LEFT:
-//          levelViewScrollPane.setHvalue(Math.max(levelViewScrollPane.getHvalue() - delta, 0));
-//          break;
-//        case RIGHT:
-//          levelViewScrollPane.setHvalue(Math.min(levelViewScrollPane.getHvalue() + delta, 1));
-//          break;
-//        // Optionally, handle UP/DOWN if vertical panning is needed:
-//        case UP:
-//          levelViewScrollPane.setVvalue(Math.max(levelViewScrollPane.getVvalue() - delta, 0));
-//          break;
-//        case DOWN:
-//          levelViewScrollPane.setVvalue(Math.min(levelViewScrollPane.getVvalue() + delta, 1));
-//          break;
-//        default:
-//          break;
-//      }
-//      event.consume();
-//    });
-//
-//    // Add zoom handling
-//    levelViewScrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
-//      // Only process the event for zooming, ignore its vertical scrolling aspect.
-//      double currentScale = canvasGroup.getScaleX(); // assuming uniform scale
-//      if (event.getDeltaY() < 0) {
-//        if (currentScale / ZOOM_FACTOR >= MIN_ZOOM)
-//          currentScale /= ZOOM_FACTOR;
-//      } else {
-//        if (currentScale * ZOOM_FACTOR <= MAX_ZOOM)
-//          currentScale *= ZOOM_FACTOR;
-//      }
-//      canvasGroup.setScaleX(currentScale);
-//      canvasGroup.setScaleY(currentScale);
-//
-//      // Ensure the vertical scroll value remains fixed
-//      levelViewScrollPane.setVvalue(0);
-//
-//      event.consume();  // Prevent the default vertical panning
-//    });
-//
-//    return levelViewScrollPane;
   }
 
   private HBox createBottomPanel() {
