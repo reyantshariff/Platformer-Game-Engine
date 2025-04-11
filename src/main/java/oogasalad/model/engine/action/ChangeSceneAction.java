@@ -24,7 +24,10 @@ public class ChangeSceneAction extends BehaviorAction<String> {
 
   @Override
   protected void perform(String parameter) {
-    mainViewManager.switchToMainMenu();
-    getBehavior().getController().getParent().getScene().getGame().changeScene(parameter);
+    if (parameter.equals("nextLevel")) {
+      getBehavior().getController().getParent().getScene().getGame().goToNextLevel();
+    } else {
+      mainViewManager.switchTo(parameter);
+    }
   }
 }

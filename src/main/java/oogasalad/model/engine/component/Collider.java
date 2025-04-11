@@ -15,6 +15,7 @@ import oogasalad.model.engine.base.serialization.SerializableField;
  */
 public class Collider extends GameComponent {
   private static final double COLLISION_OFFSET =0.1;
+  private static final double OVERLAP_TOLERANCE =2;
 
   @Override
   public ComponentTag componentTag() {
@@ -121,11 +122,11 @@ public class Collider extends GameComponent {
     }
   }
 
-  private boolean isOverlapping(Transform collidedTransform) {
-    return transform.getX() < collidedTransform.getX() + collidedTransform.getScaleX() &&
-        transform.getX() + transform.getScaleX() > collidedTransform.getX() &&
-        transform.getY() < collidedTransform.getY() + collidedTransform.getScaleY() &&
-        transform.getY() + transform.getScaleY() > collidedTransform.getY();
+  private boolean isOverlapping(Transform other) {
+    return transform.getX() < other.getX() + other.getScaleX() + OVERLAP_TOLERANCE &&
+        transform.getX() + transform.getScaleX() > other.getX() - OVERLAP_TOLERANCE &&
+        transform.getY() < other.getY() + other.getScaleY() + OVERLAP_TOLERANCE &&
+        transform.getY() + transform.getScaleY() > other.getY() - OVERLAP_TOLERANCE;
   }
 
   /**

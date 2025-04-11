@@ -1,6 +1,8 @@
 package oogasalad.view.scene;
 
 
+import java.util.HashMap;
+import java.util.Map;
 import javafx.stage.Stage;
 
 
@@ -14,6 +16,7 @@ public class MainViewManager {
   private final Stage stage;
   private static MainViewManager instance;
   private ViewScene currentScene;
+  private final Map<String, ViewScene> viewScenes = new HashMap<>();
 
   /**
    * Constructs the MainViewManager with the given primary stage
@@ -35,8 +38,24 @@ public class MainViewManager {
     return instance;
   }
 
+
+  public void switchTo(String viewSceneName) {
+    try {
+      if (!viewScenes.containsKey(viewSceneName)) {
+        Class<?> clazz = Class.forName("oogasalad.view.scene." + viewSceneName);
+        ViewScene viewScene = (ViewScene) clazz.getDeclaredConstructor(MainViewManager.class).newInstance(this);
+        viewScenes.put(viewSceneName, viewScene);
+      }
+      switchTo(viewScenes.get(viewSceneName));
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to switch to scene: " + viewSceneName, e);
+    }
+  }
+
   /**
    * Switches to the given ViewScene
+   *
+   * TODO: Deprecate this method to only use reflection above
    *
    * @param viewScene the new scene to display
    */
@@ -52,10 +71,11 @@ public class MainViewManager {
     stage.show();
   }
 
+
   /**
    * Shortcut to go to the main menu
    */
   public void switchToMainMenu() {
-    switchTo(new MainMenuScene(this));
+    switchTo("MainMenuScene");
   }
 }
