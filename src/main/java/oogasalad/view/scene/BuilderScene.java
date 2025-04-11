@@ -251,7 +251,7 @@ public class BuilderScene extends ViewScene {
           });
           tilePane.getChildren().add(newSpriteButton);
         } catch (Exception e) {
-          System.err.println("Error loading preview image from: " + previewImagePath);
+          logger.error("Error loading preview image from: " + previewImagePath);
         }
       }
     }
