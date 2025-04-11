@@ -19,9 +19,7 @@ public class Follower extends GameComponent {
 
   @SerializableField
   private String followObjectName;
-  @SerializableField
   private double offsetX;
-  @SerializableField
   private double offsetY;
   private Transform myTransform;
   private GameObject followObject;
@@ -40,6 +38,9 @@ public class Follower extends GameComponent {
   public void awake() {
     myTransform = getParent().getComponent(Transform.class);
     followObject = getParent().getScene().getObject(followObjectName);
+    Transform attachTransform = followObject.getComponent(Transform.class);
+    offsetX = myTransform.getX() - attachTransform.getX();
+    offsetY = myTransform.getY() - attachTransform.getY();
   }
 
   @Override

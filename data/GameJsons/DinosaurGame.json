@@ -35,7 +35,7 @@
                 "Name": "Transform",
                 "Configurations": {
                   "x": 0,
-                  "y": 700,
+                  "y": 500,
                   "rotation": 0,
                   "scaleX": 2560,
                   "scaleY": 20
@@ -70,7 +70,7 @@
                 "Name": "Transform",
                 "Configurations": {
                   "x": 100,
-                  "y": 620,
+                  "y": 420,
                   "rotation": 0,
                   "scaleX": 40,
                   "scaleY": 40
@@ -162,7 +162,7 @@
                 "Name": "Transform",
                 "Configurations": {
                   "x": 1280,
-                  "y": 660,
+                  "y": 460,
                   "rotation": 0,
                   "scaleX": 30,
                   "scaleY": 60
@@ -228,7 +228,7 @@
                 "Name": "Transform",
                 "Configurations": {
                   "x": 1600,
-                  "y": 660,
+                  "y": 460,
                   "rotation": 0,
                   "scaleX": 30,
                   "scaleY": 60
@@ -294,7 +294,7 @@
                 "Name": "Transform",
                 "Configurations": {
                   "x": 1900,
-                  "y": 660,
+                  "y": 460,
                   "rotation": 0,
                   "scaleX": 30,
                   "scaleY": 60
@@ -360,7 +360,7 @@
                 "Name": "Transform",
                 "Configurations": {
                   "x": 2100,
-                  "y": 620,
+                  "y": 420,
                   "rotation": 0,
                   "scaleX": 40,
                   "scaleY": 40
@@ -426,7 +426,7 @@
                 "Name": "Transform",
                 "Configurations": {
                   "x": 2400,
-                  "y": 640,
+                  "y": 440,
                   "rotation": 0,
                   "scaleX": 40,
                   "scaleY": 40
@@ -495,7 +495,7 @@
                   "y": 0,
                   "rotation": 0,
                   "scaleX": 1300,
-                  "scaleY": 800
+                  "scaleY": 1000
                 }
               },
               {
@@ -505,9 +505,7 @@
               {
                 "Name": "Follower",
                 "Configurations": {
-                  "followObjectName": "Dino",
-                  "offsetX": -200,
-                  "offsetY": -300
+                  "followObjectName": "Dino"
                 }
               }
             ]
