@@ -3,6 +3,8 @@ package oogasalad.view.scene;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.File;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -15,6 +17,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
+import javafx.scene.input.KeyCode;
 import oogasalad.model.builder.Builder;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
@@ -49,6 +52,13 @@ public class BuilderScene extends ViewScene {
 
   private Builder builder;
   private final MainViewManager viewManager;
+
+  private final Map<KeyCode, Consumer<Double>> scrollPaneEventMap = Map.of(
+    KeyCode.LEFT, (delta) -> scrollPaneKeyPress(-delta, 0),
+    KeyCode.RIGHT, (delta) -> scrollPaneKeyPress(delta, 1),
+    KeyCode.UP, (delta) -> scrollPaneKeyPress(-delta, 0),
+    KeyCode.DOWN, (delta) -> scrollPaneKeyPress(delta, 1)
+);
 
   /**
    * Constructor for BuilderView
@@ -119,6 +129,12 @@ public class BuilderScene extends ViewScene {
 
     levelViewScrollPane = new ScrollPane(canvasGroup);
 
+    initializeScrollPane(canvasGroup);
+
+    return levelViewScrollPane;
+  }
+
+  private void initializeScrollPane(Group canvasGroup) {
     // Canvas viewport size within builder window
     levelViewScrollPane.setPrefViewportWidth(
         GAME_PREVIEW_WIDTH); // TODO: replace these hardcoded values
@@ -133,22 +149,10 @@ public class BuilderScene extends ViewScene {
     // Pan the view using arrow keys
     levelViewScrollPane.setOnKeyPressed(event -> {
       double delta = 0.05;
-      switch (event.getCode()) {
-        case LEFT:
-          levelViewScrollPane.setHvalue(Math.max(levelViewScrollPane.getHvalue() - delta, 0));
-          break;
-        case RIGHT:
-          levelViewScrollPane.setHvalue(Math.min(levelViewScrollPane.getHvalue() + delta, 1));
-          break;
-        // Optionally, handle UP/DOWN if vertical panning is needed:
-        case UP:
-          levelViewScrollPane.setVvalue(Math.max(levelViewScrollPane.getVvalue() - delta, 0));
-          break;
-        case DOWN:
-          levelViewScrollPane.setVvalue(Math.min(levelViewScrollPane.getVvalue() + delta, 1));
-          break;
-        default:
-          break;
+      try {
+        scrollPaneEventMap.get(event.getCode()).accept(delta);
+      } catch (NullPointerException e) {
+        logger.error("Key event not mapped: " + event.getCode());
       }
       event.consume();
     });
@@ -159,16 +163,7 @@ public class BuilderScene extends ViewScene {
     // Add zoom handling
     levelViewScrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
       // Only process the event for zooming, ignore its vertical scrolling aspect.
-      double currentScale = canvasGroup.getScaleX(); // assuming uniform scale
-      if (event.getDeltaY() < 0) {
-        if (currentScale / ZOOM_FACTOR >= MIN_ZOOM) {
-          currentScale /= ZOOM_FACTOR;
-        }
-      } else {
-        if (currentScale * ZOOM_FACTOR <= MAX_ZOOM) {
-          currentScale *= ZOOM_FACTOR;
-        }
-      }
+      double currentScale = getCurrentScale(canvasGroup, event.getDeltaY());
       canvasGroup.setScaleX(currentScale);
       canvasGroup.setScaleY(currentScale);
 
@@ -177,8 +172,24 @@ public class BuilderScene extends ViewScene {
 
       event.consume();  // Prevent the default vertical panning
     });
+  }
 
-    return levelViewScrollPane;
+  private void scrollPaneKeyPress(double delta, int b) {
+    levelViewScrollPane.setHvalue(Math.max(levelViewScrollPane.getHvalue() + delta, b));
+  }
+
+  private double getCurrentScale(Group canvasGroup, double deltaY) {
+    double currentScale = canvasGroup.getScaleX(); // assuming uniform scale
+    if (deltaY < 0) {
+      if (currentScale / ZOOM_FACTOR >= MIN_ZOOM) {
+        currentScale /= ZOOM_FACTOR;
+      }
+    } else {
+      if (currentScale * ZOOM_FACTOR <= MAX_ZOOM) {
+        currentScale *= ZOOM_FACTOR;
+      }
+    }
+    return currentScale;
   }
 
   private HBox createBottomPanel() {
