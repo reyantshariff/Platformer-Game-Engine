@@ -3,11 +3,13 @@ package oogasalad.model.engine.base.behavior;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import oogasalad.model.engine.action.ChangeSceneAction;
 import javafx.application.Platform;
 import java.util.concurrent.CountDownLatch;
 
-public class ChangeSceneActionTest extends ActionsTest {
+import oogasalad.model.engine.action.ChangeSceneAction;
+
+
+public class ChangeSceneActionTest extends ActionsTest<ChangeSceneAction> {
 
     @Override
     public void customSetUp() {
