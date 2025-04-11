@@ -42,7 +42,8 @@ public class PrefabLoader {
         GameObject obj = parser.parse(node);
         validPrefabs.add(obj);
       } catch (IOException | ParsingException e) {
-        System.err.println("Error parsing prefab " + file.getName() + ": " + e.getMessage());
+        LOGGER.error("Error parsing prefab " + file.getName() + ": " + e.getMessage());
+        throw new RuntimeException("Error parsing prefab " + file.getName() + ": " + e.getMessage());
       }
     }
   }
