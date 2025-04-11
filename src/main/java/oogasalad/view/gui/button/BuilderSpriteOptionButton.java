@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 import oogasalad.model.engine.base.architecture.GameObject;
 
 public class BuilderSpriteOptionButton extends ImageButton {
-  GameObject prefab = null;
+  private GameObject prefab = null;
 
   public BuilderSpriteOptionButton(Image image, double width, double height, GameObject prefab) {
     super(image);
