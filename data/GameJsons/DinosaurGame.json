@@ -212,7 +212,7 @@
                   "actions": [
                     {
                       "name": "ChangeSceneAction",
-                      "parameter": "MainGame",
+                      "parameter": "MainMenuScene",
                       "parameterType": "String"
                     }
                   ]
@@ -278,7 +278,7 @@
                   "actions": [
                     {
                       "name": "ChangeSceneAction",
-                      "parameter": "MainGame",
+                      "parameter": "MainMenuScene",
                       "parameterType": "String"
                     }
                   ]
@@ -344,7 +344,7 @@
                   "actions": [
                     {
                       "name": "ChangeSceneAction",
-                      "parameter": "MainGame",
+                      "parameter": "MainMenuScene",
                       "parameterType": "String"
                     }
                   ]
@@ -410,7 +410,7 @@
                   "actions": [
                     {
                       "name": "ChangeSceneAction",
-                      "parameter": "MainGame",
+                      "parameter": "MainMenuScene",
                       "parameterType": "String"
                     }
                   ]
@@ -476,7 +476,7 @@
                   "actions": [
                     {
                       "name": "ChangeSceneAction",
-                      "parameter": "MainGame",
+                      "parameter": "MainMenuScene",
                       "parameterType": "String"
                     }
                   ]

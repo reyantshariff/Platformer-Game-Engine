@@ -1,13 +1,10 @@
 package oogasalad.model.engine.component;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.enumerate.ComponentTag;
-import oogasalad.model.engine.base.serialization.SerializableField;
 
 /**
  * A physics component responsible for detecting collisions and executing behaviors based on object
@@ -15,14 +12,13 @@ import oogasalad.model.engine.base.serialization.SerializableField;
  */
 public class Collider extends GameComponent {
   private static final double COLLISION_OFFSET =0.1;
+  private static final double OVERLAP_TOLERANCE =2;
 
   @Override
   public ComponentTag componentTag() {
     return ComponentTag.COLLISION;
   }
 
-  @SerializableField
-  private List<String> collidableTags;
 
   private final Set<Collider> collidedColliders = new HashSet<>();
   private Transform transform;
@@ -32,7 +28,6 @@ public class Collider extends GameComponent {
   @Override
   protected void awake() {
     transform = getComponent(Transform.class);
-    collidableTags = new ArrayList<>();
   }
 
   @Override
@@ -51,7 +46,7 @@ public class Collider extends GameComponent {
   private void processCollision(GameObject obj) {
     Collider collider = obj.getComponent(Collider.class);
 
-    if (collider == this || collidableTags.contains(collider.getParent().getTag())) {
+    if (collider == this) {
       return;
     }
 
@@ -121,11 +116,11 @@ public class Collider extends GameComponent {
     }
   }
 
-  private boolean isOverlapping(Transform collidedTransform) {
-    return transform.getX() < collidedTransform.getX() + collidedTransform.getScaleX() &&
-        transform.getX() + transform.getScaleX() > collidedTransform.getX() &&
-        transform.getY() < collidedTransform.getY() + collidedTransform.getScaleY() &&
-        transform.getY() + transform.getScaleY() > collidedTransform.getY();
+  private boolean isOverlapping(Transform other) {
+    return transform.getX() < other.getX() + other.getScaleX() + OVERLAP_TOLERANCE &&
+        transform.getX() + transform.getScaleX() > other.getX() - OVERLAP_TOLERANCE &&
+        transform.getY() < other.getY() + other.getScaleY() + OVERLAP_TOLERANCE &&
+        transform.getY() + transform.getScaleY() > other.getY() - OVERLAP_TOLERANCE;
   }
 
   /**

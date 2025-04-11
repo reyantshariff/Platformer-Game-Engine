@@ -92,7 +92,7 @@ public class BehaviorParser implements Parser<Behavior> {
     
     Class<?> parameterType = getParameterType(actionNode, paramField.getFieldType());
     setFieldFromValue(paramField, valueNode, parameterType);
-    
+
     behaviorInstance.addAction(action);
   }
 
