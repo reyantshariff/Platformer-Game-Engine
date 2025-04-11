@@ -18,12 +18,13 @@ public class Follower extends GameComponent {
   }
 
   @SerializableField
-  private GameObject followObject;
+  private String followObjectName;
   @SerializableField
   private double offsetX;
   @SerializableField
   private double offsetY;
   private Transform myTransform;
+  private GameObject followObject;
 
   /**
    * Constructor for Follower. Sets default values for the offset and the follow object.
@@ -38,6 +39,12 @@ public class Follower extends GameComponent {
   @Override
   public void awake() {
     myTransform = getParent().getComponent(Transform.class);
+    try {
+      followObject = getParent().getScene().getObject(followObjectName);
+    } catch (NullPointerException e) {
+      LOGGER.error("Missing GameObject with name: " + followObjectName);
+      throw new RuntimeException("Missing GameObject with name: " + followObjectName, e);
+    }
   }
 
   @Override
@@ -97,5 +104,23 @@ public class Follower extends GameComponent {
    */
   public double getOffsetY() {
     return offsetY;
+  }
+
+  /**
+   * Sets the name of the object to follow.
+   *
+   * @param followObjectName the name of the object to follow
+   */
+  public void setFollowObjectName(String followObjectName) {
+    this.followObjectName = followObjectName;
+  }
+
+  /**
+   * Gets the name of the object to follow.
+   *
+   * @return the name of the object to follow
+   */
+  public String getFollowObjectName() {
+    return followObjectName;
   }
 }
