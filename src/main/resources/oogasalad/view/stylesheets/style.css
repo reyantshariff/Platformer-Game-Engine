@@ -1,0 +1,83 @@
+.root {
+  -fx-font-family: "Hevletica";
+  -fx-background-color: white;
+  -fx-text-fill: black;
+  -fx-accent: darkgrey;
+}
+/* General Component Styles */
+.button {
+  -fx-font-family: "Lato";
+  -fx-border-color: black;
+  -fx-fill-color: darkgrey;
+  -fx-text-fill: black;
+  -fx-padding: 10px 10px 10px 10px;
+  -fx-font-size: 20px;
+  -fx-border-radius: 20px;
+  -fx-background-radius: 20px;
+  -fx-border-width: 1px;
+  -fx-spacing: 5px;
+  -fx-background-color: linear-gradient(to bottom, #aaa, #eee); /* Subtle light gradient */
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.5, 2, 2);
+}
+.button:hover {
+  -fx-effect: innershadow(gaussian, rgba(100, 100, 100, 0.3), 100, 0.5, 0, 0);
+}
+/* Component Class Styles */
+#mainMenuTitle {
+  -fx-font-size: 150px;
+}
+#buttonBox {
+  -fx-alignment: center;
+  -fx-spacing: 40px;
+}
+#gameSelector {
+  -fx-font-family: "Lato";
+  -fx-border-color: black;
+  -fx-fill-color: darkgrey;
+  -fx-text-fill: black;
+  -fx-padding: 6px 6px 6px 6px;
+  -fx-font-size: 20px;
+  -fx-border-radius: 20px;
+  -fx-background-radius: 20px;
+  -fx-border-width: 1px;
+  -fx-background-color: linear-gradient(to bottom, #aaa, #eee); /* Subtle light gradient */
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.5, 2, 2);
+}
+#gameSelector:hover {
+  -fx-effect: innershadow(gaussian, rgba(100, 100, 100, 0.3), 100, 0.5, 0, 0);
+}
+#selectorBox {
+  -fx-alignment: center;
+  -fx-spacing: 20px;
+}
+#menuSelector {
+  -fx-font-family: "Lato";
+  -fx-border-color: black;
+  -fx-fill-color: darkgrey;
+  -fx-text-fill: black;
+  -fx-padding: 3px 3px 3px 3px;
+  -fx-font-size: 14px;
+  -fx-border-radius: 10px;
+  -fx-background-radius: 10px;
+  -fx-border-width: 1px;
+  -fx-background-color: linear-gradient(to bottom, #aaa, #eee); /* Subtle light gradient */
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.5, 2, 2);
+}
+#menuSelector:hover {
+  -fx-effect: innershadow(gaussian, rgba(100, 100, 100, 0.3), 100, 0.5, 0, 0);
+}
+/* GAME PLAYER */
+#returnButton {
+  -fx-font-family: "Lato";
+  -fx-border-color: black;
+  -fx-fill-color: darkgrey;
+  -fx-text-fill: black;
+  -fx-font-size: 14px;
+  -fx-border-radius: 5px;
+  -fx-background-radius: 5px;
+}
+#gameCanvas {
+  -fx-border-color: darkgrey;
+  -fx-border-width: 1px;
+  -fx-padding: 5px, 5px, 5px, 5px;
+}
