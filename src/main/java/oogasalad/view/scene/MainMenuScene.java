@@ -28,12 +28,11 @@ public class MainMenuScene extends ViewScene {
     title.setFont(new Font("Arial", 30));
 
     ComboBox<String> gameSelector = new ComboBox<>();
-    gameSelector.getItems().addAll("Dino Game", "Geometry Dash");
-    gameSelector.setValue("Dino Game");
+    gameSelector.getItems().addAll("Dinosaur Game", "Geometry Dash");
+    gameSelector.setValue("Dinosaur Game");
 
     Button playButton = new Button("Play Game");
     Button buildButton = new Button("Build Game");
-    Button dinoButton = new Button("Dino Game");
 
     playButton.setOnAction(e ->
         manager.switchTo(new GamePlayerScene(manager, gameSelector.getValue()))

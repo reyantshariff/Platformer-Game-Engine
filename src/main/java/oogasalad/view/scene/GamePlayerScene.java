@@ -16,6 +16,7 @@ import oogasalad.view.gui.Gui;
  * Displays the game using a GUI canvas inside a JavaFX scene
  */
 public class GamePlayerScene extends ViewScene {
+  private static final String JSON_PATH_PREFIX = "data/GameJsons/";
   /**
    * Constructs a new GamePlayerScene to display a game within a JavaFX scene.
    *
@@ -27,9 +28,11 @@ public class GamePlayerScene extends ViewScene {
 
     StackPane root = (StackPane) getScene().getRoot();
 
+    String correctGameName = gameName.replaceAll("\\s+","");
+
 
     // Parse the game JSON into a Game object
-    String jsonPath = "doc/plan/data/FullDino.json";
+    String jsonPath = JSON_PATH_PREFIX + correctGameName+ ".json";
     Game game;
     try {
       Parser<?> parser = new JsonParser(jsonPath);
