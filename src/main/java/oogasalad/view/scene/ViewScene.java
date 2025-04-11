@@ -1,7 +1,15 @@
 package oogasalad.view.scene;
 
+import java.awt.Rectangle;
+import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import oogasalad.view.gui.GameObjectRenderer;
 
 /**
@@ -22,6 +30,8 @@ public abstract class ViewScene {
    */
   public ViewScene(Parent root, double width, double height) {
     myScene = new Scene(root, width, height);
+
+    myScene.getStylesheets().add(getClass().getResource("/oogasalad/view/stylesheets/mainmenu.css").toExternalForm());
     myObjectRenderer = new GameObjectRenderer(myScene);
   }
 
