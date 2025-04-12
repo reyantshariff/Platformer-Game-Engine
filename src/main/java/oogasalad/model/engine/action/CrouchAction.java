@@ -42,7 +42,7 @@ public class CrouchAction extends BehaviorAction<Object> {
     Transform transform;
     try {
       transform = (Transform) getComponent(Transform.class);
-    } catch (Exception e) {
+    } catch (ClassCastException e) {
       return;
     }
 
