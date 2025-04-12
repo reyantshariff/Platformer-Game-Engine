@@ -38,7 +38,7 @@ public class ObjectDragger {
   private double oldY = 0;
 
   private int activeHandleIndex = -1;
-  private ArrayList<Point2D> handles;
+  private List<Point2D> resize_handles;
 
   public ObjectDragger(Canvas canvas, Builder builder, BuilderScene builderScene, GameObjectRenderer renderer) {
     this.canvas = canvas;
@@ -57,7 +57,7 @@ public class ObjectDragger {
     canvas.setOnMouseDragged(this::handleDraggedIfInBounds);
     canvas.setOnMouseReleased(this::handleReleasedIfInBounds);
     canvas.setOnMouseMoved(e -> {
-      boolean hovering = isHoveringOverHandle(e.getX(), e.getY());
+      boolean hovering = isHoveringOverResizeHandle(e.getX(), e.getY());
       canvas.setCursor(hovering ? Cursor.HAND : Cursor.DEFAULT);
     });
 
@@ -134,23 +134,20 @@ public class ObjectDragger {
     double dx = e.getX() - oldX;
     double dy = e.getY() - oldY;
 
-    if (builder.objectIsSelected()) {
-      builder.moveObject(newX, newY);
-      renderer.renderWithoutCamera(canvas.getGraphicsContext2D(), gameScene);
+    if (activeHandleIndex != -1)
+    {
+      resizeFromHandle(builder.getSelectedObject(), dx, dy);
     }
 
-    if (dragging)
-    {
-//      if (activeHandleIndex != -1)
-//      {
-//        resizeFromHandle(builder.getSelectedObject(), dx, dy);
-//      }
+    else if (builder.objectIsSelected()) {
+      builder.moveObject(newX, newY);
+      renderer.renderWithoutCamera(canvas.getGraphicsContext2D(), gameScene);
     }
 
     builderScene.updateGamePreview();  // refresh all sprite visuals in the canvas
   }
 
-  private boolean isHoveringOverHandle(double x, double y)
+  private boolean isHoveringOverResizeHandle(double x, double y)
   {
     Point2D mousePoint = new Point2D(x, y);
     List<GameObject> objects = new ArrayList<>(gameScene.getAllObjects());
@@ -162,7 +159,7 @@ public class ObjectDragger {
       double w = t.getScaleX();
       double h = t.getScaleY();
 
-      List<Point2D> handles = List.of(
+      resize_handles = List.of(
           new Point2D(t.getX(), t.getY()),
           new Point2D(t.getX() + w / 2, t.getY()),
           new Point2D(t.getX() + w, t.getY()),
@@ -174,12 +171,12 @@ public class ObjectDragger {
       );
 
       // 🔹 Check if clicked a handle
-      for (int i = 0; i < handles.size(); i++) {
+      for (int i = 0; i < resize_handles.size(); i++) {
         /**
          checks if the mouse click is within a small circular area (radius = half the handle size) around a handle,
          meaning the user clicked on that handle.
          */
-        if (mousePoint.distance(handles.get(i)) <= HANDLE_SIZE / 2) {
+        if (mousePoint.distance(resize_handles.get(i)) <= HANDLE_SIZE / 2) {
           activeHandleIndex = i;
           return true;
         }
