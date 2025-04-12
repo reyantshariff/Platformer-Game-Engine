@@ -10,7 +10,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
- * Initialize a Firebase dhow atabase for the project
+ * Initialize a Firebase database for the project
  *
  * @author Justin Aronwald
  */
