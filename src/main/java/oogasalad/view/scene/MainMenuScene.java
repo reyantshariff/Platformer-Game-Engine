@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import oogasalad.model.config.GameConfig;
+import oogasalad.view.config.StyleConfig;
 
 /**
  * Main menu view with play and builder options
@@ -90,10 +91,10 @@ public class MainMenuScene extends ViewScene {
     ComboBox<String> themeSelector = new ComboBox<>();
     themeSelector.setValue("SELECT A THEME");
     themeSelector.setId("menuSelector");
-    themeSelector.getItems().addAll("DARK", "ETC.");
-    // themeSelector.setOnAction(e -> {;}
-    // GameConfig.setTheme(themeSelector.getValue());});
-    // TODO: add setTheme to GameConfig
+    themeSelector.getItems().addAll("DARK", "LIGHT", "FREAKY", "CLASSY", "FAIL");
+    themeSelector.setOnAction(e -> {
+      StyleConfig.setStylesheet(getScene(), themeSelector.getValue());
+    });
     return themeSelector;
   }
 }

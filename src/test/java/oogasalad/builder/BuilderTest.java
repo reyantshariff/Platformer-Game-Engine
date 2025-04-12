@@ -1,22 +1,22 @@
-// package oogasalad.builder;
+package oogasalad.builder;
+/*
 
 // import static org.junit.jupiter.api.Assertions.assertEquals;
 // import static org.junit.jupiter.api.Assertions.assertFalse;
 // import static org.junit.jupiter.api.Assertions.assertTrue;
 
-// import oogasalad.model.builder.Builder;
-// import oogasalad.model.engine.base.architecture.GameObject;
-// import oogasalad.model.engine.base.architecture.GameScene;
-// import oogasalad.model.engine.base.architecture.Game;
-// import oogasalad.model.engine.component.Transform;
-// import org.junit.jupiter.api.Test;
-
-// public class BuilderTest {
-//   @Test
-//   public void deleteSelectedObject_selectedObject_unregister() {
-//     Game game = new Game();
-//     GameScene scene = new GameScene("scene");
-//     GameObject object = new GameObject("GameObject");
+import oogasalad.model.builder.Builder;
+import oogasalad.model.engine.base.architecture.GameObject;
+import oogasalad.model.engine.base.architecture.GameScene;
+import oogasalad.model.engine.base.architecture.Game;
+import oogasalad.model.engine.component.Transform;
+import org.junit.jupiter.api.Test;
+public class BuilderTest {
+  @Test
+  public void deleteSelectedObject_selectedObject_unregister() {
+    Game game = new Game();
+    GameScene scene = new GameScene("scene");
+    GameObject object = new GameObject("GameObject");
 
 //     game.addScene(scene);
 //     scene.registerObject(object);
@@ -211,13 +211,8 @@
 //     // Redo the move (should go back to new position)
 //     builder.redoLastAction();
 
-//     assertEquals(newX, object.getComponent(Transform.class).getX());
-//     assertEquals(newY, object.getComponent(Transform.class).getY());
-//   }
-
-
-
-
-
-
-// }
+    assertEquals(newX, object.getComponent(Transform.class).getX());
+    assertEquals(newY, object.getComponent(Transform.class).getY());
+  }
+}
+ */
