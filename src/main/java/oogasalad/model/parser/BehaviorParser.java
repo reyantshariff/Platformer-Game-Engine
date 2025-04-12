@@ -240,17 +240,18 @@ public class BehaviorParser implements Parser<Behavior> {
       ObjectNode oneAction = mapper.createObjectNode();
       BiConsumer<ObjectNode, Object> writer = TYPE_WRITERS.get(action.getParameter().getClass());
 
-      try {
+      if(writer == null || action.getParameter() == null || oneAction == null) {
+        LOGGER.error(
+            "Could not write action {} for behavior {}. Invalid JSON parameter type. Skipping action.",
+            action.getParameter().getClass().getSimpleName(), data.getName());
+        return;
+      }
+
         oneAction.put(LOWER_NAME, action.getClass().getSimpleName());
         writer.accept(oneAction, action.getParameter()); // Catching this error
         oneAction.put(PARAMETER_TYPE, action.getParameter().getClass().getSimpleName());
 
         actionsArray.add(oneAction);
-      } catch (NullPointerException e) {
-        LOGGER.error(
-            "Could not write action {} for behavior {}. Invalid JSON parameter type. Skipping action.",
-            action.getParameter().getClass().getSimpleName(), data.getName());
-      }
     });
 
     root.set(ACTIONS, actionsArray);
