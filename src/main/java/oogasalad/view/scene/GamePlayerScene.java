@@ -71,10 +71,6 @@ public class GamePlayerScene extends ViewScene {
    */
   @Override
   public void deactivate() {
-    try {
-      gui.stop();
-    } catch (Exception e) {
-      throw new RuntimeException("Error deactivating scene: " + e.getMessage());
-    }
+    gui.stop();
   }
 }
