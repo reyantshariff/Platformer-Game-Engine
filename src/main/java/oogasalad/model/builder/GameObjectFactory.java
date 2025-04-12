@@ -1,6 +1,7 @@
 package oogasalad.model.builder;
 
 import oogasalad.model.engine.base.architecture.GameObject;
+import java.lang.reflect.InvocationTargetException;
 
 
 /**
@@ -33,8 +34,10 @@ public class GameObjectFactory {
       return (GameObject) clazz.getDeclaredConstructor().newInstance();
 
 
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to create GameObject of type: " + type, e);
+    } catch (ClassNotFoundException e) {
+      throw new IllegalArgumentException("GameObject type " + type + " not found", e);
+    } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+      throw new RuntimeException("Failed to create GameObject of type " + type, e);
     }
   }
 }
