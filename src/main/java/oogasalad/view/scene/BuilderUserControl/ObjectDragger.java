@@ -138,13 +138,7 @@ public class ObjectDragger {
 
     // 🔹 If nothing was clicked
     if (!clickedObject) {
-      Transform t = builder.getSelectedObject().getComponent(Transform.class);
-      ResizeObjectAction resizeAction = new ResizeObjectAction(
-          builder.getSelectedObject(),
-          resizeStartX, resizeStartY, resizeStartW, resizeStartH,
-          t.getX(), t.getY(), t.getScaleX(), t.getScaleY()
-      );
-      builder.pushAction(resizeAction);
+      recordResizing();
       builder.deselect();
       dragContext.endInteraction();
     }
@@ -269,18 +263,23 @@ public class ObjectDragger {
 
     else if (dragContext.isResizing())
     {
-      Transform t = builder.getSelectedObject().getComponent(Transform.class);
-      ResizeObjectAction resizeAction = new ResizeObjectAction(
-          builder.getSelectedObject(),
-          resizeStartX, resizeStartY, resizeStartW, resizeStartH,
-          t.getX(), t.getY(), t.getScaleX(), t.getScaleY()
-      );
-
-      builder.pushAction(resizeAction);
+      recordResizing();
     }
 
     dragContext.endInteraction();
     builderScene.updateGamePreview();
+  }
+
+  private void recordResizing()
+  {
+    Transform t = builder.getSelectedObject().getComponent(Transform.class);
+    ResizeObjectAction resizeAction = new ResizeObjectAction(
+        builder.getSelectedObject(),
+        resizeStartX, resizeStartY, resizeStartW, resizeStartH,
+        t.getX(), t.getY(), t.getScaleX(), t.getScaleY()
+    );
+
+    builder.pushAction(resizeAction);
   }
 
 
