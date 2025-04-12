@@ -3,6 +3,7 @@ package oogasalad.model.engine.base.behavior;
 import static oogasalad.model.config.GameConfig.LOGGER;
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.reflect.InvocationTargetException;
 import oogasalad.model.engine.base.serialization.Serializable;
 import oogasalad.model.engine.base.serialization.SerializableField;
 import oogasalad.model.engine.component.BehaviorController;
@@ -114,9 +115,10 @@ public class Behavior implements Serializable {
       constraint.awake();
       constraints.add(constraint);
       return constraint;
-    } catch (Exception e) {
+    } catch (NoSuchMethodException | IllegalAccessException | InstantiationException
+        | InvocationTargetException e) {
       LOGGER.error("Failed to create constraint: {}", constraintClass.getName(), e);
-      throw new RuntimeException("Failed to create constraint: " + constraintClass.getName(), e);
+      throw new ConstraintConstructionException("Failed to create constraint: " + constraintClass.getName(), e);
     }
   }
 
@@ -131,9 +133,9 @@ public class Behavior implements Serializable {
     try {
       constraintInstance.setBehavior(this);
       constraints.add(constraintInstance);
-    } catch (Exception e) {
+    } catch (UnsupportedOperationException | IllegalArgumentException | ClassCastException e) {
       LOGGER.error("Failed to create constraint: {}", constraintInstance.getClass().getName());
-      throw new RuntimeException("Failed to create constraint: " + constraintInstance.getClass().getName());
+      throw new ConstraintConstructionException("Failed to create constraint: " + constraintInstance.getClass().getName(), e);
     }
   }
 
@@ -170,9 +172,10 @@ public class Behavior implements Serializable {
       action.awake();
       actions.add(action);
       return action;
-    } catch (Exception e) {
+    } catch (NoSuchMethodException | IllegalAccessException | InstantiationException
+        | InvocationTargetException e) {
       LOGGER.error("Failed to create action: {}", actionClass.getName(), e);
-      throw new RuntimeException("Failed to create action: " + actionClass.getName(), e);
+      throw new ActionConstructionException("Failed to create action: " + actionClass.getName(), e);
     }
   }
 
@@ -187,9 +190,9 @@ public class Behavior implements Serializable {
     try {
       actionInstance.setBehavior(this);
       actions.add(actionInstance);
-    } catch (Exception e) {
+    } catch (UnsupportedOperationException | IllegalArgumentException | ClassCastException e) {
       LOGGER.error("Failed to add action: {}", actionInstance.getClass().getName());
-      throw new RuntimeException("Failed to create action: " + actionInstance.getClass().getName());
+      throw new ActionConstructionException("Failed to create action: " + actionInstance.getClass().getName(), e);
     }
   }
 
