@@ -39,7 +39,7 @@ public class LevelPreviewScene extends ViewScene {
     try {
       game = jsonParser.parse(gameNode);
     } catch (ParsingException e) {
-      throw new RuntimeException("Error parsing game: " + e.getMessage());
+      throw new IllegalStateException("Failed to parse game JSON file: " + e.getMessage(), e);
     }
     gui = new Gui(game);
 
@@ -60,10 +60,6 @@ public class LevelPreviewScene extends ViewScene {
    */
   @Override
   public void deactivate() {
-    try {
-      gui.stop();
-    } catch (Exception e) {
-      throw new RuntimeException("Error deactivating scene: " + e.getMessage());
-    }
+    gui.stop();
   }
 }
