@@ -12,7 +12,7 @@ import oogasalad.view.gui.GameObjectRenderer;
 
 public abstract class ViewScene {
 
-  protected final StyleConfig styleConfig;
+  private final StyleConfig styleConfig;
   private final Scene myScene;
   private final GameObjectRenderer myObjectRenderer;
 
@@ -54,6 +54,15 @@ public abstract class ViewScene {
    */
   protected GameObjectRenderer getObjectRenderer() {
     return myObjectRenderer;
+  }
+
+  /**
+   * Return the StyleConfig for this scene
+   *
+   * @return StyleConfig object
+   */
+  protected StyleConfig getStyleConfig() {
+    return styleConfig;
   }
 
 }
