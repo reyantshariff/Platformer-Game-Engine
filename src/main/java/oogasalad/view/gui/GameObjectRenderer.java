@@ -48,14 +48,18 @@ public class GameObjectRenderer {
    * @param scene The game scene to render.
    */
   public void renderWithCamera(GraphicsContext gc, GameScene scene) {
-    try {
-      Camera camera = scene.getCamera();
-      Transform cameraTransform = camera.getComponent(Transform.class);
-      relativeX = cameraTransform.getX();
-      relativeY = cameraTransform.getY();
-    } catch (NullPointerException | IllegalArgumentException e) {
-      logger.warn("No camera found in scene");
+    Camera camera = scene.getCamera();
+    if (camera == null) {
+      logger.error("Camera not found in scene");
+      return;
     }
+    Transform cameraTransform = camera.getComponent(Transform.class);
+    if (cameraTransform == null) {
+      logger.error("Camera transform not found");
+      return;
+    }
+    relativeX = cameraTransform.getX();
+    relativeY = cameraTransform.getY();
 
     renderWithoutCamera(gc, scene);
   }
@@ -75,10 +79,9 @@ public class GameObjectRenderer {
     gc.clearRect(windowX, windowY, windowWidth, windowHeight);
 
     Collection<GameObject> objects;
-    try {
-      scene.getCamera(); // get only objects in view of camera if camera exists
+    if (scene.getCamera() != null) {
       objects = scene.getAllObjectsInView();
-    } catch (NullPointerException | IllegalArgumentException e) {
+    } else {
       objects = scene.getAllObjects(); // if no camera component in scene, get all objects in scene
     }
 
