@@ -34,6 +34,7 @@ public class StyleConfig {
   public static void setStylesheet(Scene scene, String theme) {
     try {
       stylesheet = STYLE_FILE_PREFIX + theme.toLowerCase() + STYLE_FILE_TYPE;
+      scene.getStylesheets().clear();
       scene.getStylesheets().add(StyleConfig.class.getResource(stylesheet).toExternalForm());
     } catch (NullPointerException e) {
       LOGGER.warn("Stylesheet file not found for '{}'. Switching to default.", theme);
