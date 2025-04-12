@@ -37,7 +37,7 @@ public class GameObjectFactory {
     } catch (ClassNotFoundException e) {
       throw new IllegalArgumentException("GameObject type " + type + " not found", e);
     } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-      throw new RuntimeException("Failed to create GameObject of type " + type, e);
+      throw new GameObjectCreationException("Failed to create GameObject of type " + type, e);
     }
   }
 }
