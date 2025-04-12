@@ -1,5 +1,6 @@
 package oogasalad.model.config;
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import org.apache.logging.log4j.LogManager;
@@ -39,7 +40,8 @@ public class GameConfig {
    * @param key - the message you want that is stored in the properties file
    * @return - the value of the message you wish to display/log
    */
-  public static String getText(String key) {
-    return myMessages.getString(key);
+  public static String getText(String key, Object... args) {
+    String rawMessage = myMessages.getString(key);
+    return MessageFormat.format(rawMessage, args);
   }
 }
