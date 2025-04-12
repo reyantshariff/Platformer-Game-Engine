@@ -32,6 +32,8 @@ public class GameObjectRenderer {
   private double relativeX;
   private double relativeY;
 
+  private static final String UNUSED = "unused";
+
   /**
    * Constructor for GameObjectRenderer
    *
@@ -122,7 +124,7 @@ public class GameObjectRenderer {
   /**
    * renders a javaFX Text object
    */
-  @SuppressWarnings("unused")
+  @SuppressWarnings(UNUSED)
   private void renderTextComponent(Text component, GraphicsContext gc) {
     javafx.scene.text.Text text = new javafx.scene.text.Text(component.getText());
     applyStyleSheet(text, String.valueOf(component.getStyleClass()));
@@ -133,7 +135,7 @@ public class GameObjectRenderer {
   /**
    * renders a javaFX Image object
    */
-  @SuppressWarnings("unused")
+  @SuppressWarnings(UNUSED)
   private void renderSpriteRenderer(SpriteRenderer component, GraphicsContext gc) {
     GameObject obj = component.getParent();
     Transform transform = obj.getComponent(Transform.class);
@@ -153,7 +155,7 @@ public class GameObjectRenderer {
   /**
    * renders a javafx Rectangle object
    */
-  @SuppressWarnings("unused")
+  @SuppressWarnings(UNUSED)
   private void renderTransform(Transform component, GraphicsContext gc) {
     gc.fillRect(component.getX() - relativeX, component.getY() - relativeY, component.getScaleX(),
         component.getScaleY());
