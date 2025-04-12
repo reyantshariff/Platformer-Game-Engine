@@ -126,12 +126,12 @@ public class GameScene {
       return camera.getObjectsInView();
     } catch (IndexOutOfBoundsException e) {
       LOGGER.error(GameConfig.getText(NO_CAMERA_KEY));
-      throw new IllegalArgumentException(GameConfig.getText(NO_CAMERA_KEY));
+      throw new IllegalArgumentException(GameConfig.getText(NO_CAMERA_KEY), e);
     } catch (ClassCastException e) {
       LOGGER
           .error(MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), GAME_OBJECT, CAMERA));
       throw new IllegalArgumentException(
-          MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), GAME_OBJECT, CAMERA));
+          MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), GAME_OBJECT, CAMERA), e);
     }
   }
 
@@ -145,12 +145,12 @@ public class GameScene {
       return (Camera) allComponents.get(ComponentTag.CAMERA).get(0);
     } catch (IndexOutOfBoundsException e) {
       LOGGER.error(GameConfig.getText(NO_CAMERA_KEY));
-      throw new IllegalArgumentException(GameConfig.getText(NO_CAMERA_KEY));
+      throw new IllegalArgumentException(GameConfig.getText(NO_CAMERA_KEY), e);
     } catch (ClassCastException e) {
       LOGGER
           .error(MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), GAME_OBJECT, CAMERA));
       throw new IllegalArgumentException(
-          MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), GAME_OBJECT, CAMERA));
+          MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), GAME_OBJECT, CAMERA), e);
     }
   }
 
