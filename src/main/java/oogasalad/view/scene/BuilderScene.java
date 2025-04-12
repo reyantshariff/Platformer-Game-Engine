@@ -120,10 +120,13 @@ public class BuilderScene extends ViewScene {
     myComponentContainer = new VBox(10);
     ClassSelectionDropDown addComponentMenuButton = new ClassSelectionDropDown("Add A Component", COMPONENT_PACKAGE_NAME, GameComponent.class, className -> {
       try {
-        Class<?> componentClass = Class.forName(COMPONENT_PACKAGE_NAME + "." + className);
+        Class<? extends GameComponent> componentClass = (Class<? extends GameComponent>) Class.forName(COMPONENT_PACKAGE_NAME + "." + className);
         GameObject selectedObject = builder.getSelectedObject();
 
-        // TODO: Handle Add Component
+        if (selectedObject != null && !selectedObject.hasComponent(componentClass)) {
+          selectedObject.addComponent(componentClass);
+          componentSelectionUpdate();
+        }
 
       } catch (ClassNotFoundException e) {
         logger.error("Class not found: {}", e.getMessage());
