@@ -132,6 +132,7 @@ public class BuilderScene extends ViewScene {
     dragger.setupListeners();
     Group canvasGroup = new Group(myGameCanvas);
     levelViewController = new LevelViewScrollController(canvasGroup, GAME_PREVIEW_WIDTH, GAME_PREVIEW_HEIGHT);
+    levelViewScrollPane = levelViewController.scrollPane();
     return levelViewController.scrollPane();
   }
 
