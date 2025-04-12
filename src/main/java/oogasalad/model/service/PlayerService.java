@@ -74,8 +74,8 @@ public class PlayerService {
   public static PlayerData getPlayerByUsername(String username) throws DatabaseException {
     DocumentSnapshot snapshot = getDocument(username, COLLECTION_NAME);
     if (!snapshot.exists()) {
-      LOGGER.warn(getText("playerNotExistError", username, COLLECTION_NAME));
-      throw new DatabaseException(getText("playerNotExistError", username, COLLECTION_NAME));
+      LOGGER.warn(getText(PLAYER_NOT_EXIST_ERROR_MESSAGE, username, COLLECTION_NAME));
+      throw new DatabaseException(getText(PLAYER_NOT_EXIST_ERROR_MESSAGE, username, COLLECTION_NAME));
     }
     return snapshot.toObject(PlayerData.class);
   }
