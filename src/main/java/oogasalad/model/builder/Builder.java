@@ -219,6 +219,11 @@ public class Builder {
     }
   }
 
+  public GameObject getSelectedObject()
+  {
+    return selectedObject;
+  }
+
   public GameScene getCurrentScene()
   {
     return currentScene;
