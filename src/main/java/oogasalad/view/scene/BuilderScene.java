@@ -18,10 +18,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import oogasalad.model.builder.Builder;
+import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.parser.PrefabLoader;
 import oogasalad.view.gui.button.BuilderSpriteOptionButton;
+import oogasalad.view.gui.dropDown.ClassSelectionDropDown;
 import oogasalad.view.player.dinosaur.DinosaurGameScene;
 import oogasalad.view.scene.BuilderUserControl.LevelViewScrollController;
 import oogasalad.view.scene.BuilderUserControl.ObjectDragger;
@@ -46,15 +48,13 @@ public class BuilderScene extends ViewScene {
   private static final Logger logger = LogManager.getLogger(BuilderScene.class);
 
   private final BorderPane myWindow;
+  private final MainViewManager viewManager;
+
   private Canvas myGameCanvas;
   private ScrollPane levelViewScrollPane; // ScrollPane containing the game Canvas
   private LevelViewScrollController levelViewController;
-
-
   private GameScene gameScene;
-
   private Builder builder;
-  private final MainViewManager viewManager;
 
   /**
    * Constructor for BuilderView
@@ -73,7 +73,6 @@ public class BuilderScene extends ViewScene {
     gameScene = new DinosaurGameScene("LevelEditTest");
     gameScene.onActivated();
     builder = new Builder(gameScene);
-//    builder = new Builder();
   }
 
   private void initializeUI() {
@@ -94,67 +93,20 @@ public class BuilderScene extends ViewScene {
 
     // Add layout for bottom button menus
     myWindow.setBottom(createBottomPanel());
-    // Add layout for widget panel
+
+    // Add layout for Component panel
     myWindow.setRight(createComponentPanel());
 
-    levelViewScrollPane = createGamePreview();
-
     // Add level-view segment of window
-    myWindow.setCenter(createGamePreview());
-
-    // Right properties panel
-    /*
-    VBox propertiesPanel = new VBox();
-    propertiesPanel.getChildren().add(new Label("Properties"));
-    myWindow.setRight(propertiesPanel);
-    */
-
+    levelViewScrollPane = createGamePreview();
+    myWindow.setCenter(levelViewScrollPane);
   }
 
   private VBox createComponentPanel() {
-    ComboBox<String> componentSelector = new ComboBox<>();
-    componentSelector.setValue("Select A Component");
-    String directoryPath = "src/main/java/oogasalad/model/engine/component";
-    String packageClass = "oogasalad.model.engine.component.";
-    List<Class<?>> componentList = new ArrayList<>(getClassesInDirectory(directoryPath, packageClass));
-
-    componentSelector.getItems().addAll(
-        componentList.stream()
-            .map(Class::getSimpleName)  // Convert each Class<?> to its simple name
-            .collect(Collectors.toList())  // Collect the names into a List
-    );
-    componentSelector.setOnAction(e -> {
-      // createComponentWidget(componentSelector.getValue());
-    });
-
-    return new VBox(componentSelector);
+    String componentPackageName = "oogasalad.model.engine.component";
+    return new VBox(new ClassSelectionDropDown(componentPackageName, GameComponent.class));
   }
 
-  private List<Class<?>> getClassesInDirectory(String directoryPath, String classPackage) {
-    List<Class<?>> classes = new ArrayList<>();
-    File directory = new File(directoryPath);
-
-    if (directory.exists() && directory.isDirectory()) {
-      // Get all .class files in the directory
-      File[] files = directory.listFiles((dir, name) -> name.endsWith(".java"));
-      if (files != null) {
-        for (File file : files) {
-          System.out.println(file.getAbsolutePath());
-          String className = file.getName().replace(".java", "");
-          try {
-            // Load the class dynamically
-            Class<?> clazz = Class.forName(classPackage + className);
-            classes.add(clazz); // Add to list
-          } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-          }
-        }
-      }
-    }
-    return classes;
-  }
-
-  // private
   /**
    * Updates game preview window by rendering all current GameObjects in the GameScene in their
    * current position

@@ -1,4 +1,4 @@
-package oogasalad.view.scene.BuilderUI;
+package oogasalad.view.scene.BuilderUserControl;
 
 import javafx.scene.Group;
 import javafx.scene.control.ScrollPane;
