@@ -3,8 +3,11 @@ package oogasalad.view.gui.panel;
 import java.util.List;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.serialization.SerializedField;
@@ -22,6 +25,7 @@ public class ComponentPanel extends VBox {
 
   private static final String COLLAPSED_ARROW = "▶";
   private static final String EXPANDED_ARROW = "▼";
+  private static final String DELETE_BUTTON = "-";
 
   private final VBox contentBox = new VBox();
 
@@ -42,11 +46,23 @@ public class ComponentPanel extends VBox {
     header.setSpacing(5);
     header.setCursor(Cursor.HAND);
 
+    // Add arrow and title
     Label arrow = new Label(EXPANDED_ARROW);
     Label title = new Label(component.getClass().getSimpleName());
     title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
-    header.getChildren().addAll(arrow, title);
+    // Add delete button
+    Button deleteButton = new Button(DELETE_BUTTON);
+    deleteButton.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-background-color: transparent;");
+    deleteButton.setOnAction(e -> {
+      ((Pane) getParent()).getChildren().remove(this);
+      component.getParent().removeComponent(component.getClass());
+    });
+
+    // Push deleteButton to the right
+    HBox spacer = new HBox();
+    HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+    header.getChildren().addAll(arrow, title, spacer, deleteButton);
 
     contentBox.getChildren().addAll(getDeserializedComponents(component));
     contentBox.setVisible(false);
