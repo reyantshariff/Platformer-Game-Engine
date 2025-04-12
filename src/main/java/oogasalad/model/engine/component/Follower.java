@@ -12,6 +12,10 @@ import oogasalad.model.engine.base.serialization.SerializableField;
  */
 
 public class Follower extends GameComponent {
+
+  private static final String FOLLOW_OBJECT_MISSING_TRANSFORM =
+      "Follow Object Missing Transform Component";
+
   @Override
   public ComponentTag componentTag() {
     return ComponentTag.TRANSFORM;
@@ -47,7 +51,7 @@ public class Follower extends GameComponent {
   public void update(double deltaTime) {
     Transform targetTransform = followObject.getComponent(Transform.class);
     if (targetTransform == null) {
-      LOGGER.error("Follow Object Missing Transform Component");
+      LOGGER.error(FOLLOW_OBJECT_MISSING_TRANSFORM);
       return;
     }
     myTransform.setX(targetTransform.getX() + offsetX);
@@ -70,8 +74,8 @@ public class Follower extends GameComponent {
     try {
       attachTransform = followObject.getComponent(Transform.class);
     } catch (IllegalArgumentException e) {
-      LOGGER.error("Follow Object Missing Transform Component");
-      throw new IllegalArgumentException("Follow Object Missing Transform Component");
+      LOGGER.error(FOLLOW_OBJECT_MISSING_TRANSFORM);
+      throw new IllegalArgumentException(FOLLOW_OBJECT_MISSING_TRANSFORM, e);
     }
     myTransform = getParent().getComponent(Transform.class);
     offsetX = myTransform.getX() - attachTransform.getX();
