@@ -1,16 +1,16 @@
 package oogasalad.view.scene;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -18,12 +18,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import oogasalad.model.builder.Builder;
-import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.parser.PrefabLoader;
 import oogasalad.view.gui.button.BuilderSpriteOptionButton;
-import oogasalad.view.gui.dropDown.ClassSelectionDropDown;
 import oogasalad.view.player.dinosaur.DinosaurGameScene;
 import oogasalad.view.scene.BuilderUserControl.LevelViewScrollController;
 import oogasalad.view.scene.BuilderUserControl.ObjectDragger;
@@ -40,6 +38,8 @@ public class BuilderScene extends ViewScene {
   // Static constants defining the size of the level-preview window within the builder scene
   public static final double GAME_PREVIEW_WIDTH = 1000;
   public static final double GAME_PREVIEW_HEIGHT = 800;
+
+  private static final String COMPONENT_PACKAGE_NAME = "oogasalad.model.engine.component";
 
   public static final double ZOOM_FACTOR = 1.05;
   public static final double MAX_ZOOM = 2.0;
@@ -77,34 +77,39 @@ public class BuilderScene extends ViewScene {
 
   private void initializeUI() {
     // Top bar
-    /*
-    HBox topBar = new HBox();
-    Button loadButton = new Button("Load");
-    Button saveButton = new Button("Save");
-    Button playtestButton = new Button("Playtest");
-    topBar.getChildren().addAll(loadButton, saveButton, playtestButton);
-    myWindow.setTop(topBar);
-    */
+//    HBox topBar = new HBox();
+//    Button loadButton = new Button("Load");
+//    Button saveButton = new Button("Save");
+//    Button playtestButton = new Button("Playtest");
+//    topBar.getChildren().addAll(loadButton, saveButton, playtestButton);
+//    myWindow.setTop(topBar);
     Button returnButton = new Button("Main Menu");
     returnButton.setOnAction(e -> {
       viewManager.switchToMainMenu();
     });
     myWindow.setTop(returnButton);
 
-    // Add layout for bottom button menus
-    myWindow.setBottom(createBottomPanel());
+    // Add SplitPane for sprite button options and object control panel
+    SplitPane objectControlSplitPane = new SplitPane(createAddSpriteButtonOptions(), createObjectControlPanel());
+    objectControlSplitPane.setOrientation(Orientation.HORIZONTAL);
+    objectControlSplitPane.setDividerPositions(0.7);
 
-    // Add layout for Component panel
-    myWindow.setRight(createComponentPanel());
+    // Add SplitPane for splitting the view and object panel
+    SplitPane viewObjectSplitPane = new SplitPane(createGamePreview(), objectControlSplitPane);
+    viewObjectSplitPane.setOrientation(Orientation.VERTICAL);
+    viewObjectSplitPane.setDividerPositions(0.6);
 
-    // Add level-view segment of window
-    levelViewScrollPane = createGamePreview();
-    myWindow.setCenter(levelViewScrollPane);
+    // Add SplitPane for splitting the view and component panel
+    SplitPane viewComponentSplitPane = new SplitPane(viewObjectSplitPane, createComponentPanel());
+    viewComponentSplitPane.setOrientation(Orientation.HORIZONTAL);
+    viewComponentSplitPane.setDividerPositions(0.8);
+
+    // Add split pane to the center of the window
+    myWindow.setCenter(viewComponentSplitPane);
   }
 
   private VBox createComponentPanel() {
-    String componentPackageName = "oogasalad.model.engine.component";
-    return new VBox(new ClassSelectionDropDown(componentPackageName, GameComponent.class));
+    return new VBox();
   }
 
   /**
@@ -130,10 +135,7 @@ public class BuilderScene extends ViewScene {
     return levelViewController.scrollPane();
   }
 
-  private HBox createBottomPanel() {
-    HBox bottomPanel = new HBox();
-    bottomPanel.setSpacing(10);
-
+  private VBox createObjectControlPanel() {
     Button undoButton = new Button("Undo");
     undoButton.setOnAction(event -> {
       builder.undoLastAction();
@@ -152,15 +154,20 @@ public class BuilderScene extends ViewScene {
       updateGamePreview();
     });
 
-    bottomPanel.getChildren().addAll(createAddSpriteButtonOptions(), undoButton, redoButton, deleteButton);
+    HBox buttonBox = new HBox(undoButton, redoButton, deleteButton);
+    buttonBox.setSpacing(10);
+    buttonBox.setAlignment(Pos.CENTER);
+    VBox bottomPanel = new VBox(buttonBox);
+    bottomPanel.setAlignment(Pos.CENTER);
+    bottomPanel.setSpacing(10);
 
     return bottomPanel;
   }
 
   private ScrollPane createAddSpriteButtonOptions() {
     // Define width and height of the sprite button panel
-    double spriteButtonPaneWidth = getScene().getWidth()*0.45;
-    double spriteButtonPaneHeight = getScene().getHeight()*0.25;
+    double spriteButtonPaneWidth = getScene().getWidth() * 0.75;
+    double spriteButtonPaneHeight = getScene().getHeight() * 0.25;
 
     // Organize the button layout via TilePane
     TilePane tilePane = createSpriteButtonTilePane(spriteButtonPaneWidth);
@@ -211,7 +218,7 @@ public class BuilderScene extends ViewScene {
     spriteScrollPane.setPrefWidth(width);
     spriteScrollPane.setPrefHeight(height);
     spriteScrollPane.setHbarPolicy(ScrollBarPolicy.NEVER); // Disable horizontal scrolling
-    spriteScrollPane.setVbarPolicy(ScrollBarPolicy.ALWAYS); // Enable vertical scrolling
+    spriteScrollPane.setVbarPolicy(ScrollBarPolicy.NEVER); // Disable vertical scrolling
     spriteScrollPane.setFitToWidth(true);
     spriteScrollPane.setFitToHeight(true);
     return spriteScrollPane;
