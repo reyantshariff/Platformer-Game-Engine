@@ -1,6 +1,5 @@
 package oogasalad.view.scene.BuilderUserControl;
 
-import java.awt.Point;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
@@ -28,17 +27,15 @@ public class ObjectDragger {
   private final GameScene gameScene;
   private final GameObjectRenderer renderer;
 
-  private boolean dragging = false;
   private double dragOffsetX = 0;
   private double dragOffsetY = 0;
-  private boolean resizing = false;
 
   private final double HANDLE_SIZE = 8;
 
   private double oldX = 0;
   private double oldY = 0;
 
-  private int activeHandleIndex = -1;
+  private final DragContext dragContext = new DragContext();
   private List<Point2D> resize_handles;
 
   public ObjectDragger(Canvas canvas, Builder builder, BuilderScene builderScene, GameObjectRenderer renderer) {
@@ -107,11 +104,13 @@ public class ObjectDragger {
       double w = t.getScaleX();
       double h = t.getScaleY();
 
-      if (builder.objectIsSelected() && builder.getSelectedObject().equals(obj) && isHoveringOverResizeHandle(oldX, oldY))
+      boolean isSelected = builder.objectIsSelected() && builder.getSelectedObject().equals(obj) ;
+
+      if (isSelected && isHoveringOverResizeHandle(oldX, oldY))
       {
-        dragging = true;
         dragOffsetX = oldX - t.getX();
         dragOffsetY = oldY - t.getY();
+        dragContext.beginDrag(e, dragOffsetX, dragOffsetY, true);
         return;
       }
 
@@ -119,11 +118,10 @@ public class ObjectDragger {
       if (oldX >= t.getX() && oldX <= t.getX() + w &&
           oldY >= t.getY() && oldY <= t.getY() + h) {
         builder.selectExistingObject(obj);
-        dragging = true; // whole object move
-        dragOffsetX = oldX - t.getX();
-        dragOffsetY = oldY - t.getY();
+        double offsetX = e.getX() - t.getX();
+        double offsetY = e.getY() - t.getY();
+        dragContext.beginDrag(e, offsetX, offsetY, false);
         builderScene.handleObjectSelectionChange();
-        activeHandleIndex = -1;
         clickedObject = true;
       }
     }
@@ -131,6 +129,7 @@ public class ObjectDragger {
     // 🔹 If nothing was clicked
     if (!clickedObject) {
       builder.deselect();
+      dragContext.endInteraction();
     }
 
     builderScene.updateGamePreview();
@@ -138,30 +137,20 @@ public class ObjectDragger {
 
 
   private void handleDragged(MouseEvent e) {
-    if (builder.objectIsSelected())
-    {
-      double newX = e.getX() - dragOffsetX;
-      double newY = e.getY() - dragOffsetY;
-
-      if (activeHandleIndex != -1)
-      {
-        double dx = e.getX() - oldX;
-        double dy = e.getY() - oldY;
-        resizing = true;
-        resizeFromHandle(builder.getSelectedObject(), dx, dy);
-      }
-
-      else if (builder.objectIsSelected()) {
-        builder.moveObject(newX, newY);
-        renderer.renderWithoutCamera(canvas.getGraphicsContext2D(), gameScene);
-      }
-
-      oldX = e.getX();
-      oldY = e.getY();
-
-      builderScene.updateGamePreview();  // refresh all sprite visuals in the canvas
+    if (!builder.objectIsSelected() || !dragContext.isActive()) return;
+    if (dragContext.isResizing()) {
+      double dx = dragContext.deltaX(e);
+      double dy = dragContext.deltaY(e);
+      resizeFromHandle(builder.getSelectedObject(), dx, dy);
+    } else {
+      builder.moveObject(dragContext.newX(e), dragContext.newY(e));
     }
+
+    dragContext.updateCoordinates(e);
+    renderer.renderWithoutCamera(canvas.getGraphicsContext2D(), gameScene);
+    builderScene.updateGamePreview();
   }
+
 
   private boolean isHoveringOverResizeHandle(double x, double y)
   {
@@ -192,7 +181,7 @@ public class ObjectDragger {
          meaning the user clicked on that handle.
          */
         if (mousePoint.distance(resize_handles.get(i)) <= HANDLE_SIZE / 2) {
-          activeHandleIndex = i;
+          dragContext.activateHandle(i);
           return true;
         }
       }
@@ -210,7 +199,7 @@ public class ObjectDragger {
 
     double newX = x, newY = y, newW = w, newH = h;
 
-    switch (activeHandleIndex) {
+    switch (dragContext.getActiveHandleIndex()) {
       case 0 -> {    // top-left
         newX += dx;
         newY += dy;
@@ -255,23 +244,17 @@ public class ObjectDragger {
 
 
   private void handleReleased(MouseEvent e) {
-    double newX = e.getX() - dragOffsetX;
-    double newY = e.getY() - dragOffsetY;
-    builderScene.handleObjectSelectionChange();
+    if (!isInCanvas(e) || !builder.objectIsSelected()) return;
 
-    if (isInCanvas(e) && dragging && builder.objectIsSelected() && !resizing) {
-      dragging = false;
-      builder.placeObject(newX, newY);
-      renderer.renderWithoutCamera(canvas.getGraphicsContext2D(), gameScene);
-    }
-    else if (resizing)
-    {
-      resizing = false;
-      dragging = false;
+    if (dragContext.isDragging() && !dragContext.isResizing()) {
+      builder.placeObject(dragContext.newX(e), dragContext.newY(e));
     }
 
-    builderScene.updateGamePreview();  // refresh all sprite visuals in the canvas
+    dragContext.endInteraction();
+    builderScene.updateGamePreview();
   }
+
+
 
 
   private List<GameObject> removeCamerasFromObjects(List<GameObject> objects) {
