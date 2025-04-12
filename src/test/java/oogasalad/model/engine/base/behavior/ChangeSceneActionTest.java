@@ -2,6 +2,8 @@ package oogasalad.model.engine.base.behavior;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import javafx.application.Platform;
 import java.util.concurrent.CountDownLatch;
@@ -20,14 +22,18 @@ public class ChangeSceneActionTest extends ActionsTest<ChangeSceneAction> {
     @Override
     @Test
     public void onPerform_performAction_performAction() {
-        step();
+        List<String> sceneNames = new ArrayList<>();
+        sceneNames.add(getScene1().getName());
+        sceneNames.add(getScene2().getName());
+        getGame().setLevelOrder(sceneNames);
         assertEquals(getScene1().getName(), getGame().getCurrentScene().getName());
 
         CountDownLatch latch = new CountDownLatch(1);
         Platform.runLater(() -> {
             try {
-                getAction().onPerform(getScene2().getName());
+                getAction().onPerform("nextLevel");
             } finally {
+                assertTrue(getScene2().getName().equals(getGame().getCurrentScene().getName()));
                 latch.countDown();
             }
         });
@@ -38,8 +44,5 @@ public class ChangeSceneActionTest extends ActionsTest<ChangeSceneAction> {
             Thread.currentThread().interrupt();
             fail("Test interrupted");
         }
-
-        step();
-        assertEquals("Scene2", getGame().getCurrentScene().getName());
     }
 }
