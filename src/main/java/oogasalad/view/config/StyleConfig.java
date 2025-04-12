@@ -32,13 +32,13 @@ public class StyleConfig {
    * @param theme = the new theme that is being swapped
    */
   public static void setStylesheet(Scene scene, String theme) {
-    try {
       stylesheet = STYLE_FILE_PREFIX + theme.toLowerCase() + STYLE_FILE_TYPE;
       scene.getStylesheets().clear();
-      scene.getStylesheets().add(StyleConfig.class.getResource(stylesheet).toExternalForm());
-    } catch (NullPointerException e) {
-      LOGGER.warn("Stylesheet file not found for '{}'. Switching to default.", theme);
-      scene.getStylesheets().add(StyleConfig.class.getResource(STYLE_FILE_PREFIX + DEFAULT_STYLE + STYLE_FILE_TYPE).toExternalForm());
-    }
+      if(StyleConfig.class.getResource(stylesheet).toExternalForm() == null) {
+        LOGGER.warn("Stylesheet file not found for '{}'. Switching to default.", theme);
+        scene.getStylesheets().add(StyleConfig.class.getResource(STYLE_FILE_PREFIX + DEFAULT_STYLE + STYLE_FILE_TYPE).toExternalForm());
+      } else {
+        scene.getStylesheets().add(StyleConfig.class.getResource(stylesheet).toExternalForm());
+      }
   }
 }
