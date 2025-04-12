@@ -30,8 +30,7 @@ public class GamePlayerScene extends ViewScene {
     super(new StackPane(), 1280, 720);
 
     StackPane root = (StackPane) getScene().getRoot();
-    Game game = new Game();
-    /*
+
     String correctGameName = gameName.replaceAll("\\s+","");
 
 
@@ -51,7 +50,7 @@ public class GamePlayerScene extends ViewScene {
     }
 
     game.goToScene(game.getLevelOrder().getFirst());
-    */
+
     gui = new Gui(game);
 
     Button returnButton = new Button("MAIN MENU");
