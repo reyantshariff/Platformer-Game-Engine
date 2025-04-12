@@ -138,6 +138,13 @@ public class ObjectDragger {
 
     // 🔹 If nothing was clicked
     if (!clickedObject) {
+      Transform t = builder.getSelectedObject().getComponent(Transform.class);
+      ResizeObjectAction resizeAction = new ResizeObjectAction(
+          builder.getSelectedObject(),
+          resizeStartX, resizeStartY, resizeStartW, resizeStartH,
+          t.getX(), t.getY(), t.getScaleX(), t.getScaleY()
+      );
+      builder.pushAction(resizeAction);
       builder.deselect();
       dragContext.endInteraction();
     }
