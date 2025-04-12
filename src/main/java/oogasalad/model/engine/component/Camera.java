@@ -58,8 +58,10 @@ public class Camera extends GameComponent {
     }
     List<GameObject> objectsInView = new ArrayList<>();
     for (GameObject object : objects) {
-      Transform transform = object.getComponent(Transform.class);
-      if (transform == null) {
+      Transform transform;
+      try {
+      transform = object.getComponent(Transform.class);
+      } catch (IllegalArgumentException e) {
         LOGGER.warn("GameObject {} does not have a Transform component", object.getName());
         continue;
       }
