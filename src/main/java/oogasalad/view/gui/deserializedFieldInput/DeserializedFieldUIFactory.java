@@ -14,7 +14,19 @@ public class DeserializedFieldUIFactory {
         box.initGUI(field);
         return box;
       }
-      default -> throw new IllegalStateException("Unexpected value: " + fieldType);
+      case "String", "string" -> {
+        StringFieldInput box = new StringFieldInput();
+        box.initGUI(field);
+        return box;
+      }
+      case "List" -> {
+        ListFieldInput box = new ListFieldInput();
+        box.initGUI(field);
+        return box;
+      }
+      default -> {
+        throw new IllegalStateException("Unexpected value: " + fieldType);
+      }
     }
   }
 

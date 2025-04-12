@@ -1,7 +1,10 @@
 package oogasalad.view.scene;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -107,13 +110,13 @@ public class BuilderScene extends ViewScene {
     // Add SplitPane for splitting the view and component panel
     SplitPane viewComponentSplitPane = new SplitPane(viewObjectSplitPane, createComponentPanel());
     viewComponentSplitPane.setOrientation(Orientation.HORIZONTAL);
-    viewComponentSplitPane.setDividerPositions(0.8);
+    viewComponentSplitPane.setDividerPositions(0.7);
 
     // Add split pane to the center of the window
     myWindow.setCenter(viewComponentSplitPane);
   }
 
-  private VBox createComponentPanel() {
+  private ScrollPane createComponentPanel() {
     myComponentContainer = new VBox(10);
     ClassSelectionDropDown addComponentMenuButton = new ClassSelectionDropDown("Add A Component", COMPONENT_PACKAGE_NAME, GameComponent.class, className -> {
       try {
@@ -127,9 +130,16 @@ public class BuilderScene extends ViewScene {
       }
     });
 
-    VBox box = new VBox(10, myComponentContainer, addComponentMenuButton);
-    box.setAlignment(Pos.TOP_CENTER);
-    return box;
+    VBox container = new VBox(10, myComponentContainer, addComponentMenuButton);
+    container.setPadding(new Insets(10, 10, 10, 10));
+    container.setAlignment(Pos.TOP_CENTER);
+
+    ScrollPane scrollPane = new ScrollPane(container);
+    scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
+    scrollPane.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
+    scrollPane.setFitToWidth(true);
+
+    return scrollPane;
   }
 
   /**
@@ -150,11 +160,12 @@ public class BuilderScene extends ViewScene {
   }
 
   private void componentSelectionUpdate() {
-    // TODO: Add other components to the component panel
     myComponentContainer.getChildren().clear();
-    Transform transform = builder.getSelectedObject().getComponent(Transform.class);
-    if (transform != null) {
-      myComponentContainer.getChildren().add(new ComponentPanel(transform));
+
+    List<GameComponent> components = new ArrayList<>(builder.getSelectedObject().getAllComponents().values());
+    components.sort(Comparator.comparing(c -> c.componentTag().ordinal()));
+    for (GameComponent component : components) {
+      myComponentContainer.getChildren().add(new ComponentPanel(component));
     }
   }
 

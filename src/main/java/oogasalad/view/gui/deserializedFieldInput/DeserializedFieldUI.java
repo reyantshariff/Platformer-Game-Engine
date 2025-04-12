@@ -18,6 +18,7 @@ public abstract class DeserializedFieldUI<T> extends HBox {
    */
   protected DeserializedFieldUI() {
     super(10);
+    setStyle("-fx-background-color: #dadada; -fx-padding: 5;");
   }
 
   @SuppressWarnings("unchecked")

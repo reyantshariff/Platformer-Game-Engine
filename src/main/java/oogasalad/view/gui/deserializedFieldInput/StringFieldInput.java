@@ -4,16 +4,14 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.util.converter.DoubleStringConverter;
 import oogasalad.model.engine.base.serialization.SerializedField;
 
-public class DoubleFieldInput extends DeserializedFieldUI<Double> {
+public class StringFieldInput extends DeserializedFieldUI<String> {
 
   @Override
-  protected Node showGUI(SerializedField<Double> field) {
+  protected Node showGUI(SerializedField<String> field) {
     // Make a label for the field
     String name = field.getFieldName().replaceAll("([a-z])([A-Z])", "$1 $2");
     name = name.substring(0, 1).toUpperCase() + name.substring(1);
@@ -21,25 +19,10 @@ public class DoubleFieldInput extends DeserializedFieldUI<Double> {
 
     // Make a text field for the field that only accepts double values
     TextField textField = new TextField();
-    textField.setPromptText("Enter a number");
-    TextFormatter<Double> formatter = new TextFormatter<>(
-        new DoubleStringConverter(),
-        field.getValue(),
-        change -> {
-          String newText = change.getControlNewText();
-          if (newText.isEmpty()) return change;
-          try {
-            Double.parseDouble(newText);
-            return change;
-          } catch (NumberFormatException e) {
-            return null;
-          }
-        }
-    );
-    textField.setTextFormatter(formatter);
+    textField.setPromptText("Enter a string");
 
     // Listeners
-    formatter.valueProperty().addListener((obs, oldVal, newVal) -> {
+    textField.textProperty().addListener((obs, oldVal, newVal) -> {
       field.setValue(newVal);
     });
 
@@ -51,5 +34,4 @@ public class DoubleFieldInput extends DeserializedFieldUI<Double> {
 
     return hBox;
   }
-
 }

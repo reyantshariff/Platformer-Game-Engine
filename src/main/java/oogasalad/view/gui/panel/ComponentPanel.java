@@ -24,7 +24,7 @@ public class ComponentPanel extends VBox {
    */
   public ComponentPanel(GameComponent component) {
     super();
-    setStyle("-fx-background-color: #CECECE; -fx-padding: 10px;");
+    setStyle("-fx-background-color: #e4e4e4; -fx-padding: 10px;");
     setAlignment(Pos.TOP_CENTER);
     setSpacing(10);
 
