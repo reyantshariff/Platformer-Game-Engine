@@ -129,21 +129,21 @@ public class Builder {
   }
 
 
-  private GameObject findObject(UUID id)
-  {
-    for (GameObject object : game.getCurrentScene().getAllObjects())
-    {
-      if (object.getId() == id)
-      {
-        return object;
-      }
-//      if (object.getComponent(Transform.class).getX() == x && object.getComponent(Transform.class).getY() == y)
-//      {
-//        return object;
-//      }
-    }
-    return null;
-  }
+//   private GameObject findObject(UUID id)
+//   {
+//     for (GameObject object : game.getCurrentScene().getAllObjects())
+//     {
+//       if (object.getId() == id)
+//       {
+//         return object;
+//       }
+// //      if (object.getComponent(Transform.class).getX() == x && object.getComponent(Transform.class).getY() == y)
+// //      {
+// //        return object;
+// //      }
+//     }
+//     return null;
+//   }
 
   /**
    *  Stops the preview if the user lifts mouse and cursor is not on the editor screen.
