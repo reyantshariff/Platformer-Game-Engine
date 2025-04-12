@@ -122,49 +122,52 @@ public class GameObjectRenderer {
   /**
    * renders a javaFX Text object
    */
-  // private void renderTextComponent(Text component, GraphicsContext gc) {
-  //   javafx.scene.text.Text text = new javafx.scene.text.Text(component.getText());
-  //   applyStyleSheet(text, String.valueOf(component.getStyleClass()));
-  //   WritableImage snapshot = text.snapshot(null, null);
-  //   gc.drawImage(snapshot, component.getX() - relativeX, component.getY() - relativeY);
-  // }
+  @SuppressWarnings("unused")
+  private void renderTextComponent(Text component, GraphicsContext gc) {
+    javafx.scene.text.Text text = new javafx.scene.text.Text(component.getText());
+    applyStyleSheet(text, String.valueOf(component.getStyleClass()));
+    WritableImage snapshot = text.snapshot(null, null);
+    gc.drawImage(snapshot, component.getX() - relativeX, component.getY() - relativeY);
+  }
 
   /**
    * renders a javaFX Image object
    */
-  // private void renderSpriteRenderer(SpriteRenderer component, GraphicsContext gc) {
-  //   GameObject obj = component.getParent();
-  //   Transform transform = obj.getComponent(Transform.class);
+  @SuppressWarnings("unused")
+  private void renderSpriteRenderer(SpriteRenderer component, GraphicsContext gc) {
+    GameObject obj = component.getParent();
+    Transform transform = obj.getComponent(Transform.class);
 
-  //   try {
-  //     Image image = new Image(component.getImagePath());
-  //     gc.drawImage(image, transform.getX() + component.getOffsetX() - relativeX,
-  //         transform.getY() + component.getOffsetY() - relativeY, transform.getScaleX(), // width
-  //         // (scale)
-  //         transform.getScaleY() // height (scale)
-  //     );
-  //   } catch (Exception e) {
-  //     logger.error("Failed to render image: " + component.getImagePath());
-  //   }
-  // }
+    try {
+      Image image = new Image(component.getImagePath());
+      gc.drawImage(image, transform.getX() + component.getOffsetX() - relativeX,
+          transform.getY() + component.getOffsetY() - relativeY, transform.getScaleX(), // width
+          // (scale)
+          transform.getScaleY() // height (scale)
+      );
+    } catch (Exception e) {
+      logger.error("Failed to render image: " + component.getImagePath());
+    }
+  }
 
   /**
    * renders a javafx Rectangle object
    */
-  // private void renderTransform(Transform component, GraphicsContext gc) {
-  //   gc.fillRect(component.getX() - relativeX, component.getY() - relativeY, component.getScaleX(),
-  //       component.getScaleY());
-  // }
+  @SuppressWarnings("unused")
+  private void renderTransform(Transform component, GraphicsContext gc) {
+    gc.fillRect(component.getX() - relativeX, component.getY() - relativeY, component.getScaleX(),
+        component.getScaleY());
+  }
 
-  // private void applyStyleSheet(Node node, String styleSheet) {
-  //   if (myScene == null) {
-  //     logger.error("Could not apply stylesheet: scene is null.");
-  //     return;
-  //   }
+  private void applyStyleSheet(Node node, String styleSheet) {
+    if (myScene == null) {
+      logger.error("Could not apply stylesheet: scene is null.");
+      return;
+    }
 
-  //   node.getStyleClass().add(styleSheet);
-  //   Group tempRoot = new Group(node);
-  //   Scene tempScene = new Scene(tempRoot);
-  //   tempScene.getStylesheets().addAll(myScene.getStylesheets());
-  // }
+    node.getStyleClass().add(styleSheet);
+    Group tempRoot = new Group(node);
+    Scene tempScene = new Scene(tempRoot);
+    tempScene.getStylesheets().addAll(myScene.getStylesheets());
+  }
 }
