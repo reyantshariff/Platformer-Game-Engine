@@ -217,17 +217,17 @@ public class BehaviorParser implements Parser<Behavior> {
       ObjectNode oneConstraint = mapper.createObjectNode();
       BiConsumer<ObjectNode, Object> writer = TYPE_WRITERS.get(
           constraint.getParameter().getClass());
+        
+        if(writer == null || constraint.getParameter() == null || oneConstraint == null) {
+          LOGGER.error("Could not write constraint {} for behavior {}. Invalid JSON parameter type. Skipping constraint.",
+              constraint.getParameter().getClass().getSimpleName(), data.getName());
+          return;
+        }
 
-      try {
         oneConstraint.put(LOWER_NAME, constraint.getClass().getSimpleName());
         writer.accept(oneConstraint, constraint.getParameter()); // Catching this error
         oneConstraint.put(PARAMETER_TYPE, constraint.getParameter().getClass().getSimpleName());
         constraintArray.add(oneConstraint);
-      } catch (NullPointerException e) {
-        LOGGER.error(
-            "Could not write constraint {} for behavior {}. Invalid JSON parameter type. Skipping constraint.",
-            constraint.getParameter().getClass().getSimpleName(), data.getName());
-      }
 
       root.set(CONSTRAINTS, constraintArray);
     });
