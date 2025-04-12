@@ -37,7 +37,7 @@ public class DinosaurGameScene extends GameScene {
 
   private static final String DINOSAUR_SCENE_BUNDLE = "oogasalad.dinosaur.dinosaur";
 
-  private Scene scene;
+  //private Scene scene;
 
   /**
    * Constructor for DinosaurGameScene
