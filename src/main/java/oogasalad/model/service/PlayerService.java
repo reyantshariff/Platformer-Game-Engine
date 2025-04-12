@@ -22,6 +22,7 @@ import oogasalad.model.profile.PlayerData;
 public class PlayerService {
 
   private static final String COLLECTION_NAME = "players";
+  private static final String PLAYER_NOT_EXIST_ERROR_MESSAGE = "playerNotExistError";
 
   /**
    * Creates a new player with the given username
@@ -54,8 +55,8 @@ public class PlayerService {
    */
   public static boolean deletePlayer(String username) throws DatabaseException {
     if (!documentExists(username, COLLECTION_NAME)) {
-      LOGGER.warn(getText("playerNotExistError"), username, COLLECTION_NAME);
-      throw new DatabaseException(getText("playerNotExistError", username, COLLECTION_NAME));
+      LOGGER.warn(getText(PLAYER_NOT_EXIST_ERROR_MESSAGE), username, COLLECTION_NAME);
+      throw new DatabaseException(getText(PLAYER_NOT_EXIST_ERROR_MESSAGE, username, COLLECTION_NAME));
     }
 
     deleteFromDatabase(username, COLLECTION_NAME);

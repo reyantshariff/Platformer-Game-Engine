@@ -17,6 +17,12 @@ import java.io.IOException;
 public class FirebaseManager {
   private static Firestore db;
 
+  /**
+   * Initializes the Firebase app using the service JSON file
+   * This should only be called once during application startup.
+   *
+   * @throws IOException - if the credential file cannot be read, throws error
+   */
   public static void initializeFirebase() throws IOException {
     FileInputStream serviceAccount = new FileInputStream("data/DatabaseInformation/oogasalad-a908c-firebase-adminsdk-fbsvc-73ed2b05e6.json");
 
@@ -28,6 +34,12 @@ public class FirebaseManager {
     db = FirestoreClient.getFirestore();
   }
 
+  /**
+   * Returns the Firestone database instance
+   * This should only be called after initialization has been done
+   *
+   * @return - the initialized instance
+   */
   public static Firestore getDB() {
     return db;
   }

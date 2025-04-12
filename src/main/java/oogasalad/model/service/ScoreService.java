@@ -22,6 +22,7 @@ import oogasalad.model.profile.ScoreData;
  */
 public class ScoreService {
   private static final String COLLECTION_NAME = "scores";
+  private static final String SCORE_NOT_EXIST_ERROR_MESSAGE = "scoreNotExistError";
 
   /**
    * Checks for an existing high score, and if the new score is bigger, then it saves it.
@@ -77,7 +78,7 @@ public class ScoreService {
     String docId = username + "_" + game;
 
     if (!documentExists(docId, COLLECTION_NAME)) {
-      LOGGER.warn(getText("scoreNotExistError", docId, COLLECTION_NAME));
+      LOGGER.warn(getText(SCORE_NOT_EXIST_ERROR_MESSAGE, docId, COLLECTION_NAME));
       return false;
     }
 
@@ -98,8 +99,8 @@ public class ScoreService {
     String docId = username + "_" + game;
     DocumentSnapshot highScore = getDocument(docId, COLLECTION_NAME);
     if (!highScore.exists()) {
-      LOGGER.warn(getText("scoreNotExistError", docId, COLLECTION_NAME));
-      throw new DatabaseException(getText("scoreNotExistError", docId, COLLECTION_NAME));
+      LOGGER.warn(getText(SCORE_NOT_EXIST_ERROR_MESSAGE, docId, COLLECTION_NAME));
+      throw new DatabaseException(getText(SCORE_NOT_EXIST_ERROR_MESSAGE, docId, COLLECTION_NAME));
     }
     return highScore.toObject(ScoreData.class);
 
