@@ -45,9 +45,6 @@ public final class BehaviorController extends GameComponent {
    * @param behavior is the fully qualified behavior that is to be added to the behaviors list
    */
   public void addBehavior(Behavior behavior) {
-    if (behaviors.contains(behavior.getClass())) {
-
-    }
     behaviors.add(behavior);
   }
 
