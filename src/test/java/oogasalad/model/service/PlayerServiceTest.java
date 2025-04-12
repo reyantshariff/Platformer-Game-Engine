@@ -15,12 +15,15 @@ public class PlayerServiceTest {
   }
 
   @Test
-  public void createNewPlayer_creatingANewPlayer_Success() {
+  public void createNewPlayer_creatingANewPlayer_Success() throws DatabaseException {
     String username = "testuser_" + System.currentTimeMillis();
 
     assertDoesNotThrow(() -> {
       PlayerService.createNewPlayer(username);
     });
+
+    boolean deleteResult = PlayerService.deletePlayer(username);
+    assertTrue(deleteResult);
   }
 
   @Test
@@ -32,6 +35,9 @@ public class PlayerServiceTest {
     Exception exception = assertThrows(DatabaseException.class, () -> PlayerService.createNewPlayer(username));
 
     assertTrue(exception.getMessage().contains("Player already exists"));
+
+    boolean deleteResult = PlayerService.deletePlayer(username);
+    assertTrue(deleteResult);
   }
 
   @Test
@@ -52,6 +58,9 @@ public class PlayerServiceTest {
 
     PlayerData player = PlayerService.getPlayerByUsername(username);
     assertEquals(username, player.getUsername());
+
+    boolean deleteResult = PlayerService.deletePlayer(username);
+    assertTrue(deleteResult);
   }
 
 }
