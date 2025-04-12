@@ -1,5 +1,10 @@
 package oogasalad.model.builder;
 
+/**
+ * This exception is thrown when there is an error loading a game.
+ * It extends the RuntimeException class.
+ */
+
 public class loadGameException extends RuntimeException {
     /**
      * Constructs a new loadGameException with the specified detail message.
