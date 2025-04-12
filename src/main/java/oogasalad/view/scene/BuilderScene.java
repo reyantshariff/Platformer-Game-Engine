@@ -122,6 +122,13 @@ public class BuilderScene extends ViewScene {
     myObjectRenderer.renderWithoutCamera(gc, builder.getCurrentScene(), builder);
   }
 
+  /**
+   * Handles the object selection change
+   */
+  public void HandleObjectSelectionChange() {
+    
+  }
+
   private ScrollPane createGamePreview() {
     // TODO: replace canvas size hardcoding with level map size
     myGameCanvas = new Canvas(3000, 600);
