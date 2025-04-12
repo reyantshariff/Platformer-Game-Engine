@@ -37,6 +37,15 @@ public class Behavior implements Serializable {
     this.behaviorName = behaviorName;
   }
 
+
+  /**
+   * Gets the name for the behavior
+   * @return String being behavior name
+   */
+  public String getName() {
+    return behaviorName;
+  }
+
   /**
    * Get the controller of the behavior. This is used to get the controller that the behavior
    */
@@ -210,7 +219,6 @@ public class Behavior implements Serializable {
   public <T extends BehaviorAction<?>> void removeAction(Class<T> actionClass) {
     actions.removeIf(action -> action.getClass().equals(actionClass));
   }
-
 
 }
 
