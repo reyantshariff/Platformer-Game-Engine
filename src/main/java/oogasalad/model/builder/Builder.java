@@ -119,6 +119,11 @@ public class Builder {
     selectedObject=object;
   }
 
+  public void deselect()
+  {
+    selectedObject = null;
+  }
+
 
   /**
    *  Records when two game objects overlap
@@ -163,7 +168,7 @@ public class Builder {
       selectedObject.getComponent(Transform.class).setX(x);
       selectedObject.getComponent(Transform.class).setY(y);
     }
-    selectedObject = null; //should I add exception?
+  //  selectedObject = null; //should I add exception?
   }
 
   /**

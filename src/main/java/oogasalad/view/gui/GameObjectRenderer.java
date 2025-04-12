@@ -10,8 +10,10 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import oogasalad.model.ResourceBundles;
+import oogasalad.model.builder.Builder;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
@@ -60,13 +62,18 @@ public class GameObjectRenderer {
     renderWithoutCamera(gc, scene);
   }
 
+  public void renderWithoutCamera(GraphicsContext gc, GameScene scene)
+  {
+    renderWithoutCamera(gc, scene, null);
+  }
+
   /**
    * For scenes WITHOUT a camera: renders the game objects in the given scene onto the canvas.
    *
    * @param gc    The graphics context of the canvas.
    * @param scene The game scene to render.
    */
-  public void renderWithoutCamera(GraphicsContext gc, GameScene scene) {
+  public void renderWithoutCamera(GraphicsContext gc, GameScene scene, Builder builder) {
     String baseName = "oogasalad.gui.general";
     int windowX = ResourceBundles.getInt(baseName, "windowX");
     int windowY = ResourceBundles.getInt(baseName, "windowY");
@@ -84,6 +91,10 @@ public class GameObjectRenderer {
 
     for (GameObject obj : objects) {
       renderGameObject(gc, obj);
+      if (builder != null && obj.equals(builder.getSelectedObject()))
+      {
+        renderSelectionOverlay(gc, obj);
+      }
     }
   }
 
@@ -164,4 +175,31 @@ public class GameObjectRenderer {
     Scene tempScene = new Scene(tempRoot);
     tempScene.getStylesheets().addAll(myScene.getStylesheets());
   }
+
+  private void renderSelectionOverlay(GraphicsContext gc, GameObject obj) {
+    if (!obj.hasComponent(Transform.class)) return;
+
+    Transform t = obj.getComponent(Transform.class);
+    double x = t.getX();
+    double y = t.getY();
+    double w = t.getScaleX();
+    double h = t.getScaleY();
+
+    gc.setStroke(Color.LIGHTBLUE);
+    gc.setLineWidth(2);
+    gc.strokeRect(x, y, w, h);
+
+    double handleSize = 8;
+    double[][] positions = {
+        {x, y}, {x + w / 2, y}, {x + w, y},
+        {x + w, y + h / 2}, {x + w, y + h},
+        {x + w / 2, y + h}, {x, y + h}, {x, y + h / 2}
+    };
+
+    gc.setFill(Color.LIGHTBLUE);
+    for (double[] pos : positions) {
+      gc.fillRect(pos[0] - handleSize / 2, pos[1] - handleSize / 2, handleSize, handleSize);
+    }
+  }
+
 }

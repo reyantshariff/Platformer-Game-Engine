@@ -80,6 +80,7 @@ public class ObjectDragger {
   private void handlePressed(MouseEvent e) {
     oldX = e.getX();
     oldY = e.getY();
+    boolean clickedObject = false;
     List<GameObject> objects = new ArrayList<>(gameScene.getAllObjects());
     objects = removeCamerasFromObjects(objects);  // FOR THE BUILDER: remove all cameras
 
@@ -93,9 +94,16 @@ public class ObjectDragger {
         dragOffsetX = oldX - t.getX();
         dragOffsetY = oldY - t.getY();
         dragging = true;
+        clickedObject = true;
         break;
       }
     }
+
+    if (!clickedObject)
+    {
+      builder.deselect();
+    }
+
 
     builderScene.updateGamePreview();  // refresh all sprite visuals in the canvas
   }
