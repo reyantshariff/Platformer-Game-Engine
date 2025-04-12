@@ -27,15 +27,13 @@ public class Camera extends GameComponent {
 
   @Override
   public void awake() {
-    try {
       transform = getParent().getComponent(Transform.class);
+      if (transform == null) {
+        throw new IllegalArgumentException("Camera must have a Transform component");
+      }
       Dimension screenDimensions = getParent().getScene().getGame().getGameInfo().resolution();
       transform.setScaleX(screenDimensions.getWidth());
       transform.setScaleY(screenDimensions.getHeight());
-    } catch (NullPointerException e) {
-      LOGGER.error("Missing Transform Component or Parent");
-      throw new RuntimeException("Missing Transform Component or Parent", e);
-    }
   }
 
   @Override
