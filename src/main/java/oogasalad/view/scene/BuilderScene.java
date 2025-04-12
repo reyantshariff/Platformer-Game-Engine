@@ -18,10 +18,14 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import oogasalad.model.builder.Builder;
+import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
+import oogasalad.model.engine.component.Transform;
 import oogasalad.model.parser.PrefabLoader;
 import oogasalad.view.gui.button.BuilderSpriteOptionButton;
+import oogasalad.view.gui.dropDown.ClassSelectionDropDown;
+import oogasalad.view.gui.panel.ComponentPanel;
 import oogasalad.view.player.dinosaur.DinosaurGameScene;
 import oogasalad.view.scene.BuilderUserControl.LevelViewScrollController;
 import oogasalad.view.scene.BuilderUserControl.ObjectDragger;
@@ -51,6 +55,7 @@ public class BuilderScene extends ViewScene {
   private final MainViewManager viewManager;
 
   private Canvas myGameCanvas;
+  private VBox myComponentContainer;
   private ScrollPane levelViewScrollPane; // ScrollPane containing the game Canvas
   private LevelViewScrollController levelViewController;
   private GameScene gameScene;
@@ -109,7 +114,22 @@ public class BuilderScene extends ViewScene {
   }
 
   private VBox createComponentPanel() {
-    return new VBox();
+    myComponentContainer = new VBox(10);
+    ClassSelectionDropDown addComponentMenuButton = new ClassSelectionDropDown("Add A Component", COMPONENT_PACKAGE_NAME, GameComponent.class, className -> {
+      try {
+        Class<?> componentClass = Class.forName(COMPONENT_PACKAGE_NAME + "." + className);
+        GameObject selectedObject = builder.getSelectedObject();
+
+        // TODO: Handle Add Component
+
+      } catch (ClassNotFoundException e) {
+        logger.error("Class not found: {}", e.getMessage());
+      }
+    });
+
+    VBox box = new VBox(10, myComponentContainer, addComponentMenuButton);
+    box.setAlignment(Pos.TOP_CENTER);
+    return box;
   }
 
   /**
@@ -125,8 +145,17 @@ public class BuilderScene extends ViewScene {
   /**
    * Handles the object selection change
    */
-  public void HandleObjectSelectionChange() {
-    
+  public void handleObjectSelectionChange() {
+    componentSelectionUpdate();
+  }
+
+  private void componentSelectionUpdate() {
+    // TODO: Add other components to the component panel
+    myComponentContainer.getChildren().clear();
+    Transform transform = builder.getSelectedObject().getComponent(Transform.class);
+    if (transform != null) {
+      myComponentContainer.getChildren().add(new ComponentPanel(transform));
+    }
   }
 
   private ScrollPane createGamePreview() {

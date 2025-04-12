@@ -1,12 +1,12 @@
 package oogasalad.view.gui.deserializedFieldInput;
 
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.util.converter.DoubleStringConverter;
 import oogasalad.model.engine.base.serialization.SerializedField;
 
@@ -53,7 +53,8 @@ public class DoubleFieldInput extends DeserializedFieldUI<Double> {
     // Container for the label and text field
     HBox hBox = new HBox(10, label, textField);
     hBox.setAlignment(Pos.CENTER_LEFT);
-    hBox.setPadding(new Insets(5));
+    HBox.setHgrow(hBox, Priority.ALWAYS);
+    HBox.setHgrow(textField, Priority.ALWAYS);
 
     return hBox;
   }

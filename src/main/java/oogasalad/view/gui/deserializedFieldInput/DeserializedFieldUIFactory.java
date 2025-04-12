@@ -12,7 +12,7 @@ public class DeserializedFieldUIFactory {
       case "Double", "double" -> {
         DoubleFieldInput box = new DoubleFieldInput();
         box.initGUI(field);
-        return new DoubleFieldInput();
+        return box;
       }
       default -> throw new IllegalStateException("Unexpected value: " + fieldType);
     }

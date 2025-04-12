@@ -1,6 +1,7 @@
 package oogasalad.view.gui.panel;
 
 import java.util.List;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -21,9 +22,10 @@ public class ComponentPanel extends VBox {
    *
    * @param component the game component to be displayed
    */
-  protected ComponentPanel(GameComponent component) {
+  public ComponentPanel(GameComponent component) {
     super();
-    setStyle("-fx-background-color: #f0f0f0; -fx-padding: 10px;");
+    setStyle("-fx-background-color: #CECECE; -fx-padding: 10px;");
+    setAlignment(Pos.TOP_CENTER);
     setSpacing(10);
 
     // Add component title

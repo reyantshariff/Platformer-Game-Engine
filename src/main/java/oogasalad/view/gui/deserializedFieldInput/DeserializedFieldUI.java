@@ -1,6 +1,7 @@
 package oogasalad.view.gui.deserializedFieldInput;
 
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import oogasalad.model.engine.base.serialization.SerializedField;
 
@@ -17,7 +18,6 @@ public abstract class DeserializedFieldUI<T> extends HBox {
    */
   protected DeserializedFieldUI() {
     super(10);
-    setStyle("-fx-background-color: #f0f0f0; -fx-padding: 10px;");
   }
 
   @SuppressWarnings("unchecked")
