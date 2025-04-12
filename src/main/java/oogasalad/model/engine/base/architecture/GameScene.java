@@ -122,6 +122,10 @@ public class GameScene {
    */
   public final Collection<GameObject> getAllObjectsInView() {
     try {
+      List<GameComponent> cameraComponents = allComponents.get(ComponentTag.CAMERA);
+      if (cameraComponents.isEmpty()) {
+        return Collections.emptyList();
+      }
       Camera camera = (Camera) allComponents.get(ComponentTag.CAMERA).get(0);
       return camera.getObjectsInView();
     } catch (IndexOutOfBoundsException e) {
@@ -181,7 +185,9 @@ public class GameScene {
    */
   public final void step(double deltaTime) {
 
-    wakeObject(getCamera().getParent());
+    if (hasCamera()) {
+      wakeObject(getCamera().getParent());
+    }
 
     runSubscribedEvents();
 
