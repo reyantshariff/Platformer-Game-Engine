@@ -2,7 +2,6 @@ package oogasalad.view.player.dinosaur;
 
 import java.util.List;
 import java.util.Random;
-import javafx.scene.Scene;
 import oogasalad.model.ResourceBundles;
 import oogasalad.model.engine.action.ChangeSceneAction;
 import oogasalad.model.engine.action.CrouchAction;
