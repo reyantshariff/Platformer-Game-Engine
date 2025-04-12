@@ -196,8 +196,7 @@ public class Builder {
     try {
       return parser.write(game);
     } catch (IOException e) {
-      throw new RuntimeException("Error saving game to JSON: " + e.getMessage());
-      // TODO: replace with custom exception class
+      throw new SaveGameException("Error saving game to JSON: " + e.getMessage(), e);
     }
   }
 
@@ -209,7 +208,7 @@ public class Builder {
     try {
       game = parser.parse(node);
     } catch (ParsingException e) {
-      throw new RuntimeException("Error loading game from JSON: " + e.getMessage());
+      throw new loadGameException("Error loading game from JSON: " + e.getMessage(), e);
     }
   }
 }
