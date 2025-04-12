@@ -32,14 +32,15 @@ public class BehaviorParser implements Parser<Behavior> {
   private static final String CONSTRAINTS = "constraints";
   private static final String ACTION_CLASS_PATH = "oogasalad.model.engine.action.";
   private static final String CONSTRAINT_CLASS_PATH = "oogasalad.model.engine.constraint.";
+  private static final String PARAMETER = "parameter";
 
   private static final Map<Class<?>, BiConsumer<ObjectNode, Object>> TYPE_WRITERS = new HashMap<>();
 
   static {
-    TYPE_WRITERS.put(String.class, (node, value) -> node.put("parameter", (String) value));
-    TYPE_WRITERS.put(Integer.class, (node, value) -> node.put("parameter", (Integer) value));
-    TYPE_WRITERS.put(Double.class, (node, value) -> node.put("parameter", (Double) value));
-    TYPE_WRITERS.put(KeyCode.class, (node, value) -> node.put("parameter", value.toString()));
+    TYPE_WRITERS.put(String.class, (node, value) -> node.put(PARAMETER, (String) value));
+    TYPE_WRITERS.put(Integer.class, (node, value) -> node.put(PARAMETER, (Integer) value));
+    TYPE_WRITERS.put(Double.class, (node, value) -> node.put(PARAMETER, (Double) value));
+    TYPE_WRITERS.put(KeyCode.class, (node, value) -> node.put(PARAMETER, value.toString()));
   }
 
   private final ObjectMapper mapper = new ObjectMapper();
@@ -100,7 +101,7 @@ public class BehaviorParser implements Parser<Behavior> {
     action.setBehavior(behaviorInstance);
 
     SerializedField<?> paramField = action.getParentSerializableField();
-    JsonNode valueNode = actionNode.get("parameter");
+    JsonNode valueNode = actionNode.get(PARAMETER);
 
     if (valueNode == null) {
       throw new IllegalArgumentException("Missing parameter field");
@@ -141,7 +142,7 @@ public class BehaviorParser implements Parser<Behavior> {
     constraint.setBehavior(behaviorInstance);
 
     SerializedField<?> paramField = constraint.getParentSerializableField();
-    JsonNode valueNode = constraintNode.get("parameter");
+    JsonNode valueNode = constraintNode.get(PARAMETER);
 
     if (valueNode == null) {
       throw new IllegalArgumentException("Missing parameter field");
