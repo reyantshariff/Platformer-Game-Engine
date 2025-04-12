@@ -12,6 +12,10 @@ import oogasalad.model.engine.base.serialization.SerializableField;
  */
 
 public class Follower extends GameComponent {
+
+  private static final String FOLLOW_OBJECT_MISSING_TRANSFORM =
+      "Follow Object Missing Transform Component";
+
   @Override
   public ComponentTag componentTag() {
     return ComponentTag.TRANSFORM;
@@ -45,14 +49,13 @@ public class Follower extends GameComponent {
 
   @Override
   public void update(double deltaTime) {
-    try {
-      Transform targetTransform = followObject.getComponent(Transform.class);
-      myTransform.setX(targetTransform.getX() + offsetX);
-      myTransform.setY(targetTransform.getY() + offsetY);
-    } catch (NullPointerException e) {
-      LOGGER.error("Missing Transform Component");
-      throw new RuntimeException("Missing Transform Component", e);
+    Transform targetTransform = followObject.getComponent(Transform.class);
+    if (targetTransform == null) {
+      LOGGER.error(FOLLOW_OBJECT_MISSING_TRANSFORM);
+      return;
     }
+    myTransform.setX(targetTransform.getX() + offsetX);
+    myTransform.setY(targetTransform.getY() + offsetY);
   }
 
   /**
@@ -63,16 +66,21 @@ public class Follower extends GameComponent {
    * @apiNote Use this method if the awake method for this component has already been called.
    */
   public void setFollowObject(GameObject followObject) {
-    this.followObject = followObject;
-    try {
-      Transform attachTransform = followObject.getComponent(Transform.class);
-      myTransform = getParent().getComponent(Transform.class);
-      offsetX = myTransform.getX() - attachTransform.getX();
-      offsetY = myTransform.getY() - attachTransform.getY();
-    } catch (NullPointerException e) {
-      LOGGER.error("Follow Object Missing Transform Component");
-      throw new RuntimeException("Follow Object Missing Transform Component", e);
+    if(followObject == null) {
+      LOGGER.error("Follow Object is null");
+      throw new IllegalArgumentException("Follow Object is null");
     }
+    Transform attachTransform;
+    try {
+      attachTransform = followObject.getComponent(Transform.class);
+    } catch (IllegalArgumentException e) {
+      LOGGER.error(FOLLOW_OBJECT_MISSING_TRANSFORM);
+      throw new IllegalArgumentException(FOLLOW_OBJECT_MISSING_TRANSFORM, e);
+    }
+    myTransform = getParent().getComponent(Transform.class);
+    offsetX = myTransform.getX() - attachTransform.getX();
+    offsetY = myTransform.getY() - attachTransform.getY();
+    this.followObject = followObject;
   }
 
   /**

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.util.Deque;
 import java.util.ArrayDeque;
-import java.util.UUID;
 import oogasalad.model.builder.actions.DeleteObjectAction;
 import oogasalad.model.builder.actions.MoveObjectAction;
 import oogasalad.model.engine.base.architecture.Game;
@@ -129,21 +128,21 @@ public class Builder {
   }
 
 
-  private GameObject findObject(UUID id)
-  {
-    for (GameObject object : game.getCurrentScene().getAllObjects())
-    {
-      if (object.getId() == id)
-      {
-        return object;
-      }
-//      if (object.getComponent(Transform.class).getX() == x && object.getComponent(Transform.class).getY() == y)
-//      {
-//        return object;
-//      }
-    }
-    return null;
-  }
+//   private GameObject findObject(UUID id)
+//   {
+//     for (GameObject object : game.getCurrentScene().getAllObjects())
+//     {
+//       if (object.getId() == id)
+//       {
+//         return object;
+//       }
+// //      if (object.getComponent(Transform.class).getX() == x && object.getComponent(Transform.class).getY() == y)
+// //      {
+// //        return object;
+// //      }
+//     }
+//     return null;
+//   }
 
   /**
    *  Stops the preview if the user lifts mouse and cursor is not on the editor screen.
@@ -197,8 +196,7 @@ public class Builder {
     try {
       return parser.write(game);
     } catch (IOException e) {
-      throw new RuntimeException("Error saving game to JSON: " + e.getMessage());
-      // TODO: replace with custom exception class
+      throw new SaveGameException("Error saving game to JSON: " + e.getMessage(), e);
     }
   }
 
@@ -210,7 +208,7 @@ public class Builder {
     try {
       game = parser.parse(node);
     } catch (ParsingException e) {
-      throw new RuntimeException("Error loading game from JSON: " + e.getMessage());
+      throw new loadGameException("Error loading game from JSON: " + e.getMessage(), e);
     }
   }
 }

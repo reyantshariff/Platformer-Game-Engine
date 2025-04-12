@@ -3,6 +3,7 @@ package oogasalad.model.engine.base.architecture;
 import java.util.*;
 import oogasalad.model.engine.component.Transform;
 import oogasalad.model.engine.base.enumerate.ComponentTag;
+import java.lang.reflect.InvocationTargetException;
 
 import static oogasalad.model.config.GameConfig.LOGGER;
 
@@ -66,9 +67,10 @@ public class GameObject {
     try {
       T component = componentClass.getDeclaredConstructor().newInstance();
       return configureParentAndPutComponent(component);
-    } catch (Exception e) {
+    } catch (InstantiationException | IllegalAccessException |
+        NoSuchMethodException | InvocationTargetException e) {
       LOGGER.error("Could not add component {}", componentClass.getName());
-      throw new RuntimeException("Failed to add component", e);
+      throw new ComponentAddException("Failed to add component", e);
     }
   }
 
@@ -232,6 +234,9 @@ public class GameObject {
    * @return the parent scene of the object
    */
   public final GameScene getScene() {
+    if (parentScene == null) {
+      throw new MissingParentSceneException("GameObject does not have a parent scene");
+    }
     return parentScene;
   }
 

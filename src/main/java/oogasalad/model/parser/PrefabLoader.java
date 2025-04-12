@@ -30,15 +30,18 @@ public class PrefabLoader {
   public static List<GameObject> loadAvailablePrefabs(String directory) {
     List<GameObject> validPrefabs = new ArrayList<>();
     File dir = new File(PREFAB_DIRECTORY + directory + "/");
-    try {
-      File[] files = dir.listFiles((d, name) -> name.endsWith(".json"));
-      ObjectMapper mapper = new ObjectMapper();
-      GameObjectParser parser = new GameObjectParser();
-      parseFiles(files, mapper, parser, validPrefabs);
-    } catch (NullPointerException e) {
-      LOGGER.error("Prefab directory not found or empty: " + PREFAB_DIRECTORY);
-      throw new NullPointerException("Prefab directory not found or empty: " + PREFAB_DIRECTORY);
+    if (!dir.exists()) {
+      LOGGER.error("Prefab directory does not exist: " + dir.getAbsolutePath());
+      throw new IllegalArgumentException("Prefab directory does not exist: " + dir.getAbsolutePath());
     }
+    File[] files = dir.listFiles((d, name) -> name.endsWith(".json"));
+    if (files == null || files.length == 0) {
+      LOGGER.error("No JSON files found in prefab directory: " + dir.getAbsolutePath());
+      throw new IllegalArgumentException("No JSON files found in prefab directory: " + dir.getAbsolutePath());
+    }
+    ObjectMapper mapper = new ObjectMapper();
+    GameObjectParser parser = new GameObjectParser();
+    parseFiles(files, mapper, parser, validPrefabs);
     return validPrefabs;
   }
 
@@ -50,7 +53,7 @@ public class PrefabLoader {
         validPrefabs.add(obj);
       } catch (IOException | ParsingException e) {
         LOGGER.error("Error parsing prefab " + file.getName() + ": " + e.getMessage());
-        throw new RuntimeException("Error parsing prefab " + file.getName() + ": " + e.getMessage());
+        throw new PrefabLoadException("Error parsing prefab " + file.getName() + ": " + e.getMessage(), e);
       }
     }
   }

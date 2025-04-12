@@ -2,13 +2,12 @@ package oogasalad.view.scene;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import oogasalad.model.engine.base.architecture.Game;
-import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.parser.JsonParser;
 import oogasalad.model.parser.Parser;
 import oogasalad.model.parser.ParsingException;
@@ -20,6 +19,8 @@ import oogasalad.view.gui.Gui;
 public class GamePlayerScene extends ViewScene {
   private final Gui gui;
   private static final String JSON_PATH_PREFIX = "data/GameJsons/";
+  private static final Logger logger = LogManager.getLogger(GamePlayerScene.class);
+
   /**
    * Constructs a new GamePlayerScene to display a game within a JavaFX scene.
    *
@@ -42,7 +43,7 @@ public class GamePlayerScene extends ViewScene {
       ObjectMapper mapper = new ObjectMapper();
       JsonNode newNode = mapper.createObjectNode();
       game = (Game) parser.parse(newNode);
-      System.out.println(game.getAllScenes().values().stream().findFirst().getClass());
+      logger.debug(game.getAllScenes().values().stream().findFirst().getClass());
 
 
     } catch (ParsingException e) {
@@ -70,10 +71,6 @@ public class GamePlayerScene extends ViewScene {
    */
   @Override
   public void deactivate() {
-    try {
-      gui.stop();
-    } catch (Exception e) {
-      throw new RuntimeException("Error deactivating scene: " + e.getMessage());
-    }
+    gui.stop();
   }
 }

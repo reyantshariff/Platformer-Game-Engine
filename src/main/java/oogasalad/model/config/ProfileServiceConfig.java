@@ -24,12 +24,8 @@ public class ProfileServiceConfig {
    * @return DocumentReference - a specific row reference in the firestone database
    */
   public static DocumentReference getDocumentRef(String documentId, String COLLECTION_NAME) throws DatabaseException {
-    try {
-      Firestore db = FirebaseManager.getDB();
-      return db.collection(COLLECTION_NAME).document(documentId);
-    } catch (Exception e) {
-      throw new DatabaseException("Failed to get document reference", e);
-    }
+    Firestore db = FirebaseManager.getDB();
+    return db.collection(COLLECTION_NAME).document(documentId);
   }
 
   /**

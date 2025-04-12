@@ -56,13 +56,13 @@ public class SerializedField<T> {
       try {
         return (T) getter.invoke(targetObject);
       } catch (IllegalAccessException | InvocationTargetException e) {
-        throw new RuntimeException("Cannot get the value to SerializedField: " + fieldName);
+        throw new GetSerializedFieldException("Cannot get the value to SerializedField: " + fieldName, e);
       }
     }
     try {
       return (T) field.get(targetObject);
     } catch (IllegalAccessException e) {
-      throw new RuntimeException("Cannot get the value to SerializedField: " + fieldName);
+      throw new GetSerializedFieldException("Cannot get the value to SerializedField: " + fieldName, e);
     }
   }
 
@@ -76,13 +76,13 @@ public class SerializedField<T> {
       try {
         setter.invoke(targetObject, value);
       } catch (IllegalAccessException | InvocationTargetException e) {
-        throw new RuntimeException("Cannot set the value to SerializedField: " + fieldName);
+        throw new SetSerializedFieldException("Cannot set the value to SerializedField: " + fieldName, e);
       }
     } else {
       try {
         field.set(targetObject, value);
       } catch (IllegalAccessException e) {
-        throw new RuntimeException("Cannot set the value to SerializedField: " + fieldName);
+        throw new SetSerializedFieldException("Cannot set the value to SerializedField: " + fieldName, e);
       }
     }
   }

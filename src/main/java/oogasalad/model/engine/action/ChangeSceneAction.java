@@ -25,7 +25,7 @@ public class ChangeSceneAction extends BehaviorAction<String> {
 
   @Override
   protected void perform(String parameter) {
-    if (parameter.equals(NEXT_LEVEL)) {
+    if (NEXT_LEVEL.equals(parameter)) {
       getBehavior().getController().getParent().getScene().getGame().goToNextLevel();
     } else {
       mainViewManager.switchTo(parameter);

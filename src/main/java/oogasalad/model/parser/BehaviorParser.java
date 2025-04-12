@@ -32,14 +32,16 @@ public class BehaviorParser implements Parser<Behavior> {
   private static final String CONSTRAINTS = "constraints";
   private static final String ACTION_CLASS_PATH = "oogasalad.model.engine.action.";
   private static final String CONSTRAINT_CLASS_PATH = "oogasalad.model.engine.constraint.";
+  private static final String PARAMETER = "parameter";
+  private static final String LOWER_NAME = "name";
 
   private static final Map<Class<?>, BiConsumer<ObjectNode, Object>> TYPE_WRITERS = new HashMap<>();
 
   static {
-    TYPE_WRITERS.put(String.class, (node, value) -> node.put("parameter", (String) value));
-    TYPE_WRITERS.put(Integer.class, (node, value) -> node.put("parameter", (Integer) value));
-    TYPE_WRITERS.put(Double.class, (node, value) -> node.put("parameter", (Double) value));
-    TYPE_WRITERS.put(KeyCode.class, (node, value) -> node.put("parameter", value.toString()));
+    TYPE_WRITERS.put(String.class, (node, value) -> node.put(PARAMETER, (String) value));
+    TYPE_WRITERS.put(Integer.class, (node, value) -> node.put(PARAMETER, (Integer) value));
+    TYPE_WRITERS.put(Double.class, (node, value) -> node.put(PARAMETER, (Double) value));
+    TYPE_WRITERS.put(KeyCode.class, (node, value) -> node.put(PARAMETER, value.toString()));
   }
 
   private final ObjectMapper mapper = new ObjectMapper();
@@ -69,7 +71,7 @@ public class BehaviorParser implements Parser<Behavior> {
              NoSuchMethodException e) {
       LOGGER.error("Could not instantiate Behavior class: {}",
           behaviorNode.get("Name").asText());
-      throw new ParsingException("Could not instantiate Behavior class." + e);
+      throw new ParsingException("Could not instantiate Behavior class." + e, e);
     }
   }
 
@@ -78,7 +80,7 @@ public class BehaviorParser implements Parser<Behavior> {
     if (behaviorNode.has(ACTIONS)) {
       for (JsonNode actionNode : behaviorNode.get(ACTIONS)) {
         Class<?> clazz;
-        String aName = actionNode.get("name").asText();
+        String aName = actionNode.get(LOWER_NAME).asText();
         String aFullClassName = ACTION_CLASS_PATH + aName;
 
         try {
@@ -100,7 +102,7 @@ public class BehaviorParser implements Parser<Behavior> {
     action.setBehavior(behaviorInstance);
 
     SerializedField<?> paramField = action.getParentSerializableField();
-    JsonNode valueNode = actionNode.get("parameter");
+    JsonNode valueNode = actionNode.get(PARAMETER);
 
     if (valueNode == null) {
       throw new IllegalArgumentException("Missing parameter field");
@@ -117,14 +119,14 @@ public class BehaviorParser implements Parser<Behavior> {
     if (behaviorNode.has(CONSTRAINTS)) {
       for (JsonNode constraintNode : behaviorNode.get(CONSTRAINTS)) {
         Class<?> clazz;
-        String cName = constraintNode.get("name").asText();
+        String cName = constraintNode.get(LOWER_NAME).asText();
         String cFullClassName = CONSTRAINT_CLASS_PATH + cName;
 
         try {
           clazz = Class.forName(cFullClassName);
         } catch (ClassNotFoundException e) {
           LOGGER.error("Could not find constraint class {}", cFullClassName);
-          throw new ParsingException("Invalid constraint class: " + cFullClassName + e);
+          throw new ParsingException("Invalid constraint class: " + cFullClassName + e, e);
         }
 
         createAndAddConstraint(behaviorInstance, constraintNode, clazz);
@@ -141,7 +143,7 @@ public class BehaviorParser implements Parser<Behavior> {
     constraint.setBehavior(behaviorInstance);
 
     SerializedField<?> paramField = constraint.getParentSerializableField();
-    JsonNode valueNode = constraintNode.get("parameter");
+    JsonNode valueNode = constraintNode.get(PARAMETER);
 
     if (valueNode == null) {
       throw new IllegalArgumentException("Missing parameter field");
@@ -215,17 +217,17 @@ public class BehaviorParser implements Parser<Behavior> {
       ObjectNode oneConstraint = mapper.createObjectNode();
       BiConsumer<ObjectNode, Object> writer = TYPE_WRITERS.get(
           constraint.getParameter().getClass());
+        
+        if(writer == null || constraint.getParameter() == null || oneConstraint == null) {
+          LOGGER.error("Could not write constraint {} for behavior {}. Invalid JSON parameter type. Skipping constraint.",
+              constraint.getParameter().getClass().getSimpleName(), data.getName());
+          return;
+        }
 
-      try {
-        oneConstraint.put("name", constraint.getClass().getSimpleName());
+        oneConstraint.put(LOWER_NAME, constraint.getClass().getSimpleName());
         writer.accept(oneConstraint, constraint.getParameter()); // Catching this error
-        oneConstraint.put("parameterType", constraint.getParameter().getClass().getSimpleName());
+        oneConstraint.put(PARAMETER_TYPE, constraint.getParameter().getClass().getSimpleName());
         constraintArray.add(oneConstraint);
-      } catch (NullPointerException e) {
-        LOGGER.error(
-            "Could not write constraint {} for behavior {}. Invalid JSON parameter type. Skipping constraint.",
-            constraint.getParameter().getClass().getSimpleName(), data.getName());
-      }
 
       root.set(CONSTRAINTS, constraintArray);
     });
@@ -238,17 +240,18 @@ public class BehaviorParser implements Parser<Behavior> {
       ObjectNode oneAction = mapper.createObjectNode();
       BiConsumer<ObjectNode, Object> writer = TYPE_WRITERS.get(action.getParameter().getClass());
 
-      try {
-        oneAction.put("name", action.getClass().getSimpleName());
-        writer.accept(oneAction, action.getParameter()); // Catching this error
-        oneAction.put("parameterType", action.getParameter().getClass().getSimpleName());
-
-        actionsArray.add(oneAction);
-      } catch (NullPointerException e) {
+      if(writer == null || action.getParameter() == null || oneAction == null) {
         LOGGER.error(
             "Could not write action {} for behavior {}. Invalid JSON parameter type. Skipping action.",
             action.getParameter().getClass().getSimpleName(), data.getName());
+        return;
       }
+
+        oneAction.put(LOWER_NAME, action.getClass().getSimpleName());
+        writer.accept(oneAction, action.getParameter()); // Catching this error
+        oneAction.put(PARAMETER_TYPE, action.getParameter().getClass().getSimpleName());
+
+        actionsArray.add(oneAction);
     });
 
     root.set(ACTIONS, actionsArray);

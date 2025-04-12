@@ -121,18 +121,12 @@ public class GameScene {
    * @return a collection of all the objects in the view of the camera
    */
   public final Collection<GameObject> getAllObjectsInView() {
-    try {
-      Camera camera = (Camera) allComponents.get(ComponentTag.CAMERA).get(0);
-      return camera.getObjectsInView();
-    } catch (IndexOutOfBoundsException e) {
-      LOGGER.error(GameConfig.getText(NO_CAMERA_KEY));
-      throw new IllegalArgumentException(GameConfig.getText(NO_CAMERA_KEY));
-    } catch (ClassCastException e) {
-      LOGGER
-          .error(MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), GAME_OBJECT, CAMERA));
-      throw new IllegalArgumentException(
-          MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), GAME_OBJECT, CAMERA));
+    List<GameComponent> cameraComponents = allComponents.get(ComponentTag.CAMERA);
+    if (cameraComponents.isEmpty()) {
+      return Collections.emptyList();
     }
+    Camera camera = getCamera();
+    return camera.getObjectsInView();
   }
 
   /**
@@ -145,12 +139,12 @@ public class GameScene {
       return (Camera) allComponents.get(ComponentTag.CAMERA).get(0);
     } catch (IndexOutOfBoundsException e) {
       LOGGER.error(GameConfig.getText(NO_CAMERA_KEY));
-      throw new IllegalArgumentException(GameConfig.getText(NO_CAMERA_KEY));
+      throw new IllegalArgumentException(GameConfig.getText(NO_CAMERA_KEY), e);
     } catch (ClassCastException e) {
       LOGGER
           .error(MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), GAME_OBJECT, CAMERA));
       throw new IllegalArgumentException(
-          MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), GAME_OBJECT, CAMERA));
+          MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), GAME_OBJECT, CAMERA), e);
     }
   }
 
@@ -181,7 +175,9 @@ public class GameScene {
    */
   public final void step(double deltaTime) {
 
-    wakeObject(getCamera().getParent());
+    if (hasCamera()) {
+      wakeObject(getCamera().getParent());
+    }
 
     runSubscribedEvents();
 
@@ -308,12 +304,12 @@ public class GameScene {
    */
   public void onActivated() {
     // NOTE: This method should be overriden if needed.
-  };
+  }
 
   /**
    * Event that will be called when the gameScene is set to inactive.
    */
   public void onDeactivated() {
     // NOTE: This method should be overriden if needed.
-  };
+  }
 }
