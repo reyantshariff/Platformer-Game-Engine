@@ -45,14 +45,13 @@ public class Follower extends GameComponent {
 
   @Override
   public void update(double deltaTime) {
-    try {
-      Transform targetTransform = followObject.getComponent(Transform.class);
-      myTransform.setX(targetTransform.getX() + offsetX);
-      myTransform.setY(targetTransform.getY() + offsetY);
-    } catch (NullPointerException e) {
-      LOGGER.error("Missing Transform Component");
-      throw new RuntimeException("Missing Transform Component", e);
+    Transform targetTransform = followObject.getComponent(Transform.class);
+    if (targetTransform == null) {
+      LOGGER.error("Follow Object Missing Transform Component");
+      return;
     }
+    myTransform.setX(targetTransform.getX() + offsetX);
+    myTransform.setY(targetTransform.getY() + offsetY);
   }
 
   /**
@@ -64,15 +63,14 @@ public class Follower extends GameComponent {
    */
   public void setFollowObject(GameObject followObject) {
     this.followObject = followObject;
-    try {
-      Transform attachTransform = followObject.getComponent(Transform.class);
-      myTransform = getParent().getComponent(Transform.class);
-      offsetX = myTransform.getX() - attachTransform.getX();
-      offsetY = myTransform.getY() - attachTransform.getY();
-    } catch (NullPointerException e) {
+    Transform attachTransform = followObject.getComponent(Transform.class);
+    if (attachTransform == null) {
       LOGGER.error("Follow Object Missing Transform Component");
-      throw new RuntimeException("Follow Object Missing Transform Component", e);
+      return;
     }
+    myTransform = getParent().getComponent(Transform.class);
+    offsetX = myTransform.getX() - attachTransform.getX();
+    offsetY = myTransform.getY() - attachTransform.getY();
   }
 
   /**
