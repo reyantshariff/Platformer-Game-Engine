@@ -1,6 +1,7 @@
 package oogasalad.model.service;
 
 import static oogasalad.model.config.GameConfig.LOGGER;
+import static oogasalad.model.config.GameConfig.getText;
 import static oogasalad.model.config.ProfileServiceConfig.addToDatabase;
 import static oogasalad.model.config.ProfileServiceConfig.deleteFromDatabase;
 import static oogasalad.model.config.ProfileServiceConfig.documentExists;
@@ -31,8 +32,8 @@ public class PlayerService {
    */
   public static boolean createNewPlayer(String username) throws DatabaseException {
     if (documentExists(username, COLLECTION_NAME)) {
-      LOGGER.error("Player {} already exists", username);
-      throw new DatabaseException("Player already exists");
+      LOGGER.error(getText("playerExistsError"), username);
+      throw new DatabaseException(getText("playerExistsError", username));
     }
 
     Map<String, Object> playerData = new HashMap<>();
@@ -40,7 +41,7 @@ public class PlayerService {
     playerData.put("createdAt", FieldValue.serverTimestamp());
 
     addToDatabase(username, COLLECTION_NAME, playerData);
-    LOGGER.info("Created player {}", username);
+    LOGGER.info(getText("createPlayerMessage"), username);
     return true;
   }
 
@@ -53,12 +54,12 @@ public class PlayerService {
    */
   public static boolean deletePlayer(String username) throws DatabaseException {
     if (!documentExists(username, COLLECTION_NAME)) {
-      LOGGER.warn("Player {} does not exist in collection {}", username, COLLECTION_NAME);
-      throw new DatabaseException("Player does not exist");
+      LOGGER.warn(getText("playerNotExistError"), username, COLLECTION_NAME);
+      throw new DatabaseException(getText("playerNotExistError", username, COLLECTION_NAME));
     }
 
     deleteFromDatabase(username, COLLECTION_NAME);
-    LOGGER.info("Successfully deleted player {}", username);
+    LOGGER.info(getText("deletePlayerSuccess", username));
     return true;
   }
 
@@ -72,8 +73,8 @@ public class PlayerService {
   public static PlayerData getPlayerByUsername(String username) throws DatabaseException {
     DocumentSnapshot snapshot = getDocument(username, COLLECTION_NAME);
     if (!snapshot.exists()) {
-      LOGGER.warn("Player {} does not exist", username);
-      throw new DatabaseException("Player does not exist");
+      LOGGER.warn(getText("playerNotExistError", username, COLLECTION_NAME));
+      throw new DatabaseException(getText("playerNotExistError", username, COLLECTION_NAME));
     }
     return snapshot.toObject(PlayerData.class);
   }

@@ -1,5 +1,6 @@
 package oogasalad.model.service;
 
+import static oogasalad.model.config.GameConfig.getText;
 import static oogasalad.model.config.ProfileServiceConfig.addToDatabase;
 import static oogasalad.model.config.GameConfig.LOGGER;
 import static oogasalad.model.config.ProfileServiceConfig.deleteFromDatabase;
@@ -40,8 +41,7 @@ public class ScoreService {
       Long existingScore = curScore.getLong("score");
 
       if (existingScore != null && existingScore >= newScore) {
-        LOGGER.info("Existing score {} for {} in {} is higher or equal to new score {}",
-            existingScore, username, game, newScore);
+        LOGGER.info(getText("existingScoreMessage", existingScore, username, game, newScore));
         return false;
       }
     }
@@ -61,7 +61,7 @@ public class ScoreService {
     scoreData.put("createdAt", FieldValue.serverTimestamp());
 
     addToDatabase(docId, COLLECTION_NAME, scoreData);
-    LOGGER.info("Saved or updated new high score {} for {} in {}", newScore, username, game);
+    LOGGER.info(getText("saveUpdateScoreMessage", newScore, username, game));
     return true;
   }
 
@@ -77,12 +77,12 @@ public class ScoreService {
     String docId = username + "_" + game;
 
     if (!documentExists(docId, COLLECTION_NAME)) {
-      LOGGER.warn("Score {} does not exist at collection {}", docId, COLLECTION_NAME);
+      LOGGER.warn(getText("scoreNotExistError", docId, COLLECTION_NAME));
       return false;
     }
 
     deleteFromDatabase(docId, COLLECTION_NAME);
-    LOGGER.info("Successfully deleted player {}", username);
+    LOGGER.info(getText("deletePlayerSuccess", username));
     return true;
   }
 
@@ -98,8 +98,8 @@ public class ScoreService {
     String docId = username + "_" + game;
     DocumentSnapshot highScore = getDocument(docId, COLLECTION_NAME);
     if (!highScore.exists()) {
-      LOGGER.warn("Score {} does not exist at collection {}", docId, COLLECTION_NAME);
-      throw new DatabaseException("Score " + docId + " does not exist at collection " + COLLECTION_NAME);
+      LOGGER.warn(getText("scoreNotExistError", docId, COLLECTION_NAME));
+      throw new DatabaseException(getText("scoreNotExistError", docId, COLLECTION_NAME));
     }
     return highScore.toObject(ScoreData.class);
 

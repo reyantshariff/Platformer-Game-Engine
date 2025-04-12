@@ -1,5 +1,7 @@
 package oogasalad.model.config;
 
+import static oogasalad.model.config.GameConfig.getText;
+
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
@@ -71,7 +73,7 @@ public class ProfileServiceConfig {
     try {
       getDocumentRef(documentId, COLLECTION_NAME).set(data).get();
     } catch (ExecutionException | InterruptedException e) {
-      throw new DatabaseException("Failed to write document: " + documentId, e);
+      throw new DatabaseException(getText("databaseAddError", documentId), e);
     }
   }
 
@@ -86,7 +88,7 @@ public class ProfileServiceConfig {
     try {
       getDocumentRef(documentId, COLLECTION_NAME).delete().get();
     } catch (ExecutionException | InterruptedException e) {
-      throw new DatabaseException("Failed to delete document: " + documentId, e);
+      throw new DatabaseException(getText("databaseDeleteError", documentId), e);
     }
   }
 
