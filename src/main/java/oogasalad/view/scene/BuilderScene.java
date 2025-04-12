@@ -158,8 +158,8 @@ public class BuilderScene extends ViewScene {
       event.consume();
     });
 
-    ObjectDragger dragger = new ObjectDragger(myGameCanvas, builder, this, gameScene,
-        getObjectRenderer());
+    // ObjectDragger dragger = new ObjectDragger(myGameCanvas, builder, this, gameScene,
+    //     getObjectRenderer());
 
     // Add zoom handling
     levelViewScrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
