@@ -2,6 +2,7 @@ package oogasalad.view.scene;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.File;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -257,10 +258,10 @@ public class BuilderScene extends ViewScene {
 
         // Retrieve the Transform component
         Transform t = newObject.getComponent(Transform.class);
-        try {
-          alignObject(t);
-        } catch (NullPointerException e) {
+        if (t == null) {
           logger.error("Error getting Transform component from prefab " + prefab.getName());
+        } else {
+          alignObject(t);
         }
         // Register new object to the scene
         gameScene.registerObject(newObject);
@@ -268,7 +269,7 @@ public class BuilderScene extends ViewScene {
         updateGamePreview();
       });
       tilePane.getChildren().add(newSpriteButton);
-    } catch (Exception e) {
+    } catch (IllegalArgumentException | MalformedURLException e) {
       logger.error("Error loading preview image from: " + previewImagePath);
     }
   }
@@ -298,16 +299,13 @@ public class BuilderScene extends ViewScene {
   }
 
   private String getPreviewImagePath(GameObject prefab) {
-    try {
-      var spriteRenderer = prefab.getComponent(
-          oogasalad.model.engine.component.SpriteRenderer.class);
-      String imagePath = spriteRenderer.getImagePath();
-      if (imagePath != null && !imagePath.isEmpty()) {
-        return "src/main/resources/" + imagePath;
-      }
-    } catch (Exception e) {
-      logger.error("Error getting preview image from prefab " + prefab.getName());
+    var spriteRenderer = prefab.getComponent(
+        oogasalad.model.engine.component.SpriteRenderer.class);
+    String imagePath = spriteRenderer.getImagePath();
+    if (imagePath != null && !imagePath.isEmpty()) {
+      return "src/main/resources/" + imagePath;
     }
+    logger.error("Error getting preview image from prefab " + prefab.getName());
     return null;
   }
 }
