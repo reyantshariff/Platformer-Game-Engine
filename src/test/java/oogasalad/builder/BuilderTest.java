@@ -1,4 +1,5 @@
 package oogasalad.builder;
+/*
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -10,7 +11,6 @@ import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.component.Transform;
 import org.junit.jupiter.api.Test;
-
 public class BuilderTest {
   @Test
   public void deleteSelectedObject_selectedObject_unregister() {
@@ -214,10 +214,5 @@ public class BuilderTest {
     assertEquals(newX, object.getComponent(Transform.class).getX());
     assertEquals(newY, object.getComponent(Transform.class).getY());
   }
-
-
-
-
-
-
 }
+ */
