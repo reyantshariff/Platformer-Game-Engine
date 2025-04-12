@@ -2,6 +2,7 @@ package oogasalad.view.scene;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import oogasalad.view.config.StyleConfig;
 import oogasalad.view.gui.GameObjectRenderer;
 
 /**
@@ -11,6 +12,7 @@ import oogasalad.view.gui.GameObjectRenderer;
 
 public abstract class ViewScene {
 
+  protected final StyleConfig styleConfig;
   private final Scene myScene;
   private final GameObjectRenderer myObjectRenderer;
 
@@ -23,8 +25,9 @@ public abstract class ViewScene {
    */
   public ViewScene(Parent root, double width, double height) {
     myScene = new Scene(root, width, height);
+    styleConfig = new StyleConfig(myScene);
 
-    myScene.getStylesheets().add(getClass().getResource("/oogasalad/view/stylesheets/style.css").toExternalForm());
+
     myObjectRenderer = new GameObjectRenderer(myScene);
   }
 
