@@ -2,6 +2,7 @@ package oogasalad.view.gui.panel;
 
 import java.util.List;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -13,9 +14,16 @@ import oogasalad.view.gui.deserializedFieldInput.DeserializedFieldUIFactory;
  * ComponentPanel is a GUI component that displays a list of game components.
  * It is used in the BuilderScene to let the user select and configure components for the game.
  *
+ * Now includes expand/collapse feature with a toggle arrow.
+ *
  * @author Hsuan-Kai Liao
  */
 public class ComponentPanel extends VBox {
+
+  private static final String COLLAPSED_ARROW = "▶";
+  private static final String EXPANDED_ARROW = "▼";
+
+  private final VBox contentBox = new VBox();
 
   /**
    * Constructor for ComponentPanel.
@@ -28,18 +36,34 @@ public class ComponentPanel extends VBox {
     setAlignment(Pos.TOP_CENTER);
     setSpacing(10);
 
-    // Add component title
+    // Add expandable header
+    HBox header = new HBox();
+    header.setAlignment(Pos.CENTER_LEFT);
+    header.setSpacing(5);
+    header.setCursor(Cursor.HAND);
+
+    Label arrow = new Label(EXPANDED_ARROW);
     Label title = new Label(component.getClass().getSimpleName());
     title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
-    // Add component details to the panel
-    getChildren().add(title);
-    getChildren().addAll(getDeserializedComponents(component));
+    header.getChildren().addAll(arrow, title);
+
+    contentBox.getChildren().addAll(getDeserializedComponents(component));
+    contentBox.setVisible(false);
+    contentBox.setManaged(false);
+
+    header.setOnMouseClicked(e -> {
+      boolean expanded = contentBox.isVisible();
+      contentBox.setVisible(!expanded);
+      contentBox.setManaged(!expanded);
+      arrow.setText(expanded ? COLLAPSED_ARROW : EXPANDED_ARROW);
+    });
+
+    getChildren().addAll(header, contentBox);
   }
 
   private List<HBox> getDeserializedComponents(GameComponent component) {
     List<SerializedField<?>> fields = component.getSerializedFields();
     return fields.stream().map(DeserializedFieldUIFactory::createDeserializedFieldUI).toList();
   }
-
 }
