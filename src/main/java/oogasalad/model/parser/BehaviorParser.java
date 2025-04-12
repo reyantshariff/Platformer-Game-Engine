@@ -33,6 +33,7 @@ public class BehaviorParser implements Parser<Behavior> {
   private static final String ACTION_CLASS_PATH = "oogasalad.model.engine.action.";
   private static final String CONSTRAINT_CLASS_PATH = "oogasalad.model.engine.constraint.";
   private static final String PARAMETER = "parameter";
+  private static final String LOWER_NAME = "name";
 
   private static final Map<Class<?>, BiConsumer<ObjectNode, Object>> TYPE_WRITERS = new HashMap<>();
 
@@ -79,7 +80,7 @@ public class BehaviorParser implements Parser<Behavior> {
     if (behaviorNode.has(ACTIONS)) {
       for (JsonNode actionNode : behaviorNode.get(ACTIONS)) {
         Class<?> clazz;
-        String aName = actionNode.get("name").asText();
+        String aName = actionNode.get(LOWER_NAME).asText();
         String aFullClassName = ACTION_CLASS_PATH + aName;
 
         try {
@@ -118,7 +119,7 @@ public class BehaviorParser implements Parser<Behavior> {
     if (behaviorNode.has(CONSTRAINTS)) {
       for (JsonNode constraintNode : behaviorNode.get(CONSTRAINTS)) {
         Class<?> clazz;
-        String cName = constraintNode.get("name").asText();
+        String cName = constraintNode.get(LOWER_NAME).asText();
         String cFullClassName = CONSTRAINT_CLASS_PATH + cName;
 
         try {
@@ -218,7 +219,7 @@ public class BehaviorParser implements Parser<Behavior> {
           constraint.getParameter().getClass());
 
       try {
-        oneConstraint.put("name", constraint.getClass().getSimpleName());
+        oneConstraint.put(LOWER_NAME, constraint.getClass().getSimpleName());
         writer.accept(oneConstraint, constraint.getParameter()); // Catching this error
         oneConstraint.put(PARAMETER_TYPE, constraint.getParameter().getClass().getSimpleName());
         constraintArray.add(oneConstraint);
@@ -240,7 +241,7 @@ public class BehaviorParser implements Parser<Behavior> {
       BiConsumer<ObjectNode, Object> writer = TYPE_WRITERS.get(action.getParameter().getClass());
 
       try {
-        oneAction.put("name", action.getClass().getSimpleName());
+        oneAction.put(LOWER_NAME, action.getClass().getSimpleName());
         writer.accept(oneAction, action.getParameter()); // Catching this error
         oneAction.put(PARAMETER_TYPE, action.getParameter().getClass().getSimpleName());
 
