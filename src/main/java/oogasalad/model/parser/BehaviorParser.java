@@ -4,11 +4,17 @@ import static oogasalad.model.config.GameConfig.LOGGER;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
 import oogasalad.model.engine.base.behavior.Behavior;
 import oogasalad.model.engine.base.behavior.BehaviorAction;
 import oogasalad.model.engine.base.behavior.BehaviorConstraint;
+import oogasalad.model.engine.base.enumerate.KeyCode;
 import oogasalad.model.engine.base.serialization.SerializedField;
 
 // Assumes I am already within a behavior subsection at one of the array objects.
@@ -19,12 +25,22 @@ import oogasalad.model.engine.base.serialization.SerializedField;
  * @author Justin Aronwald, Daniel Radriguez-Florido
  */
 public class BehaviorParser implements Parser<Behavior> {
+
   private static final String NAME = "Name";
   private static final String ACTIONS = "actions";
   private static final String PARAMETER_TYPE = "parameterType";
   private static final String CONSTRAINTS = "constraints";
   private static final String ACTION_CLASS_PATH = "oogasalad.model.engine.action.";
   private static final String CONSTRAINT_CLASS_PATH = "oogasalad.model.engine.constraint.";
+
+  private static final Map<Class<?>, BiConsumer<ObjectNode, Object>> TYPE_WRITERS = new HashMap<>();
+
+  static {
+    TYPE_WRITERS.put(String.class, (node, value) -> node.put("parameter", (String) value));
+    TYPE_WRITERS.put(Integer.class, (node, value) -> node.put("parameter", (Integer) value));
+    TYPE_WRITERS.put(Double.class, (node, value) -> node.put("parameter", (Double) value));
+    TYPE_WRITERS.put(KeyCode.class, (node, value) -> node.put("parameter", value.toString()));
+  }
 
   private final ObjectMapper mapper = new ObjectMapper();
 
@@ -59,7 +75,7 @@ public class BehaviorParser implements Parser<Behavior> {
 
   private void parseActions(JsonNode behaviorNode, Behavior behaviorInstance)
       throws ParsingException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
-    if (behaviorNode.has(ACTIONS  )) {
+    if (behaviorNode.has(ACTIONS)) {
       for (JsonNode actionNode : behaviorNode.get(ACTIONS)) {
         Class<?> clazz;
         String aName = actionNode.get("name").asText();
@@ -89,7 +105,7 @@ public class BehaviorParser implements Parser<Behavior> {
     if (valueNode == null) {
       throw new IllegalArgumentException("Missing parameter field");
     }
-    
+
     Class<?> parameterType = getParameterType(actionNode, paramField.getFieldType());
     setFieldFromValue(paramField, valueNode, parameterType);
 
@@ -116,10 +132,12 @@ public class BehaviorParser implements Parser<Behavior> {
     }
   }
 
-  private void createAndAddConstraint(Behavior behaviorInstance, JsonNode constraintNode, Class<?> clazz)
+  private void createAndAddConstraint(Behavior behaviorInstance, JsonNode constraintNode,
+      Class<?> clazz)
       throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ParsingException {
 
-    BehaviorConstraint<?> constraint = (BehaviorConstraint<?>) clazz.getDeclaredConstructor().newInstance();
+    BehaviorConstraint<?> constraint = (BehaviorConstraint<?>) clazz.getDeclaredConstructor()
+        .newInstance();
     constraint.setBehavior(behaviorInstance);
 
     SerializedField<?> paramField = constraint.getParentSerializableField();
@@ -137,7 +155,7 @@ public class BehaviorParser implements Parser<Behavior> {
 
   private void setFieldFromValue(SerializedField<?> field, JsonNode valueNode, Class<?> type)
       throws ParsingException {
-    
+
     try {
       Object value;
 
@@ -147,9 +165,12 @@ public class BehaviorParser implements Parser<Behavior> {
       typedField.setValue(value);
 
     } catch (IllegalArgumentException e) {
-      throw new ParsingException("Invalid value for enum field '" + field.getFieldName() + "': " + valueNode.asText(), e);
+      throw new ParsingException(
+          "Invalid value for enum field '" + field.getFieldName() + "': " + valueNode.asText(), e);
     } catch (ClassCastException e) {
-      throw new ParsingException("Type mismatch for field '" + field.getFieldName() + "' — expected " + type.getSimpleName(), e);
+      throw new ParsingException(
+          "Type mismatch for field '" + field.getFieldName() + "' — expected "
+              + type.getSimpleName(), e);
     }
   }
 
@@ -172,15 +193,72 @@ public class BehaviorParser implements Parser<Behavior> {
    */
   @Override
   public JsonNode write(Behavior data) throws IOException {
-    // Todo write this method
-    return new ObjectMapper().valueToTree(data);
+    ObjectMapper mapper = new ObjectMapper();
+    ObjectNode root = mapper.createObjectNode();
+
+    String behaviorName = data.getName();
+    root.put(NAME, behaviorName);
+
+    //I understand that the two methods below are quite similar in structure, but the alternative
+    // would be to create a method with about 6 or more parameters to account for both,
+    // which I think is less readable and coder friendly than two similar methods.
+    writeConstraints(data, root);
+    writeActions(data, root);
+
+    return root;
+  }
+
+  private void writeConstraints(Behavior data, ObjectNode root) {
+    ArrayNode constraintArray = mapper.createArrayNode();
+
+    data.getConstraints().forEach(constraint -> {
+      ObjectNode oneConstraint = mapper.createObjectNode();
+      BiConsumer<ObjectNode, Object> writer = TYPE_WRITERS.get(
+          constraint.getParameter().getClass());
+
+      try {
+        oneConstraint.put("name", constraint.getClass().getSimpleName());
+        writer.accept(oneConstraint, constraint.getParameter()); // Catching this error
+        oneConstraint.put("parameterType", constraint.getParameter().getClass().getSimpleName());
+        constraintArray.add(oneConstraint);
+      } catch (NullPointerException e) {
+        LOGGER.error(
+            "Could not write constraint {} for behavior {}. Invalid JSON parameter type. Skipping constraint.",
+            constraint.getParameter().getClass().getSimpleName(), data.getName());
+      }
+
+      root.set(CONSTRAINTS, constraintArray);
+    });
+  }
+
+  private void writeActions(Behavior data, ObjectNode root) {
+    ArrayNode actionsArray = mapper.createArrayNode();
+
+    data.getActions().forEach(action -> {
+      ObjectNode oneAction = mapper.createObjectNode();
+      BiConsumer<ObjectNode, Object> writer = TYPE_WRITERS.get(action.getParameter().getClass());
+
+      try {
+        oneAction.put("name", action.getClass().getSimpleName());
+        writer.accept(oneAction, action.getParameter()); // Catching this error
+        oneAction.put("parameterType", action.getParameter().getClass().getSimpleName());
+
+        actionsArray.add(oneAction);
+      } catch (NullPointerException e) {
+        LOGGER.error(
+            "Could not write action {} for behavior {}. Invalid JSON parameter type. Skipping action.",
+            action.getParameter().getClass().getSimpleName(), data.getName());
+      }
+    });
+
+    root.set(ACTIONS, actionsArray);
   }
 
 
   //unsure how to handle this without using switch
   private Class<?> getParameterType(JsonNode node, Class<?> defaultType) throws ParsingException {
     if (!node.has(PARAMETER_TYPE)) {
-      return defaultType; 
+      return defaultType;
     }
 
     String typeName = node.get(PARAMETER_TYPE).asText();

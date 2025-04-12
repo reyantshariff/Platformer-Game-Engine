@@ -1,29 +1,49 @@
 package oogasalad.model.parser;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
-import oogasalad.model.engine.base.behavior.Behavior;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import oogasalad.model.engine.base.behavior.Behavior;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.shadow.com.univocity.parsers.common.beans.BeanHelper;
 
 class BehaviorParserTest {
 
   static final int CONSTRAINTS_INDEX = 1;
   static final int ACTIONS_INDEX = 2;
+  static final String CONSTRAINTS = "constraints";
+  static final String ACTIONS = "actions";
 
   BehaviorParser myBehaviorParser;
   ObjectMapper myMapper;
+
+  String goodJsonString =
+      """
+          {
+            "Name": "SceneChanger",
+            "constraints": [
+              {
+                "name": "KeyPressConstraint",
+                "parameter": "SPACE",
+                "parameterType": "KeyCode"
+              }
+            ],
+            "actions": [
+              {
+                "name": "ChangeSceneAction",
+                "parameter": "Example Main Scene",
+                "parameterType": "String"
+              }
+            ]
+          }
+          """;
 
   @BeforeEach
   void setUp() {
@@ -33,24 +53,6 @@ class BehaviorParserTest {
 
   @Test
   void parse_validJson_success() throws JsonProcessingException, ParsingException {
-    String goodJsonString =
-        """
-            {
-              "Name": "SceneChanger",
-              "constraints": [
-                {
-                  "name": "KeyPressConstraint",
-                  "parameter": "SPACE"
-                }
-              ],
-              "actions": [
-                {
-                  "name": "ChangeSceneAction",
-                  "parameter": "Example Main Scene"
-                }
-              ]
-            }
-            """;
     JsonNode node = myMapper.readTree(goodJsonString);
     Behavior behavior = myBehaviorParser.parse(node);
     assertNotNull(behavior); // Once we have actual behavior classes this should work
@@ -68,22 +70,24 @@ class BehaviorParserTest {
               "constraints": [
                 {
                   "name": "KeyPressConstraint",
-                  "parameter": "SPACE"
+                  "parameter": "SPACE",
+                  "parameterType": "KeyCode"
                 },
                 {
                   "name": "KeyPressConstraint",
-                  "parameter": "SPACE"
+                  "parameter": "SPACE",
+                  "parameterType": "KeyCode"
                 }
               ],
               "actions": [
                 {
                   "name": "ChangeSceneAction",
-                  "parameter": "Example Main Scene"
+                  "parameter": "Example Main Scene",
+                  "parameterType": "String"
                 }
               ]
             }
             """;
-
     JsonNode node = myMapper.readTree(repeatConstraintsJsonString);
     Behavior behavior = myBehaviorParser.parse(node);
 
@@ -109,7 +113,8 @@ class BehaviorParserTest {
               "actions": [
                 {
                   "name": "ChangeSceneAction",
-                  "parameter": "Example Main Scene"
+                  "parameter": "Example Main Scene",
+                  "parameterType": "String"
                 }
               ]
             }
@@ -133,17 +138,20 @@ class BehaviorParserTest {
               "constraints": [
                 {
                   "name": "KeyPressConstraint",
-                  "parameter": "SPACE"
+                  "parameter": "SPACE",
+                  "parameterType": "KeyCode"
                 }
               ],
               "actions": [
                 {
                   "name": "ChangeSceneAction",
-                  "parameter": "Example Main Scene"
+                  "parameter": "Example Main Scene",
+                  "parameterType": "String"
                 },
                 {
                   "name": "ChangeSceneAction",
-                  "parameter": "Example Main Scene"
+                  "parameter": "Example Main Scene",
+                  "parameterType": "String"
                 }
               ]
             }
@@ -171,7 +179,8 @@ class BehaviorParserTest {
               "constraints": [
                 {
                   "name": "KeyPressConstraint",
-                  "parameter": "SPACE"
+                  "parameter": "SPACE",
+                  "parameterType": "KeyCode"
                 }
               ],
               "actions": [
@@ -197,13 +206,15 @@ class BehaviorParserTest {
               "constraints": [
                 {
                   "name": "OnKeyPressed",
-                  "parameter": "SPACE"
+                  "parameter": "SPACE",
+                  "parameterType": "KeyCode"
                 }
               ],
               "actions": [
                 {
                   "name": "ChangeSceneAction",
-                  "parameter": "Example Main Scene"
+                  "parameter": "Example Main Scene",
+                  "parameterType": "String"
                 }
               ]
             }
@@ -213,27 +224,142 @@ class BehaviorParserTest {
     assertThrows(ParsingException.class, () -> myBehaviorParser.parse(node));
   }
 
-  // TODO: Create write function
   @Test
-  void write_validComponent_success() throws IOException {
-//    Transform transformComponent = new Transform();
-//    transformComponent.setX(1);
-//    transformComponent.setY(1);
-//    transformComponent.setRotation(1);
-//    transformComponent.setScaleX(1);
-//    transformComponent.setScaleY(1);
-//
-//    JsonNode gameComponent = myBehaviorParser.write(transformComponent);
-//    assertNotNull(gameComponent);
-//    assertTrue(gameComponent.isObject());
-//    assertTrue(gameComponent.has("Name"));
-//    assertTrue(gameComponent.has("Configurations"));
-//
-//    JsonNode configurations = gameComponent.get("Configurations");
-//    assertTrue(configurations.has("x"));
-//    assertTrue(configurations.has("y"));
-//    assertTrue(configurations.has("rotation"));
-//    assertTrue(configurations.has("scaleX"));
-//    assertTrue(configurations.has("scaleY"));
+  void write_validBehaviorOneOfEach_success() throws IOException, ParsingException {
+    JsonNode node = myMapper.readTree(goodJsonString);
+    Behavior behavior = myBehaviorParser.parse(node);
+
+    JsonNode writeNode = myBehaviorParser.write(behavior);
+    System.out.println(writeNode.toPrettyString());
+    assertTrue(writeNode.has("Name"));
+    assertTrue(writeNode.has(CONSTRAINTS));
+    assertTrue(writeNode.has(ACTIONS));
+
+    JsonNode constraints = writeNode.get("constraints");
+    JsonNode oneConstraint = constraints.get(0);
+    assertTrue(oneConstraint.has("name"));
+    assertTrue(oneConstraint.has("parameter"));
+    assertTrue(oneConstraint.has("parameterType"));
+
+    JsonNode actions = writeNode.get(ACTIONS);
+    JsonNode oneAction = actions.get(0);
+    assertTrue(oneAction.has("name"));
+    assertTrue(oneAction.has("parameter"));
+    assertTrue(oneAction.has("parameterType"));
   }
+
+  @Test
+  void write_validBehaviorMultipleConstraintsAndBehaviors_success()
+      throws IOException, ParsingException {
+    String repeatConstraintsAndActionsJsonString =
+        """
+             {
+                "Name": "JumpWhenPressed",
+                "constraints": [
+                  {
+                    "name": "KeyPressConstraint",
+                    "parameter": "SPACE",
+                    "parameterType": "KeyCode"
+                  },
+                  {
+                    "name": "TouchingFromAboveConstraint",
+                    "parameter": "Ground",
+                    "parameterType": "String"
+                  }
+                ],
+                "actions": [
+                  {
+                    "name": "JumpAction",
+                    "parameter": 500,
+                    "parameterType": "Double"
+                  },
+                  {
+                    "name": "CrouchAction",
+                    "parameter": "",
+                    "parameterType": "String"
+                   }
+                ]
+              }
+            """;
+    JsonNode node = myMapper.readTree(repeatConstraintsAndActionsJsonString);
+    Behavior behavior = myBehaviorParser.parse(node);
+
+    JsonNode writeNode = myBehaviorParser.write(behavior);
+    System.out.println(writeNode.toPrettyString());
+    assertTrue(writeNode.has("Name"));
+    assertTrue(writeNode.has(CONSTRAINTS));
+    assertTrue(writeNode.has(ACTIONS));
+
+    JsonNode constraints = writeNode.get("constraints");
+
+    JsonNode firstConstraint = constraints.get(0);
+    assertTrue(firstConstraint.has("name"));
+    assertTrue(firstConstraint.has("parameter"));
+    assertTrue(firstConstraint.has("parameterType"));
+
+    JsonNode secondConstraint = constraints.get(1);
+    assertTrue(secondConstraint.has("name"));
+    assertTrue(secondConstraint.has("parameter"));
+    assertTrue(secondConstraint.has("parameterType"));
+
+    JsonNode actions = writeNode.get(ACTIONS);
+    JsonNode oneAction = actions.get(0);
+    assertTrue(oneAction.has("name"));
+    assertTrue(oneAction.has("parameter"));
+    assertTrue(oneAction.has("parameterType"));
+  }
+
+  @Test
+  void write_invalidBehaviorBadActionParameterType_failure() throws IOException, ParsingException {
+    String badTypeJsonString =
+        """
+              {
+              "Name": "SceneChanger",
+              "constraints": [
+                {
+                  "name": "KeyPressConstraint",
+                  "parameter": "SPACE",
+                  "parameterType": "KeyCode"
+                }
+              ],
+              "actions": [
+                {
+                  "name": "ChangeSceneAction",
+                  "parameter": "Example Main Scene",
+                  "parameterType": "OogaObject"
+                }
+              ]
+            }
+            """;
+    JsonNode node = myMapper.readTree(badTypeJsonString);
+    assertThrows(ParsingException.class, () -> myBehaviorParser.parse(node));
+  }
+
+  @Test
+  void write_invalidBehaviorBadConstraintParameterType_failure()
+      throws IOException, ParsingException {
+    String badTypeJsonString =
+        """
+              {
+              "Name": "SceneChanger",
+              "constraints": [
+                {
+                  "name": "KeyPressConstraint",
+                  "parameter": "SPACE",
+                  "parameterType": "OogasaladObject"
+                }
+              ],
+              "actions": [
+                {
+                  "name": "ChangeSceneAction",
+                  "parameter": "Example Main Scene",
+                  "parameterType": "String"
+                }
+              ]
+            }
+            """;
+    JsonNode node = myMapper.readTree(badTypeJsonString);
+    assertThrows(ParsingException.class, () -> myBehaviorParser.parse(node));
+  }
+
 }
