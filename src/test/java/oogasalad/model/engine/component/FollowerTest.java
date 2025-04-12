@@ -79,9 +79,9 @@ class FollowerTest {
 
   @Test
   void update_NoFollowObject_ThrowsRuntimeException() {
-    RuntimeException ex =
-        assertThrows(RuntimeException.class, () -> follower.setFollowObject(null));
-    assertTrue(ex.getMessage().contains("Follow Object Missing Transform Component"));
+    IllegalArgumentException ex =
+        assertThrows(IllegalArgumentException.class, () -> follower.setFollowObject(null));
+    assertTrue(ex.getMessage().contains("Follow Object is null"));
   }
 
   @Test

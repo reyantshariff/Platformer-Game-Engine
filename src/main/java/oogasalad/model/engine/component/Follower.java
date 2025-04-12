@@ -62,15 +62,21 @@ public class Follower extends GameComponent {
    * @apiNote Use this method if the awake method for this component has already been called.
    */
   public void setFollowObject(GameObject followObject) {
-    this.followObject = followObject;
-    Transform attachTransform = followObject.getComponent(Transform.class);
-    if (attachTransform == null) {
+    if(followObject == null) {
+      LOGGER.error("Follow Object is null");
+      throw new IllegalArgumentException("Follow Object is null");
+    }
+    Transform attachTransform;
+    try {
+      attachTransform = followObject.getComponent(Transform.class);
+    } catch (IllegalArgumentException e) {
       LOGGER.error("Follow Object Missing Transform Component");
-      return;
+      throw new IllegalArgumentException("Follow Object Missing Transform Component");
     }
     myTransform = getParent().getComponent(Transform.class);
     offsetX = myTransform.getX() - attachTransform.getX();
     offsetY = myTransform.getY() - attachTransform.getY();
+    this.followObject = followObject;
   }
 
   /**
