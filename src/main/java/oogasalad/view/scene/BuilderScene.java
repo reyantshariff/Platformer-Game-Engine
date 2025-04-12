@@ -149,10 +149,11 @@ public class BuilderScene extends ViewScene {
     // Pan the view using arrow keys
     levelViewScrollPane.setOnKeyPressed(event -> {
       double delta = 0.05;
-      try {
-        scrollPaneEventMap.get(event.getCode()).accept(delta);
-      } catch (NullPointerException e) {
-        logger.error("Key event not mapped: " + event.getCode());
+      Consumer<Double> action = scrollPaneEventMap.get(event.getCode());
+      if (action == null) {
+        logger.warn("Key event not mapped: " + event.getCode());
+      } else {
+        action.accept(delta);
       }
       event.consume();
     });
