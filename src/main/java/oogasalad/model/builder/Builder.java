@@ -224,10 +224,35 @@ public class Builder {
     }
   }
 
+  /**
+   *  Resizes the selected object
+   * @param x - x position
+   * @param y  - y position
+   * @param h - height
+   * @param w - width
+   */
+  public void resizeObject(double x, double y, double w, double h) {
+    if (selectedObject != null && selectedObject.hasComponent(Transform.class)) {
+      Transform t = selectedObject.getComponent(Transform.class);
+      t.setX(x);
+      t.setY(y);
+      t.setScaleX(w);
+      t.setScaleY(h);
+    }
+  }
+
+
+  /**
+   *  Returns the currently selected object
+   */
   public GameObject getSelectedObject()
   {
     return selectedObject;
   }
+
+  /**
+   *  Returns the current scene
+   */
 
   public GameScene getCurrentScene()
   {
