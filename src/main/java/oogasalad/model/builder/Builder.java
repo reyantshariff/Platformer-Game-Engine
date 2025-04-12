@@ -6,6 +6,7 @@ import java.util.UUID;
 import oogasalad.model.builder.actions.DeleteObjectAction;
 import oogasalad.model.builder.actions.CreateObjectAction;
 import oogasalad.model.builder.actions.MoveObjectAction;
+import oogasalad.model.builder.actions.ResizeObjectAction;
 import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
@@ -25,6 +26,9 @@ public class Builder {
   private GameScene currentScene;
   private double selectedObjectprevX;
   private double selectedObjectprevY;
+
+  private Deque<EditorAction> undoStack = new ArrayDeque<>();
+  private Deque<EditorAction> redoStack = new ArrayDeque<>();
 
   //Add Backend boolean to keep track of whether user has saved Game.
   /**
@@ -52,9 +56,6 @@ public class Builder {
     game.changeScene("new GameScene");
   }
 
-  private Deque<EditorAction> undoStack = new ArrayDeque<>();
-  private Deque<EditorAction> redoStack = new ArrayDeque<>();
-
   /**
    * Constructs a new Builder instance with the specified Game.
    *
@@ -65,6 +66,11 @@ public class Builder {
     currentScene = scene;
     game.addScene(currentScene);
     game.changeScene(scene.getName());
+  }
+
+  public void pushAction(EditorAction action)
+  {
+    undoStack.push(action);
   }
 
   /**
@@ -234,6 +240,7 @@ public class Builder {
   public void resizeObject(double x, double y, double w, double h) {
     if (selectedObject != null && selectedObject.hasComponent(Transform.class)) {
       Transform t = selectedObject.getComponent(Transform.class);
+      undoStack.push(new ResizeObjectAction(selectedObject, t.getX(), t.getY(), t.getScaleX(), t.getScaleY(), x, y, w, h));
       t.setX(x);
       t.setY(y);
       t.setScaleX(w);

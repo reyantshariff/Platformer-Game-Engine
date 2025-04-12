@@ -5,6 +5,7 @@ import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseEvent;
 import oogasalad.model.builder.Builder;
+import oogasalad.model.builder.actions.ResizeObjectAction;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.engine.component.Camera;
@@ -37,6 +38,8 @@ public class ObjectDragger {
 
   private final DragContext dragContext = new DragContext();
   private List<Point2D> resize_handles;
+
+  private double resizeStartX, resizeStartY, resizeStartW, resizeStartH;
 
   public ObjectDragger(Canvas canvas, Builder builder, BuilderScene builderScene, GameObjectRenderer renderer) {
     this.canvas = canvas;
@@ -108,8 +111,15 @@ public class ObjectDragger {
 
       if (isSelected && isHoveringOverResizeHandle(oldX, oldY))
       {
+        resizeStartX = t.getX();
+        resizeStartY = t.getY();
+        resizeStartW = t.getScaleX();
+        resizeStartH = t.getScaleY();
+
         dragOffsetX = oldX - t.getX();
         dragOffsetY = oldY - t.getY();
+
+
         dragContext.beginDrag(e, dragOffsetX, dragOffsetY, true);
         return;
       }
@@ -248,6 +258,18 @@ public class ObjectDragger {
 
     if (dragContext.isDragging() && !dragContext.isResizing()) {
       builder.placeObject(dragContext.newX(e), dragContext.newY(e));
+    }
+
+    else if (dragContext.isResizing())
+    {
+      Transform t = builder.getSelectedObject().getComponent(Transform.class);
+      ResizeObjectAction resizeAction = new ResizeObjectAction(
+          builder.getSelectedObject(),
+          resizeStartX, resizeStartY, resizeStartW, resizeStartH,
+          t.getX(), t.getY(), t.getScaleX(), t.getScaleY()
+      );
+
+      builder.pushAction(resizeAction);
     }
 
     dragContext.endInteraction();
