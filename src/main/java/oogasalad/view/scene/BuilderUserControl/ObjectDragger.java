@@ -122,6 +122,7 @@ public class ObjectDragger {
         dragging = true; // whole object move
         dragOffsetX = oldX - t.getX();
         dragOffsetY = oldY - t.getY();
+        builderScene.handleObjectSelectionChange();
         activeHandleIndex = -1;
         clickedObject = true;
       }
@@ -256,6 +257,7 @@ public class ObjectDragger {
   private void handleReleased(MouseEvent e) {
     double newX = e.getX() - dragOffsetX;
     double newY = e.getY() - dragOffsetY;
+    builderScene.handleObjectSelectionChange();
 
     if (isInCanvas(e) && dragging && builder.objectIsSelected() && !resizing) {
       dragging = false;
