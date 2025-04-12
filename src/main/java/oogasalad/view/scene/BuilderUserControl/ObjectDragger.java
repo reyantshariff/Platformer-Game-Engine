@@ -1,5 +1,8 @@
 package oogasalad.view.scene.BuilderUserControl;
 
+import java.awt.Point;
+import javafx.geometry.Point2D;
+import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseEvent;
 import oogasalad.model.builder.Builder;
@@ -35,6 +38,7 @@ public class ObjectDragger {
   private double oldY = 0;
 
   private int activeHandleIndex = -1;
+  private ArrayList<Point2D> handles;
 
   public ObjectDragger(Canvas canvas, Builder builder, BuilderScene builderScene, GameObjectRenderer renderer) {
     this.canvas = canvas;
@@ -52,6 +56,12 @@ public class ObjectDragger {
     canvas.setOnMousePressed(this::handlePressedIfInBounds);
     canvas.setOnMouseDragged(this::handleDraggedIfInBounds);
     canvas.setOnMouseReleased(this::handleReleasedIfInBounds);
+    canvas.setOnMouseMoved(e -> {
+      boolean hovering = isHoveringOverHandle(e.getX(), e.getY());
+      canvas.setCursor(hovering ? Cursor.HAND : Cursor.DEFAULT);
+    });
+
+
   }
 
   private void handlePressedIfInBounds(MouseEvent e) {
@@ -80,56 +90,157 @@ public class ObjectDragger {
    * Checks if mouse is touching sprite and then records it as selected
    * @param e is the event click
    * */
-
   private void handlePressed(MouseEvent e) {
     oldX = e.getX();
     oldY = e.getY();
+    Point2D click = new Point2D(oldX, oldY);
+
     boolean clickedObject = false;
     List<GameObject> objects = new ArrayList<>(gameScene.getAllObjects());
-    objects = removeCamerasFromObjects(objects);  // FOR THE BUILDER: remove all cameras
+    objects = removeCamerasFromObjects(objects);
 
     for (GameObject obj : objects) {
       if (!obj.hasComponent(Transform.class)) continue;
       Transform t = obj.getComponent(Transform.class);
 
-      double w = obj.getComponent(Transform.class).getScaleX(), h = obj.getComponent(Transform.class).getScaleY();
+      double w = t.getScaleX();
+      double h = t.getScaleY();
 
-      double[][] handles = {
-          {t.getX(), t.getY()}, {t.getX() + w / 2, t.getY()}, {t.getX() + w, t.getY()},
-          {t.getX() + w, t.getY() + h / 2}, {t.getX() + w, t.getY() + h},
-          {t.getX() + w / 2, t.getY() + h}, {t.getX(), t.getY() + h}, {t.getX(), t.getY() + h / 2}
-      };
-
-      if (oldX >= t.getX() && oldX <= t.getX() + w && oldY >= t.getY() && oldY <= t.getY() + h) {
+      // 🔹 Check if clicked inside bounding box
+      if (oldX >= t.getX() && oldX <= t.getX() + w &&
+          oldY >= t.getY() && oldY <= t.getY() + h) {
         builder.selectExistingObject(obj);
+        dragging = true; // whole object move
         dragOffsetX = oldX - t.getX();
         dragOffsetY = oldY - t.getY();
-        dragging = true;
+        activeHandleIndex = -1;
         clickedObject = true;
-        builderScene.handleObjectSelectionChange();
-        break;
       }
     }
 
-    if (!clickedObject)
-    {
+    // 🔹 If nothing was clicked
+    if (!clickedObject) {
       builder.deselect();
     }
 
-
-    builderScene.updateGamePreview();  // refresh all sprite visuals in the canvas
+    builderScene.updateGamePreview();
   }
 
+
   private void handleDragged(MouseEvent e) {
-    if (dragging && builder.objectIsSelected()) {
-      double newX = e.getX() - dragOffsetX;
-      double newY = e.getY() - dragOffsetY;
+    double newX = e.getX() - dragOffsetX;
+    double newY = e.getY() - dragOffsetY;
+
+    double dx = e.getX() - oldX;
+    double dy = e.getY() - oldY;
+
+    if (builder.objectIsSelected()) {
       builder.moveObject(newX, newY);
       renderer.renderWithoutCamera(canvas.getGraphicsContext2D(), gameScene);
     }
 
+    if (dragging)
+    {
+//      if (activeHandleIndex != -1)
+//      {
+//        resizeFromHandle(builder.getSelectedObject(), dx, dy);
+//      }
+    }
+
     builderScene.updateGamePreview();  // refresh all sprite visuals in the canvas
   }
+
+  private boolean isHoveringOverHandle(double x, double y)
+  {
+    Point2D mousePoint = new Point2D(x, y);
+    List<GameObject> objects = new ArrayList<>(gameScene.getAllObjects());
+    objects = removeCamerasFromObjects(objects);
+    for (GameObject obj : objects)
+    {
+      Transform t = obj.getComponent(Transform.class);
+
+      double w = t.getScaleX();
+      double h = t.getScaleY();
+
+      List<Point2D> handles = List.of(
+          new Point2D(t.getX(), t.getY()),
+          new Point2D(t.getX() + w / 2, t.getY()),
+          new Point2D(t.getX() + w, t.getY()),
+          new Point2D(t.getX() + w, t.getY() + h / 2),
+          new Point2D(t.getX() + w, t.getY() + h),
+          new Point2D(t.getX() + w / 2, t.getY() + h),
+          new Point2D(t.getX(), t.getY() + h),
+          new Point2D(t.getX(), t.getY() + h / 2)
+      );
+
+      // 🔹 Check if clicked a handle
+      for (int i = 0; i < handles.size(); i++) {
+        /**
+         checks if the mouse click is within a small circular area (radius = half the handle size) around a handle,
+         meaning the user clicked on that handle.
+         */
+        if (mousePoint.distance(handles.get(i)) <= HANDLE_SIZE / 2) {
+          activeHandleIndex = i;
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  private void resizeFromHandle(GameObject obj, double dx, double dy) {
+    Transform t = obj.getComponent(Transform.class);
+
+    double x = t.getX();
+    double y = t.getY();
+    double w = t.getScaleX();
+    double h = t.getScaleY();
+
+    double newX = x, newY = y, newW = w, newH = h;
+
+    switch (activeHandleIndex) {
+      case 0 -> {    // top-left
+        newX += dx;
+        newY += dy;
+        newW -= dx;
+        newH -= dy;
+      }
+      case 1 -> {   // top-center
+        newY += dy;
+        newH -= dy;
+      }
+      case 2 -> {   // top-right
+        newY += dy;
+        newW += dx;
+        newH -= dy;
+      }
+      case 3 ->  {  // mid-right
+        newW += dx;
+      }
+      case 4 -> {   // bottom-right
+        newH += dy;
+        newW += dx;
+      }
+      case 5 -> {    // bottom-center
+        newH += dy;
+      }
+      case 6 -> {    // bottom-left
+        newX += dx;
+        newW -= dx;
+        newH += dy;
+      }
+      case 7 -> {   // mid-left
+        newX += dx;
+        newW -= dx;
+      }
+    }
+
+    if (newW > 1 && newH > 1) {
+      builder.resizeObject(newX, newY, newW, newH);
+    }
+  }
+
+
 
   private void handleReleased(MouseEvent e) {
     if (isInCanvas(e) && dragging && builder.objectIsSelected()) {
@@ -142,6 +253,7 @@ public class ObjectDragger {
 
     builderScene.updateGamePreview();  // refresh all sprite visuals in the canvas
   }
+
 
   private List<GameObject> removeCamerasFromObjects(List<GameObject> objects) {
     // remove any camera objects so they cannot be "pressed"
