@@ -1,6 +1,7 @@
 package oogasalad.model.engine.base.architecture;
 
 import static oogasalad.model.config.GameConfig.LOGGER;
+import java.lang.reflect.InvocationTargetException;
 
 import oogasalad.model.engine.base.enumerate.ComponentTag;
 import oogasalad.model.engine.base.serialization.Serializable;
@@ -62,8 +63,9 @@ public abstract class GameComponent implements Serializable {
         setCopyField(copy, field);
       }
       return copy;
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to deep copy component: " + this.getClass().getSimpleName(), e);
+    } catch (InstantiationException | IllegalAccessException |
+             NoSuchMethodException | InvocationTargetException e) {
+      throw new FailedCopyException("Failed to deep copy component: " + this.getClass().getSimpleName(), e);
     }
   }
 
