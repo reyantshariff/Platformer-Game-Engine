@@ -4,6 +4,11 @@ import oogasalad.model.builder.EditorAction;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.component.Transform;
 
+/**
+ * Class that tracks when GameObjects are resized
+ *@author Reyan Shariff
+ */
+
 public class ResizeObjectAction implements EditorAction {
   private final GameObject object;
   private final double fromX, fromY;
