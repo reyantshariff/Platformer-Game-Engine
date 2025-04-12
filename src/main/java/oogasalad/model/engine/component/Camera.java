@@ -2,6 +2,7 @@ package oogasalad.model.engine.component;
 
 import static oogasalad.model.config.GameConfig.LOGGER;
 import java.util.ArrayList;
+import oogasalad.model.engine.base.architecture.MissingParentSceneException;
 import java.util.List;
 import java.awt.Dimension;
 import oogasalad.model.engine.base.architecture.GameComponent;
@@ -47,21 +48,26 @@ public class Camera extends GameComponent {
    * @return a list of GameObjects that are in the view of the camera.
    */
   public List<GameObject> getObjectsInView() {
+    List<GameObject> objects;
     try {
       GameScene scene = getParent().getScene();
-      List<GameObject> objects = new ArrayList<>(scene.getAllObjects());
-      List<GameObject> objectsInView = new ArrayList<>();
-      for (GameObject object : objects) {
-        Transform transform = object.getComponent(Transform.class);
-        if (isInView(transform)) {
-          objectsInView.add(object);
-        }
-      }
-      return objectsInView;
-    } catch (IllegalArgumentException | NullPointerException e) {
-      LOGGER.warn("Missing GameScene or Transform Component");
+      objects = new ArrayList<>(scene.getAllObjects());
+    } catch (MissingParentSceneException e) {
+      LOGGER.error("Camera does not have a parent scene", e);
       return new ArrayList<>();
     }
+    List<GameObject> objectsInView = new ArrayList<>();
+    for (GameObject object : objects) {
+      Transform transform = object.getComponent(Transform.class);
+      if (transform == null) {
+        LOGGER.warn("GameObject {} does not have a Transform component", object.getName());
+        continue;
+      }
+      if (isInView(transform)) {
+        objectsInView.add(object);
+      }
+    }
+    return objectsInView;
   }
 
   private boolean isInView(Transform transform) {

@@ -234,6 +234,9 @@ public class GameObject {
    * @return the parent scene of the object
    */
   public final GameScene getScene() {
+    if (parentScene == null) {
+      throw new MissingParentSceneException("GameObject does not have a parent scene");
+    }
     return parentScene;
   }
 
