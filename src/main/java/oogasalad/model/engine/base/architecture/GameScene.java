@@ -308,12 +308,12 @@ public class GameScene {
    */
   public void onActivated() {
     // NOTE: This method should be overriden if needed.
-  };
+  }
 
   /**
    * Event that will be called when the gameScene is set to inactive.
    */
   public void onDeactivated() {
     // NOTE: This method should be overriden if needed.
-  };
+  }
 }
