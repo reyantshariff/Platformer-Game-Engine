@@ -31,6 +31,7 @@ public class ObjectDragger {
   private boolean dragging = false;
   private double dragOffsetX = 0;
   private double dragOffsetY = 0;
+  private boolean resizing = false;
 
   private final double HANDLE_SIZE = 8;
 
@@ -106,6 +107,14 @@ public class ObjectDragger {
       double w = t.getScaleX();
       double h = t.getScaleY();
 
+      if (builder.objectIsSelected() && builder.getSelectedObject().equals(obj) && isHoveringOverResizeHandle(oldX, oldY))
+      {
+        dragging = true;
+        dragOffsetX = oldX - t.getX();
+        dragOffsetY = oldY - t.getY();
+        return;
+      }
+
       // 🔹 Check if clicked inside bounding box
       if (oldX >= t.getX() && oldX <= t.getX() + w &&
           oldY >= t.getY() && oldY <= t.getY() + h) {
@@ -128,23 +137,29 @@ public class ObjectDragger {
 
 
   private void handleDragged(MouseEvent e) {
-    double newX = e.getX() - dragOffsetX;
-    double newY = e.getY() - dragOffsetY;
-
-    double dx = e.getX() - oldX;
-    double dy = e.getY() - oldY;
-
-    if (activeHandleIndex != -1)
+    if (builder.objectIsSelected())
     {
-      resizeFromHandle(builder.getSelectedObject(), dx, dy);
-    }
+      double newX = e.getX() - dragOffsetX;
+      double newY = e.getY() - dragOffsetY;
 
-    else if (builder.objectIsSelected()) {
-      builder.moveObject(newX, newY);
-      renderer.renderWithoutCamera(canvas.getGraphicsContext2D(), gameScene);
-    }
+      if (activeHandleIndex != -1)
+      {
+        double dx = e.getX() - oldX;
+        double dy = e.getY() - oldY;
+        resizing = true;
+        resizeFromHandle(builder.getSelectedObject(), dx, dy);
+      }
 
-    builderScene.updateGamePreview();  // refresh all sprite visuals in the canvas
+      else if (builder.objectIsSelected()) {
+        builder.moveObject(newX, newY);
+        renderer.renderWithoutCamera(canvas.getGraphicsContext2D(), gameScene);
+      }
+
+      oldX = e.getX();
+      oldY = e.getY();
+
+      builderScene.updateGamePreview();  // refresh all sprite visuals in the canvas
+    }
   }
 
   private boolean isHoveringOverResizeHandle(double x, double y)
@@ -170,10 +185,9 @@ public class ObjectDragger {
           new Point2D(t.getX(), t.getY() + h / 2)
       );
 
-      // 🔹 Check if clicked a handle
       for (int i = 0; i < resize_handles.size(); i++) {
         /**
-         checks if the mouse click is within a small circular area (radius = half the handle size) around a handle,
+         checks if the mouse is within a small circular area (radius = half the handle size) around a handle,
          meaning the user clicked on that handle.
          */
         if (mousePoint.distance(resize_handles.get(i)) <= HANDLE_SIZE / 2) {
@@ -240,12 +254,18 @@ public class ObjectDragger {
 
 
   private void handleReleased(MouseEvent e) {
-    if (isInCanvas(e) && dragging && builder.objectIsSelected()) {
+    double newX = e.getX() - dragOffsetX;
+    double newY = e.getY() - dragOffsetY;
+
+    if (isInCanvas(e) && dragging && builder.objectIsSelected() && !resizing) {
       dragging = false;
-      double newX = e.getX() - dragOffsetX;
-      double newY = e.getY() - dragOffsetY;
       builder.placeObject(newX, newY);
       renderer.renderWithoutCamera(canvas.getGraphicsContext2D(), gameScene);
+    }
+    else if (resizing)
+    {
+      resizing = false;
+      dragging = false;
     }
 
     builderScene.updateGamePreview();  // refresh all sprite visuals in the canvas
