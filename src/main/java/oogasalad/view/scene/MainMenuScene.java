@@ -28,11 +28,25 @@ public class MainMenuScene extends ViewScene {
     Label title = new Label("PLATFORMERS");
     title.setId("mainMenuTitle");
 
-    ComboBox<String> gameSelector = new ComboBox<>();
-    gameSelector.getItems().addAll("DINO", "GEOMETRY DASH");
-    gameSelector.setValue("SELECT A GAME");
-    gameSelector.setId("gameSelector");
+    ComboBox<String> gameSelector = setupGameSelector();
 
+    HBox buttonBox = setupButtonBox();
+    Button playButton = (Button) buttonBox.lookup("#playButton");
+    Button buildButton = (Button) buttonBox.lookup("#buildButton");
+
+    playButton.setOnAction(e ->
+        manager.switchTo(new GamePlayerScene(manager, gameSelector.getValue()))
+    );
+
+    buildButton.setOnAction(e -> manager.switchTo(new BuilderScene(manager))
+    );
+    // Language and Theme Selections
+    HBox selectorBox = setupSelectorBox();
+
+    root.getChildren().addAll(title, gameSelector, buttonBox, selectorBox);
+  }
+
+  private HBox setupButtonBox() {
     HBox buttonBox = new HBox();
     Button playButton = new Button("PLAY GAME");
     playButton.setId("playButton");
@@ -42,21 +56,37 @@ public class MainMenuScene extends ViewScene {
     socialHubButton.setId("socialHubButton");
     buttonBox.getChildren().addAll(playButton, buildButton, socialHubButton);
     buttonBox.setId("buttonBox");
+    return buttonBox;
+  }
 
-    playButton.setOnAction(e ->
-        manager.switchTo(new GamePlayerScene(manager, gameSelector.getValue()))
-    );
+  private ComboBox<String> setupGameSelector() {
+    ComboBox<String> gameSelector = new ComboBox<>();
+    gameSelector.getItems().addAll("DINO", "GEOMETRY DASH");
+    gameSelector.setValue("SELECT A GAME");
+    gameSelector.setId("gameSelector");
+    return gameSelector;
+  }
 
-    buildButton.setOnAction(e -> manager.switchTo(new BuilderScene(manager))
-    );
-    // Language and Theme Selections
+  private HBox setupSelectorBox() {
     HBox selectorBox = new HBox();
+    ComboBox<String> languageSelector = setupLanguageSelector();
+    ComboBox<String> themeSelector = setupThemeSelector();
+    selectorBox.getChildren().addAll(languageSelector, themeSelector);
+    selectorBox.setId("selectorBox");
+    return selectorBox;
+  }
+
+  private ComboBox<String> setupLanguageSelector() {
     ComboBox<String> languageSelector = new ComboBox<>();
     languageSelector.setValue("SELECT A LANGUAGE");
     languageSelector.setId("menuSelector");
     languageSelector.getItems().addAll("ENGLISH", "ETC.");
     languageSelector.setOnAction(e -> {
       GameConfig.setLanguage(languageSelector.getValue());});
+    return languageSelector;
+  }
+
+  private ComboBox<String> setupThemeSelector() {
     ComboBox<String> themeSelector = new ComboBox<>();
     themeSelector.setValue("SELECT A THEME");
     themeSelector.setId("menuSelector");
@@ -64,9 +94,6 @@ public class MainMenuScene extends ViewScene {
     // themeSelector.setOnAction(e -> {;}
     // GameConfig.setTheme(themeSelector.getValue());});
     // TODO: add setTheme to GameConfig
-    selectorBox.getChildren().addAll(languageSelector, themeSelector);
-    selectorBox.setId("selectorBox");
-
-    root.getChildren().addAll(title, gameSelector, buttonBox, selectorBox);
+    return themeSelector;
   }
 }
