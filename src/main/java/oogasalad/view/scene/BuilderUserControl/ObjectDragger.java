@@ -29,8 +29,12 @@ public class ObjectDragger {
   private double dragOffsetX = 0;
   private double dragOffsetY = 0;
 
+  private final double HANDLE_SIZE = 8;
+
   private double oldX = 0;
   private double oldY = 0;
+
+  private int activeHandleIndex = -1;
 
   public ObjectDragger(Canvas canvas, Builder builder, BuilderScene builderScene, GameObjectRenderer renderer) {
     this.canvas = canvas;
@@ -87,7 +91,14 @@ public class ObjectDragger {
     for (GameObject obj : objects) {
       if (!obj.hasComponent(Transform.class)) continue;
       Transform t = obj.getComponent(Transform.class);
+
       double w = obj.getComponent(Transform.class).getScaleX(), h = obj.getComponent(Transform.class).getScaleY();
+
+      double[][] handles = {
+          {t.getX(), t.getY()}, {t.getX() + w / 2, t.getY()}, {t.getX() + w, t.getY()},
+          {t.getX() + w, t.getY() + h / 2}, {t.getX() + w, t.getY() + h},
+          {t.getX() + w / 2, t.getY() + h}, {t.getX(), t.getY() + h}, {t.getX(), t.getY() + h / 2}
+      };
 
       if (oldX >= t.getX() && oldX <= t.getX() + w && oldY >= t.getY() && oldY <= t.getY() + h) {
         builder.selectExistingObject(obj);
@@ -95,6 +106,7 @@ public class ObjectDragger {
         dragOffsetY = oldY - t.getY();
         dragging = true;
         clickedObject = true;
+        builderScene.handleObjectSelectionChange();
         break;
       }
     }
