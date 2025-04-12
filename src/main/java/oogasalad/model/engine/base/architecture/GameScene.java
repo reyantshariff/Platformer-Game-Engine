@@ -121,22 +121,12 @@ public class GameScene {
    * @return a collection of all the objects in the view of the camera
    */
   public final Collection<GameObject> getAllObjectsInView() {
-    try {
-      List<GameComponent> cameraComponents = allComponents.get(ComponentTag.CAMERA);
-      if (cameraComponents.isEmpty()) {
-        return Collections.emptyList();
-      }
-      Camera camera = (Camera) allComponents.get(ComponentTag.CAMERA).get(0);
-      return camera.getObjectsInView();
-    } catch (IndexOutOfBoundsException e) {
-      LOGGER.error(GameConfig.getText(NO_CAMERA_KEY));
-      throw new IllegalArgumentException(GameConfig.getText(NO_CAMERA_KEY), e);
-    } catch (ClassCastException e) {
-      LOGGER
-          .error(MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), GAME_OBJECT, CAMERA));
-      throw new IllegalArgumentException(
-          MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), GAME_OBJECT, CAMERA), e);
+    List<GameComponent> cameraComponents = allComponents.get(ComponentTag.CAMERA);
+    if (cameraComponents.isEmpty()) {
+      return Collections.emptyList();
     }
+    Camera camera = getCamera();
+    return camera.getObjectsInView();
   }
 
   /**
