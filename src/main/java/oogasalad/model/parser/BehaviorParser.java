@@ -219,7 +219,7 @@ public class BehaviorParser implements Parser<Behavior> {
       try {
         oneConstraint.put("name", constraint.getClass().getSimpleName());
         writer.accept(oneConstraint, constraint.getParameter()); // Catching this error
-        oneConstraint.put("parameterType", constraint.getParameter().getClass().getSimpleName());
+        oneConstraint.put(PARAMETER_TYPE, constraint.getParameter().getClass().getSimpleName());
         constraintArray.add(oneConstraint);
       } catch (NullPointerException e) {
         LOGGER.error(
@@ -241,7 +241,7 @@ public class BehaviorParser implements Parser<Behavior> {
       try {
         oneAction.put("name", action.getClass().getSimpleName());
         writer.accept(oneAction, action.getParameter()); // Catching this error
-        oneAction.put("parameterType", action.getParameter().getClass().getSimpleName());
+        oneAction.put(PARAMETER_TYPE, action.getParameter().getClass().getSimpleName());
 
         actionsArray.add(oneAction);
       } catch (NullPointerException e) {
