@@ -1,13 +1,15 @@
 package oogasalad.model.service;
 
 import static oogasalad.model.config.GameConfig.LOGGER;
+import static oogasalad.model.config.ServiceConfig.documentExists;
+import static oogasalad.model.config.ServiceConfig.getDocument;
+import static oogasalad.model.config.ServiceConfig.getDocumentRef;
 
 import com.google.cloud.firestore.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import oogasalad.database.DatabaseException;
-import oogasalad.database.FirebaseManager;
 import oogasalad.model.profile.PlayerData;
 
 /**
@@ -28,7 +30,7 @@ public class PlayerService {
    * @throws DatabaseException - if the player already exists or a database error occurs
    */
   public static boolean createNewPlayer(String username) throws DatabaseException {
-    if (documentExists(username)) {
+    if (documentExists(username, COLLECTION_NAME)) {
       LOGGER.error("Player {} already exists", username);
       throw new DatabaseException("Player already exists");
     }
@@ -50,7 +52,7 @@ public class PlayerService {
    * @throws DatabaseException - if the player does not exist or a database error occurs
    */
   public static boolean deletePlayer(String username) throws DatabaseException {
-    if (!documentExists(username)) {
+    if (!documentExists(username, COLLECTION_NAME)) {
       LOGGER.warn("Player {} does not exist", username);
       throw new DatabaseException("Player does not exist");
     }
@@ -68,50 +70,12 @@ public class PlayerService {
    * @throws DatabaseException   if the player does not exist or a database error occurs
    */
   public static PlayerData getPlayerByUsername(String username) throws DatabaseException {
-    DocumentSnapshot snapshot = getDocument(username);
+    DocumentSnapshot snapshot = getDocument(username, COLLECTION_NAME);
     if (!snapshot.exists()) {
       LOGGER.warn("Player {} does not exist", username);
       throw new DatabaseException("Player does not exist");
     }
     return snapshot.toObject(PlayerData.class);
-  }
-
-  /**
-   * Returns a Firestore DocumentReference for the given document ID (in Table terms, a reference to a row)
-   */
-  private static DocumentReference getDocumentRef(String documentId) throws DatabaseException {
-    try {
-      Firestore db = FirebaseManager.getDB();
-      return db.collection(COLLECTION_NAME).document(documentId);
-    } catch (Exception e) {
-      throw new DatabaseException("Failed to get document reference", e);
-    }
-  }
-
-  /**
-   * Retrieves the DocumentSnapshot for the given document ID (the query result row)
-   *
-   * @param documentId the document ID
-   * @return the DocumentSnapshot object
-   * @throws DatabaseException if the document could not be fetched
-   */
-  private static DocumentSnapshot getDocument(String documentId) throws DatabaseException {
-    try {
-      return getDocumentRef(documentId).get().get();
-    } catch (ExecutionException | InterruptedException e) {
-      throw new DatabaseException("Failed to fetch document: " + documentId, e);
-    }
-  }
-
-  /**
-   * Checks whether a document with the given ID exists in the players collection
-   *
-   * @param documentId the document ID to check
-   * @return true if the document exists; false otherwise
-   * @throws DatabaseException if the document could not be checked
-   */
-  private static boolean documentExists(String documentId) throws DatabaseException {
-    return getDocument(documentId).exists();
   }
 
   /**
@@ -123,7 +87,7 @@ public class PlayerService {
    */
   private static void addToDatabase(String documentId, Map<String, Object> data) throws DatabaseException {
     try {
-      getDocumentRef(documentId).set(data).get();
+      getDocumentRef(documentId, COLLECTION_NAME).set(data).get();
     } catch (ExecutionException | InterruptedException e) {
       throw new DatabaseException("Failed to write document: " + documentId, e);
     }
@@ -137,7 +101,7 @@ public class PlayerService {
    */
   private static void deleteFromDatabase(String documentId) throws DatabaseException {
     try {
-      getDocumentRef(documentId).delete().get();
+      getDocumentRef(documentId, COLLECTION_NAME).delete().get();
     } catch (ExecutionException | InterruptedException e) {
       throw new DatabaseException("Failed to delete document: " + documentId, e);
     }
