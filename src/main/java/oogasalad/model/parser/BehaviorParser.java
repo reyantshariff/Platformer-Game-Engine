@@ -53,7 +53,7 @@ public class BehaviorParser implements Parser<Behavior> {
              NoSuchMethodException e) {
       LOGGER.error("Could not instantiate Behavior class: {}",
           behaviorNode.get("Name").asText());
-      throw new ParsingException("Could not instantiate Behavior class." + e);
+      throw new ParsingException("Could not instantiate Behavior class." + e, e);
     }
   }
 
@@ -108,7 +108,7 @@ public class BehaviorParser implements Parser<Behavior> {
           clazz = Class.forName(cFullClassName);
         } catch (ClassNotFoundException e) {
           LOGGER.error("Could not find constraint class {}", cFullClassName);
-          throw new ParsingException("Invalid constraint class: " + cFullClassName + e);
+          throw new ParsingException("Invalid constraint class: " + cFullClassName + e, e);
         }
 
         createAndAddConstraint(behaviorInstance, constraintNode, clazz);
