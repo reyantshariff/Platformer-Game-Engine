@@ -147,7 +147,7 @@ public class GameObjectRenderer {
           // (scale)
           transform.getScaleY() // height (scale)
       );
-    } catch (Exception e) {
+    } catch (IllegalArgumentException e) {
       logger.error("Failed to render image: " + component.getImagePath());
     }
   }
