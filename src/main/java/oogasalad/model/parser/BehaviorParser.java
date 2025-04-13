@@ -260,21 +260,27 @@ public class BehaviorParser implements Parser<Behavior> {
 
 
   //unsure how to handle this without using switch
+  private static final Map<String, Class<?>> PARAMETER_TYPE_MAP = Map.of(
+      "KeyCode", oogasalad.model.engine.base.enumerate.KeyCode.class,
+      "String", String.class,
+      "Integer", Integer.class,
+      "Double", Double.class,
+      "Void", Void.class
+  );
+
   private Class<?> getParameterType(JsonNode node, Class<?> defaultType) throws ParsingException {
     if (!node.has(PARAMETER_TYPE)) {
       return defaultType;
     }
 
     String typeName = node.get(PARAMETER_TYPE).asText();
-    return switch (typeName) {
-      case "KeyCode" -> oogasalad.model.engine.base.enumerate.KeyCode.class;
-      case "String" -> String.class;
-      case "Integer" -> Integer.class;
-      case "Double" -> Double.class;
-      case "Void" -> Void.class;
-      default -> throw new ParsingException("Unknown parameterType: " + typeName);
-    };
+    Class<?> typeClass = PARAMETER_TYPE_MAP.get(typeName);
+    if (typeClass == null) {
+      throw new ParsingException("Unknown parameterType: " + typeName);
+    }
+    return typeClass;
   }
+
 
 }
 
