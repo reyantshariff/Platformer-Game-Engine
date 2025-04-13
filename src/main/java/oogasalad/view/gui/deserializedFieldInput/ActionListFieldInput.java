@@ -52,67 +52,151 @@ public class ActionListFieldInput extends DeserializedFieldUI<List<BehaviorActio
     StringTextField paramField = new StringTextField("", "param...");
     Button removeButton = new Button("−");
 
-    HBox.setHgrow(paramField, Priority.ALWAYS);
     HBox row = new HBox(5, dropDown, paramField, removeButton);
     row.setAlignment(Pos.CENTER_LEFT);
+    HBox.setHgrow(paramField, Priority.ALWAYS);
 
-    // Init if action already exists
-    if (initialAction != null) {
-      dropDown.setValue(initialAction.getClass().getSimpleName());
-      if (getGenericTypeName(initialAction).equals("Void")) {
-        paramField.setVisible(false);
-        paramField.setManaged(false);
-      } else {
-        SerializedField<?> param = initialAction.getSerializedFields().getFirst();
-        paramField.setText(Optional.ofNullable(param.getValue()).map(Object::toString).orElse(""));
-      }
+    initializeIfActionExists(initialAction, dropDown, paramField);
+
+    setDropDownBehavior(dropDown, actionRef, paramField);
+    setParamFieldBehavior(paramField, actionRef);
+    setRemoveButtonBehavior(removeButton, row);
+
+    return row;
+  }
+
+  private void initializeIfActionExists(BehaviorAction<?> action, ClassSelectionDropDownList dropDown, StringTextField paramField) {
+    if (action == null) return;
+
+    dropDown.setValue(action.getClass().getSimpleName());
+    if (getGenericTypeName(action).equals("Void")) {
+      hide(paramField);
+    } else {
+      SerializedField<?> param = action.getSerializedFields().getFirst();
+      paramField.setText(Optional.ofNullable(param.getValue()).map(Object::toString).orElse(""));
     }
+  }
 
-    // Dropdown change: instantiate new action
+  private void setDropDownBehavior(ClassSelectionDropDownList dropDown, BehaviorAction<?>[] actionRef, StringTextField paramField) {
     dropDown.setOnAction(e -> {
       String className = dropDown.getValue();
       BehaviorAction<?> newAction = instantiateAction(className);
       actionRef[0] = newAction;
 
       SerializedField<?> param = newAction.getSerializedFields().getFirst();
-      if (getGenericTypeName(actionRef[0]).equals("Void")) {
-        paramField.setVisible(false);
-        paramField.setManaged(false);
+      if (getGenericTypeName(newAction).equals("Void")) {
+        hide(paramField);
       } else {
-        paramField.setVisible(true);
-        paramField.setManaged(true);
+        show(paramField);
         paramField.setText(Optional.ofNullable(param.getValue()).map(Object::toString).orElse(""));
       }
 
       updateFieldList();
     });
+  }
 
-    // Param field update - Using setOnAction to detect when user presses Enter
-    paramField.setOnAction(e -> {
-      Optional.ofNullable(actionRef[0]).ifPresent(action -> {
-        SerializedField<?> param = action.getSerializedFields().getFirst();
-        updateParameter(action, param, paramField.getText(), paramField);
-      });
-    });
-
-    // Alternatively, you can use a focus listener to detect when the field loses focus
+  private void setParamFieldBehavior(StringTextField paramField, BehaviorAction<?>[] actionRef) {
+    paramField.setOnAction(e -> updateParamField(actionRef, paramField));
     paramField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
       if (!isNowFocused) {
-        Optional.ofNullable(actionRef[0]).ifPresent(action -> {
-          SerializedField<?> param = action.getSerializedFields().getFirst();
-          updateParameter(action, param, paramField.getText(), paramField);
-        });
+        updateParamField(actionRef, paramField);
       }
     });
+  }
 
-    // Remove row
+  private void updateParamField(BehaviorAction<?>[] actionRef, StringTextField paramField) {
+    Optional.ofNullable(actionRef[0]).ifPresent(action -> {
+      SerializedField<?> param = action.getSerializedFields().getFirst();
+      updateParameter(action, param, paramField.getText(), paramField);
+    });
+  }
+
+  private void setRemoveButtonBehavior(Button removeButton, HBox row) {
     removeButton.setOnAction(e -> {
       listContainer.getChildren().remove(row);
       updateFieldList();
     });
-
-    return row;
   }
+
+  private void hide(StringTextField field) {
+    field.setVisible(false);
+    field.setManaged(false);
+  }
+
+  private void show(StringTextField field) {
+    field.setVisible(true);
+    field.setManaged(true);
+  }
+
+
+//  private HBox createActionRow(BehaviorAction<?> initialAction) {
+//    BehaviorAction<?>[] actionRef = new BehaviorAction[]{initialAction};
+//
+//    ClassSelectionDropDownList dropDown = new ClassSelectionDropDownList("Select Action", ACTION_PACKAGE, BehaviorAction.class);
+//    StringTextField paramField = new StringTextField("", "param...");
+//    Button removeButton = new Button("−");
+//
+//    HBox.setHgrow(paramField, Priority.ALWAYS);
+//    HBox row = new HBox(5, dropDown, paramField, removeButton);
+//    row.setAlignment(Pos.CENTER_LEFT);
+//
+//    // Init if action already exists
+//    if (initialAction != null) {
+//      dropDown.setValue(initialAction.getClass().getSimpleName());
+//      if (getGenericTypeName(initialAction).equals("Void")) {
+//        paramField.setVisible(false);
+//        paramField.setManaged(false);
+//      } else {
+//        SerializedField<?> param = initialAction.getSerializedFields().getFirst();
+//        paramField.setText(Optional.ofNullable(param.getValue()).map(Object::toString).orElse(""));
+//      }
+//    }
+//
+//    // Dropdown change: instantiate new action
+//    dropDown.setOnAction(e -> {
+//      String className = dropDown.getValue();
+//      BehaviorAction<?> newAction = instantiateAction(className);
+//      actionRef[0] = newAction;
+//
+//      SerializedField<?> param = newAction.getSerializedFields().getFirst();
+//      if (getGenericTypeName(actionRef[0]).equals("Void")) {
+//        paramField.setVisible(false);
+//        paramField.setManaged(false);
+//      } else {
+//        paramField.setVisible(true);
+//        paramField.setManaged(true);
+//        paramField.setText(Optional.ofNullable(param.getValue()).map(Object::toString).orElse(""));
+//      }
+//
+//      updateFieldList();
+//    });
+//
+//    // Param field update - Using setOnAction to detect when user presses Enter
+//    paramField.setOnAction(e -> {
+//      Optional.ofNullable(actionRef[0]).ifPresent(action -> {
+//        SerializedField<?> param = action.getSerializedFields().getFirst();
+//        updateParameter(action, param, paramField.getText(), paramField);
+//      });
+//    });
+//
+//    // Alternatively, you can use a focus listener to detect when the field loses focus
+//    paramField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+//      if (!isNowFocused) {
+//        Optional.ofNullable(actionRef[0]).ifPresent(action -> {
+//          SerializedField<?> param = action.getSerializedFields().getFirst();
+//          updateParameter(action, param, paramField.getText(), paramField);
+//        });
+//      }
+//    });
+//
+//    // Remove row
+//    removeButton.setOnAction(e -> {
+//      listContainer.getChildren().remove(row);
+//      updateFieldList();
+//    });
+//
+//    return row;
+//  }
 
   private void updateFieldList() {
     List<BehaviorAction<?>> updated = listContainer.getChildren().stream()
