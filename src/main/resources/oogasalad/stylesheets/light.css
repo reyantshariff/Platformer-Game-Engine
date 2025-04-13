@@ -1,0 +1,130 @@
+.root {
+  -fx-font-family: "Hevletica";
+  -fx-background-color: #F8F9FA; /* Light background */
+  -fx-text-fill: #212529; /* Dark text */
+  -fx-accent: #808080; /* Keep accent the same or change as needed */
+}
+
+.button {
+  -fx-font-family: "Lato";
+  -fx-border-color: #CED4DA; /* Lighter border */
+  -fx-fill-color: #E9ECEF; /* Light fill */
+  -fx-text-fill: #212529; /* Dark text */
+  -fx-padding: 10px 10px 10px 10px;
+  -fx-font-size: 20px;
+  -fx-border-radius: 20px;
+  -fx-background-radius: 20px;
+  -fx-border-width: 1px;
+  -fx-spacing: 5px;
+  -fx-background-color: linear-gradient(to bottom, #E9ECEF, #DEE2E6); /* Lighter gradient */
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.5, 2, 2); /* Subtle shadow */
+}
+
+.button:hover {
+  -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.2), 100, 0.5, 0, 0); /* Subtle inner shadow */
+}
+
+.combo-box {
+  -fx-background-color: #E9ECEF; /* Light background for the entire ComboBox */
+  -fx-border-color: #CED4DA;
+  -fx-border-radius: 5px;
+}
+
+.combo-box .list-cell {
+  -fx-text-fill: #212529; /* Dark text for selected item */
+  -fx-background-color: transparent;
+}
+
+.combo-box .list-view {
+  -fx-background-color: #F8F9FA; /* light background for dropdown */
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 8, 0.8, 0, 0);
+}
+
+.combo-box .list-view .list-cell {
+  -fx-text-fill: #212529; /* Dark text for dropdown items */
+  -fx-background-color: transparent; /* Ensure transparent background */
+}
+
+.combo-box .list-view .list-cell:hover,
+.combo-box .list-view .list-cell:focused {
+  -fx-text-fill: #FFFFFF;
+  -fx-background-color: rgba(0, 0, 0, 0.1);
+}
+
+.combo-box-base .label {
+  -fx-text-fill: #212529; /* Dark text for initially displayed value */
+}
+
+.combo-box-popup .list-view .list-cell:filled:selected {
+  -fx-background-color: #CED4DA;
+  -fx-text-fill: #212529;
+}
+
+#mainMenuTitle {
+  -fx-font-size: 150px;
+  -fx-text-fill: #212529; /* Dark text */
+}
+
+#buttonBox {
+  -fx-alignment: center;
+  -fx-spacing: 40px;
+}
+
+#gameSelector {
+  -fx-font-family: "Lato";
+  -fx-border-color: #CED4DA; /* Lighter border */
+  -fx-fill-color: #E9ECEF; /* Light fill */
+  -fx-text-fill: #212529; /* Dark text */
+  -fx-padding: 6px 6px 6px 6px;
+  -fx-font-size: 20px;
+  -fx-border-radius: 20px;
+  -fx-background-radius: 20px;
+  -fx-border-width: 1px;
+  -fx-background-color: linear-gradient(to bottom, #E9ECEF, #DEE2E6); /* Lighter gradient */
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.5, 2, 2); /* Subtle shadow */
+}
+
+#gameSelector:hover {
+  -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.2), 100, 0.5, 0, 0); /* Subtle inner shadow */
+}
+
+#selectorBox {
+  -fx-alignment: center;
+  -fx-spacing: 20px;
+}
+
+#menuSelector {
+  -fx-font-family: "Lato";
+  -fx-border-color: #CED4DA; /* Lighter border */
+  -fx-fill-color: #E9ECEF; /* Light fill */
+  -fx-text-fill: #212529; /* Dark text */
+  -fx-padding: 3px 3px 3px 3px;
+  -fx-font-size: 14px;
+  -fx-border-radius: 10px;
+  -fx-background-radius: 10px;
+  -fx-border-width: 1px;
+  -fx-background-color: linear-gradient(to bottom, #E9ECEF, #DEE2E6); /* Lighter gradient */
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.5, 2, 2); /* Subtle shadow */
+}
+
+#menuSelector:hover {
+  -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.2), 100, 0.5, 0, 0); /* Subtle inner shadow */
+}
+
+/* GAME PLAYER */
+#returnButton {
+  -fx-font-family: "Lato";
+  -fx-border-color: #CED4DA; /* Lighter border */
+  -fx-fill-color: #E9ECEF;  /* Light fill */
+  -fx-text-fill: #212529; /* Dark text */
+  -fx-font-size: 14px;
+  -fx-border-radius: 5px;
+  -fx-background-radius: 5px;
+}
+
+#gameCanvas {
+  -fx-border-color: #CED4DA; /* Lighter border */
+  -fx-border-width: 1px;
+  -fx-padding: 5px, 5px, 5px, 5px;
+}
+

@@ -2,6 +2,8 @@ package oogasalad.model.engine.base.architecture;
 
 import java.util.*;
 import oogasalad.model.engine.component.Transform;
+import oogasalad.model.engine.base.enumerate.ComponentTag;
+import java.lang.reflect.InvocationTargetException;
 
 import static oogasalad.model.config.GameConfig.LOGGER;
 
@@ -17,7 +19,6 @@ public class GameObject {
   private final UUID id;
   private final Map<Class<? extends GameComponent>, GameComponent> allComponents;
   private final List<Runnable> componentAwakeInitializer;
-  private final List<Runnable> componentStartInitializer;
 
   private GameScene parentScene;
   private String name;
@@ -34,7 +35,6 @@ public class GameObject {
     this.tag = tag;
     this.allComponents = new HashMap<>();
     this.componentAwakeInitializer = new ArrayList<>();
-    this.componentStartInitializer = new ArrayList<>();
   }
 
   /**
@@ -53,11 +53,6 @@ public class GameObject {
     componentAwakeInitializer.clear();
   }
 
-  final void startUp() {
-    componentStartInitializer.forEach(Runnable::run);
-    componentStartInitializer.clear();
-  }
-
   /**
    * Add the component to the gameObject based on its class.
    *
@@ -72,9 +67,10 @@ public class GameObject {
     try {
       T component = componentClass.getDeclaredConstructor().newInstance();
       return configureParentAndPutComponent(component);
-    } catch (Exception e) {
+    } catch (InstantiationException | IllegalAccessException |
+        NoSuchMethodException | InvocationTargetException e) {
       LOGGER.error("Could not add component {}", componentClass.getName());
-      throw new RuntimeException("Failed to add component", e);
+      throw new ComponentAddException("Failed to add component", e);
     }
   }
 
@@ -101,7 +97,6 @@ public class GameObject {
 
     if (parentScene == null) {
       componentAwakeInitializer.add(component::awake);
-      componentStartInitializer.add(component::start);
     } else {
       component.awake();
       parentScene.subscribeEvent(component::start);
@@ -127,6 +122,22 @@ public class GameObject {
   }
 
   /**
+   * Get the components based on the input component tag.
+   *
+   * @param tag the component tag specified
+   * @return the components
+   */
+  public final Collection<GameComponent> getComponents(ComponentTag tag) {
+    List<GameComponent> components = new ArrayList<>();
+    for (GameComponent component : allComponents.values()) {
+      if (component.componentTag() == tag) {
+        components.add(component);
+      }
+    }
+    return components;
+  }
+
+  /**
    * @param componentClass - Component looking for
    * @return - If current object has that component
    */
@@ -137,7 +148,8 @@ public class GameObject {
   /**
    * Returns all the components
    *
-   * @return - a Map of some extended gameComponent to the GameComponent, representing all components
+   * @return - a Map of some extended gameComponent to the GameComponent, representing all
+   *         components
    */
   public final Map<Class<? extends GameComponent>, GameComponent> getAllComponents() {
     return allComponents;
@@ -175,6 +187,7 @@ public class GameObject {
    *
    * @return new GameObject with same components but different UUID
    */
+  @Override
   public GameObject clone() {
 
     GameObject copy = new GameObject(this.getName(), this.getTag());
@@ -221,6 +234,9 @@ public class GameObject {
    * @return the parent scene of the object
    */
   public final GameScene getScene() {
+    if (parentScene == null) {
+      throw new MissingParentSceneException("GameObject does not have a parent scene");
+    }
     return parentScene;
   }
 

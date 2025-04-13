@@ -2,6 +2,7 @@ package oogasalad.view.scene;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import oogasalad.view.config.StyleConfig;
 import oogasalad.view.gui.GameObjectRenderer;
 
 /**
@@ -11,8 +12,9 @@ import oogasalad.view.gui.GameObjectRenderer;
 
 public abstract class ViewScene {
 
+  private final StyleConfig styleConfig;
   private final Scene myScene;
-  protected final GameObjectRenderer myObjectRenderer;
+  private final GameObjectRenderer myObjectRenderer;
 
   /**
    * Template for a program JavaFX window using a GameObjectRenderer
@@ -23,6 +25,9 @@ public abstract class ViewScene {
    */
   public ViewScene(Parent root, double width, double height) {
     myScene = new Scene(root, width, height);
+    styleConfig = new StyleConfig(myScene);
+
+
     myObjectRenderer = new GameObjectRenderer(myScene);
   }
 
@@ -39,6 +44,25 @@ public abstract class ViewScene {
    * Run all necessary actions when exiting a scene. Should be implemented by subclasses.
    */
   public void deactivate() {
+    // Implement if necessary
+  }
+
+  /**
+   * Return the GameObjectRenderer for this scene
+   *
+   * @return GameObjectRenderer object
+   */
+  protected GameObjectRenderer getObjectRenderer() {
+    return myObjectRenderer;
+  }
+
+  /**
+   * Return the StyleConfig for this scene
+   *
+   * @return StyleConfig object
+   */
+  protected StyleConfig getStyleConfig() {
+    return styleConfig;
   }
 
 }

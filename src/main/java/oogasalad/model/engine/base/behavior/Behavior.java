@@ -3,6 +3,7 @@ package oogasalad.model.engine.base.behavior;
 import static oogasalad.model.config.GameConfig.LOGGER;
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.reflect.InvocationTargetException;
 import oogasalad.model.engine.base.serialization.Serializable;
 import oogasalad.model.engine.base.serialization.SerializableField;
 import oogasalad.model.engine.component.BehaviorController;
@@ -37,6 +38,15 @@ public class Behavior implements Serializable {
     this.behaviorName = behaviorName;
   }
 
+
+  /**
+   * Gets the name for the behavior
+   * @return String being behavior name
+   */
+  public String getName() {
+    return behaviorName;
+  }
+
   /**
    * Get the controller of the behavior. This is used to get the controller that the behavior
    */
@@ -51,6 +61,24 @@ public class Behavior implements Serializable {
    */
   public void setBehaviorController(BehaviorController controller) {
     this.controller = controller;
+  }
+
+  /**
+   * Getter for the constraints
+   *
+   * @return - a list of the behavior constraints
+   */
+  public List<BehaviorConstraint<?>> getConstraints() {
+    return constraints;
+  }
+
+  /**
+   * Getter for the actions
+   *
+   * @return - a list of behavior actions
+   */
+  public List<BehaviorAction<?>> getActions() {
+    return actions;
   }
 
   /**
@@ -96,9 +124,10 @@ public class Behavior implements Serializable {
       }
       constraints.add(constraint);
       return constraint;
-    } catch (Exception e) {
+    } catch (NoSuchMethodException | IllegalAccessException | InstantiationException
+        | InvocationTargetException e) {
       LOGGER.error("Failed to create constraint: {}", constraintClass.getName(), e);
-      throw new RuntimeException("Failed to create constraint: " + constraintClass.getName(), e);
+      throw new ConstraintConstructionException("Failed to create constraint: " + constraintClass.getName(), e);
     }
   }
 
@@ -109,9 +138,9 @@ public class Behavior implements Serializable {
   public void addConstraint(BehaviorConstraint<?> constraintInstance) {
     try {
       constraints.add(constraintInstance);
-    } catch (Exception e) {
+    } catch (UnsupportedOperationException | IllegalArgumentException | ClassCastException e) {
       LOGGER.error("Failed to create constraint: {}", constraintInstance.getClass().getName());
-      throw new RuntimeException("Failed to create constraint: " + constraintInstance.getClass().getName());
+      throw new ConstraintConstructionException("Failed to create constraint: " + constraintInstance.getClass().getName(), e);
     }
   }
 
@@ -145,9 +174,10 @@ public class Behavior implements Serializable {
 
       actions.add(action);
       return action;
-    } catch (Exception e) {
+    } catch (NoSuchMethodException | IllegalAccessException | InstantiationException
+        | InvocationTargetException e) {
       LOGGER.error("Failed to create action: {}", actionClass.getName(), e);
-      throw new RuntimeException("Failed to create action: " + actionClass.getName(), e);
+      throw new ActionConstructionException("Failed to create action: " + actionClass.getName(), e);
     }
   }
 
@@ -161,9 +191,9 @@ public class Behavior implements Serializable {
     }
     try {
       actions.add(actionInstance);
-    } catch (Exception e) {
+    } catch (UnsupportedOperationException | IllegalArgumentException | ClassCastException e) {
       LOGGER.error("Failed to add action: {}", actionInstance.getClass().getName());
-      throw new RuntimeException("Failed to create action: " + actionInstance.getClass().getName());
+      throw new ActionConstructionException("Failed to create action: " + actionInstance.getClass().getName(), e);
     }
   }
 

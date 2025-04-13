@@ -1,9 +1,13 @@
 package oogasalad.view.scene;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import java.io.File;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -15,15 +19,18 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.scene.input.KeyCode;
 import oogasalad.model.builder.Builder;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
+import oogasalad.model.engine.component.Transform;
 import oogasalad.model.parser.PrefabLoader;
 import oogasalad.view.gui.button.BuilderSpriteOptionButton;
 import oogasalad.view.gui.dropDown.ClassSelectionDropDownMenu;
@@ -63,17 +70,25 @@ public class BuilderScene extends ViewScene {
   private GameScene gameScene;
   private Builder builder;
 
+  private final Map<KeyCode, Consumer<Double>> scrollPaneEventMap = Map.of(
+    KeyCode.LEFT, (delta) -> scrollPaneKeyPress(-delta, 0),
+    KeyCode.RIGHT, (delta) -> scrollPaneKeyPress(delta, 1),
+    KeyCode.UP, (delta) -> scrollPaneKeyPress(-delta, 0),
+    KeyCode.DOWN, (delta) -> scrollPaneKeyPress(delta, 1)
+  );
+
   /**
    * Constructor for BuilderView
-   * the height of the window
+   *
+   * @param manager the view manager which this scene will use to navigate to other screens
    */
   public BuilderScene(MainViewManager manager) {
     // Create the BorderPane as the root
     super(new BorderPane(), 1280, 720);
+    viewManager = manager;
     myWindow = (BorderPane) getScene().getRoot();
     createDinoGameTest();
     initializeUI();
-    viewManager = manager;
   }
 
   private void createDinoGameTest() {
@@ -84,17 +99,18 @@ public class BuilderScene extends ViewScene {
 
   private void initializeUI() {
     // Top bar
-//    HBox topBar = new HBox();
-//    Button loadButton = new Button("Load");
-//    Button saveButton = new Button("Save");
-//    Button playtestButton = new Button("Playtest");
-//    topBar.getChildren().addAll(loadButton, saveButton, playtestButton);
-//    myWindow.setTop(topBar);
-    Button returnButton = new Button("Main Menu");
-    returnButton.setOnAction(e -> {
-      viewManager.switchToMainMenu();
+    HBox topBar = new HBox();
+    Button mainMenuButton = new Button("Main Menu");
+    mainMenuButton.setOnAction(e -> viewManager.switchToMainMenu());
+    Button previewLevelButton = new Button("Preview Level");
+    previewLevelButton.setOnAction(e -> {
+      JsonNode gameNode = builder.saveGameAs("test.json");
+      viewManager.switchTo(
+          new LevelPreviewScene(viewManager, this, gameNode));
+
     });
-    myWindow.setTop(returnButton);
+    topBar.getChildren().addAll(mainMenuButton, previewLevelButton);
+    myWindow.setTop(topBar);
 
     // Add SplitPane for sprite button options and object control panel
     SplitPane objectControlSplitPane = new SplitPane(createAddSpriteButtonOptions(), createObjectControlPanel());
@@ -152,7 +168,7 @@ public class BuilderScene extends ViewScene {
   public void updateGamePreview() {
     GraphicsContext gc = myGameCanvas.getGraphicsContext2D();
     gc.clearRect(0, 0, myGameCanvas.getWidth(), myGameCanvas.getHeight());
-    myObjectRenderer.renderWithoutCamera(gc, builder.getCurrentScene(), builder);
+    getObjectRenderer().renderWithoutCamera(gc, builder.getCurrentScene(), builder);
   }
 
   /**
@@ -182,13 +198,51 @@ public class BuilderScene extends ViewScene {
     myGameCanvas = new Canvas(3000, 600);
     updateGamePreview(); // render GameObjects to canvas
 
-    ObjectDragger dragger = new ObjectDragger(myGameCanvas, builder, this,
-        myObjectRenderer);
-    dragger.setupListeners();
     Group canvasGroup = new Group(myGameCanvas);
-    levelViewController = new LevelViewScrollController(canvasGroup, GAME_PREVIEW_WIDTH, GAME_PREVIEW_HEIGHT);
-    levelViewScrollPane = levelViewController.scrollPane();
-    return levelViewController.scrollPane();
+
+    levelViewScrollPane = new ScrollPane(canvasGroup);
+
+    initializeScrollPane(canvasGroup);
+
+    return levelViewScrollPane;
+  }
+
+  private void initializeScrollPane(Group canvasGroup) {
+    // Canvas viewport size within builder window
+    levelViewScrollPane.setPrefViewportWidth(
+        GAME_PREVIEW_WIDTH); // TODO: replace these hardcoded values
+    levelViewScrollPane.setPrefViewportHeight(GAME_PREVIEW_HEIGHT);
+
+    // Disable vertical scroll bar
+    levelViewScrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
+
+    levelViewScrollPane.setFocusTraversable(true);
+    levelViewScrollPane.requestFocus();
+
+    // Pan the view using arrow keys
+    levelViewScrollPane.setOnKeyPressed(event -> {
+      double delta = 0.05;
+      Consumer<Double> action = scrollPaneEventMap.get(event.getCode());
+      if (action == null) {
+        logger.warn("Key event not mapped: " + event.getCode());
+      } else {
+        action.accept(delta);
+      }
+      event.consume();
+    });
+
+    // Add zoom handling
+    levelViewScrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
+      // Only process the event for zooming, ignore its vertical scrolling aspect.
+      double currentScale = getCurrentScale(canvasGroup, event.getDeltaY());
+      canvasGroup.setScaleX(currentScale);
+      canvasGroup.setScaleY(currentScale);
+
+      // Ensure the vertical scroll value remains fixed
+      levelViewScrollPane.setVvalue(0);
+
+      event.consume();  // Prevent the default vertical panning
+    });
   }
 
   private VBox createObjectControlPanel() {
@@ -203,6 +257,7 @@ public class BuilderScene extends ViewScene {
       builder.redoLastAction();
       updateGamePreview();
     });
+
 
     Button deleteButton = new Button("Delete");
     deleteButton.setOnAction(event -> {
@@ -220,6 +275,24 @@ public class BuilderScene extends ViewScene {
     return bottomPanel;
   }
 
+  private void scrollPaneKeyPress(double delta, int b) {
+    levelViewScrollPane.setHvalue(Math.max(levelViewScrollPane.getHvalue() + delta, b));
+  }
+
+  private double getCurrentScale(Group canvasGroup, double deltaY) {
+    double currentScale = canvasGroup.getScaleX(); // assuming uniform scale
+    if (deltaY < 0) {
+      if (currentScale / ZOOM_FACTOR >= MIN_ZOOM) {
+        currentScale /= ZOOM_FACTOR;
+      }
+    } else {
+      if (currentScale * ZOOM_FACTOR <= MAX_ZOOM) {
+        currentScale *= ZOOM_FACTOR;
+      }
+    }
+    return currentScale;
+  }
+
   private ScrollPane createAddSpriteButtonOptions() {
     // Define width and height of the sprite button panel
     double spriteButtonPaneWidth = getScene().getWidth() * 0.75;
@@ -229,35 +302,14 @@ public class BuilderScene extends ViewScene {
     TilePane tilePane = createSpriteButtonTilePane(spriteButtonPaneWidth);
 
     // Create a ScrollPane to hold the buttons
-    ScrollPane spriteScrollPane = createSpriteButtonScrollPane(spriteButtonPaneWidth, spriteButtonPaneHeight, tilePane);
+    ScrollPane spriteScrollPane = createSpriteButtonScrollPane(spriteButtonPaneWidth,
+        spriteButtonPaneHeight, tilePane);
 
     // Load the prefab GameObjects
-    List<GameObject> prefabObjects = PrefabLoader.loadAvailablePrefabs("dinosaur"); // TODO: remove hardcoded game type
+    List<GameObject> prefabObjects = PrefabLoader.loadAvailablePrefabs(
+        "dinosaur"); // TODO: remove hardcoded game type
     for (GameObject prefab : prefabObjects) {
-      // Assume the prefab has a SpriteRenderer component.
-      String previewImagePath = getPreviewImagePath(prefab);
-      if (previewImagePath != null) {
-        // Convert the preview image path to a JavaFX Image
-        try {
-          Image previewImage = new Image(new File(previewImagePath).toURI().toURL().toString());
-          Button newSpriteButton = new BuilderSpriteOptionButton(
-              previewImage,
-              tilePane.getPrefWidth()*0.25,
-              tilePane.getPrefHeight()*0.25,
-              prefab);
-
-          newSpriteButton.setOnAction(event -> {
-            double previewHorizontalMidpoint = levelViewScrollPane.getHvalue() * GAME_PREVIEW_WIDTH + (GAME_PREVIEW_WIDTH / 2);
-            double previewVerticalMidpoint = levelViewScrollPane.getVvalue() * GAME_PREVIEW_HEIGHT + (GAME_PREVIEW_HEIGHT / 2);
-            builder.addObject(prefab.clone(), previewHorizontalMidpoint, previewVerticalMidpoint);
-            updateGamePreview();
-          });
-
-          tilePane.getChildren().add(newSpriteButton);
-        } catch (Exception e) {
-          System.err.println("Error loading preview image from: " + previewImagePath);
-        }
-      }
+     createObject(prefab, tilePane);
     }
 
     // TODO: TilePane and its buttons should immediately be correctly sized without requiring mouse movement
@@ -266,6 +318,52 @@ public class BuilderScene extends ViewScene {
     });
 
     return spriteScrollPane;
+  }
+
+  private void alignObject(Transform t) {
+    // Calculate center based on preview or scene dimensions.
+    double previewHorizontalMidpoint =
+    levelViewScrollPane.getHvalue() * GAME_PREVIEW_WIDTH + (GAME_PREVIEW_WIDTH / 2);
+    double previewVerticalMidpoint =
+        levelViewScrollPane.getVvalue() * GAME_PREVIEW_HEIGHT + (GAME_PREVIEW_HEIGHT / 2);
+    double objectWidth = t.getScaleX();
+    double objectHeight = t.getScaleY();
+
+    // Center the object
+    t.setX(previewHorizontalMidpoint - (objectWidth / 2));
+    t.setY(previewVerticalMidpoint - (objectHeight / 2));
+  }
+
+  private void createObject(GameObject prefab, TilePane tilePane) {
+    // Assume the prefab has a SpriteRenderer component.
+    String previewImagePath = getPreviewImagePath(prefab);
+    // Convert the preview image path to a JavaFX Image
+    try {
+      Image previewImage = new Image(new File(previewImagePath).toURI().toURL().toString());
+      Button newSpriteButton = new BuilderSpriteOptionButton(
+          previewImage,
+          tilePane.getPrefWidth() * 0.25,
+          tilePane.getPrefHeight() * 0.25,
+          prefab);
+      newSpriteButton.setOnAction(event -> {
+        GameObject newObject = prefab.clone();  // or a deep copy via serialization
+
+        // Retrieve the Transform component
+        Transform t = newObject.getComponent(Transform.class);
+        if (t == null) {
+          logger.error("Error getting Transform component from prefab " + prefab.getName());
+        } else {
+          alignObject(t);
+        }
+        // Register new object to the scene
+        gameScene.registerObject(newObject);
+        // Update the game preview so the new object appears
+        updateGamePreview();
+      });
+      tilePane.getChildren().add(newSpriteButton);
+    } catch (IllegalArgumentException | MalformedURLException e) {
+      logger.error("Error loading preview image from: " + previewImagePath);
+    }
   }
 
   private ScrollPane createSpriteButtonScrollPane(double width, double height, Pane contents) {
@@ -283,8 +381,8 @@ public class BuilderScene extends ViewScene {
     // Create a TilePane that will automatically arrange the sprite buttons in a tile/grid layout
     TilePane tilePane = new TilePane();
     tilePane.setPrefColumns(2); // Desired number of columns
-    tilePane.setHgap(getScene().getWidth()*0.02);
-    tilePane.setVgap(getScene().getHeight()*0.02);
+    tilePane.setHgap(getScene().getWidth() * 0.02);
+    tilePane.setVgap(getScene().getHeight() * 0.02);
     // Define TilePane size
     tilePane.setPrefWidth(width);
     tilePane.setMinWidth(width);
@@ -293,15 +391,13 @@ public class BuilderScene extends ViewScene {
   }
 
   private String getPreviewImagePath(GameObject prefab) {
-    try {
-      var spriteRenderer = prefab.getComponent(oogasalad.model.engine.component.SpriteRenderer.class);
-      String imagePath = spriteRenderer.getImagePath();
-      if (imagePath != null && !imagePath.isEmpty()) {
-        return "src/main/resources/" + imagePath;
-      }
-    } catch (Exception e) {
-      System.err.println("Error getting preview image from prefab " + prefab.getName());
+    var spriteRenderer = prefab.getComponent(
+        oogasalad.model.engine.component.SpriteRenderer.class);
+    String imagePath = spriteRenderer.getImagePath();
+    if (imagePath != null && !imagePath.isEmpty()) {
+      return "src/main/resources/" + imagePath;
     }
+    logger.error("Error getting preview image from prefab " + prefab.getName());
     return null;
   }
 

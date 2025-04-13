@@ -34,6 +34,8 @@ public class GameObjectRenderer {
   private double relativeX;
   private double relativeY;
 
+  private static final String UNUSED = "unused";
+
   /**
    * Constructor for GameObjectRenderer
    *
@@ -50,14 +52,18 @@ public class GameObjectRenderer {
    * @param scene The game scene to render.
    */
   public void renderWithCamera(GraphicsContext gc, GameScene scene) {
-    try {
-      Camera camera = scene.getCamera();
-      Transform cameraTransform = camera.getComponent(Transform.class);
-      relativeX = cameraTransform.getX();
-      relativeY = cameraTransform.getY();
-    } catch (NullPointerException | IllegalArgumentException e) {
-      logger.warn("No camera found in scene");
+    Camera camera = scene.getCamera();
+    if (camera == null) {
+      logger.error("Camera not found in scene");
+      return;
     }
+    Transform cameraTransform = camera.getComponent(Transform.class);
+    if (cameraTransform == null) {
+      logger.error("Camera transform not found");
+      return;
+    }
+    relativeX = cameraTransform.getX();
+    relativeY = cameraTransform.getY();
 
     renderWithoutCamera(gc, scene);
   }
@@ -82,10 +88,9 @@ public class GameObjectRenderer {
     gc.clearRect(windowX, windowY, windowWidth, windowHeight);
 
     Collection<GameObject> objects;
-    try {
-      scene.getCamera(); // get only objects in view of camera if camera exists
+    if (scene.getCamera() != null) {
       objects = scene.getAllObjectsInView();
-    } catch (NullPointerException | IllegalArgumentException e) {
+    } else {
       objects = scene.getAllObjects(); // if no camera component in scene, get all objects in scene
     }
 
@@ -130,6 +135,7 @@ public class GameObjectRenderer {
   /**
    * renders a javaFX Text object
    */
+  @SuppressWarnings(UNUSED)
   private void renderTextComponent(Text component, GraphicsContext gc) {
     javafx.scene.text.Text text = new javafx.scene.text.Text(component.getText());
     applyStyleSheet(text, String.valueOf(component.getStyleClass()));
@@ -140,6 +146,7 @@ public class GameObjectRenderer {
   /**
    * renders a javaFX Image object
    */
+  @SuppressWarnings(UNUSED)
   private void renderSpriteRenderer(SpriteRenderer component, GraphicsContext gc) {
     GameObject obj = component.getParent();
     Transform transform = obj.getComponent(Transform.class);
@@ -151,7 +158,7 @@ public class GameObjectRenderer {
           // (scale)
           transform.getScaleY() // height (scale)
       );
-    } catch (Exception e) {
+    } catch (IllegalArgumentException e) {
       logger.error("Failed to render image: " + component.getImagePath());
     }
   }
@@ -159,6 +166,7 @@ public class GameObjectRenderer {
   /**
    * renders a javafx Rectangle object
    */
+  @SuppressWarnings(UNUSED)
   private void renderTransform(Transform component, GraphicsContext gc) {
     gc.fillRect(component.getX() - relativeX, component.getY() - relativeY, component.getScaleX(),
         component.getScaleY());

@@ -19,7 +19,9 @@ public abstract class BehaviorAction<T> implements Serializable {
   private Behavior behavior;
 
   /**
-   * Set the behavior of the constraint. This is used to set the behavior that the constraint belongs to
+   * Set the behavior of the constraint. This is used to set the behavior that the constraint
+   * belongs to
+   * 
    * @param behavior the behavior to set
    */
   public final void setBehavior(Behavior behavior) {
@@ -61,8 +63,9 @@ public abstract class BehaviorAction<T> implements Serializable {
   }
 
   /**
-   * The type of the constraint. This is used to classify the constraints being checked.
-   * Note: This method MUST be override.
+   * The type of the constraint. This is used to classify the constraints being checked. Note: This
+   * method MUST be override.
+   * 
    * @return the type of the constraint
    */
   public abstract ComponentTag ActionType();
@@ -73,7 +76,7 @@ public abstract class BehaviorAction<T> implements Serializable {
    * @param parameter the parameter for the action
    */
   @SuppressWarnings("unchecked")
-  final void onPerform(Object parameter) {
+  public final void onPerform(Object parameter) {
     perform((T) parameter);
   }
 
@@ -91,6 +94,12 @@ public abstract class BehaviorAction<T> implements Serializable {
     // NOTE: Override this method if needed
   }
 
+  /**
+   * Returns whether the action is equal to another action
+   * 
+   * @param other the other action to compare to
+   * @return true if the actions are equal, false otherwise
+   */
   public boolean equals(BehaviorAction<?> other) {
     return this.getClass().equals(other.getClass());
   }

@@ -12,18 +12,21 @@ import oogasalad.model.engine.base.serialization.SerializableField;
  */
 
 public class Follower extends GameComponent {
+
+  private static final String FOLLOW_OBJECT_MISSING_TRANSFORM =
+      "Follow Object Missing Transform Component";
+
   @Override
   public ComponentTag componentTag() {
     return ComponentTag.TRANSFORM;
   }
 
   @SerializableField
-  private GameObject followObject;
-  @SerializableField
+  private String followObjectName;
   private double offsetX;
-  @SerializableField
   private double offsetY;
   private Transform myTransform;
+  private GameObject followObject;
 
   /**
    * Constructor for Follower. Sets default values for the offset and the follow object.
@@ -38,26 +41,45 @@ public class Follower extends GameComponent {
   @Override
   public void awake() {
     myTransform = getParent().getComponent(Transform.class);
+    followObject = getParent().getScene().getObject(followObjectName);
+    Transform attachTransform = followObject.getComponent(Transform.class);
+    offsetX = myTransform.getX() - attachTransform.getX();
+    offsetY = myTransform.getY() - attachTransform.getY();
   }
 
   @Override
   public void update(double deltaTime) {
-    try {
-      Transform targetTransform = followObject.getComponent(Transform.class);
-      myTransform.setX(targetTransform.getX() + offsetX);
-      myTransform.setY(targetTransform.getY() + offsetY);
-    } catch (NullPointerException e) {
-      LOGGER.error("Missing Transform Component");
-      throw new RuntimeException("Missing Transform Component", e);
+    Transform targetTransform = followObject.getComponent(Transform.class);
+    if (targetTransform == null) {
+      LOGGER.error(FOLLOW_OBJECT_MISSING_TRANSFORM);
+      return;
     }
+    myTransform.setX(targetTransform.getX() + offsetX);
+    myTransform.setY(targetTransform.getY() + offsetY);
   }
 
   /**
    * Sets the object to follow.
    *
    * @param followObject the object to follow
+   * 
+   * @apiNote Use this method if the awake method for this component has already been called.
    */
   public void setFollowObject(GameObject followObject) {
+    if(followObject == null) {
+      LOGGER.error("Follow Object is null");
+      throw new IllegalArgumentException("Follow Object is null");
+    }
+    Transform attachTransform;
+    try {
+      attachTransform = followObject.getComponent(Transform.class);
+    } catch (IllegalArgumentException e) {
+      LOGGER.error(FOLLOW_OBJECT_MISSING_TRANSFORM);
+      throw new IllegalArgumentException(FOLLOW_OBJECT_MISSING_TRANSFORM, e);
+    }
+    myTransform = getParent().getComponent(Transform.class);
+    offsetX = myTransform.getX() - attachTransform.getX();
+    offsetY = myTransform.getY() - attachTransform.getY();
     this.followObject = followObject;
   }
 
@@ -97,5 +119,25 @@ public class Follower extends GameComponent {
    */
   public double getOffsetY() {
     return offsetY;
+  }
+
+  /**
+   * Sets the name of the object to follow.
+   *
+   * @param followObjectName the name of the object to follow
+   * 
+   * @apiNote Use this method if the awake method for this component has not been called yet.
+   */
+  public void setFollowObjectName(String followObjectName) {
+    this.followObjectName = followObjectName;
+  }
+
+  /**
+   * Gets the name of the object to follow.
+   *
+   * @return the name of the object to follow
+   */
+  public String getFollowObjectName() {
+    return followObjectName;
   }
 }

@@ -134,9 +134,4 @@ private GameObject object;
     assertEquals(newY, object.getComponent(Transform.class).getY());
   }
 
-
-
-
-
-
 }

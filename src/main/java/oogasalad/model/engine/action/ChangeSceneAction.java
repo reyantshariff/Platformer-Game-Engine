@@ -10,6 +10,7 @@ import oogasalad.view.scene.MainViewManager;
  * @author Hsuan-Kai Liao
  */
 public class ChangeSceneAction extends BehaviorAction<String> {
+  private static final String NEXT_LEVEL = "nextLevel";
   @Override
   public ComponentTag ActionType() {
     return ComponentTag.TRANSFORM;
@@ -24,7 +25,10 @@ public class ChangeSceneAction extends BehaviorAction<String> {
 
   @Override
   protected void perform(String parameter) {
-    mainViewManager.switchToMainMenu();
-    getBehavior().getController().getParent().getScene().getGame().changeScene(parameter);
+    if (NEXT_LEVEL.equals(parameter)) {
+      getBehavior().getController().getParent().getScene().getGame().goToNextLevel();
+    } else {
+      mainViewManager.switchTo(parameter);
+    }
   }
 }

@@ -66,7 +66,7 @@ public abstract class BehaviorConstraint<T> implements Serializable {
    * @return true if the constraint is met, false otherwise
    */
   @SuppressWarnings("unchecked")
-  final boolean onCheck(Object parameter) {
+  public final boolean onCheck(Object parameter) {
     return check((T) parameter);
   }
 
@@ -84,6 +84,13 @@ public abstract class BehaviorConstraint<T> implements Serializable {
     // NOTE: This method should be overriden if needed
   }
 
+  /**
+   * Check if two BehaviorConstraint objects are equal
+   * 
+   * @param other the other BehaviorConstraint object to compare against
+   * 
+   * @return true if the two BehaviorConstraint objects are equal, false otherwise
+   */
   public boolean equals(BehaviorConstraint<?> other) {
     return this.getClass().equals(other.getClass());
   }

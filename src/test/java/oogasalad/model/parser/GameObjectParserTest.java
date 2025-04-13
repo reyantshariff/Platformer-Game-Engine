@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import oogasalad.model.engine.base.architecture.GameObject;
+import oogasalad.model.engine.component.BehaviorController;
+import oogasalad.model.engine.component.Transform;
 import oogasalad.model.engine.prefab.dinosaur.Bird;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,11 +71,13 @@ class GameObjectParserTest {
     JsonNode node = myMapper.readTree(goodJsonString);
     GameObject gameObject = myGameObjectParser.parse(node);
     assertNotNull(gameObject);
+    assertTrue(gameObject.hasComponent(Transform.class));
+    assertTrue(gameObject.hasComponent(BehaviorController.class));
     assertEquals("ExampleMenuBackground", gameObject.getName());
   }
 
   @Test
-  void parse_invalidJson_throwsError() throws JsonProcessingException, ParsingException {
+  void parse_invalidJson_throwsError() throws JsonProcessingException {
 // The bad json string has no name, should return error
     String badJsonString =
         """
@@ -117,7 +121,7 @@ class GameObjectParserTest {
   }
 
   @Test
-  void parse_invalidJsonNoTransform_throwsError() throws JsonProcessingException, ParsingException {
+  void parse_invalidJsonNoTransform_throwsError() throws JsonProcessingException {
     String noTransformJsonString =
         """
             {
@@ -162,7 +166,7 @@ class GameObjectParserTest {
   @Test
   void write_validJson_writesGameObject() throws IOException {
     Bird bird = new Bird("Bird1");
-    JsonNode node = null;
+    JsonNode node;
     try {
       node = myGameObjectParser.write(bird);
     } catch (IOException e) {

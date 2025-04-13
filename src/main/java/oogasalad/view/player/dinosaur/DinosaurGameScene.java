@@ -2,7 +2,6 @@ package oogasalad.view.player.dinosaur;
 
 import java.util.List;
 import java.util.Random;
-import javafx.scene.Scene;
 import oogasalad.model.ResourceBundles;
 import oogasalad.model.engine.action.ChangeSceneAction;
 import oogasalad.model.engine.action.CrouchAction;
@@ -37,7 +36,7 @@ public class DinosaurGameScene extends GameScene {
 
   private static final String DINOSAUR_SCENE_BUNDLE = "oogasalad.dinosaur.dinosaur";
 
-  private Scene scene;
+  //private Scene scene;
 
   /**
    * Constructor for DinosaurGameScene

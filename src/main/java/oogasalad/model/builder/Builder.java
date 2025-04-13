@@ -1,5 +1,7 @@
 package oogasalad.model.builder;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import java.io.IOException;
 import java.util.Deque;
 import java.util.ArrayDeque;
 import java.util.UUID;
@@ -12,6 +14,8 @@ import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.engine.component.Transform;
 import oogasalad.view.player.dinosaur.DinosaurGameScene;
+import oogasalad.model.parser.JsonParser;
+import oogasalad.model.parser.ParsingException;
 
 /**
  * Builder API that manages drag/drop and delete functions of the Editor UI
@@ -148,21 +152,21 @@ public class Builder {
   }
 
 
-  private GameObject findObject(UUID id)
-  {
-    for (GameObject object : game.getCurrentScene().getAllObjects())
-    {
-      if (object.getId() == id)
-      {
-        return object;
-      }
-//      if (object.getComponent(Transform.class).getX() == x && object.getComponent(Transform.class).getY() == y)
-//      {
-//        return object;
-//      }
-    }
-    return null;
-  }
+//   private GameObject findObject(UUID id)
+//   {
+//     for (GameObject object : game.getCurrentScene().getAllObjects())
+//     {
+//       if (object.getId() == id)
+//       {
+//         return object;
+//       }
+// //      if (object.getComponent(Transform.class).getX() == x && object.getComponent(Transform.class).getY() == y)
+// //      {
+// //        return object;
+// //      }
+//     }
+//     return null;
+//   }
 
   /**
    *  Stops the preview if the user lifts mouse and cursor is not on the editor screen.
@@ -186,10 +190,9 @@ public class Builder {
 
   /**
    * Tracks coordinates of the object as its dragged
-   * @x tracks the x position of the object
-   * @y tracks the y position of the object
+   * @param x tracks the x position of the object
+   * @param y tracks the y position of the object
    * */
-
   public void moveObject(double x, double y)
   {
     if (selectedObject != null && selectedObject.hasComponent(Transform.class))
@@ -264,5 +267,30 @@ public class Builder {
   public GameScene getCurrentScene()
   {
     return currentScene;
+  }
+
+  /**
+   * Save the currently loaded Game object as a JSON file using the JsonParser
+   * @param filepath location of JSON file
+   */
+  public JsonNode saveGameAs(String filepath) {
+    JsonParser parser = new JsonParser(filepath);
+    try {
+      return parser.write(game);
+    } catch (IOException e) {
+      throw new SaveGameException("Error saving game to JSON: " + e.getMessage(), e);
+    }
+  }
+
+  /**
+   * Load a new Game into the Builder via a JSON file node
+   */
+  public void loadGame(JsonNode node) {
+    JsonParser parser = new JsonParser(filepath);
+    try {
+      game = parser.parse(node);
+    } catch (ParsingException e) {
+      throw new loadGameException("Error loading game from JSON: " + e.getMessage(), e);
+    }
   }
 }

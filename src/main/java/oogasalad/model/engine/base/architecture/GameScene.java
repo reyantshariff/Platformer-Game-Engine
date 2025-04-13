@@ -19,12 +19,15 @@ public class GameScene {
   private final Map<UUID, GameObject> allObjects;
   private final Map<ComponentTag, List<GameComponent>> allComponents;
   private final Queue<Runnable> subscribedEvents;
+  private Set<GameObject> awakeList;
 
   private String name;
   private Game game;
 
   private static final String NO_CAMERA_KEY = "noCamera";
   private static final String CAST_FAILED_KEY = "castFailed";
+  private static final String GAME_OBJECT = "GameObject";
+  private static final String CAMERA = "Camera";
 
   /**
    * Constructor for GameScene
@@ -40,6 +43,7 @@ public class GameScene {
       allComponents.put(tag, new ArrayList<>());
     }
     this.subscribedEvents = new LinkedList<>();
+    this.awakeList = new HashSet<>();
   }
 
   /**
@@ -117,18 +121,12 @@ public class GameScene {
    * @return a collection of all the objects in the view of the camera
    */
   public final Collection<GameObject> getAllObjectsInView() {
-    try {
-      Camera camera = (Camera) allComponents.get(ComponentTag.CAMERA).get(0);
-      return camera.getObjectsInView();
-    } catch (IndexOutOfBoundsException e) {
-      LOGGER.error(GameConfig.getText(NO_CAMERA_KEY));
-      throw new IllegalArgumentException(GameConfig.getText(NO_CAMERA_KEY));
-    } catch (ClassCastException e) {
-      LOGGER
-          .error(MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), "GameObject", "Camera"));
-      throw new IllegalArgumentException(
-          MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), "GameObject", "Camera"));
+    List<GameComponent> cameraComponents = allComponents.get(ComponentTag.CAMERA);
+    if (cameraComponents.isEmpty()) {
+      return Collections.emptyList();
     }
+    Camera camera = getCamera();
+    return camera.getObjectsInView();
   }
 
   /**
@@ -141,12 +139,12 @@ public class GameScene {
       return (Camera) allComponents.get(ComponentTag.CAMERA).get(0);
     } catch (IndexOutOfBoundsException e) {
       LOGGER.error(GameConfig.getText(NO_CAMERA_KEY));
-      throw new IllegalArgumentException(GameConfig.getText(NO_CAMERA_KEY));
+      throw new IllegalArgumentException(GameConfig.getText(NO_CAMERA_KEY), e);
     } catch (ClassCastException e) {
       LOGGER
-          .error(MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), "GameObject", "Camera"));
+          .error(MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), GAME_OBJECT, CAMERA));
       throw new IllegalArgumentException(
-          MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), "GameObject", "Camera"));
+          MessageFormat.format(GameConfig.getText(CAST_FAILED_KEY), GAME_OBJECT, CAMERA), e);
     }
   }
 
@@ -175,24 +173,52 @@ public class GameScene {
    * 
    * @param deltaTime the elapsed time between two frames
    */
-  final void step(double deltaTime) {
-    // Update with the following sequence
-    // 1. Handle all the subscribed events
-    while (!subscribedEvents.isEmpty()) {
-      subscribedEvents.poll().run();
+  public final void step(double deltaTime) {
+
+    if (hasCamera()) {
+      wakeObject(getCamera().getParent());
     }
 
-    // 3. Update the components based on the order
-    for (ComponentTag order : ComponentTag.values()) {
-      if (order == ComponentTag.NONE)
-        continue;
-      for (GameComponent component : allComponents.get(order)) {
-        component.update(deltaTime);
-      }
-    }
+    runSubscribedEvents();
+
+    // 2. Get all objects in view
+    Collection<GameObject> objectsInView = getAllObjectsInView();
+
+    // 3. Update the components of objects in view based on the order
+    updateComponents(objectsInView, deltaTime);
 
     // 4. Update the scene actions
     // TODO: Handle Change Scene Action Here
+  }
+
+  private void runSubscribedEvents() {
+    while (!subscribedEvents.isEmpty()) {
+      subscribedEvents.poll().run();
+    }
+  }
+
+  private void updateComponents(Collection<GameObject> objectsInView, double deltaTime) {
+    for (ComponentTag order : ComponentTag.values()) {
+      if (order == ComponentTag.NONE)
+        continue;
+        updateObjects(order, objectsInView, deltaTime);
+    }
+  }
+
+  private void updateObjects(ComponentTag order, Collection<GameObject> objectsInView, double deltaTime) {
+    for (GameObject object : objectsInView) {
+      wakeObject(object);
+      for (GameComponent component : object.getComponents(order)) {
+        component.update(deltaTime);
+      }
+    }
+  }
+
+  private void wakeObject(GameObject object) {
+    if (awakeList.contains(object)) {
+      object.wakeUp();
+      awakeList.remove(object);
+    }
   }
 
   /**
@@ -234,13 +260,14 @@ public class GameScene {
           MessageFormat.format(GameConfig.getText("duplicateGameObject"), gameObject.getName()));
     }
 
+    gameObject.setScene(this);
+
     // Register components
     for (GameComponent component : gameObject.getAllComponents().values()) {
       registerComponent(component);
     }
 
-    gameObject.wakeUp();
-    gameObject.setScene(this);
+    awakeList.add(gameObject);
     allObjects.put(gameObject.getId(), gameObject);
   }
 
@@ -277,12 +304,12 @@ public class GameScene {
    */
   public void onActivated() {
     // NOTE: This method should be overriden if needed.
-  };
+  }
 
   /**
    * Event that will be called when the gameScene is set to inactive.
    */
   public void onDeactivated() {
     // NOTE: This method should be overriden if needed.
-  };
+  }
 }
