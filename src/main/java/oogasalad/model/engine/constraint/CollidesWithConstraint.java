@@ -14,6 +14,7 @@ public class CollidesWithConstraint extends BehaviorConstraint<String> {
 
   @Override
   protected void awake() {
+    System.out.println("CollidesWithConstraint awake");
     collider = getComponent(Collider.class);
   }
 

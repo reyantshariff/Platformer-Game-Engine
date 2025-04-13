@@ -24,10 +24,9 @@ import oogasalad.model.builder.Builder;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
-import oogasalad.model.engine.component.Transform;
 import oogasalad.model.parser.PrefabLoader;
 import oogasalad.view.gui.button.BuilderSpriteOptionButton;
-import oogasalad.view.gui.dropDown.ClassSelectionDropDown;
+import oogasalad.view.gui.dropDown.ClassSelectionDropDownMenu;
 import oogasalad.view.gui.panel.ComponentPanel;
 import oogasalad.view.player.dinosaur.DinosaurGameScene;
 import oogasalad.view.scene.BuilderUserControl.LevelViewScrollController;
@@ -118,7 +117,8 @@ public class BuilderScene extends ViewScene {
 
   private ScrollPane createComponentPanel() {
     myComponentContainer = new VBox(10);
-    ClassSelectionDropDown addComponentMenuButton = new ClassSelectionDropDown("Add A Component", COMPONENT_PACKAGE_NAME, GameComponent.class, className -> {
+    ClassSelectionDropDownMenu addComponentMenuButton = new ClassSelectionDropDownMenu("Add A Component", COMPONENT_PACKAGE_NAME, GameComponent.class);
+    addComponentMenuButton.setOnClassSelected(className -> {
       try {
         Class<? extends GameComponent> componentClass = (Class<? extends GameComponent>) Class.forName(COMPONENT_PACKAGE_NAME + "." + className);
         GameObject selectedObject = builder.getSelectedObject();
@@ -165,7 +165,12 @@ public class BuilderScene extends ViewScene {
   private void componentSelectionUpdate() {
     myComponentContainer.getChildren().clear();
 
-    List<GameComponent> components = new ArrayList<>(builder.getSelectedObject().getAllComponents().values());
+    GameObject selectedObject = builder.getSelectedObject();
+    if (selectedObject == null) {
+      return;
+    }
+
+    List<GameComponent> components = new ArrayList<>(selectedObject.getAllComponents().values());
     components.sort(Comparator.comparing(c -> c.componentTag().ordinal()));
     for (GameComponent component : components) {
       myComponentContainer.getChildren().add(new ComponentPanel(component));
@@ -262,7 +267,6 @@ public class BuilderScene extends ViewScene {
 
     return spriteScrollPane;
   }
-
 
   private ScrollPane createSpriteButtonScrollPane(double width, double height, Pane contents) {
     ScrollPane spriteScrollPane = new ScrollPane(contents);
