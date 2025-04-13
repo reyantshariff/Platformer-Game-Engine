@@ -1,7 +1,9 @@
-package oogasalad.view.scene;
+package oogasalad.view.scene.player;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import oogasalad.view.scene.MainViewManager;
+import oogasalad.view.scene.ViewScene;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import javafx.geometry.Pos;
@@ -11,13 +13,13 @@ import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.parser.JsonParser;
 import oogasalad.model.parser.Parser;
 import oogasalad.model.parser.ParsingException;
-import oogasalad.view.gui.Gui;
+import oogasalad.view.player.GameRunner;
 
 /**
  * Displays the game using a GUI canvas inside a JavaFX scene
  */
 public class GamePlayerScene extends ViewScene {
-  private final Gui gui;
+  private final GameRunner gameRunner;
   private static final String JSON_PATH_PREFIX = "data/GameJsons/";
   private static final Logger logger = LogManager.getLogger(GamePlayerScene.class);
 
@@ -52,7 +54,7 @@ public class GamePlayerScene extends ViewScene {
 
     game.goToScene(game.getLevelOrder().getFirst());
 
-    gui = new Gui(game);
+    gameRunner = new GameRunner(game);
 
     Button returnButton = new Button("MAIN MENU");
     returnButton.setId("returnButton");
@@ -62,8 +64,8 @@ public class GamePlayerScene extends ViewScene {
     });
     StackPane.setAlignment(returnButton, Pos.TOP_RIGHT);
 
-    root.getChildren().addAll(gui.getCanvas(), returnButton);
-    gui.getCanvas().requestFocus();
+    root.getChildren().addAll(gameRunner.getCanvas(), returnButton);
+    gameRunner.getCanvas().requestFocus();
   }
 
   /**
@@ -71,6 +73,6 @@ public class GamePlayerScene extends ViewScene {
    */
   @Override
   public void deactivate() {
-    gui.stop();
+    gameRunner.stop();
   }
 }

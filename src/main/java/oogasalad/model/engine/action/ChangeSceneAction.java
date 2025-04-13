@@ -12,7 +12,7 @@ import oogasalad.view.scene.MainViewManager;
 public class ChangeSceneAction extends BehaviorAction<String> {
   private static final String NEXT_LEVEL = "nextLevel";
   @Override
-  public ComponentTag ActionType() {
+  public ComponentTag actionType() {
     return ComponentTag.TRANSFORM;
   }
 

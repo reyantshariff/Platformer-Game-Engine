@@ -1,4 +1,4 @@
-package oogasalad.view.scene;
+package oogasalad.view.scene.menu;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -8,6 +8,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import oogasalad.model.config.GameConfig;
 import oogasalad.view.config.StyleConfig;
+import oogasalad.view.scene.MainViewManager;
+import oogasalad.view.scene.ViewScene;
+import oogasalad.view.scene.builder.BuilderScene;
+import oogasalad.view.scene.player.GamePlayerScene;
 
 /**
  * Main menu view with play and builder options

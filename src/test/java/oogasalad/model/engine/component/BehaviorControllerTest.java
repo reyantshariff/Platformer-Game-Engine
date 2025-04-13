@@ -30,7 +30,7 @@ class BehaviorControllerTest {
      * @return the type of the constraint
      */
     @Override
-    public ComponentTag ConstraintType() {
+    public ComponentTag constraintType() {
       return null;
     }
 
@@ -60,7 +60,7 @@ class BehaviorControllerTest {
      * @return the type of the constraint
      */
     @Override
-    public ComponentTag ActionType() {
+    public ComponentTag actionType() {
       return null;
     }
 

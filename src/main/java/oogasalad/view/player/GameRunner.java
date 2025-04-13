@@ -1,4 +1,4 @@
-package oogasalad.view.gui;
+package oogasalad.view.player;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -9,6 +9,7 @@ import oogasalad.model.ResourceBundles;
 import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.engine.base.enumerate.KeyCode;
+import oogasalad.view.renderer.GameSceneRenderer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,15 +21,15 @@ import org.apache.logging.log4j.Logger;
  *
  * @author Jack F. Regan and Logan Dracos
  */
-public class Gui {
+public class GameRunner {
 
-  private static final Logger logger = LogManager.getLogger(Gui.class);
+  private static final Logger logger = LogManager.getLogger(GameRunner.class);
   private static final String GUI_GENERAL_PATH = "oogasalad.gui.general";
 
   private final Game game;
   private final Canvas canvas;
   private final GraphicsContext gc;
-  private final GameObjectRenderer objectRenderer;
+  private final GameSceneRenderer objectRenderer;
   private Timeline gameLoop;
 
   /**
@@ -36,7 +37,7 @@ public class Gui {
    *
    * @param game The game instance to be displayed.
    */
-  public Gui(Game game) {
+  public GameRunner(Game game) {
     this.game = game;
     ResourceBundles.loadBundle(GUI_GENERAL_PATH);
 
@@ -51,7 +52,7 @@ public class Gui {
 
     canvas.requestFocus();
     gc = canvas.getGraphicsContext2D();
-    objectRenderer = new GameObjectRenderer(null);
+    objectRenderer = new GameSceneRenderer(null);
 
     startGameLoop();
   }

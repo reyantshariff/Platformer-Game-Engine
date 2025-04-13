@@ -28,7 +28,7 @@ public class CrouchAction extends BehaviorAction<Void> {
    * @return the type of the constraint
    */
   @Override
-  public ComponentTag ActionType() {
+  public ComponentTag actionType() {
     return ComponentTag.INPUT;
   }
 

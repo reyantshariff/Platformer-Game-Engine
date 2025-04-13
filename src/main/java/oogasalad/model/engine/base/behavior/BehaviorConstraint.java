@@ -58,7 +58,7 @@ public abstract class BehaviorConstraint<T> implements Serializable {
    * Note: This method MUST be override.
    * @return the type of the constraint
    */
-  public abstract ComponentTag ConstraintType();
+  public abstract ComponentTag constraintType();
 
   /**
    * Check if the constraint is met.

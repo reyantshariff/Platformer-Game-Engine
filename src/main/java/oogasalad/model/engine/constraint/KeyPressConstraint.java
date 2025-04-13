@@ -13,7 +13,7 @@ import oogasalad.model.engine.component.InputHandler;
  */
 public class KeyPressConstraint extends BehaviorConstraint<KeyCode> {
   @Override
-  public ComponentTag ConstraintType() {
+  public ComponentTag constraintType() {
     return ComponentTag.INPUT;
   }
 

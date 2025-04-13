@@ -1,4 +1,4 @@
-package oogasalad.view.scene;
+package oogasalad.view.scene.builder;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,7 +38,9 @@ import oogasalad.model.parser.PrefabLoader;
 import oogasalad.view.gui.button.BuilderSpriteOptionButton;
 import oogasalad.view.gui.dropDown.ClassSelectionDropDownMenu;
 import oogasalad.view.gui.panel.ComponentPanel;
-import oogasalad.view.scene.BuilderUserControl.ObjectDragger;
+import oogasalad.view.scene.MainViewManager;
+import oogasalad.view.scene.ViewScene;
+import oogasalad.view.scene.builder.builderControl.ObjectDragger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

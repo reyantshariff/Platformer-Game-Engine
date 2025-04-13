@@ -1,4 +1,4 @@
-package oogasalad.view.scene.BuilderUserControl;
+package oogasalad.view.scene.builder.builderControl;
 
 import javafx.scene.input.MouseEvent;
 
