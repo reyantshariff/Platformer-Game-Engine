@@ -91,4 +91,17 @@ public enum KeyCode {
     }
     return null;
   }
+
+  /**
+   * Finds a KeyCode by its string representation.
+   * @param keyCode The string representation of the key code.
+   * @return The matching KeyCode, or null if not found.
+   */
+  public static KeyCode fromString(String keyCode) {
+    try {
+      return KeyCode.valueOf(keyCode);
+    } catch (IllegalArgumentException e) {
+      return null;
+    }
+  }
 }
