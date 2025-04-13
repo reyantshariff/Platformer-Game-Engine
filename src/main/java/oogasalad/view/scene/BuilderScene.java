@@ -20,6 +20,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -40,6 +41,7 @@ import oogasalad.view.gui.button.BuilderSpriteOptionButton;
 import oogasalad.view.gui.dropDown.ClassSelectionDropDownMenu;
 import oogasalad.view.gui.panel.ComponentPanel;
 import oogasalad.view.scene.BuilderUserControl.LevelViewScrollController;
+import oogasalad.view.scene.BuilderUserControl.ObjectDragger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -217,6 +219,8 @@ public class BuilderScene extends ViewScene {
     Group canvasGroup = new Group(myGameCanvas);
 
     levelViewScrollPane = new ScrollPane(canvasGroup);
+    ObjectDragger objectDragger = new ObjectDragger(myGameCanvas, builder, this, getObjectRenderer());
+    objectDragger.setupListeners();
 
     initializeScrollPane(canvasGroup);
 
