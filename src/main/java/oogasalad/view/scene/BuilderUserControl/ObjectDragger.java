@@ -282,9 +282,6 @@ public class ObjectDragger {
     builder.pushAction(resizeAction);
   }
 
-
-
-
   private List<GameObject> removeCamerasFromObjects(List<GameObject> objects) {
     // remove any camera objects so they cannot be "pressed"
     List<GameObject> camerasToRemove = new ArrayList<>();
