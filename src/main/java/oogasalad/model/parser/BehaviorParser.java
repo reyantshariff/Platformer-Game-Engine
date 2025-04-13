@@ -12,6 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import javax.print.attribute.standard.MediaSize.NA;
 import oogasalad.model.engine.base.behavior.Behavior;
 import oogasalad.model.engine.base.behavior.BehaviorAction;
 import oogasalad.model.engine.base.behavior.BehaviorConstraint;
@@ -71,9 +72,9 @@ public class BehaviorParser implements Parser<Behavior> {
     } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
              NoSuchMethodException e) {
       LOGGER.error(getText("instantiateBehaviorError",
-          behaviorNode.get("Name").asText()));
+          behaviorNode.get(NAME).asText()));
       throw new ParsingException(getText("instantiateBehaviorError",
-          behaviorNode.get("Name").asText()), e);
+          behaviorNode.get(NAME).asText()), e);
     }
   }
 
