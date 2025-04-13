@@ -144,7 +144,6 @@ public class Builder {
     {
       if (!currentObject.equals(object) && object.hasComponent(Transform.class) && object.getComponent(Transform.class).getX() == currentObject.getComponent(Transform.class).getX() && object.getComponent(Transform.class).getY() == currentObject.getComponent(Transform.class).getY())
       {
-        System.out.println(getCurrentScene().getAllObjects().size());
         return true;
       }
     }
