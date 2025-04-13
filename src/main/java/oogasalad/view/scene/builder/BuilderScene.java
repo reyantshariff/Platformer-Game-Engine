@@ -225,7 +225,6 @@ public class BuilderScene extends ViewScene {
     // handle mouse pressed and dragged events
     container.setOnMousePressed(event -> {
       if (builder.objectIsSelected()) return;
-      System.out.println("Mouse Pressed");
       lastMousePosition.set(new Point2D(event.getSceneX(), event.getSceneY()));
     });
     container.setOnMouseDragged(event -> {
