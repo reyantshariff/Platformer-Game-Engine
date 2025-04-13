@@ -7,6 +7,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import oogasalad.model.engine.base.serialization.SerializedField;
+import oogasalad.view.gui.textField.StringTextField;
 
 public class StringFieldInput extends DeserializedFieldUI<String> {
 
@@ -18,8 +19,7 @@ public class StringFieldInput extends DeserializedFieldUI<String> {
     Label label = new Label(name);
 
     // Make a text field for the field that only accepts double values
-    TextField textField = new TextField();
-    textField.setPromptText("Enter a string");
+    StringTextField textField = new StringTextField(field.getValue(), "Enter a string value");
 
     // Listeners
     textField.textProperty().addListener((obs, oldVal, newVal) -> {

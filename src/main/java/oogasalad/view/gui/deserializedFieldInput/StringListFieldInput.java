@@ -13,13 +13,14 @@ import oogasalad.model.engine.base.serialization.SerializedField;
 
 import java.util.ArrayList;
 import java.util.List;
+import oogasalad.view.gui.textField.StringTextField;
 
 /**
  * A GUI component for editing a serialized List<String> field
  *
  * @author Hsuan-Kai Liao
  */
-public class ListFieldInput extends DeserializedFieldUI<List<String>> {
+public class StringListFieldInput extends DeserializedFieldUI<List<String>> {
 
   private VBox listContainer;
   private SerializedField<List<String>> field;
@@ -54,7 +55,7 @@ public class ListFieldInput extends DeserializedFieldUI<List<String>> {
   }
 
   private HBox createItemField(String initialValue) {
-    TextField textField = new TextField(initialValue);
+    StringTextField textField = new StringTextField(initialValue, "...");
 
     // Button to remove this item
     Button removeButton = new Button("−");
@@ -64,7 +65,7 @@ public class ListFieldInput extends DeserializedFieldUI<List<String>> {
     });
 
     // Listener to update the field whenever the text changes
-    textField.textProperty().addListener((obs, oldVal, newVal) -> updateFieldValue());
+    textField.addListener((obs, oldVal, newVal) -> updateFieldValue());
 
     HBox itemBox = new HBox(5, textField, removeButton);
     HBox.setHgrow(textField, Priority.ALWAYS);

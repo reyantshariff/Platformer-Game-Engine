@@ -9,6 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.util.converter.DoubleStringConverter;
 import oogasalad.model.engine.base.serialization.SerializedField;
+import oogasalad.view.gui.textField.DoubleTextField;
 
 public class DoubleFieldInput extends DeserializedFieldUI<Double> {
 
@@ -20,27 +21,9 @@ public class DoubleFieldInput extends DeserializedFieldUI<Double> {
     Label label = new Label(name);
 
     // Make a text field for the field that only accepts double values
-    TextField textField = new TextField();
-    textField.setPromptText("Enter a number");
-    TextFormatter<Double> formatter = new TextFormatter<>(
-        new DoubleStringConverter(),
-        field.getValue(),
-        change -> {
-          String newText = change.getControlNewText();
-          if (newText.isEmpty()) return change;
-          try {
-            Double.parseDouble(newText);
-            return change;
-          } catch (NumberFormatException e) {
-            return null;
-          }
-        }
-    );
-    textField.setTextFormatter(formatter);
-
-    // Listeners
-    formatter.valueProperty().addListener((obs, oldVal, newVal) -> {
-      field.setValue(newVal);
+    DoubleTextField textField = new DoubleTextField(field.getValue(), "Enter a double value");
+    textField.addListener((observable, oldValue, newValue) -> {
+      field.setValue(newValue);
     });
 
     // Container for the label and text field
