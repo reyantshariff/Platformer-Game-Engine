@@ -146,8 +146,8 @@
                   "actions": [
                     {
                       "name": "CrouchAction",
-                      "parameter": 50,
-                      "parameterType": "Double"
+                      "parameter": "",
+                      "parameterType": "Void"
                     }
                   ]
                 }

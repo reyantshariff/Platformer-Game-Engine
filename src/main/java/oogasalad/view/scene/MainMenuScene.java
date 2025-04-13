@@ -39,7 +39,8 @@ public class MainMenuScene extends ViewScene {
         manager.switchTo(new GamePlayerScene(manager, gameSelector.getValue()))
     );
 
-    buildButton.setOnAction(e -> manager.switchTo(new BuilderScene(manager))
+    buildButton.setOnAction(e ->
+        manager.switchTo(new BuilderScene(manager, gameSelector.getValue()))
     );
     // Language and Theme Selections
     HBox selectorBox = setupSelectorBox();
@@ -62,7 +63,7 @@ public class MainMenuScene extends ViewScene {
 
   private ComboBox<String> setupGameSelector() {
     ComboBox<String> gameSelector = new ComboBox<>();
-    gameSelector.getItems().addAll("DINO", "GEOMETRY DASH");
+    gameSelector.getItems().addAll("DinosaurGame", "GEOMETRY DASH");
     gameSelector.setValue("SELECT A GAME");
     gameSelector.setId("gameSelector");
     return gameSelector;

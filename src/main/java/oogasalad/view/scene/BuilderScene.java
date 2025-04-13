@@ -1,6 +1,7 @@
 package oogasalad.view.scene;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -27,17 +28,18 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.input.KeyCode;
 import oogasalad.model.builder.Builder;
+import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
-import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.engine.component.Transform;
+import oogasalad.model.parser.JsonParser;
+import oogasalad.model.parser.Parser;
+import oogasalad.model.parser.ParsingException;
 import oogasalad.model.parser.PrefabLoader;
 import oogasalad.view.gui.button.BuilderSpriteOptionButton;
 import oogasalad.view.gui.dropDown.ClassSelectionDropDownMenu;
 import oogasalad.view.gui.panel.ComponentPanel;
-import oogasalad.view.player.dinosaur.DinosaurGameScene;
 import oogasalad.view.scene.BuilderUserControl.LevelViewScrollController;
-import oogasalad.view.scene.BuilderUserControl.ObjectDragger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -52,6 +54,7 @@ public class BuilderScene extends ViewScene {
   public static final double GAME_PREVIEW_WIDTH = 1000;
   public static final double GAME_PREVIEW_HEIGHT = 800;
 
+  private static final String JSON_PATH_PREFIX = "data/GameJsons/";
   private static final String COMPONENT_PACKAGE_NAME = "oogasalad.model.engine.component";
 
   public static final double ZOOM_FACTOR = 1.05;
@@ -67,7 +70,7 @@ public class BuilderScene extends ViewScene {
   private VBox myComponentContainer;
   private ScrollPane levelViewScrollPane; // ScrollPane containing the game Canvas
   private LevelViewScrollController levelViewController;
-  private GameScene gameScene;
+  private Game game;
   private Builder builder;
 
   private final Map<KeyCode, Consumer<Double>> scrollPaneEventMap = Map.of(
@@ -82,19 +85,32 @@ public class BuilderScene extends ViewScene {
    *
    * @param manager the view manager which this scene will use to navigate to other screens
    */
-  public BuilderScene(MainViewManager manager) {
+  public BuilderScene(MainViewManager manager, String gameName) {
     // Create the BorderPane as the root
     super(new BorderPane(), 1280, 720);
     viewManager = manager;
     myWindow = (BorderPane) getScene().getRoot();
-    createDinoGameTest();
+    createGame(gameName);
     initializeUI();
   }
 
-  private void createDinoGameTest() {
-    gameScene = new DinosaurGameScene("LevelEditTest");
-    gameScene.onActivated();
-    builder = new Builder(gameScene);
+  private void createGame(String gameName) {
+    // Parse the game JSON into a Game object
+    String jsonPath = JSON_PATH_PREFIX + gameName.replaceAll("\\s+","") + ".json";
+    try {
+      Parser<?> parser = new JsonParser(jsonPath);
+      ObjectMapper mapper = new ObjectMapper();
+      JsonNode newNode = mapper.createObjectNode();
+      game = (Game) parser.parse(newNode);
+      logger.debug(game.getAllScenes().values().stream().findFirst().getClass());
+
+    } catch (ParsingException e) {
+      throw new IllegalStateException("Failed to parse game JSON file: " + e.getMessage(), e);
+    }
+
+    game.goToScene(game.getLevelOrder().getFirst());
+    game.step(0);
+    builder = new Builder(game.getCurrentScene());
   }
 
   private void initializeUI() {
@@ -355,8 +371,9 @@ public class BuilderScene extends ViewScene {
         } else {
           alignObject(t);
         }
+
         // Register new object to the scene
-        gameScene.registerObject(newObject);
+        game.getCurrentScene().registerObject(newObject);
         // Update the game preview so the new object appears
         updateGamePreview();
       });

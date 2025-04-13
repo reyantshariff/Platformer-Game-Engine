@@ -42,6 +42,7 @@ public class BehaviorParser implements Parser<Behavior> {
     TYPE_WRITERS.put(Integer.class, (node, value) -> node.put(PARAMETER, (Integer) value));
     TYPE_WRITERS.put(Double.class, (node, value) -> node.put(PARAMETER, (Double) value));
     TYPE_WRITERS.put(KeyCode.class, (node, value) -> node.put(PARAMETER, value.toString()));
+    TYPE_WRITERS.put(Void.class, (node, value) -> node.put(PARAMETER, ""));
   }
 
   private final ObjectMapper mapper = new ObjectMapper();
@@ -270,6 +271,7 @@ public class BehaviorParser implements Parser<Behavior> {
       case "String" -> String.class;
       case "Integer" -> Integer.class;
       case "Double" -> Double.class;
+      case "Void" -> Void.class;
       default -> throw new ParsingException("Unknown parameterType: " + typeName);
     };
   }

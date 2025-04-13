@@ -199,9 +199,8 @@ public class GameScene {
 
   private void updateComponents(Collection<GameObject> objectsInView, double deltaTime) {
     for (ComponentTag order : ComponentTag.values()) {
-      if (order == ComponentTag.NONE)
-        continue;
-        updateObjects(order, objectsInView, deltaTime);
+      if (order == ComponentTag.NONE) continue;
+      updateObjects(order, objectsInView, deltaTime);
     }
   }
 
