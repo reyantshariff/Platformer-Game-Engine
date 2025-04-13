@@ -3,6 +3,7 @@ package oogasalad.model.engine.base.serialization;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 /**
  * The class that represents the serialized field from field annotated @SerializableField
@@ -49,8 +50,16 @@ public class SerializedField<T> {
   }
 
   /**
+   * Get the generic type of the serializedField.
+   */
+  public Type getFieldGenericType() {
+    return field.getGenericType();
+  }
+
+  /**
    * Get the value of the serializedField.
    */
+  @SuppressWarnings("unchecked")
   public T getValue() {
     if (getter != null) {
       try {
@@ -67,9 +76,9 @@ public class SerializedField<T> {
   }
 
   /**
-   * Set the value of the serializedField
+   * Set the value of the serializedField. This is automatically casted to the type of the field.
    *
-   * @param value
+   * @param value - Value to set
    */
   public void setValue(T value) {
     if (setter != null) {
