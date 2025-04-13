@@ -74,19 +74,24 @@ public class StringListFieldInput extends DeserializedFieldUI<List<String>> {
   }
 
   private void updateFieldValue() {
-    List<String> updatedValues = new ArrayList<>();
-    for (Node node : listContainer.getChildren()) {
-      if (node instanceof HBox itemBox) {
-        for (Node sub : itemBox.getChildren()) {
-          if (sub instanceof TextField tf) {
-            String val = tf.getText().trim();
-            if (!val.isEmpty()) {
-              updatedValues.add(val);
-            }
-          }
-        }
-      }
-    }
+    List<String> updatedValues = listContainer.getChildren().stream()
+        .filter(node -> node instanceof HBox)
+        .map(node -> extractTextFromItemBox((HBox) node))
+        .flatMap(List::stream)
+        .filter(val -> !val.isEmpty())
+        .toList();
+
     field.setValue(updatedValues);
   }
+
+  private List<String> extractTextFromItemBox(HBox itemBox) {
+    List<String> values = new ArrayList<>();
+    for (Node sub : itemBox.getChildren()) {
+      if (sub instanceof TextField tf) {
+        values.add(tf.getText().trim());
+      }
+    }
+    return values;
+  }
+
 }
