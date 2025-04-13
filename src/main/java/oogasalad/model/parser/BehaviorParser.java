@@ -1,6 +1,7 @@
 package oogasalad.model.parser;
 
 import static oogasalad.model.config.GameConfig.LOGGER;
+import static oogasalad.model.config.GameConfig.getText;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -54,8 +55,8 @@ public class BehaviorParser implements Parser<Behavior> {
   @Override
   public Behavior parse(JsonNode behaviorNode) throws ParsingException {
     if (!behaviorNode.has(NAME)) {
-      LOGGER.error("No name found in Behavior Node. Throwing Error.");
-      throw new ParsingException("Behavior does not have required name.");
+      LOGGER.error(getText("noBehaviorNameError"));
+      throw new ParsingException(getText("noBehaviorNameError"));
     }
 
     try {
@@ -69,9 +70,10 @@ public class BehaviorParser implements Parser<Behavior> {
       return behaviorInstance;
     } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
              NoSuchMethodException e) {
-      LOGGER.error("Could not instantiate Behavior class: {}",
-          behaviorNode.get("Name").asText());
-      throw new ParsingException("Could not instantiate Behavior class." + e, e);
+      LOGGER.error(getText("instantiateBehaviorError",
+          behaviorNode.get("Name").asText()));
+      throw new ParsingException(getText("instantiateBehaviorError",
+          behaviorNode.get("Name").asText()), e);
     }
   }
 
@@ -86,8 +88,8 @@ public class BehaviorParser implements Parser<Behavior> {
         try {
           clazz = Class.forName(aFullClassName);
         } catch (ClassNotFoundException e) {
-          LOGGER.error("Could not parse action. Class {} does not exist.", aFullClassName);
-          throw new ParsingException("Failed to parse action: " + actionNode, e);
+          LOGGER.error(getText("failToParseError", aFullClassName));
+          throw new ParsingException(getText("failToParseError", aFullClassName), e);
         }
 
         createAndAddAction(behaviorInstance, actionNode, clazz);
@@ -105,7 +107,7 @@ public class BehaviorParser implements Parser<Behavior> {
     JsonNode valueNode = actionNode.get(PARAMETER);
 
     if (valueNode == null) {
-      throw new IllegalArgumentException("Missing parameter field");
+      throw new IllegalArgumentException(getText("missingParameter"));
     }
 
     Class<?> parameterType = getParameterType(actionNode, paramField.getFieldType());
@@ -125,8 +127,8 @@ public class BehaviorParser implements Parser<Behavior> {
         try {
           clazz = Class.forName(cFullClassName);
         } catch (ClassNotFoundException e) {
-          LOGGER.error("Could not find constraint class {}", cFullClassName);
-          throw new ParsingException("Invalid constraint class: " + cFullClassName + e, e);
+          LOGGER.error(getText("missingConstraintError", cFullClassName));
+          throw new ParsingException(getText("missingConstraintError", cFullClassName), e);
         }
 
         createAndAddConstraint(behaviorInstance, constraintNode, clazz);
@@ -146,7 +148,7 @@ public class BehaviorParser implements Parser<Behavior> {
     JsonNode valueNode = constraintNode.get(PARAMETER);
 
     if (valueNode == null) {
-      throw new IllegalArgumentException("Missing parameter field");
+      throw new IllegalArgumentException(getText("missingParameter"));
     }
 
     Class<?> parameterType = getParameterType(constraintNode, paramField.getFieldType());
@@ -167,12 +169,10 @@ public class BehaviorParser implements Parser<Behavior> {
       typedField.setValue(value);
 
     } catch (IllegalArgumentException e) {
-      throw new ParsingException(
-          "Invalid value for enum field '" + field.getFieldName() + "': " + valueNode.asText(), e);
+      throw new ParsingException(getText("invalidEnumValue", field.getFieldName(), valueNode.asText()), e);
     } catch (ClassCastException e) {
-      throw new ParsingException(
-          "Type mismatch for field '" + field.getFieldName() + "' — expected "
-              + type.getSimpleName(), e);
+      throw new ParsingException(getText("typeMismatchError", field.getFieldName(),
+          type.getSimpleName()), e);
     }
   }
 
@@ -219,8 +219,8 @@ public class BehaviorParser implements Parser<Behavior> {
           constraint.getParameter().getClass());
         
         if(writer == null || constraint.getParameter() == null || oneConstraint == null) {
-          LOGGER.error("Could not write constraint {} for behavior {}. Invalid JSON parameter type. Skipping constraint.",
-              constraint.getParameter().getClass().getSimpleName(), data.getName());
+          LOGGER.error(getText("writingConstraintError",
+              constraint.getParameter().getClass().getSimpleName(), data.getName()));
           return;
         }
 
@@ -241,9 +241,8 @@ public class BehaviorParser implements Parser<Behavior> {
       BiConsumer<ObjectNode, Object> writer = TYPE_WRITERS.get(action.getParameter().getClass());
 
       if(writer == null || action.getParameter() == null || oneAction == null) {
-        LOGGER.error(
-            "Could not write action {} for behavior {}. Invalid JSON parameter type. Skipping action.",
-            action.getParameter().getClass().getSimpleName(), data.getName());
+        LOGGER.error(getText("writingActionError",
+            action.getParameter().getClass().getSimpleName(), data.getName()));
         return;
       }
 
@@ -270,7 +269,7 @@ public class BehaviorParser implements Parser<Behavior> {
       case "String" -> String.class;
       case "Integer" -> Integer.class;
       case "Double" -> Double.class;
-      default -> throw new ParsingException("Unknown parameterType: " + typeName);
+      default -> throw new ParsingException(getText("unknownParameterError", typeName));
     };
   }
 
