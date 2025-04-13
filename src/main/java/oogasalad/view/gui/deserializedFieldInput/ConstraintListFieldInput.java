@@ -15,6 +15,8 @@ import oogasalad.view.gui.textField.StringTextField;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * GUI component for editing a List<BehaviorConstraint<?>> field.
@@ -54,67 +56,82 @@ public class ConstraintListFieldInput extends DeserializedFieldUI<List<BehaviorC
     StringTextField paramField = new StringTextField("", "param...");
     Button removeButton = new Button("−");
 
-    HBox.setHgrow(paramField, Priority.ALWAYS);
     HBox row = new HBox(5, dropDown, paramField, removeButton);
     row.setAlignment(Pos.CENTER_LEFT);
+    HBox.setHgrow(paramField, Priority.ALWAYS);
 
-    // Init if constraint already exists
-    if (initialConstraint != null) {
-      dropDown.setValue(initialConstraint.getClass().getSimpleName());
-      if (getGenericTypeName(initialConstraint).equals("Void")) {
-        paramField.setVisible(false);
-        paramField.setManaged(false);
-      } else {
-        SerializedField<?> param = initialConstraint.getSerializedFields().getFirst();
-        paramField.setText(Optional.ofNullable(param.getValue()).map(Object::toString).orElse(""));
-      }
+    initializeConstraint(initialConstraint, dropDown, paramField);
+    configureDropDown(dropDown, constraintRef, paramField);
+    configureParamFieldListeners(paramField, constraintRef);
+    configureRemoveButton(removeButton, row);
+
+    return row;
+  }
+
+  private void initializeConstraint(BehaviorConstraint<?> constraint, ClassSelectionDropDownList dropDown, StringTextField paramField) {
+    if (constraint == null) return;
+
+    dropDown.setValue(constraint.getClass().getSimpleName());
+    if (getGenericTypeName(constraint).equals("Void")) {
+      hideField(paramField);
+    } else {
+      SerializedField<?> param = constraint.getSerializedFields().getFirst();
+      paramField.setText(Optional.ofNullable(param.getValue()).map(Object::toString).orElse(""));
     }
+  }
 
-    // Dropdown change: instantiate new action
+  private void configureDropDown(ClassSelectionDropDownList dropDown, BehaviorConstraint<?>[] constraintRef, StringTextField paramField) {
     dropDown.setOnAction(e -> {
       String className = dropDown.getValue();
       BehaviorConstraint<?> newConstraint = instantiateConstraint(className);
       constraintRef[0] = newConstraint;
 
       SerializedField<?> param = newConstraint.getSerializedFields().getFirst();
-      if (getGenericTypeName(constraintRef[0]).equals("Void")) {
-        paramField.setVisible(false);
-        paramField.setManaged(false);
+      if (getGenericTypeName(newConstraint).equals("Void")) {
+        hideField(paramField);
       } else {
-        paramField.setVisible(true);
-        paramField.setManaged(true);
+        showField(paramField);
         paramField.setText(Optional.ofNullable(param.getValue()).map(Object::toString).orElse(""));
       }
 
       updateFieldList();
     });
+  }
 
-    // Param field update - Using setOnAction to detect when user presses Enter
-    paramField.setOnAction(e -> {
-      Optional.ofNullable(constraintRef[0]).ifPresent(constraint -> {
-        SerializedField<?> param = constraint.getSerializedFields().getFirst();
-        updateParameter(constraint, param, paramField.getText(), paramField);
-      });
-    });
-
-    // Alternatively, you can use a focus listener to detect when the field loses focus
+  private void configureParamFieldListeners(StringTextField paramField, BehaviorConstraint<?>[] constraintRef) {
+    paramField.setOnAction(e -> updateConstraintParam(constraintRef, paramField));
     paramField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
       if (!isNowFocused) {
-        Optional.ofNullable(constraintRef[0]).ifPresent(constraint -> {
-          SerializedField<?> param = constraint.getSerializedFields().getFirst();
-          updateParameter(constraint, param, paramField.getText(), paramField);
-        });
+        updateConstraintParam(constraintRef, paramField);
       }
     });
+  }
 
-    // Remove row
+  private void updateConstraintParam(BehaviorConstraint<?>[] constraintRef, StringTextField paramField) {
+    Optional.ofNullable(constraintRef[0]).ifPresent(constraint -> {
+      SerializedField<?> param = constraint.getSerializedFields().getFirst();
+      updateParameter(constraint, param, paramField.getText(), paramField);
+    });
+  }
+
+  private void configureRemoveButton(Button removeButton, HBox row) {
     removeButton.setOnAction(e -> {
       listContainer.getChildren().remove(row);
       updateFieldList();
     });
-
-    return row;
   }
+
+  private void hideField(StringTextField field) {
+    field.setVisible(false);
+    field.setManaged(false);
+  }
+
+  private void showField(StringTextField field) {
+    field.setVisible(true);
+    field.setManaged(true);
+  }
+
+
 
   private void updateFieldList() {
     List<BehaviorConstraint<?>> updated = listContainer.getChildren().stream()
@@ -126,6 +143,7 @@ public class ConstraintListFieldInput extends DeserializedFieldUI<List<BehaviorC
 
     field.setValue(updated);
   }
+  private static final Logger logger = LogManager.getLogger(ConstraintListFieldInput.class);
 
   private BehaviorConstraint<?> buildConstraintFromRow(HBox row) {
     try {
@@ -138,7 +156,7 @@ public class ConstraintListFieldInput extends DeserializedFieldUI<List<BehaviorC
 
       return constraint;
     } catch (Exception e) {
-      System.err.println(e.getMessage());
+      logger.error("Failed to build constraint from row", e);
       return null;
     }
   }
