@@ -100,7 +100,7 @@ public class Gui {
       if (current.hasCamera()) {
         objectRenderer.renderWithCamera(gc, current);
       } else {
-        objectRenderer.renderWithoutCamera(gc, current);
+        objectRenderer.renderWithoutCamera(gc, current, null);
       }
 
     } else {

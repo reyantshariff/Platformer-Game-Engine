@@ -65,11 +65,6 @@ public class GameObjectRenderer {
     relativeX = cameraTransform.getX();
     relativeY = cameraTransform.getY();
 
-    renderWithoutCamera(gc, scene);
-  }
-
-  public void renderWithoutCamera(GraphicsContext gc, GameScene scene)
-  {
     renderWithoutCamera(gc, scene, null);
   }
 
@@ -79,7 +74,8 @@ public class GameObjectRenderer {
    * @param gc    The graphics context of the canvas.
    * @param scene The game scene to render.
    */
-  public void renderWithoutCamera(GraphicsContext gc, GameScene scene, Builder builder) {
+  public void renderWithoutCamera(GraphicsContext gc, GameScene scene, GameObject SelectedGameObject) {
+    // TODO: This should not be fixed, this should get from the actual scene
     String baseName = "oogasalad.gui.general";
     int windowX = ResourceBundles.getInt(baseName, "windowX");
     int windowY = ResourceBundles.getInt(baseName, "windowY");
@@ -96,10 +92,10 @@ public class GameObjectRenderer {
 
     for (GameObject obj : objects) {
       renderGameObject(gc, obj);
-      if (builder != null && obj.equals(builder.getSelectedObject()))
-      {
-        renderSelectionOverlay(gc, obj);
-      }
+    }
+
+    if (SelectedGameObject != null) {
+      renderSelectionOverlay(gc, SelectedGameObject);
     }
   }
 

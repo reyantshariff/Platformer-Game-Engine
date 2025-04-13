@@ -51,8 +51,7 @@ public class ObjectDragger {
 
   /**
    * Sets up mouse inputs
-   * **/
-
+   */
   public void setupListeners() {
     canvas.setOnMousePressed(this::handlePressedIfInBounds);
     canvas.setOnMouseDragged(this::handleDraggedIfInBounds);
@@ -61,8 +60,6 @@ public class ObjectDragger {
       boolean hovering = isHoveringOverResizeHandle(e.getX(), e.getY());
       canvas.setCursor(hovering ? Cursor.HAND : Cursor.DEFAULT);
     });
-
-
   }
 
   private void handlePressedIfInBounds(MouseEvent e) {
@@ -94,7 +91,6 @@ public class ObjectDragger {
   private void handlePressed(MouseEvent e) {
     oldX = e.getX();
     oldY = e.getY();
-    Point2D click = new Point2D(oldX, oldY);
 
     boolean clickedObject = false;
     List<GameObject> objects = new ArrayList<>(gameScene.getAllObjects());
@@ -124,7 +120,7 @@ public class ObjectDragger {
         return;
       }
 
-      // 🔹 Check if clicked inside bounding box
+      // Check if clicked inside bounding box
       if (oldX >= t.getX() && oldX <= t.getX() + w &&
           oldY >= t.getY() && oldY <= t.getY() + h) {
         builder.selectExistingObject(obj);
@@ -136,8 +132,8 @@ public class ObjectDragger {
       }
     }
 
-    // 🔹 If nothing was clicked
-    if (!clickedObject) {
+    // If nothing was clicked
+    if (builder.objectIsSelected() && !clickedObject) {
       recordResizing();
       builder.deselect();
       dragContext.endInteraction();
@@ -158,7 +154,7 @@ public class ObjectDragger {
     }
 
     dragContext.updateCoordinates(e);
-    renderer.renderWithoutCamera(canvas.getGraphicsContext2D(), gameScene);
+    renderer.renderWithoutCamera(canvas.getGraphicsContext2D(), gameScene, null);
     builderScene.updateGamePreview();
   }
 

@@ -7,10 +7,11 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
@@ -20,14 +21,11 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
-import javafx.scene.input.KeyCode;
 import oogasalad.model.builder.Builder;
 import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.base.architecture.GameComponent;
@@ -40,7 +38,6 @@ import oogasalad.model.parser.PrefabLoader;
 import oogasalad.view.gui.button.BuilderSpriteOptionButton;
 import oogasalad.view.gui.dropDown.ClassSelectionDropDownMenu;
 import oogasalad.view.gui.panel.ComponentPanel;
-import oogasalad.view.scene.BuilderUserControl.LevelViewScrollController;
 import oogasalad.view.scene.BuilderUserControl.ObjectDragger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -59,9 +56,8 @@ public class BuilderScene extends ViewScene {
   private static final String JSON_PATH_PREFIX = "data/GameJsons/";
   private static final String COMPONENT_PACKAGE_NAME = "oogasalad.model.engine.component";
 
-  public static final double ZOOM_FACTOR = 1.05;
-  public static final double MAX_ZOOM = 2.0;
-  public static final double MIN_ZOOM = 0.5;
+  public static final double MAX_ZOOM = 5.0;
+  public static final double MIN_ZOOM = 0.1;
 
   private static final Logger logger = LogManager.getLogger(BuilderScene.class);
 
@@ -70,17 +66,8 @@ public class BuilderScene extends ViewScene {
 
   private Canvas myGameCanvas;
   private VBox myComponentContainer;
-  private ScrollPane levelViewScrollPane; // ScrollPane containing the game Canvas
-  private LevelViewScrollController levelViewController;
   private Game game;
   private Builder builder;
-
-  private final Map<KeyCode, Consumer<Double>> scrollPaneEventMap = Map.of(
-    KeyCode.LEFT, (delta) -> scrollPaneKeyPress(-delta, 0),
-    KeyCode.RIGHT, (delta) -> scrollPaneKeyPress(delta, 1),
-    KeyCode.UP, (delta) -> scrollPaneKeyPress(-delta, 0),
-    KeyCode.DOWN, (delta) -> scrollPaneKeyPress(delta, 1)
-  );
 
   /**
    * Constructor for BuilderView
@@ -149,6 +136,7 @@ public class BuilderScene extends ViewScene {
     myWindow.setCenter(viewComponentSplitPane);
   }
 
+  @SuppressWarnings("unchecked")
   private ScrollPane createComponentPanel() {
     myComponentContainer = new VBox(10);
     ClassSelectionDropDownMenu addComponentMenuButton = new ClassSelectionDropDownMenu("Add A Component", COMPONENT_PACKAGE_NAME, GameComponent.class);
@@ -186,7 +174,7 @@ public class BuilderScene extends ViewScene {
   public void updateGamePreview() {
     GraphicsContext gc = myGameCanvas.getGraphicsContext2D();
     gc.clearRect(0, 0, myGameCanvas.getWidth(), myGameCanvas.getHeight());
-    getObjectRenderer().renderWithoutCamera(gc, builder.getCurrentScene(), builder);
+    getObjectRenderer().renderWithoutCamera(gc, builder.getCurrentScene(), builder.getSelectedObject());
   }
 
   /**
@@ -211,59 +199,88 @@ public class BuilderScene extends ViewScene {
     }
   }
 
-  private ScrollPane createGamePreview() {
-    // TODO: replace canvas size hardcoding with level map size
+  private Pane createGamePreview() {
+    // TODO: replace hardcoded canvas size with level map size
     myGameCanvas = new Canvas(3000, 600);
-    updateGamePreview(); // render GameObjects to canvas
+    updateGamePreview();
 
     Group canvasGroup = new Group(myGameCanvas);
+    Pane container = new Pane(canvasGroup);
 
-    levelViewScrollPane = new ScrollPane(canvasGroup);
+    // Scene dragging and zooming
+    setupZoomAndPan(container, canvasGroup);
+
+    // Object dragging and resizing
     ObjectDragger objectDragger = new ObjectDragger(myGameCanvas, builder, this, getObjectRenderer());
     objectDragger.setupListeners();
 
-    initializeScrollPane(canvasGroup);
-
-    return levelViewScrollPane;
+    return container;
   }
 
-  private void initializeScrollPane(Group canvasGroup) {
-    // Canvas viewport size within builder window
-    levelViewScrollPane.setPrefViewportWidth(
-        GAME_PREVIEW_WIDTH); // TODO: replace these hardcoded values
-    levelViewScrollPane.setPrefViewportHeight(GAME_PREVIEW_HEIGHT);
+  private void setupZoomAndPan(Pane container, Group canvasGroup) {
+    final ObjectProperty<Point2D> lastMousePosition = new SimpleObjectProperty<>();
 
-    // Disable vertical scroll bar
-    levelViewScrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
+    // handle mouse pressed and dragged events
+    container.setOnMousePressed(event -> {
+      if (builder.objectIsSelected()) return;
+      System.out.println("Mouse Pressed");
+      lastMousePosition.set(new Point2D(event.getSceneX(), event.getSceneY()));
+    });
+    container.setOnMouseDragged(event -> {
+      if (builder.objectIsSelected()) return;
 
-    levelViewScrollPane.setFocusTraversable(true);
-    levelViewScrollPane.requestFocus();
+      Point2D currentMousePosition = new Point2D(event.getSceneX(), event.getSceneY());
+      Point2D delta = currentMousePosition.subtract(lastMousePosition.get());
 
-    // Pan the view using arrow keys
-    levelViewScrollPane.setOnKeyPressed(event -> {
-      double delta = 0.05;
-      Consumer<Double> action = scrollPaneEventMap.get(event.getCode());
-      if (action == null) {
-        logger.warn("Key event not mapped: " + event.getCode());
-      } else {
-        action.accept(delta);
-      }
+      canvasGroup.setTranslateX(canvasGroup.getTranslateX() + delta.getX());
+      canvasGroup.setTranslateY(canvasGroup.getTranslateY() + delta.getY());
+
+      lastMousePosition.set(currentMousePosition);
+    });
+
+    // handle zooming
+    container.setOnScroll(event -> {
+      double zoomFactor = 1.05;
+      double deltaY = event.getDeltaY();
+      double oldScale = canvasGroup.getScaleX();
+      double scale = (deltaY > 0) ? oldScale * zoomFactor : oldScale / zoomFactor;
+      scale = Math.min(Math.max(scale, MIN_ZOOM), MAX_ZOOM);
+
+      Point2D mousePoint = new Point2D(event.getX(), event.getY());
+      Point2D mouseInGroup = canvasGroup.parentToLocal(mousePoint);
+
+      canvasGroup.setScaleX(scale);
+      canvasGroup.setScaleY(scale);
+
+      Point2D newMouseInGroup = canvasGroup.parentToLocal(mousePoint);
+
+      Point2D delta = newMouseInGroup.subtract(mouseInGroup);
+      canvasGroup.setTranslateX(canvasGroup.getTranslateX() + delta.getX() * scale);
+      canvasGroup.setTranslateY(canvasGroup.getTranslateY() + delta.getY() * scale);
+
       event.consume();
     });
 
-    // Add zoom handling
-    levelViewScrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
-      // Only process the event for zooming, ignore its vertical scrolling aspect.
-      double currentScale = getCurrentScale(canvasGroup, event.getDeltaY());
-      canvasGroup.setScaleX(currentScale);
-      canvasGroup.setScaleY(currentScale);
+    container.setOnZoom(event -> {
+      double oldScale = canvasGroup.getScaleX();
+      double scale = oldScale * event.getZoomFactor();
+      scale = Math.min(Math.max(scale, MIN_ZOOM), MAX_ZOOM);
 
-      // Ensure the vertical scroll value remains fixed
-      levelViewScrollPane.setVvalue(0);
+      Point2D zoomCenter = new Point2D(event.getX(), event.getY());
+      Point2D zoomCenterInGroup = canvasGroup.parentToLocal(zoomCenter);
 
-      event.consume();  // Prevent the default vertical panning
+      canvasGroup.setScaleX(scale);
+      canvasGroup.setScaleY(scale);
+
+      Point2D newZoomCenterInGroup = canvasGroup.parentToLocal(zoomCenter);
+      Point2D delta = newZoomCenterInGroup.subtract(zoomCenterInGroup);
+      canvasGroup.setTranslateX(canvasGroup.getTranslateX() + delta.getX() * scale);
+      canvasGroup.setTranslateY(canvasGroup.getTranslateY() + delta.getY() * scale);
+
+      event.consume();
     });
   }
+
 
   private VBox createObjectControlPanel() {
     Button undoButton = new Button("Undo");
@@ -295,24 +312,6 @@ public class BuilderScene extends ViewScene {
     return bottomPanel;
   }
 
-  private void scrollPaneKeyPress(double delta, int b) {
-    levelViewScrollPane.setHvalue(Math.max(levelViewScrollPane.getHvalue() + delta, b));
-  }
-
-  private double getCurrentScale(Group canvasGroup, double deltaY) {
-    double currentScale = canvasGroup.getScaleX(); // assuming uniform scale
-    if (deltaY < 0) {
-      if (currentScale / ZOOM_FACTOR >= MIN_ZOOM) {
-        currentScale /= ZOOM_FACTOR;
-      }
-    } else {
-      if (currentScale * ZOOM_FACTOR <= MAX_ZOOM) {
-        currentScale *= ZOOM_FACTOR;
-      }
-    }
-    return currentScale;
-  }
-
   private ScrollPane createAddSpriteButtonOptions() {
     // Define width and height of the sprite button panel
     double spriteButtonPaneWidth = getScene().getWidth() * 0.75;
@@ -342,10 +341,9 @@ public class BuilderScene extends ViewScene {
 
   private void alignObject(Transform t) {
     // Calculate center based on preview or scene dimensions.
-    double previewHorizontalMidpoint =
-    levelViewScrollPane.getHvalue() * GAME_PREVIEW_WIDTH + (GAME_PREVIEW_WIDTH / 2);
-    double previewVerticalMidpoint =
-        levelViewScrollPane.getVvalue() * GAME_PREVIEW_HEIGHT + (GAME_PREVIEW_HEIGHT / 2);
+    // TODO: FIX THIS
+    double previewHorizontalMidpoint = GAME_PREVIEW_WIDTH / 2;
+    double previewVerticalMidpoint = GAME_PREVIEW_HEIGHT / 2;
     double objectWidth = t.getScaleX();
     double objectHeight = t.getScaleY();
 
