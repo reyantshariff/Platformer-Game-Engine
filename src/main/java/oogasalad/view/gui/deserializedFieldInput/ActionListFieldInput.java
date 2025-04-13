@@ -13,6 +13,8 @@ import oogasalad.view.gui.textField.StringTextField;
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * GUI component for editing a List<BehaviorAction<?>> field.
@@ -209,6 +211,8 @@ public class ActionListFieldInput extends DeserializedFieldUI<List<BehaviorActio
     field.setValue(updated);
   }
 
+  private static final Logger logger = LogManager.getLogger(ActionListFieldInput.class);
+
   private BehaviorAction<?> buildActionFromRow(HBox row) {
     try {
       String className = ((ClassSelectionDropDownList) row.getChildren().get(0)).getValue();
@@ -220,7 +224,7 @@ public class ActionListFieldInput extends DeserializedFieldUI<List<BehaviorActio
 
       return action;
     } catch (Exception e) {
-      System.err.println(e.getMessage());
+      logger.error("Failed to build action from row", e);
       return null;
     }
   }
