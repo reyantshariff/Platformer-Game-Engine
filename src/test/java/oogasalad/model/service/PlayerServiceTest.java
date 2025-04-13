@@ -33,8 +33,7 @@ public class PlayerServiceTest {
     boolean result = PlayerService.createNewPlayer(username);
     assertTrue(result);
     Exception exception = assertThrows(DatabaseException.class, () -> PlayerService.createNewPlayer(username));
-
-    assertTrue(exception.getMessage().contains("Player already exists"));
+    assertTrue(exception.getMessage().contains("Player " + username +  " already exists"));
 
     boolean deleteResult = PlayerService.deletePlayer(username);
     assertTrue(deleteResult);
