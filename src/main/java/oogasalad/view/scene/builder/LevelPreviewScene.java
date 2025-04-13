@@ -1,4 +1,4 @@
-package oogasalad.view.scene;
+package oogasalad.view.scene.builder;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import javafx.geometry.Pos;
@@ -7,7 +7,9 @@ import javafx.scene.layout.StackPane;
 import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.parser.JsonParser;
 import oogasalad.model.parser.ParsingException;
-import oogasalad.view.gui.Gui;
+import oogasalad.view.player.GameRunner;
+import oogasalad.view.scene.MainViewManager;
+import oogasalad.view.scene.ViewScene;
 
 /**
  * Preview a level from the Builder view using this Scene. Directly load in a GameScene to be
@@ -16,7 +18,7 @@ import oogasalad.view.gui.Gui;
 public class LevelPreviewScene extends ViewScene {
 
   // For displaying the running game preview
-  private final Gui gui;
+  private final GameRunner gameRunner;
 
   /**
    * A LevelPreviewScene is similar to GamePlayerScene but is meant for previewing a
@@ -41,7 +43,7 @@ public class LevelPreviewScene extends ViewScene {
     } catch (ParsingException e) {
       throw new IllegalStateException("Failed to parse game JSON file: " + e.getMessage(), e);
     }
-    gui = new Gui(game);
+    gameRunner = new GameRunner(game);
 
     Button returnButton = new Button("Return to Builder");
     returnButton.setOnAction(e -> {
@@ -52,7 +54,7 @@ public class LevelPreviewScene extends ViewScene {
     StackPane.setAlignment(returnButton, Pos.TOP_RIGHT);
     returnButton.setStyle("-fx-background-color: white; -fx-font-weight: bold;");
 
-    root.getChildren().addAll(gui.getCanvas(), returnButton);
+    root.getChildren().addAll(gameRunner.getCanvas(), returnButton);
   }
 
   /**
@@ -60,6 +62,6 @@ public class LevelPreviewScene extends ViewScene {
    */
   @Override
   public void deactivate() {
-    gui.stop();
+    gameRunner.stop();
   }
 }

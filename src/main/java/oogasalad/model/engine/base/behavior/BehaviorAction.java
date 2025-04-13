@@ -68,7 +68,7 @@ public abstract class BehaviorAction<T> implements Serializable {
    * 
    * @return the type of the constraint
    */
-  public abstract ComponentTag ActionType();
+  public abstract ComponentTag actionType();
 
   /**
    * This method is called to perform the action

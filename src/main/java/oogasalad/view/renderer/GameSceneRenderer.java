@@ -1,4 +1,4 @@
-package oogasalad.view.gui;
+package oogasalad.view.renderer;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -13,7 +13,6 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import oogasalad.model.ResourceBundles;
-import oogasalad.model.builder.Builder;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
@@ -27,9 +26,9 @@ import org.apache.logging.log4j.Logger;
  * The GameObjectRenderer class is responsible for rendering game objects and their components
  */
 
-public class GameObjectRenderer {
+public class GameSceneRenderer {
 
-  private static final Logger logger = LogManager.getLogger(GameObjectRenderer.class);
+  private static final Logger logger = LogManager.getLogger(GameSceneRenderer.class);
   private final Scene myScene;
   private double relativeX;
   private double relativeY;
@@ -41,7 +40,7 @@ public class GameObjectRenderer {
    *
    * @param scene the scene to render the game objects in
    */
-  public GameObjectRenderer(Scene scene) {
+  public GameSceneRenderer(Scene scene) {
     myScene = scene;
   }
 

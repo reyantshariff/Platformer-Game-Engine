@@ -13,7 +13,7 @@ public class JumpAction extends BehaviorAction<Double> {
   private PhysicsHandler physicsHandler;
 
   @Override
-  public ComponentTag ActionType() {
+  public ComponentTag actionType() {
     return ComponentTag.INPUT;
   }
 

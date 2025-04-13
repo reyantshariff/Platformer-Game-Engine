@@ -1,4 +1,4 @@
-package oogasalad.view.scene.BuilderUserControl;
+package oogasalad.view.scene.builder.builderControl;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
@@ -10,11 +10,11 @@ import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.engine.component.Camera;
 import oogasalad.model.engine.component.Transform;
-import oogasalad.view.gui.GameObjectRenderer;
+import oogasalad.view.renderer.GameSceneRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
-import oogasalad.view.scene.BuilderScene;
+import oogasalad.view.scene.builder.BuilderScene;
 
 /**
  * ObjectDragger manages mouse drag and drop for Builder pages
@@ -26,7 +26,7 @@ public class ObjectDragger {
   private final Builder builder;
   private final BuilderScene builderScene;
   private final GameScene gameScene;
-  private final GameObjectRenderer renderer;
+  private final GameSceneRenderer renderer;
 
   private double dragOffsetX = 0;
   private double dragOffsetY = 0;
@@ -41,7 +41,7 @@ public class ObjectDragger {
 
   private double resizeStartX, resizeStartY, resizeStartW, resizeStartH;
 
-  public ObjectDragger(Canvas canvas, Builder builder, BuilderScene builderScene, GameObjectRenderer renderer) {
+  public ObjectDragger(Canvas canvas, Builder builder, BuilderScene builderScene, GameSceneRenderer renderer) {
     this.canvas = canvas;
     this.builder = builder;
     this.builderScene = builderScene;

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.util.Deque;
 import java.util.ArrayDeque;
-import java.util.UUID;
 import oogasalad.model.builder.actions.DeleteObjectAction;
 import oogasalad.model.builder.actions.CreateObjectAction;
 import oogasalad.model.builder.actions.MoveObjectAction;
@@ -45,19 +44,6 @@ public class Builder {
 
     this.filepath = filepath;
     //game would then load filepath
-  }
-
-  /**
-   * Constructor for Creating a Game from Scratch
-   */
-
-  public Builder()
-  {
-    game = new Game();
-    this.currentScene = new DinosaurGameScene("new GameScene");
-    currentScene.onActivated();
-    game.addScene(currentScene);
-    game.changeScene("new GameScene");
   }
 
   /**
@@ -289,7 +275,7 @@ public class Builder {
     try {
       game = parser.parse(node);
     } catch (ParsingException e) {
-      throw new loadGameException("Error loading game from JSON: " + e.getMessage(), e);
+      throw new LoadGameException("Error loading game from JSON: " + e.getMessage(), e);
     }
   }
 }

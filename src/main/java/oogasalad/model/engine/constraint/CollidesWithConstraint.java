@@ -23,7 +23,7 @@ public class CollidesWithConstraint extends BehaviorConstraint<String> {
   }
 
   @Override
-  public ComponentTag ConstraintType() {
+  public ComponentTag constraintType() {
     return ComponentTag.COLLISION;
   }
 }
