@@ -10,9 +10,10 @@ import oogasalad.model.engine.component.Transform;
  * position.
  */
 
-public class CrouchAction extends BehaviorAction {
+public class CrouchAction extends BehaviorAction<Void> {
 
   private boolean isCrouched = false;
+  private Transform transform;
 
   /**
    * Default constructor for the CrouchAction class.
@@ -32,22 +33,16 @@ public class CrouchAction extends BehaviorAction {
     return ComponentTag.INPUT;
   }
 
+  @Override
+  protected void awake() {
+    transform = getComponent(Transform.class);
+  }
+
   /**
    * Check if the constraint is met.
-   *
-   * @param parameter the parameter to check against
-   * @return true if the constraint is met, false otherwise
    */
   @Override
-  protected void perform(Object parameter) {
-    Transform transform;
-    try {
-      transform = (Transform) getComponent(Transform.class);
-    } catch (Exception e) {
-      return;
-    }
-
-
+  protected void perform(Void unused) {
     if (!isCrouched) {
       transform.setScaleY(transform.getScaleY() / 2);
       transform.setY(transform.getY() + transform.getScaleY());
