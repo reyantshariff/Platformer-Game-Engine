@@ -239,20 +239,25 @@ public class BehaviorParser implements Parser<Behavior> {
 
     data.getActions().forEach(action -> {
       ObjectNode oneAction = mapper.createObjectNode();
-      BiConsumer<ObjectNode, Object> writer = TYPE_WRITERS.get(action.getParameter().getClass());
+      Class<?> parameterClass = action.getParameter() == null ? Void.class : action.getParameter().getClass();
+      BiConsumer<ObjectNode, Object> writer = TYPE_WRITERS.get(parameterClass);
 
-      if(writer == null || action.getParameter() == null || oneAction == null) {
+      if(writer == null || oneAction == null) {
         LOGGER.error(
             "Could not write action {} for behavior {}. Invalid JSON parameter type. Skipping action.",
-            action.getParameter().getClass().getSimpleName(), data.getName());
+            parameterClass, data.getName());
         return;
       }
 
-        oneAction.put(LOWER_NAME, action.getClass().getSimpleName());
+      oneAction.put(LOWER_NAME, action.getClass().getSimpleName());
+      if (parameterClass == Void.class) {
+        writer.accept(oneAction, "");
+      } else {
         writer.accept(oneAction, action.getParameter()); // Catching this error
-        oneAction.put(PARAMETER_TYPE, action.getParameter().getClass().getSimpleName());
+      }
+      oneAction.put(PARAMETER_TYPE, parameterClass.getSimpleName());
 
-        actionsArray.add(oneAction);
+      actionsArray.add(oneAction);
     });
 
     root.set(ACTIONS, actionsArray);

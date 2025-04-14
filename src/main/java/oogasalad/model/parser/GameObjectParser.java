@@ -144,7 +144,7 @@ public class GameObjectParser implements Parser<GameObject> {
     for (GameComponent component : data.getAllComponents().values()) {
       if (component.getClass().isAssignableFrom(BehaviorController.class)) {
         BehaviorController controller = (BehaviorController) component;
-        behaviors.addAll(((List<Behavior>) controller.getSerializedFields().getFirst()));
+        behaviors.addAll(((List<Behavior>) controller.getSerializedFields().getFirst().getValue()));
       } else {
         components.add(component);
       }

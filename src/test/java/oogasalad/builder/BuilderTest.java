@@ -20,7 +20,8 @@ private GameObject object;
   {
     GameScene scene = new GameScene("empty");
     object = new GameObject("GameObject");
-    builder = new Builder(scene); // use new constructor
+
+//    builder = new Builder(scene); // use new constructor
     builder.getCurrentScene().registerObject(object);
     object.addComponent(Transform.class);
     object.getComponent(Transform.class).setY(0);

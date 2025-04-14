@@ -36,13 +36,15 @@ public class LevelPreviewScene extends ViewScene {
 
     StackPane root = (StackPane) getScene().getRoot();
 
-    JsonParser jsonParser = new JsonParser("");
+    JsonParser jsonParser = new JsonParser("src/main/gameFiles/temp.json");
     Game game;
     try {
       game = jsonParser.parse(gameNode);
     } catch (ParsingException e) {
       throw new IllegalStateException("Failed to parse game JSON file: " + e.getMessage(), e);
     }
+
+    System.out.println(game.getAllScenes().size());
     gameRunner = new GameRunner(game);
 
     Button returnButton = new Button("Return to Builder");

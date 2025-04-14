@@ -1,28 +1,14 @@
 {
+  "Information": {
+    "Name": "DinoRunner",
+    "Description": "A playable dino runner game",
+    "Author": "Justin Aronwald",
+    "Resolution": {
+      "Width": 1280,
+      "Height": 720
+    }
+  },
   "Data": {
-    "Information": {
-      "Name": "DinoRunner",
-      "Description": "A playable dino runner game",
-      "Author": "Justin Aronwald",
-      "Resolution": {
-        "Width": 1280,
-        "Height": 720
-      }
-    },
-    "Resources": [
-      {
-        "Name": "DinoSprite",
-        "Path": "oogasalad/dinosaur/DinoStart.png"
-      },
-      {
-        "Name": "GroundSprite",
-        "Path": "oogasalad/dinosaur/Track.png"
-      },
-      {
-        "Name": "CactusSprite",
-        "Path": "oogasalad/dinosaur/Bird1.png"
-      }
-    ],
     "Scene": [
       {
         "Name": "MainGame",

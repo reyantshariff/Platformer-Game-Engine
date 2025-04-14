@@ -1,6 +1,7 @@
 package oogasalad.model.builder;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.Deque;
 import java.util.ArrayDeque;
@@ -13,6 +14,7 @@ import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.engine.component.Transform;
 import oogasalad.model.parser.JsonParser;
+import oogasalad.model.parser.Parser;
 import oogasalad.model.parser.ParsingException;
 
 /**
@@ -21,40 +23,37 @@ import oogasalad.model.parser.ParsingException;
  */
 
 public class Builder {
-  private GameObject selectedObject; //Should be passed from front end to back end. Front end should pass string ID.
-  private String filepath = " ";
-  private Game game; //Front end should pass a list of selected objects to the backend.
+  private GameObject selectedObject; // Should be passed from front end to back end. Front end should pass string ID.
+  private String filepath = "";
+  private Game game; // Front end should pass a list of selected objects to the backend.
   private boolean fileSaved = false;
   private GameScene currentScene;
-  private double selectedObjectprevX;
-  private double selectedObjectprevY;
+  private double selectedObjectPrevX;
+  private double selectedObjectPrevY;
 
-  private Deque<EditorAction> undoStack = new ArrayDeque<>();
-  private Deque<EditorAction> redoStack = new ArrayDeque<>();
+  private final Deque<EditorAction> undoStack = new ArrayDeque<>();
+  private final Deque<EditorAction> redoStack = new ArrayDeque<>();
 
-  //Add Backend boolean to keep track of whether user has saved Game.
   /**
    * Constructor for Loading a Game
    *
    * @param filepath - JSON filepath of Game
    */
-
   public Builder(String filepath) {
-
     this.filepath = filepath;
-    //game would then load filepath
-  }
 
-  /**
-   * Constructs a new Builder instance with the specified Game.
-   *
-   * @param scene The GameScene instance to be used by the builder.
-   */
-  public Builder(GameScene scene) {
-    game = new Game();
-    currentScene = scene;
-    game.addScene(currentScene);
-    game.changeScene(scene.getName());
+    try {
+      Parser<?> parser = new JsonParser(filepath);
+      ObjectMapper mapper = new ObjectMapper();
+      JsonNode newNode = mapper.createObjectNode();
+      game = (Game) parser.parse(newNode);
+    } catch (ParsingException e) {
+      throw new IllegalStateException("Failed to parse game JSON file: " + e.getMessage(), e);
+    }
+
+    game.goToScene(game.getLevelOrder().getFirst());
+    game.step(0);
+    currentScene = game.getCurrentScene();
   }
 
   public void pushAction(EditorAction action)
@@ -108,8 +107,8 @@ public class Builder {
   {
     if (object.hasComponent(Transform.class))
     {
-      selectedObjectprevX = object.getComponent(Transform.class).getX();
-      selectedObjectprevY = object.getComponent(Transform.class).getY();
+      selectedObjectPrevX = object.getComponent(Transform.class).getX();
+      selectedObjectPrevY = object.getComponent(Transform.class).getY();
     }
     selectedObject=object;
   }
@@ -158,7 +157,7 @@ public class Builder {
    */
   public void placeObject(double x, double y) {
     if (selectedObject != null && selectedObject.hasComponent(Transform.class)) {
-      undoStack.push(new MoveObjectAction(selectedObject, selectedObjectprevX, selectedObjectprevY, x, y));
+      undoStack.push(new MoveObjectAction(selectedObject, selectedObjectPrevX, selectedObjectPrevY, x, y));
       selectedObject.getComponent(Transform.class).setX(x);
       selectedObject.getComponent(Transform.class).setY(y);
     }
@@ -258,6 +257,7 @@ public class Builder {
    * @param filepath location of JSON file
    */
   public JsonNode saveGameAs(String filepath) {
+    // TODO: Need to create a new file if it doesn't exist
     JsonParser parser = new JsonParser(filepath);
     try {
       return parser.write(game);

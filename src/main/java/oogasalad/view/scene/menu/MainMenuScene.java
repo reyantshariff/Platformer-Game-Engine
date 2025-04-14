@@ -16,7 +16,9 @@ import oogasalad.view.scene.player.GamePlayerScene;
 /**
  * Main menu view with play and builder options
  */
+@SuppressWarnings("unused")
 public class MainMenuScene extends ViewScene {
+  private static final String JSON_PATH_PREFIX = "data/GameJsons/";
 
   /**
    * Constructs a new MainMenuScene to display the main menu with game selection and builder options.
@@ -40,12 +42,14 @@ public class MainMenuScene extends ViewScene {
     Button buildButton = (Button) buttonBox.lookup("#buildButton");
 
     playButton.setOnAction(e ->
-        manager.switchTo(new GamePlayerScene(manager, gameSelector.getValue()))
+        manager.switchTo(new GamePlayerScene(manager, JSON_PATH_PREFIX + gameSelector.getValue().replaceAll("\\s+", "") + ".json"))
     );
 
-    buildButton.setOnAction(e ->
-        manager.switchTo(new BuilderScene(manager, gameSelector.getValue()))
-    );
+    buildButton.setOnAction(e -> {
+      String gameName = JSON_PATH_PREFIX + gameSelector.getValue().replaceAll("\\s+", "") + ".json";
+      manager.switchTo(new BuilderScene(manager, gameName));
+    });
+
     // Language and Theme Selections
     HBox selectorBox = setupSelectorBox();
 

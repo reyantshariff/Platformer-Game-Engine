@@ -27,27 +27,20 @@ public class GamePlayerScene extends ViewScene {
    * Constructs a new GamePlayerScene to display a game within a JavaFX scene.
    *
    * @param manager  The MainViewManager used to switch scenes.
-   * @param gameName The name of the game to be displayed.
+   * @param gameFilepath The filepath to the game JSON file to be loaded.
    */
-  public GamePlayerScene(MainViewManager manager, String gameName) {
+  public GamePlayerScene(MainViewManager manager, String gameFilepath) {
     super(new StackPane(), 1280, 720);
 
     StackPane root = (StackPane) getScene().getRoot();
-
-    String correctGameName = gameName.replaceAll("\\s+","");
-
-
-    // Parse the game JSON into a Game object
-    String jsonPath = JSON_PATH_PREFIX + correctGameName+ ".json";
     Game game;
+
     try {
-      Parser<?> parser = new JsonParser(jsonPath);
+      Parser<?> parser = new JsonParser(gameFilepath);
       ObjectMapper mapper = new ObjectMapper();
       JsonNode newNode = mapper.createObjectNode();
       game = (Game) parser.parse(newNode);
       logger.debug(game.getAllScenes().values().stream().findFirst().getClass());
-
-
     } catch (ParsingException e) {
       throw new IllegalStateException("Failed to parse game JSON file: " + e.getMessage(), e);
     }

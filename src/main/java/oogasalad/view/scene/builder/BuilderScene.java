@@ -55,7 +55,6 @@ public class BuilderScene extends ViewScene {
   public static final double GAME_PREVIEW_WIDTH = 1000;
   public static final double GAME_PREVIEW_HEIGHT = 800;
 
-  private static final String JSON_PATH_PREFIX = "data/GameJsons/";
   private static final String COMPONENT_PACKAGE_NAME = "oogasalad.model.engine.component";
 
   public static final double MAX_ZOOM = 5.0;
@@ -68,7 +67,6 @@ public class BuilderScene extends ViewScene {
 
   private Canvas myGameCanvas;
   private VBox myComponentContainer;
-  private Game game;
   private Builder builder;
 
   /**
@@ -76,32 +74,13 @@ public class BuilderScene extends ViewScene {
    *
    * @param manager the view manager which this scene will use to navigate to other screens
    */
-  public BuilderScene(MainViewManager manager, String gameName) {
+  public BuilderScene(MainViewManager manager, String gameFilepath) {
     // Create the BorderPane as the root
     super(new BorderPane(), 1280, 720);
     viewManager = manager;
     myWindow = (BorderPane) getScene().getRoot();
-    createGame(gameName);
+    builder = new Builder(gameFilepath);
     initializeUI();
-  }
-
-  private void createGame(String gameName) {
-    // Parse the game JSON into a Game object
-    String jsonPath = JSON_PATH_PREFIX + gameName.replaceAll("\\s+","") + ".json";
-    try {
-      Parser<?> parser = new JsonParser(jsonPath);
-      ObjectMapper mapper = new ObjectMapper();
-      JsonNode newNode = mapper.createObjectNode();
-      game = (Game) parser.parse(newNode);
-      logger.debug(game.getAllScenes().values().stream().findFirst().getClass());
-
-    } catch (ParsingException e) {
-      throw new IllegalStateException("Failed to parse game JSON file: " + e.getMessage(), e);
-    }
-
-    game.goToScene(game.getLevelOrder().getFirst());
-    game.step(0);
-    builder = new Builder(game.getCurrentScene());
   }
 
   private void initializeUI() {
@@ -111,7 +90,7 @@ public class BuilderScene extends ViewScene {
     mainMenuButton.setOnAction(e -> viewManager.switchToMainMenu());
     Button previewLevelButton = new Button("Preview Level");
     previewLevelButton.setOnAction(e -> {
-      JsonNode gameNode = builder.saveGameAs("test.json");
+      JsonNode gameNode = builder.saveGameAs("temp.json");
       viewManager.switchTo(
           new LevelPreviewScene(viewManager, this, gameNode));
 
@@ -376,7 +355,7 @@ public class BuilderScene extends ViewScene {
         }
 
         // Register new object to the scene
-        game.getCurrentScene().registerObject(newObject);
+        builder.getCurrentScene().registerObject(newObject);
         // Update the game preview so the new object appears
         updateGamePreview();
       });
