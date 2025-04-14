@@ -92,38 +92,26 @@ public class ObjectDragger {
     oldX = e.getX();
     oldY = e.getY();
 
-    boolean clickedObject = false;
     GameObject prevObject = builder.getSelectedObject();
     List<GameObject> objects = new ArrayList<>(gameScene.getAllObjects());
     objects = removeCamerasFromObjects(objects);
 
+    boolean clickedObject = false;
+
     for (GameObject obj : objects) {
       if (!obj.hasComponent(Transform.class)) continue;
-      Transform t = obj.getComponent(Transform.class);
 
+      Transform t = obj.getComponent(Transform.class);
       double w = t.getScaleX();
       double h = t.getScaleY();
+      boolean isSelected = builder.objectIsSelected() && builder.getSelectedObject().equals(obj);
 
-      boolean isSelected = builder.objectIsSelected() && builder.getSelectedObject().equals(obj) ;
-
-      if (isSelected && isHoveringOverResizeHandle(oldX, oldY))
-      {
-        resizeStartX = t.getX();
-        resizeStartY = t.getY();
-        resizeStartW = t.getScaleX();
-        resizeStartH = t.getScaleY();
-
-        dragOffsetX = oldX - t.getX();
-        dragOffsetY = oldY - t.getY();
-
-
-        dragContext.beginDrag(e, dragOffsetX, dragOffsetY, true);
+      if (isSelected && isHoveringOverResizeHandle(oldX, oldY)) {
+        startResizing(e, t);
         return;
       }
 
-      // Check if clicked inside bounding box
-      if (oldX >= t.getX() && oldX <= t.getX() + w &&
-          oldY >= t.getY() && oldY <= t.getY() + h) {
+      if (isInsideBoundingBox(oldX, oldY, t)) {
         builder.selectExistingObject(obj);
         double offsetX = e.getX() - t.getX();
         double offsetY = e.getY() - t.getY();
@@ -132,21 +120,40 @@ public class ObjectDragger {
       }
     }
 
-    // If nothing was clicked
+    handleDeselection(prevObject, clickedObject);
+    builderScene.updateGamePreview();
+  }
+
+  private boolean isInsideBoundingBox(double mouseX, double mouseY, Transform t) {
+    double w = t.getScaleX();
+    double h = t.getScaleY();
+    return mouseX >= t.getX() && mouseX <= t.getX() + w &&
+        mouseY >= t.getY() && mouseY <= t.getY() + h;
+  }
+
+  private void startResizing(MouseEvent e, Transform t) {
+    resizeStartX = t.getX();
+    resizeStartY = t.getY();
+    resizeStartW = t.getScaleX();
+    resizeStartH = t.getScaleY();
+
+    dragOffsetX = oldX - t.getX();
+    dragOffsetY = oldY - t.getY();
+
+    dragContext.beginDrag(e, dragOffsetX, dragOffsetY, true);
+  }
+
+  private void handleDeselection(GameObject prevObject, boolean clickedObject) {
     if (builder.objectIsSelected() && !clickedObject) {
       recordResizing();
       builder.deselect();
       dragContext.endInteraction();
     }
 
-    // If selection was changed
     if (prevObject != builder.getSelectedObject()) {
       builderScene.handleObjectSelectionChange();
     }
-
-    builderScene.updateGamePreview();
   }
-
 
   private void handleDragged(MouseEvent e) {
     if (!builder.objectIsSelected() || !dragContext.isActive()) return;
