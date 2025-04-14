@@ -4,9 +4,13 @@ import static oogasalad.model.config.GameConfig.LOGGER;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -165,7 +169,7 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
 
     ObjectNode configurations = root.putObject("Configurations");
 
-    //Note: I tried my hardest to use reflection and something dynamic but Jackson library does not allow it.
+    // Note: I tried my hardest to use reflection and something dynamic but Jackson library does not allow it.
     List<SerializedField<?>> serializableFields = data.getSerializedFields();
     for (SerializedField<?> serializedField : serializableFields) {
       if (serializedField.getFieldType() == String.class) {
@@ -174,7 +178,15 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
         configurations.put(serializedField.getFieldName(), (Integer) serializedField.getValue());
       } else if (serializedField.getFieldType() == double.class) {
         configurations.put(serializedField.getFieldName(), (Double) serializedField.getValue());
-      }
+      } else if (serializedField.getFieldType() == List.class) {
+          ParameterizedType pt = (ParameterizedType) serializedField.getFieldGenericType();
+          Type argType = pt.getActualTypeArguments()[0];
+
+          if (argType == String.class) {
+            ArrayNode arrayNode = mapper.valueToTree(serializedField.getValue());
+            configurations.set(serializedField.getFieldName(), arrayNode);
+          }
+        }
     }
 
     return root;

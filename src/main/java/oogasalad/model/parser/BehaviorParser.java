@@ -202,9 +202,10 @@ public class BehaviorParser implements Parser<Behavior> {
     String behaviorName = data.getName();
     root.put(NAME, behaviorName);
 
-    //I understand that the two methods below are quite similar in structure, but the alternative
-    // would be to create a method with about 6 or more parameters to account for both,
-    // which I think is less readable and coder friendly than two similar methods.
+    // NOTE: I understand that the two methods below are quite similar in structure, but the alternative
+    //       would be to create a method with about 6 or more parameters to account for both,
+    //       which I think is less readable and coder friendly than two similar methods.
+    //   BY: Daniel Rodriguez-Florido
     writeConstraints(data, root);
     writeActions(data, root);
 

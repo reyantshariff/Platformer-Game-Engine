@@ -24,14 +24,11 @@ public class LevelPreviewScene extends ViewScene {
    * A LevelPreviewScene is similar to GamePlayerScene but is meant for previewing a
    * level-in-progress from the builder.
    *
-   * @param manager      the view manager which switches between windows; used for returning to
-   *                     builder
-   * @param builderScene the Builder view window which this preview is sourced from; used for
-   *                     returning to the builder
+   * @param builderScene the BuilderScene that created this LevelPreviewScene
    * @param gameNode     the Game object being previewed, stored as a JSON node according to
    *                     JsonParser
    */
-  public LevelPreviewScene(MainViewManager manager, BuilderScene builderScene, JsonNode gameNode) {
+  public LevelPreviewScene(BuilderScene builderScene, JsonNode gameNode) {
     super(new StackPane(), 1280, 720);
 
     StackPane root = (StackPane) getScene().getRoot();
@@ -44,13 +41,12 @@ public class LevelPreviewScene extends ViewScene {
       throw new IllegalStateException("Failed to parse game JSON file: " + e.getMessage(), e);
     }
 
-    System.out.println(game.getAllScenes().size());
     gameRunner = new GameRunner(game);
 
     Button returnButton = new Button("Return to Builder");
     returnButton.setOnAction(e -> {
       deactivate();
-      manager.switchTo(builderScene); // return to the builder scene
+      MainViewManager.getInstance().switchTo("BuilderScene"); // return to the builder scene
     });
 
     StackPane.setAlignment(returnButton, Pos.TOP_RIGHT);

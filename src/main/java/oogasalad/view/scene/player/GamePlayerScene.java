@@ -20,16 +20,13 @@ import oogasalad.view.player.GameRunner;
  */
 public class GamePlayerScene extends ViewScene {
   private final GameRunner gameRunner;
-  private static final String JSON_PATH_PREFIX = "data/GameJsons/";
   private static final Logger logger = LogManager.getLogger(GamePlayerScene.class);
 
   /**
    * Constructs a new GamePlayerScene to display a game within a JavaFX scene.
-   *
-   * @param manager  The MainViewManager used to switch scenes.
    * @param gameFilepath The filepath to the game JSON file to be loaded.
    */
-  public GamePlayerScene(MainViewManager manager, String gameFilepath) {
+  public GamePlayerScene(String gameFilepath) {
     super(new StackPane(), 1280, 720);
 
     StackPane root = (StackPane) getScene().getRoot();
@@ -53,7 +50,7 @@ public class GamePlayerScene extends ViewScene {
     returnButton.setId("returnButton");
     returnButton.setOnAction(e -> {
       deactivate();
-      manager.switchToMainMenu();
+      MainViewManager.getInstance().switchToMainMenu();
     });
     StackPane.setAlignment(returnButton, Pos.TOP_RIGHT);
 

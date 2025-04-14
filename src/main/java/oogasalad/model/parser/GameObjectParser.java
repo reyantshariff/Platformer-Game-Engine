@@ -27,7 +27,8 @@ public class GameObjectParser implements Parser<GameObject> {
   private final ObjectMapper mapper = new ObjectMapper();
 
   private static final String TAG = "Tag";
-  private static final String BEHAVIORS = "BehaviorController";
+  private static final String BEHAVIOR_CONTROLLER = "BehaviorController";
+  private static final String BEHAVIORS = "Behaviors";
   private static final String NAME = "Name";
   private static final String COMPONENTS = "Components";
 
@@ -71,8 +72,8 @@ public class GameObjectParser implements Parser<GameObject> {
   }
 
   private void handleAddingBehaviors(JsonNode node, GameObject gameObject) throws ParsingException {
-    if (node.has(BEHAVIORS)) {
-      JsonNode behaviors = node.get(BEHAVIORS);
+    if (node.has(BEHAVIOR_CONTROLLER)) {
+      JsonNode behaviors = node.get(BEHAVIOR_CONTROLLER);
       parseBehaviors(gameObject, behaviors);
     }
   }
@@ -168,6 +169,10 @@ public class GameObjectParser implements Parser<GameObject> {
       JsonNode behaviorNode = behaviorParser.write(behavior);
       behaviors.add(behaviorNode);
     }
-    root.set(BEHAVIORS, behaviors);
+
+    ObjectNode behaviorWrapper = mapper.createObjectNode();
+    behaviorWrapper.set(BEHAVIORS, behaviors);
+    root.set(BEHAVIOR_CONTROLLER, behaviorWrapper);
   }
+
 }

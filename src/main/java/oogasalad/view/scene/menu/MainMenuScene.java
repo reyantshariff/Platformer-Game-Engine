@@ -41,13 +41,14 @@ public class MainMenuScene extends ViewScene {
     Button playButton = (Button) buttonBox.lookup("#playButton");
     Button buildButton = (Button) buttonBox.lookup("#buildButton");
 
-    playButton.setOnAction(e ->
-        manager.switchTo(new GamePlayerScene(manager, JSON_PATH_PREFIX + gameSelector.getValue().replaceAll("\\s+", "") + ".json"))
-    );
+    playButton.setOnAction(e -> {
+      String gameName = JSON_PATH_PREFIX + gameSelector.getValue().replaceAll("\\s+", "") + ".json";
+      manager.switchTo(new GamePlayerScene(gameName));
+    });
 
     buildButton.setOnAction(e -> {
       String gameName = JSON_PATH_PREFIX + gameSelector.getValue().replaceAll("\\s+", "") + ".json";
-      manager.switchTo(new BuilderScene(manager, gameName));
+      manager.switchTo(new BuilderScene(gameName));
     });
 
     // Language and Theme Selections

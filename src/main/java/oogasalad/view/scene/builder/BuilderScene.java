@@ -1,7 +1,6 @@
 package oogasalad.view.scene.builder;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -27,13 +26,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import oogasalad.model.builder.Builder;
-import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.component.Transform;
-import oogasalad.model.parser.JsonParser;
-import oogasalad.model.parser.Parser;
-import oogasalad.model.parser.ParsingException;
 import oogasalad.model.parser.PrefabLoader;
 import oogasalad.view.gui.button.BuilderSpriteOptionButton;
 import oogasalad.view.gui.dropDown.ClassSelectionDropDownMenu;
@@ -63,21 +58,17 @@ public class BuilderScene extends ViewScene {
   private static final Logger logger = LogManager.getLogger(BuilderScene.class);
 
   private final BorderPane myWindow;
-  private final MainViewManager viewManager;
+  private final Builder builder;
 
   private Canvas myGameCanvas;
   private VBox myComponentContainer;
-  private Builder builder;
 
   /**
    * Constructor for BuilderView
-   *
-   * @param manager the view manager which this scene will use to navigate to other screens
    */
-  public BuilderScene(MainViewManager manager, String gameFilepath) {
+  public BuilderScene(String gameFilepath) {
     // Create the BorderPane as the root
     super(new BorderPane(), 1280, 720);
-    viewManager = manager;
     myWindow = (BorderPane) getScene().getRoot();
     builder = new Builder(gameFilepath);
     initializeUI();
@@ -87,13 +78,12 @@ public class BuilderScene extends ViewScene {
     // Top bar
     HBox topBar = new HBox();
     Button mainMenuButton = new Button("Main Menu");
+    MainViewManager viewManager = MainViewManager.getInstance();
     mainMenuButton.setOnAction(e -> viewManager.switchToMainMenu());
     Button previewLevelButton = new Button("Preview Level");
     previewLevelButton.setOnAction(e -> {
       JsonNode gameNode = builder.saveGameAs("temp.json");
-      viewManager.switchTo(
-          new LevelPreviewScene(viewManager, this, gameNode));
-
+      viewManager.switchTo(new LevelPreviewScene(this, gameNode));
     });
     topBar.getChildren().addAll(mainMenuButton, previewLevelButton);
     myWindow.setTop(topBar);
