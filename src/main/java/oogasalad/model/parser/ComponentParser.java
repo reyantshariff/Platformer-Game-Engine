@@ -169,26 +169,41 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
 
     ObjectNode configurations = root.putObject("Configurations");
 
-    // Note: I tried my hardest to use reflection and something dynamic but Jackson library does not allow it.
     List<SerializedField<?>> serializableFields = data.getSerializedFields();
     for (SerializedField<?> serializedField : serializableFields) {
-      if (serializedField.getFieldType() == String.class) {
-        configurations.put(serializedField.getFieldName(), (String) (serializedField.getValue()));
-      } else if (serializedField.getFieldType() == int.class) {
-        configurations.put(serializedField.getFieldName(), (Integer) serializedField.getValue());
-      } else if (serializedField.getFieldType() == double.class) {
-        configurations.put(serializedField.getFieldName(), (Double) serializedField.getValue());
-      } else if (serializedField.getFieldType() == List.class) {
-          ParameterizedType pt = (ParameterizedType) serializedField.getFieldGenericType();
-          Type argType = pt.getActualTypeArguments()[0];
-
-          if (argType == String.class) {
-            ArrayNode arrayNode = mapper.valueToTree(serializedField.getValue());
-            configurations.set(serializedField.getFieldName(), arrayNode);
-          }
-        }
+      serializeField(serializedField, configurations, mapper);
     }
 
     return root;
   }
+
+  private void serializeField(SerializedField<?> serializedField, ObjectNode configurations, ObjectMapper mapper) {
+    String fieldName = serializedField.getFieldName();
+    Class<?> fieldType = serializedField.getFieldType();
+
+    if (fieldType == String.class) {
+      configurations.put(fieldName, (String) serializedField.getValue());
+    } else if (fieldType == int.class || fieldType == Integer.class) {
+      configurations.put(fieldName, (Integer) serializedField.getValue());
+    } else if (fieldType == double.class || fieldType == Double.class) {
+      configurations.put(fieldName, (Double) serializedField.getValue());
+    } else if (List.class.isAssignableFrom(fieldType)) {
+      serializeListField(serializedField, configurations, mapper);
+    } else {
+      throw new IllegalArgumentException("Unsupported field type: " + fieldType);
+    }
+  }
+
+  private void serializeListField(SerializedField<?> serializedField, ObjectNode configurations, ObjectMapper mapper) {
+    ParameterizedType pt = (ParameterizedType) serializedField.getFieldGenericType();
+    Type argType = pt.getActualTypeArguments()[0];
+
+    if (argType == String.class) {
+      ArrayNode arrayNode = mapper.valueToTree(serializedField.getValue());
+      configurations.set(serializedField.getFieldName(), arrayNode);
+    } else {
+      throw new IllegalArgumentException("Unsupported List type: " + argType);
+    }
+  }
+
 }
