@@ -17,7 +17,7 @@ public class KeyReleaseConstraintTest extends ConstraintsTest<KeyReleaseConstrai
 
     @Override
     @Test
-    public void check_checkPosotive_returnsTrue() {
+    public void check_checkPositive_returnsTrue() {
         getGame().keyPressed(KeyCode.A.getValue());
         step();
         getGame().keyReleased(KeyCode.A.getValue());

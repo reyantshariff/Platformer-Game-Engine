@@ -1,5 +1,9 @@
 package oogasalad.model.engine.base.behavior;
 
+import java.util.ArrayList;
+import java.util.List;
+import oogasalad.model.engine.base.serialization.SerializedField;
+import oogasalad.model.engine.component.Collider;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,20 +17,26 @@ public class CollidesWithConstraintTest extends ConstraintsTest<CollidesWithCons
 
     @Override
     public void customSetUp() {
-        CollidesWithConstraint constraint =
-                getBehavior1().addConstraint(CollidesWithConstraint.class);
+        CollidesWithConstraint constraint = getBehavior1().addConstraint(CollidesWithConstraint.class);
         setConstraint(constraint);
+
+        Collider collider1 = getObj1().getComponent(Collider.class);
+        ((SerializedField<List<String>>) collider1.getSerializedFields().getFirst()).setValue(List.of(getObj2().getTag()));
+
         transform1 = getObj1().getComponent(Transform.class);
         transform2 = getObj2().getComponent(Transform.class);
     }
 
     @Override
     @Test
-    public void check_checkPosotive_returnsTrue() {
+    public void check_checkPositive_returnsTrue() {
         transform1.setX(transform2.getX());
         transform1.setY(transform2.getY());
         step();
         assertTrue(getConstraint().onCheck(getObj2().getTag()));
+
+        Collider collider1 = getObj1().getComponent(Collider.class);
+        ((SerializedField<List<String>>) collider1.getSerializedFields().getFirst()).setValue(new ArrayList<>());
     }
 
     @Override

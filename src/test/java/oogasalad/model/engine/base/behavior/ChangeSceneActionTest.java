@@ -33,7 +33,7 @@ public class ChangeSceneActionTest extends ActionsTest<ChangeSceneAction> {
             try {
                 getAction().onPerform("nextLevel");
             } finally {
-                assertTrue(getScene2().getName().equals(getGame().getCurrentScene().getName()));
+                assertEquals(getScene2().getName(), getGame().getCurrentScene().getName());
                 latch.countDown();
             }
         });

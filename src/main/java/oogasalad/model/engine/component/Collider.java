@@ -1,5 +1,6 @@
 package oogasalad.model.engine.component;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,11 +23,10 @@ public class Collider extends GameComponent {
   }
 
   @SerializableField
-  private List<String> collidableTags;
+  private List<String> collidableTags = new ArrayList<>();
 
   private final Set<Collider> collidedColliders = new HashSet<>();
   private Transform transform;
-
 
   @Override
   protected void awake() {

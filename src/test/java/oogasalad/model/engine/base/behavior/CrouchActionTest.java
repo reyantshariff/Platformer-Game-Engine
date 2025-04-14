@@ -24,11 +24,11 @@ public class CrouchActionTest extends ActionsTest<CrouchAction> {
         assertEquals(initialY, getObj1().getComponent(Transform.class).getY());
         assertEquals(initalScaleY, getObj1().getComponent(Transform.class).getScaleY());
 
-        getAction().onPerform(true);
+        getAction().onPerform(null);
         assertEquals(crouchY, getObj1().getComponent(Transform.class).getY());
         assertEquals(crouchScaleY, getObj1().getComponent(Transform.class).getScaleY());
 
-        getAction().onPerform(true);
+        getAction().onPerform(null);
         assertEquals(initialY, getObj1().getComponent(Transform.class).getY());
         assertEquals(initalScaleY, getObj1().getComponent(Transform.class).getScaleY());
     }

@@ -23,14 +23,8 @@ class BehaviorControllerTest {
       this.value = value;
     }
 
-    /**
-     * The type of the constraint. This is used to classify the constraints being checked. Note:
-     * This method MUST be override.
-     *
-     * @return the type of the constraint
-     */
     @Override
-    public ComponentTag constraintType() {
+    protected Boolean defaultParameter() {
       return null;
     }
 
@@ -51,6 +45,11 @@ class BehaviorControllerTest {
 
     public boolean wasExecuted() {
       return executed;
+    }
+
+    @Override
+    protected Boolean defaultParameter() {
+      return null;
     }
 
     /**
