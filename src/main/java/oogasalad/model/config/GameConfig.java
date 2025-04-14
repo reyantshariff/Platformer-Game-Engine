@@ -44,4 +44,15 @@ public class GameConfig {
     String rawMessage = myMessages.getString(key);
     return MessageFormat.format(rawMessage, args);
   }
+
+  /**
+   * A getter to use the language properties file message that have number values
+   *
+   * @param key - the message you want that is stored in the properties file
+   * @return - the value of the message you wish to display/log
+   */
+  public static Double getNumber(String key) {
+    String rawMessage = myMessages.getString(key);
+    return Double.parseDouble(rawMessage);
+  }
 }
