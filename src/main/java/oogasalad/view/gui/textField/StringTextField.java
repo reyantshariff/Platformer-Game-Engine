@@ -22,45 +22,43 @@ public class StringTextField extends TextField {
   public StringTextField(String initialValue, String prompt) {
     super();
     setPromptText(prompt);
-    originalValue = initialValue != null ? initialValue : "";
+    originalValue = (initialValue != null) ? initialValue : "";
 
-    // Allow only letters, digits, spaces, and punctuation
-    TextFormatter<String> formatter = new TextFormatter<>(
-        change -> {
-          String newText = change.getControlNewText();
-          if (newText.matches("[a-zA-Z0-9 \\p{Punct}]*")) {
-            return change;
-          } else {
-            return null;
-          }
-        });
-    setTextFormatter(formatter);
+    setTextFormatter(createTextFormatter());
     setText(originalValue);
 
-    // Cancel editing if ESC is pressed
-    setOnKeyPressed(e -> {
-      if (e.getCode() == KeyCode.ESCAPE) {
-        onCancel();
-      }
-      e.consume();
-    });
+    setOnKeyPressed(e -> handleKeyPress(e.getCode()));
+    textProperty().addListener((obs, wasText, isNowText) -> handleTextChange(isNowText));
+    focusedProperty().addListener((obs, wasFocused, isNowFocused) -> handleFocusChange(wasFocused, isNowFocused));
+  }
 
-    // Handle "submit" events
-    textProperty().addListener((obs, wasText, isNowText) -> {
-      if (onSubmit(isNowText)) {
-        setStyle("-fx-text-fill: black;");
-      } else {
-        setStyle("-fx-text-fill: red;");
-      }
-    });
+  private void handleFocusChange(boolean wasFocused, boolean isNowFocused) {
+    if (!isNowFocused) {
+      onComplete();
+    } else if (!wasFocused) {
+      originalValue = getText();
+    }
+  }
 
-    focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-      if (!isNowFocused) {
-        onComplete();
-      } else if (!wasFocused) {
-        originalValue = getText();
-      }
+  private TextFormatter<String> createTextFormatter() {
+    return new TextFormatter<>(change -> {
+      String newText = change.getControlNewText();
+      return newText.matches("[a-zA-Z0-9 \\p{Punct}]*") ? change : null;
     });
+  }
+
+  private void handleKeyPress(KeyCode keyCode) {
+    if (keyCode == KeyCode.ESCAPE) {
+      onCancel();
+    }
+  }
+
+  private void handleTextChange(String newValue) {
+    if (onSubmit(newValue)) {
+      setStyle("-fx-text-fill: black;");
+    } else {
+      setStyle("-fx-text-fill: red;");
+    }
   }
 
   /**
