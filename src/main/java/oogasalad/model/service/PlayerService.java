@@ -11,6 +11,8 @@ import com.google.cloud.firestore.*;
 import java.util.HashMap;
 import java.util.Map;
 import oogasalad.database.DatabaseException;
+import oogasalad.model.config.PasswordConfig;
+import oogasalad.model.config.PasswordHashingException;
 import oogasalad.model.profile.PlayerData;
 
 /**
@@ -28,10 +30,13 @@ public class PlayerService {
    * Creates a new player with the given username
    *
    * @param username - the unique username of the player
+   * @param password - the String password of the player
+   * @param fullName - the concatenation of the first and last name of the player
    * @return - true if the player was successfully created
    * @throws DatabaseException - if the player already exists or a database error occurs
    */
-  public static boolean createNewPlayer(String username) throws DatabaseException {
+  public static boolean createNewPlayer(String username, String password, String fullName)
+      throws DatabaseException, PasswordHashingException {
     if (documentExists(username, COLLECTION_NAME)) {
       LOGGER.error(getText("playerExistsError"), username);
       throw new DatabaseException(getText("playerExistsError", username));
@@ -39,11 +44,20 @@ public class PlayerService {
 
     Map<String, Object> playerData = new HashMap<>();
     playerData.put("username", username);
+    playerData.put("fullName", fullName);
+    handlePasswordHash(password, playerData);
     playerData.put("createdAt", FieldValue.serverTimestamp());
 
     addToDatabase(username, COLLECTION_NAME, playerData);
     LOGGER.info(getText("createPlayerMessage"), username);
     return true;
+  }
+
+  private static void handlePasswordHash(String password, Map<String, Object> playerData)
+      throws PasswordHashingException {
+    String salt = PasswordConfig.generateSalt();
+    String hashedPassword = PasswordConfig.hashPassword(password, salt);
+    playerData.put("password", hashedPassword);
   }
 
   /**
