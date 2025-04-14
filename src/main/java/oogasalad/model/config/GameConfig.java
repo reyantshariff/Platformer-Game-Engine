@@ -1,6 +1,8 @@
 package oogasalad.model.config;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import org.apache.logging.log4j.LogManager;
@@ -55,4 +57,16 @@ public class GameConfig {
     String rawMessage = myMessages.getString(key);
     return Double.parseDouble(rawMessage);
   }
+
+  /**
+   * A getter to use the language properties file message that have list of string values
+   *
+   * @param key - the message you want that is stored in the properties file
+   * @return - the value of the message you wish to display/log
+   */
+  public static List<String> getTextList(String key) {
+    String rawMessage = myMessages.getString(key);
+    return List.of(rawMessage.split(","));
+  }
+
 }
