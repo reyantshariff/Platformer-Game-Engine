@@ -26,13 +26,6 @@ public abstract class GameComponent implements Serializable {
   }
 
   /**
-   * This method is called before the object calls its update method for the first time
-   */
-  protected void start() {
-    // NOTE: This method should be override if needed
-  }
-
-  /**
    * This method is called when the component is removed.
    */
   protected void onRemove() {

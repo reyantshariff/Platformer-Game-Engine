@@ -17,7 +17,6 @@ class SpriteRendererTest {
     spriteRenderer = new SpriteRenderer();
     List<String> testPaths = List.of("img1.png", "img2.png", "img3.png");
     spriteRenderer.setImagePaths(testPaths);
-    spriteRenderer.start();
   }
 
   @Test
