@@ -14,6 +14,11 @@ public class TouchingFromAboveConstraint extends BehaviorConstraint<String> {
   private static final double TOLERANCE = 5.0;
 
   @Override
+  protected String defaultParameter() {
+    return "";
+  }
+
+  @Override
   protected void awake() {
     collider = getComponent(Collider.class);
   }
@@ -23,8 +28,4 @@ public class TouchingFromAboveConstraint extends BehaviorConstraint<String> {
     return collider.touchingFromAbove(tag, TOLERANCE);
   }
 
-  @Override
-  public ComponentTag constraintType() {
-    return ComponentTag.COLLISION;
-  }
 }

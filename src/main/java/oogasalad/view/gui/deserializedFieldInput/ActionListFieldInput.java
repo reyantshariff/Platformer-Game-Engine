@@ -165,8 +165,6 @@ public class ActionListFieldInput extends DeserializedFieldUI<List<BehaviorActio
       }
       return true;
     } catch (Exception e) {
-      // fallback if parse fails
-      Object fallback = param.getValue();
       return false;
     }
   }

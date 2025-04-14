@@ -54,26 +54,24 @@ public abstract class BehaviorConstraint<T> implements Serializable {
   }
 
   /**
-   * The type of the constraint. This is used to classify the constraints being checked.
-   * Note: This method MUST be override.
-   * @return the type of the constraint
-   */
-  public abstract ComponentTag constraintType();
-
-  /**
    * Check if the constraint is met.
    * @param parameter the parameter to check against
    * @return true if the constraint is met, false otherwise
    */
   @SuppressWarnings("unchecked")
   public final boolean onCheck(Object parameter) {
-    // TODO: FIX THIS WHEN NULL
     if (parameter == null) {
-      return false;
+      return check(defaultParameter());
     } else {
       return check((T) parameter);
     }
   }
+
+  /**
+   * This method is called to get the default parameter.
+   * @return the default parameter
+   */
+  protected abstract T defaultParameter();
 
   /**
    * Check if the constraint is met.
@@ -86,7 +84,7 @@ public abstract class BehaviorConstraint<T> implements Serializable {
    * This method is called to get the component references.
    */
   protected void awake() {
-    // NOTE: This method should be overriden if needed
+    // NOTE: This method should be override if needed
   }
 
   /**

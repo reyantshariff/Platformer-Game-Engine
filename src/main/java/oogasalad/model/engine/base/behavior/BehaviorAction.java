@@ -63,25 +63,24 @@ public abstract class BehaviorAction<T> implements Serializable {
   }
 
   /**
-   * The type of the constraint. This is used to classify the constraints being checked. Note: This
-   * method MUST be override.
-   * 
-   * @return the type of the constraint
-   */
-  public abstract ComponentTag actionType();
-
-  /**
    * This method is called to perform the action
    * 
    * @param parameter the parameter for the action
    */
   @SuppressWarnings("unchecked")
   public final void onPerform(Object parameter) {
-    // TODO: FIX THIS WHEN NULL
-    if (parameter != null) {
+    if (parameter == null) {
+      perform(defaultParameter());
+    } else {
       perform((T) parameter);
     }
   }
+
+  /**
+   * This method is called to get the default parameter for the action.
+   * @return the default parameter for the action
+   */
+  protected abstract T defaultParameter();
 
   /**
    * Performs the action

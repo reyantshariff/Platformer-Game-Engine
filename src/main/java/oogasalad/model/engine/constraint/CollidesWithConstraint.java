@@ -13,6 +13,11 @@ public class CollidesWithConstraint extends BehaviorConstraint<String> {
   private Collider collider;
 
   @Override
+  protected String defaultParameter() {
+    return "";
+  }
+
+  @Override
   protected void awake() {
     collider = getComponent(Collider.class);
   }
@@ -20,10 +25,5 @@ public class CollidesWithConstraint extends BehaviorConstraint<String> {
   @Override
   protected boolean check(String tag) {
     return collider.collidesWith(tag);
-  }
-
-  @Override
-  public ComponentTag constraintType() {
-    return ComponentTag.COLLISION;
   }
 }

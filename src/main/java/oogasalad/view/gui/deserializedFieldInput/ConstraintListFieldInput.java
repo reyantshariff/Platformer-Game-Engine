@@ -165,8 +165,6 @@ public class ConstraintListFieldInput extends DeserializedFieldUI<List<BehaviorC
       }
       return true;
     } catch (Exception e) {
-      // fallback if parse fails
-      Object fallback = param.getValue();
       return false;
     }
   }

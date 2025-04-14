@@ -6,6 +6,8 @@ package oogasalad.model.engine.base.enumerate;
  * @author Hsuan-Kai Liao, Christian Bepler
  */
 public enum KeyCode {
+  NONE(0),
+
   A(65),
   B(66),
   C(67),

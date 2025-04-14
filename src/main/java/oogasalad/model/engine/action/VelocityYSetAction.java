@@ -11,12 +11,13 @@ import oogasalad.model.engine.component.PhysicsHandler;
  * @author Hsuan-Kai Liao
  */
 public class VelocityYSetAction extends BehaviorAction<Double> {
-  @Override
-  public ComponentTag actionType() {
-    return ComponentTag.PHYSICS;
-  }
 
   private PhysicsHandler physicsHandler;
+
+  @Override
+  protected Double defaultParameter() {
+    return 0.0;
+  }
 
   @Override
   protected void awake() {

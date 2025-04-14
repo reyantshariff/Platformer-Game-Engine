@@ -12,12 +12,13 @@ import oogasalad.model.engine.component.InputHandler;
  * @author Hsuan-Kai Liao
  */
 public class KeyHoldConstraint extends BehaviorConstraint<KeyCode> {
-  @Override
-  public ComponentTag constraintType() {
-    return ComponentTag.INPUT;
-  }
 
   private InputHandler inputHandler;
+
+  @Override
+  protected KeyCode defaultParameter() {
+    return KeyCode.NONE;
+  }
   
   @Override
   protected void awake() {

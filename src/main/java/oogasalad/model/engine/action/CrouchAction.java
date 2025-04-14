@@ -21,15 +21,9 @@ public class CrouchAction extends BehaviorAction<Void> {
     super();
   }
 
-  /**
-   * The type of the constraint. This is used to classify the constraints being checked. Note: This
-   * method MUST be override.
-   *
-   * @return the type of the constraint
-   */
   @Override
-  public ComponentTag actionType() {
-    return ComponentTag.INPUT;
+  protected Void defaultParameter() {
+    return null;
   }
 
   @Override

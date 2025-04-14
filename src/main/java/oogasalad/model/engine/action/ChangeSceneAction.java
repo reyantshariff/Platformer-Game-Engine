@@ -11,12 +11,13 @@ import oogasalad.view.scene.MainViewManager;
  */
 public class ChangeSceneAction extends BehaviorAction<String> {
   private static final String NEXT_LEVEL = "nextLevel";
-  @Override
-  public ComponentTag actionType() {
-    return ComponentTag.TRANSFORM;
-  }
 
   private MainViewManager mainViewManager;
+
+  @Override
+  protected String defaultParameter() {
+    return "";
+  }
 
   @Override
   protected void awake() {
