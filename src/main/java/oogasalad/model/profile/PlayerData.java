@@ -73,16 +73,6 @@ public class PlayerData {
   }
 
   /**
-   * Setter for the password
-   *
-   * @param password - the Password object for a user
-   */
-  public void setPassword(Password password) {
-    this.password = password;
-  }
-
-
-  /**
    * Getter for the time a player was created
    *
    * @return - the time at which a player was created
@@ -110,4 +100,34 @@ public class PlayerData {
   public boolean verifyPassword(String input) throws PasswordHashingException {
     return password.verify(input);
   }
+
+  /**
+   * A getter exclusively to be used internally or for Firebase
+   *
+   * @return - the Password object
+   */
+  public Password getPassword() {
+    return password;
+  }
+
+  /**
+   * Setter for the password -- exclusively to be used internally or for Firebase
+   *
+   * @param password - the Password object for a user
+   */
+  public void setPassword(Password password) {
+    this.password = password;
+  }
+
+  /**
+   * Override the toString to protect the password
+   *
+   * @return - a random string to protect the password
+   */
+  @Override
+  public String toString() {
+    return "[PROTECTED]";
+  }
+
+
 }

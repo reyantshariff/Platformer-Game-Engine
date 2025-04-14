@@ -4,6 +4,8 @@ import oogasalad.database.DatabaseException;
 import oogasalad.database.FirebaseManager;
 import oogasalad.model.config.PasswordHashingException;
 import oogasalad.model.profile.PlayerData;
+import oogasalad.model.profile.SessionException;
+import oogasalad.model.profile.SessionManagement;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -74,6 +76,46 @@ public class PlayerServiceTest {
 
     boolean deleteResult = PlayerService.deletePlayer(username);
     assertTrue(deleteResult);
+  }
+
+  @Test
+  public void login_normalUser_success()
+      throws DatabaseException, PasswordHashingException, SessionException {
+    String username = "testuser_" + System.currentTimeMillis();
+    String password = "testpassword";
+    String fullName = "testfullname";
+    boolean result = PlayerService.createNewPlayer(username, password, fullName);
+    assertTrue(result);
+
+    assertDoesNotThrow(() -> PlayerService.login(username, password));
+    assertEquals(username, SessionManagement.getCurrentUser().getUsername());
+
+    boolean deleteResult = PlayerService.deletePlayer(username);
+    assertTrue(deleteResult);
+    assertDoesNotThrow(PlayerService::logout);
+
+  }
+
+  @Test
+  public void login_notRealUser_ThrowsError() throws PasswordHashingException {
+    String username = "testuser_" + System.currentTimeMillis();
+    String password = "testpassword";
+    PlayerService.login(username, password);
+    assertFalse(SessionManagement.isLoggedIn());
+  }
+
+  @Test
+  public void logout_normalUser_logsOutSuccess() throws DatabaseException, PasswordHashingException {
+    String username = "testuser_" + System.currentTimeMillis();
+    String password = "testpassword";
+    String fullName = "testfullname";
+    boolean result = PlayerService.createNewPlayer(username, password, fullName);
+    assertTrue(result);
+
+    assertDoesNotThrow(() -> PlayerService.login(username, password));
+    assertDoesNotThrow(PlayerService::logout);
+    assertTrue(PlayerService.deletePlayer(username));
+    assertFalse(SessionManagement.isLoggedIn());
   }
 
 }

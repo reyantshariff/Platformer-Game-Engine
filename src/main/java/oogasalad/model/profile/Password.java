@@ -14,6 +14,9 @@ public class Password {
   private String hash;
   private String salt;
 
+  /**
+   * This is a required no-arq constructor firebase
+   */
   public Password() {
     // Required no-arg constructor for serialization with Firestore */
   }

@@ -11,8 +11,8 @@ import com.google.cloud.firestore.*;
 import java.util.HashMap;
 import java.util.Map;
 import oogasalad.database.DatabaseException;
-import oogasalad.model.config.PasswordConfig;
 import oogasalad.model.config.PasswordHashingException;
+import oogasalad.model.profile.Password;
 import oogasalad.model.profile.PlayerData;
 import oogasalad.model.profile.SessionManagement;
 
@@ -33,7 +33,7 @@ public class PlayerService {
    * @param username - the unique username of the player
    * @param password - the String password of the player
    * @param fullName - the concatenation of the first and last name of the player
-   * @return - true if the player was successfully created
+   * @return - the playerData object
    * @throws DatabaseException - if the player already exists or a database error occurs
    */
   public static boolean createNewPlayer(String username, String password, String fullName)
@@ -46,7 +46,8 @@ public class PlayerService {
     Map<String, Object> playerData = new HashMap<>();
     playerData.put("username", username);
     playerData.put("fullName", fullName);
-    handlePasswordHash(password, playerData);
+    Password pass = Password.fromPlaintext(password);
+    playerData.put("password", pass);
     playerData.put("createdAt", FieldValue.serverTimestamp());
 
     addToDatabase(username, COLLECTION_NAME, playerData);
@@ -54,12 +55,6 @@ public class PlayerService {
     return true;
   }
 
-  private static void handlePasswordHash(String password, Map<String, Object> playerData)
-      throws PasswordHashingException {
-    String salt = PasswordConfig.generateSalt();
-    String hashedPassword = PasswordConfig.hashPassword(password, salt);
-    playerData.put("password", hashedPassword);
-  }
 
   /**
    * Deletes the player associated with the given username
@@ -107,7 +102,7 @@ public class PlayerService {
     try {
       curUser = getPlayerByUsername(username);
 
-      if (curUser.verifyPassword(password)){
+      if (!curUser.verifyPassword(password)){
         LOGGER.warn("Invalid password");
       }
 
