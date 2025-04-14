@@ -239,30 +239,45 @@ public class BehaviorParser implements Parser<Behavior> {
     ArrayNode actionsArray = mapper.createArrayNode();
 
     data.getActions().forEach(action -> {
-      ObjectNode oneAction = mapper.createObjectNode();
-      Class<?> parameterClass = action.getParameter() == null ? Void.class : action.getParameter().getClass();
-      BiConsumer<ObjectNode, Object> writer = TYPE_WRITERS.get(parameterClass);
-
-      if(writer == null || oneAction == null) {
-        LOGGER.error(
-            "Could not write action {} for behavior {}. Invalid JSON parameter type. Skipping action.",
-            parameterClass, data.getName());
-        return;
+      ObjectNode oneAction = createActionNode(action, data);
+      if (oneAction != null) {
+        actionsArray.add(oneAction);
       }
-
-      oneAction.put(LOWER_NAME, action.getClass().getSimpleName());
-      if (parameterClass == Void.class) {
-        writer.accept(oneAction, "");
-      } else {
-        writer.accept(oneAction, action.getParameter()); // Catching this error
-      }
-      oneAction.put(PARAMETER_TYPE, parameterClass.getSimpleName());
-
-      actionsArray.add(oneAction);
     });
 
     root.set(ACTIONS, actionsArray);
   }
+
+  private ObjectNode createActionNode(BehaviorAction<?> action, Behavior data) {
+    ObjectNode oneAction = mapper.createObjectNode();
+    Class<?> parameterClass = getParameterClass(action);
+
+    BiConsumer<ObjectNode, Object> writer = TYPE_WRITERS.get(parameterClass);
+    if (writer == null || oneAction == null) {
+      LOGGER.error("Could not write action {} for behavior {}. Invalid JSON parameter type. Skipping action.",
+          parameterClass, data.getName());
+      return null;
+    }
+
+    oneAction.put(LOWER_NAME, action.getClass().getSimpleName());
+    writeActionParameter(writer, oneAction, action);
+    oneAction.put(PARAMETER_TYPE, parameterClass.getSimpleName());
+
+    return oneAction;
+  }
+
+  private Class<?> getParameterClass(BehaviorAction<?> action) {
+    return action.getParameter() == null ? Void.class : action.getParameter().getClass();
+  }
+
+  private void writeActionParameter(BiConsumer<ObjectNode, Object> writer, ObjectNode oneAction, BehaviorAction<?> action) {
+    if (action.getParameter() == null) {
+      writer.accept(oneAction, "");
+    } else {
+      writer.accept(oneAction, action.getParameter());
+    }
+  }
+
 
 
   //unsure how to handle this without using switch
