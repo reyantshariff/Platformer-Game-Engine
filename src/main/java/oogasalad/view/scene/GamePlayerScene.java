@@ -36,7 +36,7 @@ public class GamePlayerScene extends ViewScene {
 
 
     // Parse the game JSON into a Game object
-    String jsonPath = JSON_PATH_PREFIX + correctGameName+ ".json";
+    String jsonPath = JSON_PATH_PREFIX + "/Dino/Dino_02_MultipleLevels"+ ".json";
     Game game;
     try {
       Parser<?> parser = new JsonParser(jsonPath);
