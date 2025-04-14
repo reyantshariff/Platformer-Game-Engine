@@ -13,15 +13,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class BuilderTest {
-private Builder builder;
-private GameObject object;
+
+  private Builder builder;
+  private GameObject object;
   @BeforeEach
   public void setUp()
   {
     GameScene scene = new GameScene("empty");
     object = new GameObject("GameObject");
 
-//    builder = new Builder(scene); // use new constructor
     builder.getCurrentScene().registerObject(object);
     object.addComponent(Transform.class);
     object.getComponent(Transform.class).setY(0);

@@ -21,7 +21,7 @@ public class TouchingFromAboveConstraintTest extends ConstraintsTest<TouchingFro
 
     @Override
     @Test
-    public void check_checkPosotive_returnsTrue() {
+    public void check_checkPositive_returnsTrue() {
         transform1.setX(transform2.getX());
         transform1.setY(transform2.getY() - 99);
         step();

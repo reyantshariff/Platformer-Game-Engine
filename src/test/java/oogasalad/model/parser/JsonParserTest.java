@@ -4,9 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.awt.Dimension;
 import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.base.architecture.GameInfo;
-import oogasalad.model.engine.base.architecture.GameScene;
-import oogasalad.model.parser.JsonParser;
-import oogasalad.view.player.dinosaur.DinosaurGameScene;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
