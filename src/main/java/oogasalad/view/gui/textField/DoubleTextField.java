@@ -26,7 +26,14 @@ public class DoubleTextField extends TextField {
     super();
     setPromptText(prompt);
 
-    TextFormatter<Double> formatter = new TextFormatter<>(
+    setTextFormatter(createTextFormatter(initialValue));
+    setOnKeyPressed(this::handleKeyEvents);
+    textProperty().addListener(this::handleTextChange);
+    focusedProperty().addListener(this::handleFocusChange);
+  }
+
+  private TextFormatter<Double> createTextFormatter(Double initialValue) {
+    return new TextFormatter<>(
         new DoubleStringConverter(),
         initialValue,
         change -> {
@@ -40,33 +47,29 @@ public class DoubleTextField extends TextField {
           }
         }
     );
+  }
 
-    setTextFormatter(formatter);
+  private void handleKeyEvents(javafx.scene.input.KeyEvent e) {
+    if (e.getCode() == KeyCode.ESCAPE) {
+      onCancel();
+    }
+    e.consume();
+  }
 
-    // Cancel editing if ESC is pressed
-    setOnKeyPressed(e -> {
-      if (e.getCode() == KeyCode.ESCAPE) {
-        onCancel();
-      }
-      e.consume();
-    });
+  private void handleTextChange(javafx.beans.value.ObservableValue<? extends String> obs, String wasText, String isNowText) {
+    if (onSubmit(Double.parseDouble(isNowText))) {
+      setStyle("-fx-text-fill: black;");
+    } else {
+      setStyle("-fx-text-fill: red;");
+    }
+  }
 
-    // Handle "submit" events
-    textProperty().addListener((obs, wasText, isNowText) -> {
-      if (onSubmit(Double.parseDouble(isNowText))) {
-        setStyle("-fx-text-fill: black;");
-      } else {
-        setStyle("-fx-text-fill: red;");
-      }
-    });
-
-    focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-      if (!isNowFocused) {
-        onComplete();
-      } else if (!wasFocused) {
-        originalValue = Double.parseDouble(getText());
-      }
-    });
+  private void handleFocusChange(javafx.beans.value.ObservableValue<? extends Boolean> obs, Boolean wasFocused, Boolean isNowFocused) {
+    if (!isNowFocused) {
+      onComplete();
+    } else if (!wasFocused) {
+      originalValue = Double.parseDouble(getText());
+    }
   }
 
   /**
