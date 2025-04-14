@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.serialization.Serializable;
@@ -177,33 +178,37 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
     return root;
   }
 
-  private void serializeField(SerializedField<?> serializedField, ObjectNode configurations, ObjectMapper mapper) {
-    String fieldName = serializedField.getFieldName();
-    Class<?> fieldType = serializedField.getFieldType();
+  private static final Map<Class<?>, BiConsumer<SerializedField<?>, ObjectNode>> SERIALIZERS = new HashMap<>();
 
-    if (fieldType == String.class) {
-      configurations.put(fieldName, (String) serializedField.getValue());
-    } else if (fieldType == int.class || fieldType == Integer.class) {
-      configurations.put(fieldName, (Integer) serializedField.getValue());
-    } else if (fieldType == double.class || fieldType == Double.class) {
-      configurations.put(fieldName, (Double) serializedField.getValue());
-    } else if (List.class.isAssignableFrom(fieldType)) {
-      serializeListField(serializedField, configurations, mapper);
+  static {
+    SERIALIZERS.put(String.class, (field, config) -> config.put(field.getFieldName(), (String) field.getValue()));
+    SERIALIZERS.put(Integer.class, (field, config) -> config.put(field.getFieldName(), (Integer) field.getValue()));
+    SERIALIZERS.put(int.class, (field, config) -> config.put(field.getFieldName(), (Integer) field.getValue()));
+    SERIALIZERS.put(Double.class, (field, config) -> config.put(field.getFieldName(), (Double) field.getValue()));
+    SERIALIZERS.put(double.class, (field, config) -> config.put(field.getFieldName(), (Double) field.getValue()));
+    SERIALIZERS.put(List.class, (field, config) -> serializeListField(field, config));  // Use a separate list serializer
+  }
+
+  private void serializeField(SerializedField<?> serializedField, ObjectNode configurations, ObjectMapper mapper) {
+    Class<?> fieldType = serializedField.getFieldType();
+    BiConsumer<SerializedField<?>, ObjectNode> serializer = SERIALIZERS.get(fieldType);
+
+    if (serializer != null) {
+      serializer.accept(serializedField, configurations);
     } else {
       throw new IllegalArgumentException("Unsupported field type: " + fieldType);
     }
   }
 
-  private void serializeListField(SerializedField<?> serializedField, ObjectNode configurations, ObjectMapper mapper) {
+  private static void serializeListField(SerializedField<?> serializedField, ObjectNode configurations) {
     ParameterizedType pt = (ParameterizedType) serializedField.getFieldGenericType();
     Type argType = pt.getActualTypeArguments()[0];
 
     if (argType == String.class) {
-      ArrayNode arrayNode = mapper.valueToTree(serializedField.getValue());
+      ArrayNode arrayNode = new ObjectMapper().valueToTree(serializedField.getValue());
       configurations.set(serializedField.getFieldName(), arrayNode);
     } else {
       throw new IllegalArgumentException("Unsupported List type: " + argType);
     }
   }
-
 }
