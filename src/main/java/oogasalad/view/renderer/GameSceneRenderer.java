@@ -61,41 +61,45 @@ public class GameSceneRenderer {
       logger.error("Camera transform not found");
       return;
     }
+
     relativeX = cameraTransform.getX();
     relativeY = cameraTransform.getY();
 
-    renderWithoutCamera(gc, scene, null);
+    renderScene(gc);
+
+    Collection<GameObject> objects = scene.getAllObjectsInView();
+    for (GameObject obj : objects) {
+      renderGameObject(gc, obj);
+    }
   }
 
   /**
-   * For scenes WITHOUT a camera: renders the game objects in the given scene onto the canvas.
+   * For scenes WITHOUT a camera: renders all game objects in the given scene onto the canvas.
    *
    * @param gc    The graphics context of the canvas.
    * @param scene The game scene to render.
+   * @param selectedGameObject The game object to highlight (if any)
    */
-  public void renderWithoutCamera(GraphicsContext gc, GameScene scene, GameObject SelectedGameObject) {
-    // TODO: This should not be fixed, this should get from the actual scene
+  public void renderWithoutCamera(GraphicsContext gc, GameScene scene, GameObject selectedGameObject) {
+    renderScene(gc);
+
+    Collection<GameObject> objects = scene.getAllObjects();
+    for (GameObject obj : objects) {
+      renderGameObject(gc, obj);
+    }
+
+    if (selectedGameObject != null) {
+      renderSelectionOverlay(gc, selectedGameObject);
+    }
+  }
+
+  private void renderScene(GraphicsContext gc) {
     String baseName = "oogasalad.gui.general";
     int windowX = ResourceBundles.getInt(baseName, "windowX");
     int windowY = ResourceBundles.getInt(baseName, "windowY");
     double windowWidth = ResourceBundles.getDouble(baseName, "windowWidth");
     double windowHeight = ResourceBundles.getDouble(baseName, "windowHeight");
     gc.clearRect(windowX, windowY, windowWidth, windowHeight);
-
-    Collection<GameObject> objects;
-    if (scene.getCamera() != null) {
-      objects = scene.getAllObjectsInView();
-    } else {
-      objects = scene.getAllObjects(); // if no camera component in scene, get all objects in scene
-    }
-
-    for (GameObject obj : objects) {
-      renderGameObject(gc, obj);
-    }
-
-    if (SelectedGameObject != null) {
-      renderSelectionOverlay(gc, SelectedGameObject);
-    }
   }
 
   private void renderGameObject(GraphicsContext gc, GameObject obj) {

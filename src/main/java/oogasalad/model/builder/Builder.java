@@ -118,7 +118,6 @@ public class Builder {
     selectedObject = null;
   }
 
-
   /**
    *  Records when two game objects overlap
    */

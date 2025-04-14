@@ -12,7 +12,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -146,7 +145,7 @@ public class BuilderScene extends ViewScene {
   public void updateGamePreview() {
     GraphicsContext gc = myGameCanvas.getGraphicsContext2D();
     gc.clearRect(0, 0, myGameCanvas.getWidth(), myGameCanvas.getHeight());
-    getObjectRenderer().renderWithoutCamera(gc, builder.getCurrentScene(), builder.getSelectedObject());
+    getSceneRenderer().renderWithoutCamera(gc, builder.getCurrentScene(), builder.getSelectedObject());
   }
 
   /**
@@ -217,7 +216,7 @@ public class BuilderScene extends ViewScene {
     setupZoomAndPan(container, canvasHolder);
 
     // Object dragging and resizing
-    ObjectDragger objectDragger = new ObjectDragger(myGameCanvas, builder, this, getObjectRenderer());
+    ObjectDragger objectDragger = new ObjectDragger(myGameCanvas, builder, this, getSceneRenderer());
     objectDragger.setupListeners();
 
     return container;

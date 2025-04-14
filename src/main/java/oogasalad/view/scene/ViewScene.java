@@ -2,7 +2,6 @@ package oogasalad.view.scene;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import oogasalad.view.config.StyleConfig;
 import oogasalad.view.renderer.GameSceneRenderer;
 
 /**
@@ -48,7 +47,7 @@ public abstract class ViewScene {
    *
    * @return GameObjectRenderer object
    */
-  protected GameSceneRenderer getObjectRenderer() {
+  protected GameSceneRenderer getSceneRenderer() {
     return myObjectRenderer;
   }
 }
