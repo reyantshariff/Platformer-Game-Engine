@@ -1,16 +1,15 @@
 package oogasalad.view.gui;
 
+import static oogasalad.model.config.GameConfig.LOGGER;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.util.Duration;
-import oogasalad.model.ResourceBundles;
+import oogasalad.model.config.GameConfig;
 import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.engine.base.enumerate.KeyCode;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * The GUI class manages the canvas-based graphical rendering of the OOGASalad game engine.
@@ -21,9 +20,6 @@ import org.apache.logging.log4j.Logger;
  * @author Jack F. Regan and Logan Dracos
  */
 public class Gui {
-
-  private static final Logger logger = LogManager.getLogger(Gui.class);
-  private static final String GUI_GENERAL_PATH = "oogasalad.gui.general";
 
   private final Game game;
   private final Canvas canvas;
@@ -38,11 +34,9 @@ public class Gui {
    */
   public Gui(Game game) {
     this.game = game;
-    ResourceBundles.loadBundle(GUI_GENERAL_PATH);
 
-    canvas = new Canvas(
-        ResourceBundles.getInt(GUI_GENERAL_PATH, "windowWidth"),
-        ResourceBundles.getInt(GUI_GENERAL_PATH, "windowHeight"));
+    canvas = new Canvas(GameConfig.getNumber("windowWidth"),
+        GameConfig.getNumber("windowHeight"));
 
 
     canvas.setFocusTraversable(true);
@@ -74,7 +68,7 @@ public class Gui {
       gameLoop = new Timeline();
       gameLoop.setCycleCount(Timeline.INDEFINITE);
       gameLoop.getKeyFrames().add(new KeyFrame(
-          Duration.seconds(1.0 / ResourceBundles.getDouble(GUI_GENERAL_PATH, "framesPerSecond")),
+          Duration.seconds(1.0 / GameConfig.getNumber("framesPerSecond")),
           event -> step()));
       gameLoop.play();
     }
@@ -96,7 +90,7 @@ public class Gui {
   private void step() {
     GameScene current = game.getCurrentScene();
     if (current != null) {
-      game.step(1.0 / ResourceBundles.getDouble(GUI_GENERAL_PATH, "framesPerSecond"));
+      game.step(1.0 / GameConfig.getNumber("framesPerSecond"));
       if (current.hasCamera()) {
         objectRenderer.renderWithCamera(gc, current);
       } else {
@@ -104,7 +98,7 @@ public class Gui {
       }
 
     } else {
-      logger.debug("No game scene loaded. Skipping step.");
+      LOGGER.error(GameConfig.getText("noSuchScene"));
     }
   }
 
