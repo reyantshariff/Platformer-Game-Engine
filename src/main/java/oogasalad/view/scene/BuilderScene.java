@@ -89,9 +89,9 @@ public class BuilderScene extends ViewScene {
     Button previewLevelButton = new Button("Preview Level");
     previewLevelButton.setOnAction(e -> {
       JsonNode gameNode = builder.saveGameAs("test.json");
-      viewManager.switchTo(
-          new LevelPreviewScene(viewManager, this, gameNode));
 
+      viewManager.registerSceneFactory("LevelPreviewScene", vm -> new LevelPreviewScene(vm, gameNode));
+      viewManager.switchTo("LevelPreviewScene");
     });
     topBar.getChildren().addAll(mainMenuButton, previewLevelButton);
     myWindow.setTop(topBar);

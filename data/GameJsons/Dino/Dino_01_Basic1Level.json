@@ -1,0 +1,517 @@
+{
+  "Data": {
+    "Information": {
+      "Name": "DinoRunner",
+      "Description": "A playable dino runner game",
+      "Author": "Justin Aronwald",
+      "Resolution": {
+        "Width": 1280,
+        "Height": 720
+      }
+    },
+    "Resources": [
+      {
+        "Name": "DinoSprite",
+        "Path": "oogasalad/dinosaur/DinoRun1.png"
+      },
+      {
+        "Name": "GroundSprite",
+        "Path": "oogasalad/dinosaur/Track.png"
+      },
+      {
+        "Name": "CactusSprite",
+        "Path": "oogasalad/dinosaur/Bird1.png"
+      }
+    ],
+    "Scene": [
+      {
+        "Name": "MainGame",
+        "GameObjects": [
+          {
+            "Name": "Ground",
+            "Tag": "Ground",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 0,
+                  "y": 500,
+                  "rotation": 0,
+                  "scaleX": 2560,
+                  "scaleY": 20
+                }
+              },
+              {
+                "Name": "SpriteRenderer",
+                "Configurations": {
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "imagePaths": [
+                    "oogasalad/dinosaur/Track.png"
+                  ]
+                }
+              },
+              {
+                "Name": "Collider",
+                "Configurations": {
+                  "collidableTags": [
+                    "player",
+                    "Obstacle"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "Name": "Dino",
+            "Tag": "player",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 100,
+                  "y": 420,
+                  "rotation": 0,
+                  "scaleX": 40,
+                  "scaleY": 40
+                }
+              },
+              {
+                "Name": "SpriteRenderer",
+                "Configurations": {
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "imagePaths": [
+                    "oogasalad/dinosaur/DinoRun1.png"
+                  ]
+                }
+              },
+              {
+                "Name": "Collider",
+                "Configurations": {
+                  "collidableTags": [
+                    "Ground",
+                    "Obstacle"
+                  ]
+                }
+              },
+              {
+                "Name": "PhysicsHandler",
+                "Configurations": {
+                  "mass": 1,
+                  "velocityX": 150,
+                  "velocityY": 0,
+                  "accelerationX": 0,
+                  "accelerationY": 980
+                }
+              },
+              {
+                "Name": "InputHandler",
+                "Configurations": {}
+              }
+            ],
+            "BehaviorController": {
+              "Behaviors": [
+                {
+                  "Name": "JumpWhenPressed",
+                  "constraints": [
+                    {
+                      "name": "KeyPressConstraint",
+                      "parameter": "SPACE",
+                      "parameterType": "KeyCode"
+                    },
+                    {
+                      "name": "TouchingFromAboveConstraint",
+                      "parameter": "Ground",
+                      "parameterType": "String"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "JumpAction",
+                      "parameter": 500,
+                      "parameterType": "Double"
+                    }
+                  ]
+                },
+                {
+                  "Name": "CrouchWhenPressed",
+                  "constraints": [
+                    {
+                      "name": "KeyPressConstraint",
+                      "parameter": "DOWN",
+                      "parameterType": "KeyCode"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "CrouchAction",
+                      "parameter": 50,
+                      "parameterType": "Double"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "Name": "Cactus1",
+            "Tag": "Obstacle",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 1280,
+                  "y": 460,
+                  "rotation": 0,
+                  "scaleX": 30,
+                  "scaleY": 60
+                }
+              },
+              {
+                "Name": "SpriteRenderer",
+                "Configurations": {
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "imagePaths": [
+                    "oogasalad/dinosaur/Bird1.png"
+                  ]
+                }
+              },
+              {
+                "Name": "Collider",
+                "Configurations": {
+                  "collidableTags": [
+                    "player",
+                    "Ground"
+                  ]
+                }
+              },
+              {
+                "Name": "PhysicsHandler",
+                "Configurations": {
+                  "mass": 1,
+                  "velocityX": -100,
+                  "velocityY": 0,
+                  "accelerationX": 0,
+                  "accelerationY": 0
+                }
+              }
+            ],
+            "BehaviorController": {
+              "Behaviors": [
+                {
+                  "Name": "ResetOnHit",
+                  "constraints": [
+                    {
+                      "name": "CollidesWithConstraint",
+                      "parameter": "player",
+                      "parameterType": "String"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "ChangeSceneAction",
+                      "parameter": "MainMenuScene",
+                      "parameterType": "String"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "Name": "Cactus2",
+            "Tag": "Obstacle",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 1600,
+                  "y": 460,
+                  "rotation": 0,
+                  "scaleX": 30,
+                  "scaleY": 60
+                }
+              },
+              {
+                "Name": "SpriteRenderer",
+                "Configurations": {
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "imagePaths": [
+                    "oogasalad/dinosaur/Bird1.png"
+                  ]
+                }
+              },
+              {
+                "Name": "Collider",
+                "Configurations": {
+                  "collidableTags": [
+                    "player",
+                    "Ground"
+                  ]
+                }
+              },
+              {
+                "Name": "PhysicsHandler",
+                "Configurations": {
+                  "mass": 1,
+                  "velocityX": -100,
+                  "velocityY": 0,
+                  "accelerationX": 0,
+                  "accelerationY": 0
+                }
+              }
+            ],
+            "BehaviorController": {
+              "Behaviors": [
+                {
+                  "Name": "ResetOnHit",
+                  "constraints": [
+                    {
+                      "name": "CollidesWithConstraint",
+                      "parameter": "player",
+                      "parameterType": "String"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "ChangeSceneAction",
+                      "parameter": "MainMenuScene",
+                      "parameterType": "String"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "Name": "Cactus3",
+            "Tag": "Obstacle",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 1900,
+                  "y": 460,
+                  "rotation": 0,
+                  "scaleX": 30,
+                  "scaleY": 60
+                }
+              },
+              {
+                "Name": "SpriteRenderer",
+                "Configurations": {
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "imagePaths": [
+                    "oogasalad/dinosaur/Bird1.png"
+                  ]
+                }
+              },
+              {
+                "Name": "Collider",
+                "Configurations": {
+                  "collidableTags": [
+                    "player",
+                    "Ground"
+                  ]
+                }
+              },
+              {
+                "Name": "PhysicsHandler",
+                "Configurations": {
+                  "mass": 1,
+                  "velocityX": -100,
+                  "velocityY": 0,
+                  "accelerationX": 0,
+                  "accelerationY": 0
+                }
+              }
+            ],
+            "BehaviorController": {
+              "Behaviors": [
+                {
+                  "Name": "ResetOnHit",
+                  "constraints": [
+                    {
+                      "name": "CollidesWithConstraint",
+                      "parameter": "player",
+                      "parameterType": "String"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "ChangeSceneAction",
+                      "parameter": "MainMenuScene",
+                      "parameterType": "String"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "Name": "Bird1",
+            "Tag": "Obstacle",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 2100,
+                  "y": 420,
+                  "rotation": 0,
+                  "scaleX": 40,
+                  "scaleY": 40
+                }
+              },
+              {
+                "Name": "SpriteRenderer",
+                "Configurations": {
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "imagePaths": [
+                    "oogasalad/dinosaur/Bird1.png"
+                  ]
+                }
+              },
+              {
+                "Name": "Collider",
+                "Configurations": {
+                  "collidableTags": [
+                    "player",
+                    "Ground"
+                  ]
+                }
+              },
+              {
+                "Name": "PhysicsHandler",
+                "Configurations": {
+                  "mass": 1,
+                  "velocityX": -100,
+                  "velocityY": 0,
+                  "accelerationX": 0,
+                  "accelerationY": 0
+                }
+              }
+            ],
+            "BehaviorController": {
+              "Behaviors": [
+                {
+                  "Name": "ResetOnHit",
+                  "constraints": [
+                    {
+                      "name": "CollidesWithConstraint",
+                      "parameter": "player",
+                      "parameterType": "String"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "ChangeSceneAction",
+                      "parameter": "MainMenuScene",
+                      "parameterType": "String"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "Name": "Bird2",
+            "Tag": "Obstacle",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 2400,
+                  "y": 440,
+                  "rotation": 0,
+                  "scaleX": 40,
+                  "scaleY": 40
+                }
+              },
+              {
+                "Name": "SpriteRenderer",
+                "Configurations": {
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "imagePaths": [
+                    "oogasalad/dinosaur/Bird1.png"
+                  ]
+                }
+              },
+              {
+                "Name": "Collider",
+                "Configurations": {
+                  "collidableTags": [
+                    "player",
+                    "Ground"
+                  ]
+                }
+              },
+              {
+                "Name": "PhysicsHandler",
+                "Configurations": {
+                  "mass": 1,
+                  "velocityX": -100,
+                  "velocityY": 0,
+                  "accelerationX": 0,
+                  "accelerationY": 0
+                }
+              }
+            ],
+            "BehaviorController": {
+              "Behaviors": [
+                {
+                  "Name": "ResetOnHit",
+                  "constraints": [
+                    {
+                      "name": "CollidesWithConstraint",
+                      "parameter": "player",
+                      "parameterType": "String"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "ChangeSceneAction",
+                      "parameter": "MainMenuScene",
+                      "parameterType": "String"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "Name": "Camera",
+            "Tag": "Camera",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 0,
+                  "y": 0,
+                  "rotation": 0,
+                  "scaleX": 1300,
+                  "scaleY": 1000
+                }
+              },
+              {
+                "Name": "Camera",
+                "Configurations": {}
+              },
+              {
+                "Name": "Follower",
+                "Configurations": {
+                  "followObjectName": "Dino"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

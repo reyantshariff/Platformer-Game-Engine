@@ -1,11 +1,13 @@
 package oogasalad.view.scene;
 
+import java.io.File;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import oogasalad.model.config.GameConfig;
 import oogasalad.view.config.StyleConfig;
 
@@ -35,11 +37,24 @@ public class MainMenuScene extends ViewScene {
     Button playButton = (Button) buttonBox.lookup("#playButton");
     Button buildButton = (Button) buttonBox.lookup("#buildButton");
 
-    playButton.setOnAction(e ->
-        manager.switchTo(new GamePlayerScene(manager, gameSelector.getValue()))
-    );
+    playButton.setOnAction(e -> {
+      FileChooser fileChooser = new FileChooser();
+      fileChooser.setTitle("Select a Game JSON File");
+      fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON Files", "*.json"));
+      fileChooser.setInitialDirectory(new File("data/GameJsons"));
 
-    buildButton.setOnAction(e -> manager.switchTo(new BuilderScene(manager))
+      String gameType = gameSelector.getValue();
+
+      File selectedFile = fileChooser.showOpenDialog(getScene().getWindow());
+      if (selectedFile != null) {
+        String fileName = selectedFile.getName().replace(".json", "");
+
+        manager.registerSceneFactory("GamePlayerScene", vm -> new GamePlayerScene(vm, fileName, gameType));
+        manager.switchTo("GamePlayerScene");
+      }
+    });
+
+    buildButton.setOnAction(e -> manager.switchTo("BuilderScene")
     );
     // Language and Theme Selections
     HBox selectorBox = setupSelectorBox();

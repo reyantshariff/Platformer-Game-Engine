@@ -13,6 +13,9 @@ import javafx.stage.Stage;
  * @author Justin Aronwald
  */
 public class MainViewManager {
+  private final Map<String, java.util.function.Function<MainViewManager, ViewScene>> sceneFactories = new HashMap<>();
+
+  private static final String GAME_PLAYER = "GamePlayerScene";
 
   private final Stage stage;
   private static MainViewManager instance;
@@ -39,6 +42,14 @@ public class MainViewManager {
     return instance;
   }
 
+  /**
+   * @param viewSceneName - String name of the viewscene to be added
+   * @param factory - Factory function to be put in the map
+   */
+  public void registerSceneFactory(String viewSceneName, java.util.function.Function<MainViewManager, ViewScene> factory) {
+    sceneFactories.put(viewSceneName, factory);
+  }
+
 
   /**
    * Function that uses reflection to either create or switch to a ViewScene
@@ -48,12 +59,20 @@ public class MainViewManager {
   public void switchTo(String viewSceneName) {
     try {
       if (!viewScenes.containsKey(viewSceneName)) {
-        Class<?> clazz = Class.forName("oogasalad.view.scene." + viewSceneName);
-        ViewScene viewScene = (ViewScene)
-            clazz.getDeclaredConstructor(MainViewManager.class).newInstance(this);
+        ViewScene viewScene;
+
+        if (sceneFactories.containsKey(viewSceneName)) {
+          viewScene = sceneFactories.get(viewSceneName).apply(this);
+        } else {
+          Class<?> clazz = Class.forName("oogasalad.view.scene." + viewSceneName);
+          viewScene = (ViewScene)
+              clazz.getDeclaredConstructor(MainViewManager.class).newInstance(this);
+        }
+
         viewScenes.put(viewSceneName, viewScene);
       }
       switchTo(viewScenes.get(viewSceneName));
+      removeCachedGameScene(viewSceneName);
     } catch (ClassNotFoundException |
         NoSuchMethodException |
         InstantiationException |
@@ -63,13 +82,18 @@ public class MainViewManager {
     }
   }
 
+  private void removeCachedGameScene(String viewSceneName) {
+    if(viewSceneName.equals(GAME_PLAYER)) {
+      viewScenes.remove(GAME_PLAYER);
+    }
+  }
+
   /**
    * Switches to the given ViewScene
-   * TODO: Deprecate this method to only use reflection above
    *
    * @param viewScene the new scene to display
    */
-  public void switchTo(ViewScene viewScene) {
+  private void switchTo(ViewScene viewScene) {
     // Stop current scene, if applicable
     if (currentScene != null) {
       currentScene.deactivate();

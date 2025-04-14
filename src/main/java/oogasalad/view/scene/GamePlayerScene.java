@@ -27,16 +27,17 @@ public class GamePlayerScene extends ViewScene {
    * @param manager  The MainViewManager used to switch scenes.
    * @param gameName The name of the game to be displayed.
    */
-  public GamePlayerScene(MainViewManager manager, String gameName) {
+  public GamePlayerScene(MainViewManager manager, String gameName, String gameType) {
     super(new StackPane(), 1280, 720);
 
     StackPane root = (StackPane) getScene().getRoot();
 
+    String correctedGamePath = JSON_PATH_PREFIX + gameType + "/";
     String correctGameName = gameName.replaceAll("\\s+","");
 
 
     // Parse the game JSON into a Game object
-    String jsonPath = JSON_PATH_PREFIX + correctGameName+ ".json";
+    String jsonPath = correctedGamePath + correctGameName + ".json";
     Game game;
     try {
       Parser<?> parser = new JsonParser(jsonPath);
