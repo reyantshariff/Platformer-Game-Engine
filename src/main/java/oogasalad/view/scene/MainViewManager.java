@@ -3,8 +3,10 @@ package oogasalad.view.scene;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javafx.stage.Stage;
+import org.reflections.Reflections;
 
 
 /**
@@ -13,6 +15,7 @@ import javafx.stage.Stage;
  * @author Justin Aronwald
  */
 public class MainViewManager {
+  private static final String SCENE_PACKAGE = "oogasalad.view.scene";
 
   private final Stage stage;
   private static MainViewManager instance;
@@ -48,17 +51,17 @@ public class MainViewManager {
   public void switchTo(String viewSceneName) {
     try {
       if (!viewScenes.containsKey(viewSceneName)) {
-        Class<?> clazz = Class.forName("oogasalad.view.scene." + viewSceneName);
-        ViewScene viewScene = (ViewScene)
-            clazz.getDeclaredConstructor(MainViewManager.class).newInstance(this);
-        viewScenes.put(viewSceneName, viewScene);
+        Reflections reflections = new Reflections(SCENE_PACKAGE);
+        List<Class<?>> classes = List.copyOf(reflections.getSubTypesOf(ViewScene.class));
+        Class<?> clazz = classes.stream().filter(c -> c.getSimpleName().equals(viewSceneName)).findFirst().orElse(null);
+
+        if (clazz != null) {
+          ViewScene viewScene = (ViewScene) clazz.getDeclaredConstructor(MainViewManager.class).newInstance(this);
+          viewScenes.put(viewSceneName, viewScene);
+        }
       }
       switchTo(viewScenes.get(viewSceneName));
-    } catch (ClassNotFoundException |
-        NoSuchMethodException |
-        InstantiationException |
-        IllegalAccessException |
-             InvocationTargetException e) {
+    } catch (NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException e) {
       throw new SceneSwitchException("Failed to switch to scene: " + viewSceneName, e);
     }
   }
@@ -88,20 +91,4 @@ public class MainViewManager {
   public void switchToMainMenu() {
     switchTo("MainMenuScene");
   }
-
-  /**
-   * Custom exception for any issues with scene switching. Especially for the
-   * reflection in String
-   */
-  public static class SceneSwitchException extends RuntimeException {
-    /**
-     * Constructor for SceneSwitchException
-     * @param message exception messages
-     * @param cause the cause of the exception
-     */
-    public SceneSwitchException(String message, Throwable cause) {
-      super(message, cause);
-    }
-  }
-
 }

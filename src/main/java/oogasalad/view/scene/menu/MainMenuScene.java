@@ -50,6 +50,9 @@ public class MainMenuScene extends ViewScene {
     HBox selectorBox = setupSelectorBox();
 
     root.getChildren().addAll(title, gameSelector, buttonBox, selectorBox);
+
+    // Set default styles
+    StyleConfig.setStylesheet(getScene(), "");
   }
 
   private HBox setupButtonBox() {

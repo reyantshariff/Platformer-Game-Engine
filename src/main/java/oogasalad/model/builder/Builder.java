@@ -12,7 +12,6 @@ import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.engine.component.Transform;
-import oogasalad.view.player.dinosaur.DinosaurGameScene;
 import oogasalad.model.parser.JsonParser;
 import oogasalad.model.parser.ParsingException;
 
