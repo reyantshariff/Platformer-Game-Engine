@@ -93,6 +93,7 @@ public class ObjectDragger {
     oldY = e.getY();
 
     boolean clickedObject = false;
+    GameObject prevObject = builder.getSelectedObject();
     List<GameObject> objects = new ArrayList<>(gameScene.getAllObjects());
     objects = removeCamerasFromObjects(objects);
 
@@ -127,7 +128,6 @@ public class ObjectDragger {
         double offsetX = e.getX() - t.getX();
         double offsetY = e.getY() - t.getY();
         dragContext.beginDrag(e, offsetX, offsetY, false);
-        builderScene.handleObjectSelectionChange();
         clickedObject = true;
       }
     }
@@ -137,6 +137,11 @@ public class ObjectDragger {
       recordResizing();
       builder.deselect();
       dragContext.endInteraction();
+    }
+
+    // If selection was changed
+    if (prevObject != builder.getSelectedObject()) {
+      builderScene.handleObjectSelectionChange();
     }
 
     builderScene.updateGamePreview();
@@ -248,8 +253,6 @@ public class ObjectDragger {
     }
   }
 
-
-
   private void handleReleased(MouseEvent e) {
     if (!isInCanvas(e) || !builder.objectIsSelected()) return;
 
@@ -263,6 +266,7 @@ public class ObjectDragger {
     }
 
     dragContext.endInteraction();
+    builderScene.handleObjectAttributeChange();
     builderScene.updateGamePreview();
   }
 

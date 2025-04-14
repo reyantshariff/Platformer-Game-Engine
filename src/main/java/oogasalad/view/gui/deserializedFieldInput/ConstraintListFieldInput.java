@@ -99,12 +99,7 @@ public class ConstraintListFieldInput extends DeserializedFieldUI<List<BehaviorC
   }
 
   private void configureParamFieldListeners(StringTextField paramField, BehaviorConstraint<?>[] constraintRef) {
-    paramField.setOnAction(e -> updateConstraintParam(constraintRef, paramField));
-    paramField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-      if (!isNowFocused) {
-        updateConstraintParam(constraintRef, paramField);
-      }
-    });
+    paramField.addChangeListener(e -> updateConstraintParam(constraintRef, paramField));
   }
 
   private void updateConstraintParam(BehaviorConstraint<?>[] constraintRef, StringTextField paramField) {
@@ -130,8 +125,6 @@ public class ConstraintListFieldInput extends DeserializedFieldUI<List<BehaviorC
     field.setVisible(true);
     field.setManaged(true);
   }
-
-
 
   private void updateFieldList() {
     List<BehaviorConstraint<?>> updated = listContainer.getChildren().stream()

@@ -13,6 +13,7 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -155,6 +156,37 @@ public class BuilderScene extends ViewScene {
     componentSelectionUpdate();
   }
 
+  /**
+   * Handles the object attribute change
+   */
+  public void handleObjectAttributeChange() {
+    // NOTE: This can be done in a more elegant way, in which you have a updateAttribute method in
+    //       the component panel that updates the attribute of the selected object, right now we
+    //       are just generating new panels.
+    //   BY: Hsuan-Kai Liao
+
+    GameObject selectedObject = builder.getSelectedObject();
+    if (selectedObject == null) {
+      return;
+    }
+
+    List<Boolean> expandedList = new ArrayList<>();
+    for (Node node : myComponentContainer.getChildren()) {
+      if (node instanceof ComponentPanel) {
+        expandedList.add(((ComponentPanel) node).isExpanded());
+      }
+    }
+
+    myComponentContainer.getChildren().clear();
+    List<GameComponent> components = new ArrayList<>(selectedObject.getAllComponents().values());
+    components.sort(Comparator.comparing(c -> c.componentTag().ordinal()));
+    for (GameComponent component : components) {
+      ComponentPanel componentPanel = new ComponentPanel(component);
+      componentPanel.setExpanded(expandedList.get(components.indexOf(component)));
+      myComponentContainer.getChildren().add(componentPanel);
+    }
+  }
+
   private void componentSelectionUpdate() {
     myComponentContainer.getChildren().clear();
 
@@ -175,11 +207,14 @@ public class BuilderScene extends ViewScene {
     myGameCanvas = new Canvas(3000, 600);
     updateGamePreview();
 
-    Group canvasGroup = new Group(myGameCanvas);
-    Pane container = new Pane(canvasGroup);
+    Pane canvasHolder = new Pane(myGameCanvas);
+
+    // TODO: remove hardcoded canvas boundary
+    canvasHolder.setStyle("-fx-border-color: black; -fx-border-width: 2;");
+    Pane container = new Pane(canvasHolder);
 
     // Scene dragging and zooming
-    setupZoomAndPan(container, canvasGroup);
+    setupZoomAndPan(container, canvasHolder);
 
     // Object dragging and resizing
     ObjectDragger objectDragger = new ObjectDragger(myGameCanvas, builder, this, getObjectRenderer());
@@ -188,13 +223,14 @@ public class BuilderScene extends ViewScene {
     return container;
   }
 
-  private void setupZoomAndPan(Pane container, Group canvasGroup) {
+  private void setupZoomAndPan(Pane container, Pane canvasHolder) {
     final ObjectProperty<Point2D> lastMousePosition = new SimpleObjectProperty<>();
 
     // handle mouse pressed and dragged events
     container.setOnMousePressed(event -> {
       if (builder.objectIsSelected()) return;
       lastMousePosition.set(new Point2D(event.getSceneX(), event.getSceneY()));
+      container.requestFocus();
     });
     container.setOnMouseDragged(event -> {
       if (builder.objectIsSelected()) return;
@@ -202,8 +238,8 @@ public class BuilderScene extends ViewScene {
       Point2D currentMousePosition = new Point2D(event.getSceneX(), event.getSceneY());
       Point2D delta = currentMousePosition.subtract(lastMousePosition.get());
 
-      canvasGroup.setTranslateX(canvasGroup.getTranslateX() + delta.getX());
-      canvasGroup.setTranslateY(canvasGroup.getTranslateY() + delta.getY());
+      canvasHolder.setTranslateX(canvasHolder.getTranslateX() + delta.getX());
+      canvasHolder.setTranslateY(canvasHolder.getTranslateY() + delta.getY());
 
       lastMousePosition.set(currentMousePosition);
     });
@@ -212,40 +248,40 @@ public class BuilderScene extends ViewScene {
     container.setOnScroll(event -> {
       double zoomFactor = 1.05;
       double deltaY = event.getDeltaY();
-      double oldScale = canvasGroup.getScaleX();
+      double oldScale = canvasHolder.getScaleX();
       double scale = (deltaY > 0) ? oldScale * zoomFactor : oldScale / zoomFactor;
       scale = Math.min(Math.max(scale, MIN_ZOOM), MAX_ZOOM);
 
       Point2D mousePoint = new Point2D(event.getX(), event.getY());
-      Point2D mouseInGroup = canvasGroup.parentToLocal(mousePoint);
+      Point2D mouseInGroup = canvasHolder.parentToLocal(mousePoint);
 
-      canvasGroup.setScaleX(scale);
-      canvasGroup.setScaleY(scale);
+      canvasHolder.setScaleX(scale);
+      canvasHolder.setScaleY(scale);
 
-      Point2D newMouseInGroup = canvasGroup.parentToLocal(mousePoint);
+      Point2D newMouseInGroup = canvasHolder.parentToLocal(mousePoint);
 
       Point2D delta = newMouseInGroup.subtract(mouseInGroup);
-      canvasGroup.setTranslateX(canvasGroup.getTranslateX() + delta.getX() * scale);
-      canvasGroup.setTranslateY(canvasGroup.getTranslateY() + delta.getY() * scale);
+      canvasHolder.setTranslateX(canvasHolder.getTranslateX() + delta.getX() * scale);
+      canvasHolder.setTranslateY(canvasHolder.getTranslateY() + delta.getY() * scale);
 
       event.consume();
     });
 
     container.setOnZoom(event -> {
-      double oldScale = canvasGroup.getScaleX();
+      double oldScale = canvasHolder.getScaleX();
       double scale = oldScale * event.getZoomFactor();
       scale = Math.min(Math.max(scale, MIN_ZOOM), MAX_ZOOM);
 
       Point2D zoomCenter = new Point2D(event.getX(), event.getY());
-      Point2D zoomCenterInGroup = canvasGroup.parentToLocal(zoomCenter);
+      Point2D zoomCenterInGroup = canvasHolder.parentToLocal(zoomCenter);
 
-      canvasGroup.setScaleX(scale);
-      canvasGroup.setScaleY(scale);
+      canvasHolder.setScaleX(scale);
+      canvasHolder.setScaleY(scale);
 
-      Point2D newZoomCenterInGroup = canvasGroup.parentToLocal(zoomCenter);
+      Point2D newZoomCenterInGroup = canvasHolder.parentToLocal(zoomCenter);
       Point2D delta = newZoomCenterInGroup.subtract(zoomCenterInGroup);
-      canvasGroup.setTranslateX(canvasGroup.getTranslateX() + delta.getX() * scale);
-      canvasGroup.setTranslateY(canvasGroup.getTranslateY() + delta.getY() * scale);
+      canvasHolder.setTranslateX(canvasHolder.getTranslateX() + delta.getX() * scale);
+      canvasHolder.setTranslateY(canvasHolder.getTranslateY() + delta.getY() * scale);
 
       event.consume();
     });
@@ -295,8 +331,8 @@ public class BuilderScene extends ViewScene {
         spriteButtonPaneHeight, tilePane);
 
     // Load the prefab GameObjects
-    List<GameObject> prefabObjects = PrefabLoader.loadAvailablePrefabs(
-        "dinosaur"); // TODO: remove hardcoded game type
+    // TODO: remove hardcoded game type
+    List<GameObject> prefabObjects = PrefabLoader.loadAvailablePrefabs("dinosaur");
     for (GameObject prefab : prefabObjects) {
      createObject(prefab, tilePane);
     }
@@ -327,6 +363,7 @@ public class BuilderScene extends ViewScene {
     String previewImagePath = getPreviewImagePath(prefab);
     // Convert the preview image path to a JavaFX Image
     try {
+      assert previewImagePath != null;
       Image previewImage = new Image(new File(previewImagePath).toURI().toURL().toString());
       Button newSpriteButton = new BuilderSpriteOptionButton(
           previewImage,
@@ -372,6 +409,7 @@ public class BuilderScene extends ViewScene {
     tilePane.setPrefColumns(2); // Desired number of columns
     tilePane.setHgap(getScene().getWidth() * 0.02);
     tilePane.setVgap(getScene().getHeight() * 0.02);
+
     // Define TilePane size
     tilePane.setPrefWidth(width);
     tilePane.setMinWidth(width);
@@ -386,7 +424,7 @@ public class BuilderScene extends ViewScene {
     if (imagePath != null && !imagePath.isEmpty()) {
       return "src/main/resources/" + imagePath;
     }
-    logger.error("Error getting preview image from prefab " + prefab.getName());
+    logger.error("Error getting preview image from prefab {}", prefab.getName());
     return null;
   }
 

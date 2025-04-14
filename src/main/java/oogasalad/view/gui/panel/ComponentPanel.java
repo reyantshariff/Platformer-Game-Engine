@@ -28,6 +28,9 @@ public class ComponentPanel extends VBox {
   private static final String DELETE_BUTTON = "-";
 
   private final VBox contentBox = new VBox();
+  private final Label arrow;
+
+  private boolean isExpanded = false;  // DEFAULT COLLAPSED
 
   /**
    * Constructor for ComponentPanel.
@@ -47,7 +50,7 @@ public class ComponentPanel extends VBox {
     header.setCursor(Cursor.HAND);
 
     // Add arrow and title
-    Label arrow = new Label(EXPANDED_ARROW);
+    arrow = isExpanded ? new Label(EXPANDED_ARROW) : new Label(COLLAPSED_ARROW);
     Label title = new Label(component.getClass().getSimpleName());
     title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
@@ -69,10 +72,7 @@ public class ComponentPanel extends VBox {
     contentBox.setManaged(false);
 
     header.setOnMouseClicked(e -> {
-      boolean expanded = contentBox.isVisible();
-      contentBox.setVisible(!expanded);
-      contentBox.setManaged(!expanded);
-      arrow.setText(expanded ? COLLAPSED_ARROW : EXPANDED_ARROW);
+      setExpanded(!isExpanded);
     });
 
     getChildren().addAll(header, contentBox);
@@ -81,5 +81,24 @@ public class ComponentPanel extends VBox {
   private List<HBox> getDeserializedComponents(GameComponent component) {
     List<SerializedField<?>> fields = component.getSerializedFields();
     return fields.stream().map(DeserializedFieldUIFactory::createDeserializedFieldUI).toList();
+  }
+
+  /**
+   * Returns the expanded state of the panel.
+   */
+  public boolean isExpanded() {
+    return isExpanded;
+  }
+
+  /**
+   * Sets the expanded state of the panel.
+   *
+   * @param expanded true to expand, false to collapse
+   */
+  public void setExpanded(boolean expanded) {
+    isExpanded = expanded;
+    contentBox.setVisible(isExpanded);
+    contentBox.setManaged(isExpanded);
+    arrow.setText(isExpanded ? EXPANDED_ARROW: COLLAPSED_ARROW);
   }
 }

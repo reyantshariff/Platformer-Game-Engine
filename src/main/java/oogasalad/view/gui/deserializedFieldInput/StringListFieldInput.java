@@ -65,7 +65,7 @@ public class StringListFieldInput extends DeserializedFieldUI<List<String>> {
     });
 
     // Listener to update the field whenever the text changes
-    textField.addListener((obs, oldVal, newVal) -> updateFieldValue());
+    textField.addChangeListener(e -> updateFieldValue());
 
     HBox itemBox = new HBox(5, textField, removeButton);
     HBox.setHgrow(textField, Priority.ALWAYS);

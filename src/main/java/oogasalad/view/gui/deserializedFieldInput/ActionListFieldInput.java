@@ -98,12 +98,7 @@ public class ActionListFieldInput extends DeserializedFieldUI<List<BehaviorActio
   }
 
   private void setParamFieldBehavior(StringTextField paramField, BehaviorAction<?>[] actionRef) {
-    paramField.setOnAction(e -> updateParamField(actionRef, paramField));
-    paramField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-      if (!isNowFocused) {
-        updateParamField(actionRef, paramField);
-      }
-    });
+    paramField.addChangeListener(e -> updateParamField(actionRef, paramField));
   }
 
   private void updateParamField(BehaviorAction<?>[] actionRef, StringTextField paramField) {
