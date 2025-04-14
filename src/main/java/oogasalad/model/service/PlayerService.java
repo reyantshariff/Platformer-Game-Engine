@@ -11,7 +11,10 @@ import com.google.cloud.firestore.*;
 import java.util.HashMap;
 import java.util.Map;
 import oogasalad.database.DatabaseException;
+import oogasalad.model.config.PasswordHashingException;
+import oogasalad.model.profile.Password;
 import oogasalad.model.profile.PlayerData;
+import oogasalad.model.profile.SessionManagement;
 
 /**
  * PlayerService methods for creating, retrieving, and deleting player profiles
@@ -28,10 +31,13 @@ public class PlayerService {
    * Creates a new player with the given username
    *
    * @param username - the unique username of the player
-   * @return - true if the player was successfully created
+   * @param password - the String password of the player
+   * @param fullName - the concatenation of the first and last name of the player
+   * @return - the playerData object
    * @throws DatabaseException - if the player already exists or a database error occurs
    */
-  public static boolean createNewPlayer(String username) throws DatabaseException {
+  public static boolean createNewPlayer(String username, String password, String fullName)
+      throws DatabaseException, PasswordHashingException {
     if (documentExists(username, COLLECTION_NAME)) {
       LOGGER.error(getText("playerExistsError"), username);
       throw new DatabaseException(getText("playerExistsError", username));
@@ -39,12 +45,16 @@ public class PlayerService {
 
     Map<String, Object> playerData = new HashMap<>();
     playerData.put("username", username);
+    playerData.put("fullName", fullName);
+    Password pass = Password.fromPlaintext(password);
+    playerData.put("password", pass);
     playerData.put("createdAt", FieldValue.serverTimestamp());
 
     addToDatabase(username, COLLECTION_NAME, playerData);
     LOGGER.info(getText("createPlayerMessage"), username);
     return true;
   }
+
 
   /**
    * Deletes the player associated with the given username
@@ -78,6 +88,41 @@ public class PlayerService {
       throw new DatabaseException(getText(PLAYER_NOT_EXIST_ERROR_MESSAGE, username, COLLECTION_NAME));
     }
     return snapshot.toObject(PlayerData.class);
+  }
+
+  /**
+   * Endpoint to authenticate and login a user -- adds user to sessionManagement
+   *
+   * @param username - the inputted username
+   * @param password - the inputted password
+   */
+  public static void login(String username, String password)
+      throws PasswordHashingException {
+    PlayerData curUser;
+    try {
+      curUser = getPlayerByUsername(username);
+
+      if (!curUser.verifyPassword(password)){
+        LOGGER.warn("Invalid password");
+      }
+
+      SessionManagement.login(curUser);
+      LOGGER.info("User: {} has successfully logged in", username);
+      //switch screens
+
+    } catch (DatabaseException e) {
+      LOGGER.error("Error, no user in the database", e);
+      // show on the frontend
+    }
+  }
+
+  /**
+   * Method to handle logging out -- removes the current user from session manager
+   */
+  public static void logout() {
+    SessionManagement.logout();
+    LOGGER.info("Logout successful");
+    //switch scenes
   }
 
 }
