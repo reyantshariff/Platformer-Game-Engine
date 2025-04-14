@@ -52,7 +52,7 @@ public class Password {
    * @throws PasswordHashingException - if hashing the input fails
    */
   public boolean verify(String input) throws PasswordHashingException {
-    return PasswordConfig.verifyPassword(input, salt, hash);
+    return PasswordConfig.verifyPassword(input, this.salt, this.hash);
   }
 
   /**

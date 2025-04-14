@@ -18,12 +18,25 @@ public class PasswordConfig {
   private static final int KEY_LENGTH = 256;
   private static final String ALGORITHM = "PBKDF2WithHmacSHA256";
 
+  /**
+   * Generates the salt for a given password/user
+   *
+   * @return - a String random value added to a password before hashing
+   */
   public static String generateSalt() {
     byte[] salt = new byte[16];
     new SecureRandom().nextBytes(salt);
     return Base64.getEncoder().encodeToString(salt);
   }
 
+  /**
+   * Hashes a String password with a given String salt value
+   *
+   * @param password - the string password inputted
+   * @param salt - a String random value added to a password before hashing
+   * @return - the hashed String password
+   * @throws PasswordHashingException - an exception notifying of a failure to hash the password
+   */
   public static String hashPassword(String password, String salt) throws PasswordHashingException {
     try {
       PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt.getBytes(), ITERATIONS, KEY_LENGTH);
@@ -35,6 +48,15 @@ public class PasswordConfig {
     }
   }
 
+  /**
+   * Method to determine if an inputted password matches a stored, hashed password
+   *
+   * @param inputPassword - the current password being inputted
+   * @param salt - the String random value added to a password before hashing
+   * @param storedHash - the stored, already-hashed password
+   * @return true - if the password is the same
+   * @throws PasswordHashingException - will throw if failure occurs
+   */
   public static boolean verifyPassword(String inputPassword, String salt, String storedHash)
       throws PasswordHashingException {
     return hashPassword(inputPassword, salt).equals(storedHash);
