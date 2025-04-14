@@ -240,8 +240,6 @@ public class BuilderScene extends ViewScene {
 
       canvasHolder.setTranslateX(canvasHolder.getTranslateX() + delta.getX());
       canvasHolder.setTranslateY(canvasHolder.getTranslateY() + delta.getY());
-      System.out.println(canvasHolder.getTranslateX());
-      System.out.println(canvasHolder.getTranslateY());
 
       lastMousePosition.set(currentMousePosition);
     });
