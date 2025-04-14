@@ -46,10 +46,6 @@ import org.apache.logging.log4j.Logger;
 
 public class BuilderScene extends ViewScene {
 
-  // Static constants defining the size of the level-preview window within the builder scene
-  public static final double GAME_PREVIEW_WIDTH = 1000;
-  public static final double GAME_PREVIEW_HEIGHT = 800;
-
   private static final String COMPONENT_PACKAGE_NAME = "oogasalad.model.engine.component";
 
   public static final double MAX_ZOOM = 5.0;
@@ -60,6 +56,8 @@ public class BuilderScene extends ViewScene {
   private final BorderPane myWindow;
   private final Builder builder;
 
+  private Pane myGamePreviewPane; // Container holding the game canvas
+  private Pane canvasHolder; //
   private Canvas myGameCanvas;
   private VBox myComponentContainer;
   private final String myGameType;
@@ -96,7 +94,8 @@ public class BuilderScene extends ViewScene {
     objectControlSplitPane.setDividerPositions(0.7);
 
     // Add SplitPane for splitting the view and object panel
-    SplitPane viewObjectSplitPane = new SplitPane(createGamePreview(), objectControlSplitPane);
+    myGamePreviewPane = createGamePreview();
+    SplitPane viewObjectSplitPane = new SplitPane(myGamePreviewPane, objectControlSplitPane);
     viewObjectSplitPane.setOrientation(Orientation.VERTICAL);
     viewObjectSplitPane.setDividerPositions(0.6);
 
@@ -208,7 +207,7 @@ public class BuilderScene extends ViewScene {
     myGameCanvas = new Canvas(3000, 600);
     updateGamePreview();
 
-    Pane canvasHolder = new Pane(myGameCanvas);
+    canvasHolder = new Pane(myGameCanvas);
 
     // TODO: remove hardcoded canvas boundary
     canvasHolder.setStyle("-fx-border-color: black; -fx-border-width: 2;");
@@ -241,6 +240,8 @@ public class BuilderScene extends ViewScene {
 
       canvasHolder.setTranslateX(canvasHolder.getTranslateX() + delta.getX());
       canvasHolder.setTranslateY(canvasHolder.getTranslateY() + delta.getY());
+      System.out.println(canvasHolder.getTranslateX());
+      System.out.println(canvasHolder.getTranslateY());
 
       lastMousePosition.set(currentMousePosition);
     });
@@ -251,19 +252,11 @@ public class BuilderScene extends ViewScene {
       double deltaY = event.getDeltaY();
       double oldScale = canvasHolder.getScaleX();
       double scale = (deltaY > 0) ? oldScale * zoomFactor : oldScale / zoomFactor;
-      scale = Math.min(Math.max(scale, MIN_ZOOM), MAX_ZOOM);
 
       Point2D mousePoint = new Point2D(event.getX(), event.getY());
       Point2D mouseInGroup = canvasHolder.parentToLocal(mousePoint);
 
-      canvasHolder.setScaleX(scale);
-      canvasHolder.setScaleY(scale);
-
-      Point2D newMouseInGroup = canvasHolder.parentToLocal(mousePoint);
-
-      Point2D delta = newMouseInGroup.subtract(mouseInGroup);
-      canvasHolder.setTranslateX(canvasHolder.getTranslateX() + delta.getX() * scale);
-      canvasHolder.setTranslateY(canvasHolder.getTranslateY() + delta.getY() * scale);
+      zoomCanvas(canvasHolder, scale, mousePoint, mouseInGroup);
 
       event.consume();
     });
@@ -271,21 +264,27 @@ public class BuilderScene extends ViewScene {
     container.setOnZoom(event -> {
       double oldScale = canvasHolder.getScaleX();
       double scale = oldScale * event.getZoomFactor();
-      scale = Math.min(Math.max(scale, MIN_ZOOM), MAX_ZOOM);
 
       Point2D zoomCenter = new Point2D(event.getX(), event.getY());
       Point2D zoomCenterInGroup = canvasHolder.parentToLocal(zoomCenter);
 
-      canvasHolder.setScaleX(scale);
-      canvasHolder.setScaleY(scale);
-
-      Point2D newZoomCenterInGroup = canvasHolder.parentToLocal(zoomCenter);
-      Point2D delta = newZoomCenterInGroup.subtract(zoomCenterInGroup);
-      canvasHolder.setTranslateX(canvasHolder.getTranslateX() + delta.getX() * scale);
-      canvasHolder.setTranslateY(canvasHolder.getTranslateY() + delta.getY() * scale);
+      zoomCanvas(canvasHolder, scale, zoomCenter, zoomCenterInGroup);
 
       event.consume();
     });
+  }
+
+  private static void zoomCanvas(Pane canvasHolder, double scale, Point2D mousePoint,
+      Point2D mouseInGroup) {
+    scale = Math.min(Math.max(scale, MIN_ZOOM), MAX_ZOOM);
+    canvasHolder.setScaleX(scale);
+    canvasHolder.setScaleY(scale);
+
+    Point2D newMouseInGroup = canvasHolder.parentToLocal(mousePoint);
+
+    Point2D delta = newMouseInGroup.subtract(mouseInGroup);
+    canvasHolder.setTranslateX(canvasHolder.getTranslateX() + delta.getX() * scale);
+    canvasHolder.setTranslateY(canvasHolder.getTranslateY() + delta.getY() * scale);
   }
 
 
@@ -344,18 +343,19 @@ public class BuilderScene extends ViewScene {
     return spriteScrollPane;
   }
 
-  private void alignObject(Transform t) {
-    // Calculate center based on preview or scene dimensions.
-    // TODO: FIX THIS
-    double previewHorizontalMidpoint = GAME_PREVIEW_WIDTH / 2;
-    double previewVerticalMidpoint = GAME_PREVIEW_HEIGHT / 2;
-    double objectWidth = t.getScaleX();
-    double objectHeight = t.getScaleY();
+  /**
+   * Align a newly-placed object into the center of the visible level preview
+   */
+  private void alignObject(Transform t, Pane container) {
+    double containerCenterX = container.getWidth() / 2;
+    double containerCenterY = container.getHeight() / 2;
+    Point2D viewportCenter = new Point2D(containerCenterX, containerCenterY);
+    Point2D centerInCanvas = canvasHolder.parentToLocal(viewportCenter);
 
-    // Center the object
-    t.setX(previewHorizontalMidpoint - (objectWidth / 2));
-    t.setY(previewVerticalMidpoint - (objectHeight / 2));
+    t.setX(centerInCanvas.getX());
+    t.setY(centerInCanvas.getY());
   }
+
 
   private void createObject(GameObject prefab, TilePane tilePane) {
     // Assume the prefab has a SpriteRenderer component.
@@ -377,7 +377,7 @@ public class BuilderScene extends ViewScene {
         if (t == null) {
           logger.error("Error getting Transform component from prefab " + prefab.getName());
         } else {
-          alignObject(t);
+          alignObject(t, myGamePreviewPane);
         }
 
         // Register new object to the scene
