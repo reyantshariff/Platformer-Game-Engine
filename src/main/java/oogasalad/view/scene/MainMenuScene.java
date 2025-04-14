@@ -48,11 +48,13 @@ public class MainMenuScene extends ViewScene {
       File selectedFile = fileChooser.showOpenDialog(getScene().getWindow());
       if (selectedFile != null) {
         String fileName = selectedFile.getName().replace(".json", "");
-        manager.switchTo(new GamePlayerScene(manager, fileName, gameType));
+
+        manager.registerSceneFactory("GamePlayerScene", vm -> new GamePlayerScene(vm, fileName, gameType));
+        manager.switchTo("GamePlayerScene");
       }
     });
 
-    buildButton.setOnAction(e -> manager.switchTo(new BuilderScene(manager))
+    buildButton.setOnAction(e -> manager.switchTo("BuilderScene")
     );
     // Language and Theme Selections
     HBox selectorBox = setupSelectorBox();

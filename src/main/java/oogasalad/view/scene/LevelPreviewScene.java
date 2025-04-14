@@ -24,12 +24,10 @@ public class LevelPreviewScene extends ViewScene {
    *
    * @param manager      the view manager which switches between windows; used for returning to
    *                     builder
-   * @param builderScene the Builder view window which this preview is sourced from; used for
-   *                     returning to the builder
    * @param gameNode     the Game object being previewed, stored as a JSON node according to
    *                     JsonParser
    */
-  public LevelPreviewScene(MainViewManager manager, BuilderScene builderScene, JsonNode gameNode) {
+  public LevelPreviewScene(MainViewManager manager, JsonNode gameNode) {
     super(new StackPane(), 1280, 720);
 
     StackPane root = (StackPane) getScene().getRoot();
@@ -46,7 +44,7 @@ public class LevelPreviewScene extends ViewScene {
     Button returnButton = new Button("Return to Builder");
     returnButton.setOnAction(e -> {
       deactivate();
-      manager.switchTo(builderScene); // return to the builder scene
+      manager.switchTo("BuilderScene"); // return to the builder scene
     });
 
     StackPane.setAlignment(returnButton, Pos.TOP_RIGHT);
