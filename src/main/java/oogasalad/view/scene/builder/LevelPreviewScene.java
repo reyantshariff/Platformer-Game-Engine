@@ -46,7 +46,7 @@ public class LevelPreviewScene extends ViewScene {
     Button returnButton = new Button("Return to Builder");
     returnButton.setOnAction(e -> {
       deactivate();
-      MainViewManager.getInstance().switchTo("BuilderScene"); // return to the builder scene
+      MainViewManager.getInstance().switchTo(builderScene); // return to the builder scene
     });
 
     StackPane.setAlignment(returnButton, Pos.TOP_RIGHT);
