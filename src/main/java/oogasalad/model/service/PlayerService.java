@@ -14,6 +14,7 @@ import oogasalad.database.DatabaseException;
 import oogasalad.model.config.PasswordConfig;
 import oogasalad.model.config.PasswordHashingException;
 import oogasalad.model.profile.PlayerData;
+import oogasalad.model.profile.SessionManagement;
 
 /**
  * PlayerService methods for creating, retrieving, and deleting player profiles
@@ -92,6 +93,40 @@ public class PlayerService {
       throw new DatabaseException(getText(PLAYER_NOT_EXIST_ERROR_MESSAGE, username, COLLECTION_NAME));
     }
     return snapshot.toObject(PlayerData.class);
+  }
+
+  /**
+   * Endpoint to authenticate and login a user -- adds user to sessionManagement
+   *
+   * @param username - the inputted username
+   * @param password - the inputted password
+   */
+  public static void login(String username, String password)
+      throws PasswordHashingException {
+    PlayerData curUser;
+    try {
+      curUser = getPlayerByUsername(username);
+
+      if (curUser.verifyPassword(password)){
+        LOGGER.warn("Invalid password");
+      }
+
+      SessionManagement.login(curUser);
+      LOGGER.info("User: {} has successfully logged in", username);
+      //switch screens
+
+    } catch (DatabaseException e) {
+      // show on the frontend
+    }
+  }
+
+  /**
+   * Method to handle logging out -- removes the current user from session manager
+   */
+  public static void logout() {
+    SessionManagement.logout();
+    LOGGER.info("Logout successful");
+    //switch scenes
   }
 
 }

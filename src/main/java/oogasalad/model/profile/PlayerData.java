@@ -1,6 +1,7 @@
 package oogasalad.model.profile;
 
 import com.google.cloud.Timestamp;
+import oogasalad.model.config.PasswordHashingException;
 
 /**
  * This class represents the data of a player profile. It a representation of the data stored in the database
@@ -97,5 +98,16 @@ public class PlayerData {
    */
   public void setCreatedAt(Timestamp createdAt) {
     this.createdAt = createdAt;
+  }
+
+  /**
+   * Method that delegates verification logic to Password class
+   *
+   * @param input - the password being tried
+   * @return - true if the password is verified
+   * @throws PasswordHashingException - if failure occurs throughout the process
+   */
+  public boolean verifyPassword(String input) throws PasswordHashingException {
+    return password.verify(input);
   }
 }
