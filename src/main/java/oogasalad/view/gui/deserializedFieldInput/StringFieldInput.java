@@ -3,7 +3,6 @@ package oogasalad.view.gui.deserializedFieldInput;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import oogasalad.model.engine.base.serialization.SerializedField;
@@ -22,8 +21,9 @@ public class StringFieldInput extends DeserializedFieldUI<String> {
     StringTextField textField = new StringTextField(field.getValue(), "Enter a string value");
 
     // Listeners
-    textField.textProperty().addListener((obs, oldVal, newVal) -> {
+    textField.setChangeListener(newVal -> {
       field.setValue(newVal);
+      return true;
     });
 
     // Container for the label and text field

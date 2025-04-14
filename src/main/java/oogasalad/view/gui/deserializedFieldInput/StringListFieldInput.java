@@ -65,7 +65,7 @@ public class StringListFieldInput extends DeserializedFieldUI<List<String>> {
     });
 
     // Listener to update the field whenever the text changes
-    textField.addChangeListener(e -> updateFieldValue());
+    textField.setChangeListener(e -> updateFieldValue());
 
     HBox itemBox = new HBox(5, textField, removeButton);
     HBox.setHgrow(textField, Priority.ALWAYS);
@@ -73,7 +73,7 @@ public class StringListFieldInput extends DeserializedFieldUI<List<String>> {
     return itemBox;
   }
 
-  private void updateFieldValue() {
+  private boolean updateFieldValue() {
     List<String> updatedValues = listContainer.getChildren().stream()
         .filter(node -> node instanceof HBox)
         .map(node -> extractTextFromItemBox((HBox) node))
@@ -82,6 +82,8 @@ public class StringListFieldInput extends DeserializedFieldUI<List<String>> {
         .toList();
 
     field.setValue(updatedValues);
+
+    return true;
   }
 
   private List<String> extractTextFromItemBox(HBox itemBox) {

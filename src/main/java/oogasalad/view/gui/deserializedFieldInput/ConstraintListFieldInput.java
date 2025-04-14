@@ -6,7 +6,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import oogasalad.model.engine.base.behavior.BehaviorAction;
 import oogasalad.model.engine.base.behavior.BehaviorConstraint;
 import oogasalad.model.engine.base.enumerate.KeyCode;
 import oogasalad.model.engine.base.serialization.SerializedField;
@@ -99,14 +98,14 @@ public class ConstraintListFieldInput extends DeserializedFieldUI<List<BehaviorC
   }
 
   private void configureParamFieldListeners(StringTextField paramField, BehaviorConstraint<?>[] constraintRef) {
-    paramField.addChangeListener(e -> updateConstraintParam(constraintRef, paramField));
+    paramField.setChangeListener(e -> updateConstraintParam(constraintRef, paramField));
   }
 
-  private void updateConstraintParam(BehaviorConstraint<?>[] constraintRef, StringTextField paramField) {
-    Optional.ofNullable(constraintRef[0]).ifPresent(constraint -> {
+  private boolean updateConstraintParam(BehaviorConstraint<?>[] constraintRef, StringTextField paramField) {
+    return Optional.ofNullable(constraintRef[0]).map(constraint -> {
       SerializedField<?> param = constraint.getSerializedFields().getFirst();
-      updateParameter(constraint, param, paramField.getText(), paramField);
-    });
+      return updateParameter(constraint, param, paramField.getText());
+    }).orElse(false);
   }
 
   private void configureRemoveButton(Button removeButton, HBox row) {
@@ -145,7 +144,7 @@ public class ConstraintListFieldInput extends DeserializedFieldUI<List<BehaviorC
 
       BehaviorConstraint<?> constraint = instantiateConstraint(className);
       SerializedField<?> param = constraint.getSerializedFields().getFirst();
-      updateParameter(constraint, param, paramField.getText(), paramField);
+      updateParameter(constraint, param, paramField.getText());
 
       return constraint;
     } catch (Exception e) {
@@ -164,7 +163,7 @@ public class ConstraintListFieldInput extends DeserializedFieldUI<List<BehaviorC
   }
 
   @SuppressWarnings("unchecked")
-  private void updateParameter(BehaviorConstraint<?> constraint, SerializedField<?> param, String newVal, TextField field) {
+  private boolean updateParameter(BehaviorConstraint<?> constraint, SerializedField<?> param, String newVal) {
     String typeName = getGenericTypeName(constraint);
 
     try {
@@ -174,10 +173,11 @@ public class ConstraintListFieldInput extends DeserializedFieldUI<List<BehaviorC
         case "KeyCode" -> ((SerializedField<KeyCode>) param).setValue(KeyCode.valueOf(newVal));
         default -> throw new RuntimeException("Unsupported type: " + typeName);
       }
+      return true;
     } catch (Exception e) {
       // fallback if parse fails
       Object fallback = param.getValue();
-      field.setText(fallback != null ? fallback.toString() : "");
+      return false;
     }
   }
 

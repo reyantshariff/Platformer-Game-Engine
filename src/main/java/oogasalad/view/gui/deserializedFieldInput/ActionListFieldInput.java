@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class ActionListFieldInput extends DeserializedFieldUI<List<BehaviorAction<?>>> {
 
+  private static final Logger logger = LogManager.getLogger(ActionListFieldInput.class);
   private static final String ACTION_PACKAGE = "oogasalad.model.engine.action";
 
   private VBox listContainer;
@@ -60,7 +61,7 @@ public class ActionListFieldInput extends DeserializedFieldUI<List<BehaviorActio
 
     initializeIfActionExists(initialAction, dropDown, paramField);
 
-    setDropDownBehavior(dropDown, actionRef, paramField);
+    setDropDownAction(dropDown, actionRef, paramField);
     setParamFieldBehavior(paramField, actionRef);
     setRemoveButtonBehavior(removeButton, row);
 
@@ -79,7 +80,7 @@ public class ActionListFieldInput extends DeserializedFieldUI<List<BehaviorActio
     }
   }
 
-  private void setDropDownBehavior(ClassSelectionDropDownList dropDown, BehaviorAction<?>[] actionRef, StringTextField paramField) {
+  private void setDropDownAction(ClassSelectionDropDownList dropDown, BehaviorAction<?>[] actionRef, StringTextField paramField) {
     dropDown.setOnAction(e -> {
       String className = dropDown.getValue();
       BehaviorAction<?> newAction = instantiateAction(className);
@@ -98,14 +99,20 @@ public class ActionListFieldInput extends DeserializedFieldUI<List<BehaviorActio
   }
 
   private void setParamFieldBehavior(StringTextField paramField, BehaviorAction<?>[] actionRef) {
-    paramField.addChangeListener(e -> updateParamField(actionRef, paramField));
+    paramField.setChangeListener(e -> updateParamField(actionRef, paramField));
   }
 
-  private void updateParamField(BehaviorAction<?>[] actionRef, StringTextField paramField) {
-    Optional.ofNullable(actionRef[0]).ifPresent(action -> {
+  private boolean updateParamField(BehaviorAction<?>[] actionRef, StringTextField paramField) {
+    return Optional.ofNullable(actionRef[0]).map(action -> {
       SerializedField<?> param = action.getSerializedFields().getFirst();
-      updateParameter(action, param, paramField.getText(), paramField);
-    });
+      updateParameter(action, param, paramField.getText());
+
+      // TODO: Fix here the two differences actions reference after the reslection object (when new an action)
+      System.out.println(action);
+      System.out.println(action.getParameter());
+
+      return updateParameter(action, param, paramField.getText());
+    }).orElse(false);
   }
 
   private void setRemoveButtonBehavior(Button removeButton, HBox row) {
@@ -125,76 +132,6 @@ public class ActionListFieldInput extends DeserializedFieldUI<List<BehaviorActio
     field.setManaged(true);
   }
 
-
-//  private HBox createActionRow(BehaviorAction<?> initialAction) {
-//    BehaviorAction<?>[] actionRef = new BehaviorAction[]{initialAction};
-//
-//    ClassSelectionDropDownList dropDown = new ClassSelectionDropDownList("Select Action", ACTION_PACKAGE, BehaviorAction.class);
-//    StringTextField paramField = new StringTextField("", "param...");
-//    Button removeButton = new Button("−");
-//
-//    HBox.setHgrow(paramField, Priority.ALWAYS);
-//    HBox row = new HBox(5, dropDown, paramField, removeButton);
-//    row.setAlignment(Pos.CENTER_LEFT);
-//
-//    // Init if action already exists
-//    if (initialAction != null) {
-//      dropDown.setValue(initialAction.getClass().getSimpleName());
-//      if (getGenericTypeName(initialAction).equals("Void")) {
-//        paramField.setVisible(false);
-//        paramField.setManaged(false);
-//      } else {
-//        SerializedField<?> param = initialAction.getSerializedFields().getFirst();
-//        paramField.setText(Optional.ofNullable(param.getValue()).map(Object::toString).orElse(""));
-//      }
-//    }
-//
-//    // Dropdown change: instantiate new action
-//    dropDown.setOnAction(e -> {
-//      String className = dropDown.getValue();
-//      BehaviorAction<?> newAction = instantiateAction(className);
-//      actionRef[0] = newAction;
-//
-//      SerializedField<?> param = newAction.getSerializedFields().getFirst();
-//      if (getGenericTypeName(actionRef[0]).equals("Void")) {
-//        paramField.setVisible(false);
-//        paramField.setManaged(false);
-//      } else {
-//        paramField.setVisible(true);
-//        paramField.setManaged(true);
-//        paramField.setText(Optional.ofNullable(param.getValue()).map(Object::toString).orElse(""));
-//      }
-//
-//      updateFieldList();
-//    });
-//
-//    // Param field update - Using setOnAction to detect when user presses Enter
-//    paramField.setOnAction(e -> {
-//      Optional.ofNullable(actionRef[0]).ifPresent(action -> {
-//        SerializedField<?> param = action.getSerializedFields().getFirst();
-//        updateParameter(action, param, paramField.getText(), paramField);
-//      });
-//    });
-//
-//    // Alternatively, you can use a focus listener to detect when the field loses focus
-//    paramField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-//      if (!isNowFocused) {
-//        Optional.ofNullable(actionRef[0]).ifPresent(action -> {
-//          SerializedField<?> param = action.getSerializedFields().getFirst();
-//          updateParameter(action, param, paramField.getText(), paramField);
-//        });
-//      }
-//    });
-//
-//    // Remove row
-//    removeButton.setOnAction(e -> {
-//      listContainer.getChildren().remove(row);
-//      updateFieldList();
-//    });
-//
-//    return row;
-//  }
-
   private void updateFieldList() {
     List<BehaviorAction<?>> updated = listContainer.getChildren().stream()
         .filter(HBox.class::isInstance)
@@ -206,8 +143,6 @@ public class ActionListFieldInput extends DeserializedFieldUI<List<BehaviorActio
     field.setValue(updated);
   }
 
-  private static final Logger logger = LogManager.getLogger(ActionListFieldInput.class);
-
   private BehaviorAction<?> buildActionFromRow(HBox row) {
     try {
       String className = ((ClassSelectionDropDownList) row.getChildren().get(0)).getValue();
@@ -215,7 +150,7 @@ public class ActionListFieldInput extends DeserializedFieldUI<List<BehaviorActio
 
       BehaviorAction<?> action = instantiateAction(className);
       SerializedField<?> param = action.getSerializedFields().getFirst();
-      updateParameter(action, param, paramField.getText(), paramField);
+      updateParameter(action, param, paramField.getText());
 
       return action;
     } catch (Exception e) {
@@ -234,7 +169,7 @@ public class ActionListFieldInput extends DeserializedFieldUI<List<BehaviorActio
   }
 
   @SuppressWarnings("unchecked")
-  private void updateParameter(BehaviorAction<?> action, SerializedField<?> param, String newVal, TextField field) {
+  private boolean updateParameter(BehaviorAction<?> action, SerializedField<?> param, String newVal) {
     String typeName = getGenericTypeName(action);
 
     try {
@@ -243,10 +178,11 @@ public class ActionListFieldInput extends DeserializedFieldUI<List<BehaviorActio
         case "Double" -> ((SerializedField<Double>) param).setValue(Double.parseDouble(newVal));
         default -> throw new RuntimeException("Unsupported type: " + typeName);
       }
+      return true;
     } catch (Exception e) {
       // fallback if parse fails
       Object fallback = param.getValue();
-      field.setText(fallback != null ? fallback.toString() : "");
+      return false;
     }
   }
 

@@ -67,7 +67,11 @@ public abstract class BehaviorConstraint<T> implements Serializable {
    */
   @SuppressWarnings("unchecked")
   public final boolean onCheck(Object parameter) {
-    return check((T) parameter);
+    if (parameter == null) {
+      return false;
+    } else {
+      return check((T) parameter);
+    }
   }
 
   /**

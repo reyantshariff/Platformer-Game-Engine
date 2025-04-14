@@ -1,12 +1,9 @@
 package oogasalad.view.gui.textField;
 
-import java.util.function.Consumer;
+import java.util.function.Predicate;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 
 /**
  * A TextField that only accepts English letters and common symbols.
@@ -15,7 +12,7 @@ import javafx.beans.value.ObservableValue;
 public class StringTextField extends TextField {
 
   private String originalValue;
-  private Consumer<String> changeListener;
+  private Predicate<String> changeListener;
 
   /**
    * Creates a StringTextField with optional default value and prompt text.
@@ -48,43 +45,52 @@ public class StringTextField extends TextField {
       e.consume();
     });
 
-    // Handle "submit" events: Enter key or losing focus
-    setOnAction(e -> onSubmit());
+    // Handle "submit" events
+    textProperty().addListener((obs, wasText, isNowText) -> {
+      if (onSubmit(isNowText)) {
+        setStyle("-fx-text-fill: black;");
+      } else {
+        setStyle("-fx-text-fill: red;");
+      }
+    });
+
     focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
       if (!isNowFocused) {
-        onSubmit();
+        onComplete();
+      } else if (!wasFocused) {
+        originalValue = getText();
       }
     });
   }
 
   /**
    * Registers a listener to be called after input is finalized.
-   * @param listener the callback with (oldValue, newValue)
+   * @param listener the callback with (String: newValue) and returns true if accepted
    */
-  public void addChangeListener(Consumer<String> listener) {
+  public void setChangeListener(Predicate<String> listener) {
     this.changeListener = listener;
   }
 
   private void onCancel() {
-    try {
-       {
-        setText(originalValue);
-        changeListener.accept(originalValue);
-      }
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
+    setText(originalValue);
+    changeListener.test(originalValue);
   }
 
-  private void onSubmit() {
-    try {
-      String newValue = getText();
-      if (!newValue.equals(originalValue) && changeListener != null) {
-        changeListener.accept(newValue);
+  private boolean onSubmit(String newValue) {
+    if (!newValue.equals(originalValue) && changeListener != null) {
+      return changeListener.test(newValue);
+    }
+    return true;
+  }
+
+  private void onComplete() {
+    String newValue = getText();
+    if (!newValue.equals(originalValue) && changeListener != null) {
+      if (changeListener.test(newValue)) {
         originalValue = newValue; // update base value if accepted
+      } else {
+        onCancel();
       }
-    } catch (Exception e) {
-      onCancel();
     }
   }
 }

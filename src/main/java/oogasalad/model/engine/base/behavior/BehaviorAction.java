@@ -77,7 +77,9 @@ public abstract class BehaviorAction<T> implements Serializable {
    */
   @SuppressWarnings("unchecked")
   public final void onPerform(Object parameter) {
-    perform((T) parameter);
+    if (parameter != null) {
+      perform((T) parameter);
+    }
   }
 
   /**

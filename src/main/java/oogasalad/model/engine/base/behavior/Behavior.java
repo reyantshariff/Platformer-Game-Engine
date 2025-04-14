@@ -119,9 +119,6 @@ public class Behavior implements Serializable {
   public <T extends BehaviorConstraint<?>> T addConstraint(Class<T> constraintClass) {
     try {
       T constraint = constraintClass.getDeclaredConstructor().newInstance();
-      if (isDuplicateConstraint(constraint)) {
-        return constraint; // Do not add if an instance of this action already exists
-      }
       constraints.add(constraint);
       return constraint;
     } catch (NoSuchMethodException | IllegalAccessException | InstantiationException
@@ -144,14 +141,6 @@ public class Behavior implements Serializable {
     }
   }
 
-  private boolean isDuplicateConstraint(BehaviorConstraint<?> constraintInstance) {
-    if (constraints.contains(constraintInstance)) {
-      LOGGER.error("Constraint already exists: {}. Ignoring addition.", constraintInstance);
-      return true;
-    }
-    return false;
-  }
-
   /**
    * Remove a constraint from the behavior.
    * @param constraint the constraint to be removed
@@ -168,10 +157,6 @@ public class Behavior implements Serializable {
   public <T extends BehaviorAction<?>> T addAction(Class<T> actionClass) {
     try {
       T action = actionClass.getDeclaredConstructor().newInstance();
-
-      if (isDuplicateAction(action))
-        return action;
-
       actions.add(action);
       return action;
     } catch (NoSuchMethodException | IllegalAccessException | InstantiationException
@@ -186,24 +171,12 @@ public class Behavior implements Serializable {
    * @param actionInstance the action instance we wish to add
    */
   public void addAction(BehaviorAction<?> actionInstance) {
-    if (isDuplicateAction(actionInstance)) {
-      return; // Do not add if an instance of this action already exists
-    }
     try {
       actions.add(actionInstance);
     } catch (UnsupportedOperationException | IllegalArgumentException | ClassCastException e) {
       LOGGER.error("Failed to add action: {}", actionInstance.getClass().getName());
       throw new ActionConstructionException("Failed to create action: " + actionInstance.getClass().getName(), e);
     }
-  }
-
-  private boolean isDuplicateAction(BehaviorAction<?> actionInstance) {
-    if (actions.contains(actionInstance)) {
-      LOGGER.error("Action {} already exists in behavior. Ignoring addition.",
-          actionInstance);
-      return true;
-    }
-    return false;
   }
 
   /**
