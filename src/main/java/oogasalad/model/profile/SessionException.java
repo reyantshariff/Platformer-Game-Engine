@@ -1,5 +1,9 @@
 package oogasalad.model.profile;
 
+/**
+ * Custom Exception class to display errors when handling a session
+ *
+ */
 public class SessionException extends Exception {
 
 /**

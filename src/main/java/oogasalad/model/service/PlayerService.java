@@ -111,6 +111,7 @@ public class PlayerService {
       //switch screens
 
     } catch (DatabaseException e) {
+      LOGGER.error("Error, no user in the database", e);
       // show on the frontend
     }
   }
