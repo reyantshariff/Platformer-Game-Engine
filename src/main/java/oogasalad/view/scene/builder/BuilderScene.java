@@ -62,15 +62,17 @@ public class BuilderScene extends ViewScene {
 
   private Canvas myGameCanvas;
   private VBox myComponentContainer;
+  private final String myGameType;
 
   /**
    * Constructor for BuilderView
    */
-  public BuilderScene(String gameFilepath) {
+  public BuilderScene(String gameFilepath, String gameType) {
     // Create the BorderPane as the root
     super(new BorderPane(), 1280, 720);
     myWindow = (BorderPane) getScene().getRoot();
     builder = new Builder(gameFilepath);
+    myGameType = gameType;
     initializeUI();
   }
 
@@ -319,15 +321,13 @@ public class BuilderScene extends ViewScene {
 
   private ScrollPane createAddSpriteButtonOptions() {
     // Define width and height of the sprite button panel
-    double spriteButtonPaneWidth = getScene().getWidth() * 0.75;
-    double spriteButtonPaneHeight = getScene().getHeight() * 0.25;
+    double spriteButtonPaneWidth = getScene().getWidth() * 0.5;
 
     // Organize the button layout via TilePane
     TilePane tilePane = createSpriteButtonTilePane(spriteButtonPaneWidth);
 
     // Create a ScrollPane to hold the buttons
-    ScrollPane spriteScrollPane = createSpriteButtonScrollPane(spriteButtonPaneWidth,
-        spriteButtonPaneHeight, tilePane);
+    ScrollPane spriteScrollPane = createSpriteButtonScrollPane(spriteButtonPaneWidth, tilePane);
 
     // Load the prefab GameObjects
     // TODO: remove hardcoded game type
@@ -391,10 +391,9 @@ public class BuilderScene extends ViewScene {
     }
   }
 
-  private ScrollPane createSpriteButtonScrollPane(double width, double height, Pane contents) {
+  private ScrollPane createSpriteButtonScrollPane(double width, Pane contents) {
     ScrollPane spriteScrollPane = new ScrollPane(contents);
     spriteScrollPane.setPrefWidth(width);
-    spriteScrollPane.setPrefHeight(height);
     spriteScrollPane.setHbarPolicy(ScrollBarPolicy.NEVER); // Disable horizontal scrolling
     spriteScrollPane.setVbarPolicy(ScrollBarPolicy.NEVER); // Disable vertical scrolling
     spriteScrollPane.setFitToWidth(true);
