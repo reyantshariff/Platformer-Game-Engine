@@ -65,6 +65,9 @@ public class ActionListFieldInput extends DeserializedFieldUI<List<BehaviorActio
     setParamFieldBehavior(paramField, actionRef);
     setRemoveButtonBehavior(removeButton, row);
 
+    // Bind the action reference to the row for later retrieval
+    row.setUserData(actionRef);
+
     return row;
   }
 
@@ -106,11 +109,6 @@ public class ActionListFieldInput extends DeserializedFieldUI<List<BehaviorActio
     return Optional.ofNullable(actionRef[0]).map(action -> {
       SerializedField<?> param = action.getSerializedFields().getFirst();
       updateParameter(action, param, paramField.getText());
-
-      // TODO: Fix here the two differences actions reference after the reslection object (when new an action)
-      System.out.println(action);
-      System.out.println(action.getParameter());
-
       return updateParameter(action, param, paramField.getText());
     }).orElse(false);
   }
@@ -136,27 +134,14 @@ public class ActionListFieldInput extends DeserializedFieldUI<List<BehaviorActio
     List<BehaviorAction<?>> updated = listContainer.getChildren().stream()
         .filter(HBox.class::isInstance)
         .map(HBox.class::cast)
-        .map(this::buildActionFromRow)
+        .map(row -> {
+          BehaviorAction<?>[] ref = (BehaviorAction<?>[]) row.getUserData();
+          return ref[0];
+        })
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
 
     field.setValue(updated);
-  }
-
-  private BehaviorAction<?> buildActionFromRow(HBox row) {
-    try {
-      String className = ((ClassSelectionDropDownList) row.getChildren().get(0)).getValue();
-      TextField paramField = (TextField) row.getChildren().get(1);
-
-      BehaviorAction<?> action = instantiateAction(className);
-      SerializedField<?> param = action.getSerializedFields().getFirst();
-      updateParameter(action, param, paramField.getText());
-
-      return action;
-    } catch (Exception e) {
-      logger.error("Failed to build action from row", e);
-      return null;
-    }
   }
 
   private BehaviorAction<?> instantiateAction(String className) {

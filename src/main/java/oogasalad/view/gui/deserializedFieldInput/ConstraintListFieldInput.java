@@ -24,6 +24,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class ConstraintListFieldInput extends DeserializedFieldUI<List<BehaviorConstraint<?>>> {
 
+  private static final Logger logger = LogManager.getLogger(ConstraintListFieldInput.class);
   private static final String CONSTRAINT_PACKAGE = "oogasalad.model.engine.constraint";
 
   private VBox listContainer;
@@ -63,6 +64,9 @@ public class ConstraintListFieldInput extends DeserializedFieldUI<List<BehaviorC
     configureDropDown(dropDown, constraintRef, paramField);
     configureParamFieldListeners(paramField, constraintRef);
     configureRemoveButton(removeButton, row);
+
+    // Bind the drop-down and parameter field to the constraint reference
+    row.setUserData(constraintRef);
 
     return row;
   }
@@ -129,28 +133,14 @@ public class ConstraintListFieldInput extends DeserializedFieldUI<List<BehaviorC
     List<BehaviorConstraint<?>> updated = listContainer.getChildren().stream()
         .filter(HBox.class::isInstance)
         .map(HBox.class::cast)
-        .map(this::buildConstraintFromRow)
+        .map(row -> {
+          BehaviorConstraint<?>[] ref = (BehaviorConstraint<?>[]) row.getUserData();
+          return ref[0];
+        })
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
 
     field.setValue(updated);
-  }
-  private static final Logger logger = LogManager.getLogger(ConstraintListFieldInput.class);
-
-  private BehaviorConstraint<?> buildConstraintFromRow(HBox row) {
-    try {
-      String className = ((ClassSelectionDropDownList) row.getChildren().get(0)).getValue();
-      TextField paramField = (TextField) row.getChildren().get(1);
-
-      BehaviorConstraint<?> constraint = instantiateConstraint(className);
-      SerializedField<?> param = constraint.getSerializedFields().getFirst();
-      updateParameter(constraint, param, paramField.getText());
-
-      return constraint;
-    } catch (Exception e) {
-      logger.error("Failed to build constraint from row", e);
-      return null;
-    }
   }
 
   private BehaviorConstraint<?> instantiateConstraint(String className) {
