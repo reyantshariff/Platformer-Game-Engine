@@ -98,8 +98,7 @@ public class GameObject {
     if (parentScene == null) {
       componentAwakeInitializer.add(component::awake);
     } else {
-      component.awake();
-      parentScene.subscribeEvent(component::start);
+      parentScene.subscribeEvent(component::awake);
       parentScene.registerComponent(component);
     }
 

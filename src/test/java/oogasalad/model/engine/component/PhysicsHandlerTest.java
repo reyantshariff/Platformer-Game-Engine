@@ -20,7 +20,6 @@ class PhysicsHandlerTest {
     transform = new Transform();
     player.addComponent(transform);
     physics.awake();
-    physics.start();
   }
 
 

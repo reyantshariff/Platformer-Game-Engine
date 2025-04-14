@@ -22,12 +22,7 @@ public class SpriteRenderer extends GameComponent {
   @SerializableField
   private double offsetY;
 
-  private int currentSpriteIndex;
-
-  @Override
-  public void start() {
-    currentSpriteIndex = 0;
-  }
+  private int currentSpriteIndex = 0;
 
   /**
    * Returns the x-coordinate for rendering the image.
