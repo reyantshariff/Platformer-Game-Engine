@@ -110,10 +110,9 @@ public class ObjectDragger {
     for (GameObject obj : objects) {
       if (!obj.hasComponent(Transform.class)) continue;
 
-      boolean isSelected = builder.objectIsSelected() && builder.getSelectedObject().equals(obj);
       Transform t = obj.getComponent(Transform.class);
 
-      if (isSelected && isHoveringOverResizeHandle(oldX, oldY)) {
+      if (isSelectedAndResizing(obj, t)) {
         startResizing(e, t);
         return;
       }
@@ -126,6 +125,10 @@ public class ObjectDragger {
 
     handleDeselection(prevObject, clickedObject);
     builderScene.updateGamePreview();
+  }
+
+  private boolean isSelectedAndResizing(GameObject obj, Transform t) {
+    return builder.objectIsSelected() && builder.getSelectedObject().equals(obj) && isHoveringOverResizeHandle(oldX, oldY);
   }
 
   private void startMoving(GameObject obj, MouseEvent e, Transform t)
