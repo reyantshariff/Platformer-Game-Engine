@@ -1,5 +1,6 @@
 package oogasalad.view.gui.deserializedFieldInput;
 
+import java.lang.reflect.InvocationTargetException;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -23,7 +24,6 @@ import org.apache.logging.log4j.Logger;
  */
 public class ActionListFieldInput extends DeserializedFieldUI<List<BehaviorAction<?>>> {
 
-  private static final Logger logger = LogManager.getLogger(ActionListFieldInput.class);
   private static final String ACTION_PACKAGE = "oogasalad.model.engine.action";
 
   private VBox listContainer;
@@ -75,7 +75,7 @@ public class ActionListFieldInput extends DeserializedFieldUI<List<BehaviorActio
     if (action == null) return;
 
     dropDown.setValue(action.getClass().getSimpleName());
-    if (getGenericTypeName(action).equals("Void")) {
+    if (getGenericTypeName(action).equals(Void.class.getSimpleName())) {
       hide(paramField);
     } else {
       SerializedField<?> param = action.getSerializedFields().getFirst();
@@ -90,7 +90,7 @@ public class ActionListFieldInput extends DeserializedFieldUI<List<BehaviorActio
       actionRef[0] = newAction;
 
       SerializedField<?> param = newAction.getSerializedFields().getFirst();
-      if (getGenericTypeName(newAction).equals("Void")) {
+      if (getGenericTypeName(newAction).equals(Void.class.getSimpleName())) {
         hide(paramField);
       } else {
         show(paramField);
@@ -148,7 +148,7 @@ public class ActionListFieldInput extends DeserializedFieldUI<List<BehaviorActio
     try {
       Class<?> clazz = Class.forName(ACTION_PACKAGE + "." + className);
       return (BehaviorAction<?>) clazz.getDeclaredConstructor().newInstance();
-    } catch (Exception e) {
+    } catch (RuntimeException | NoSuchMethodException | ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
       throw new RuntimeException("Failed to instantiate: " + className, e);
     }
   }
