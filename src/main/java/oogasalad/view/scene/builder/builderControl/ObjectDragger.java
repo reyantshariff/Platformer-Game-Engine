@@ -8,6 +8,7 @@ import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseEvent;
 import oogasalad.model.builder.Builder;
+import oogasalad.model.builder.TransformState;
 import oogasalad.model.builder.actions.ResizeObjectAction;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
@@ -310,10 +311,10 @@ public class ObjectDragger {
   private void recordResizing()
   {
     Transform t = builder.getSelectedObject().getComponent(Transform.class);
+    TransformState prev = new TransformState(t.getX(), t.getY(), t.getScaleX(), t.getScaleY());
+    TransformState next = new TransformState(resizeStartX, resizeStartY, resizeStartW, resizeStartH);
     ResizeObjectAction resizeAction = new ResizeObjectAction(
-        builder.getSelectedObject(),
-        resizeStartX, resizeStartY, resizeStartW, resizeStartH,
-        t.getX(), t.getY(), t.getScaleX(), t.getScaleY()
+        builder.getSelectedObject(), prev, next
     );
 
     builder.pushAction(resizeAction);

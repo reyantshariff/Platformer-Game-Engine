@@ -214,7 +214,9 @@ public class Builder {
   public void resizeObject(double x, double y, double w, double h) {
     if (selectedObject != null && selectedObject.hasComponent(Transform.class)) {
       Transform t = selectedObject.getComponent(Transform.class);
-      undoStack.push(new ResizeObjectAction(selectedObject, t.getX(), t.getY(), t.getScaleX(), t.getScaleY(), x, y, w, h));
+      TransformState prev = new TransformState(t.getX(), t.getY(), t.getScaleX(), t.getScaleY());
+      TransformState next = new TransformState(x, y, w, h);
+      undoStack.push(new ResizeObjectAction(selectedObject, prev, next));
       t.setX(x);
       t.setY(y);
       t.setScaleX(w);

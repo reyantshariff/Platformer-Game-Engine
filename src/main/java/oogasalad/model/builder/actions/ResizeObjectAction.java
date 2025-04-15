@@ -1,6 +1,7 @@
 package oogasalad.model.builder.actions;
 
 import oogasalad.model.builder.EditorAction;
+import oogasalad.model.builder.TransformState;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.component.Transform;
 
@@ -10,38 +11,38 @@ import oogasalad.model.engine.component.Transform;
  */
 
 public class ResizeObjectAction implements EditorAction {
-  private final GameObject object;
-  private final double fromX, fromY;
-  private final double toX, toY;
-  private final double prevWidth, currWidth;
-  private final double prevHeight, currHeight;
+/**
+ * Class constructor
+ * @param object - GameObject
+ * @param fromState - Transform State pre resizing
+ * @param toState - Transform State post resizing
+ * */
 
-  public ResizeObjectAction(GameObject object, double fromX, double fromY, double prevWidth, double prevHeight, double toX, double toY, double currWidth, double currHeight) {
+  private final GameObject object;
+  private final TransformState fromState;
+  private final TransformState toState;
+
+  public ResizeObjectAction(GameObject object, TransformState fromState, TransformState toState) {
     this.object = object;
-    this.fromX = fromX;
-    this.fromY = fromY;
-    this.toX = toX;
-    this.toY = toY;
-    this.prevWidth = prevWidth;
-    this.prevHeight = prevHeight;
-    this.currWidth = currWidth;
-    this.currHeight = currHeight;
+    this.fromState = fromState;
+    this.toState = toState;
   }
 
   @Override
   public void undo() {
-    object.getComponent(Transform.class).setX(fromX);
-    object.getComponent(Transform.class).setY(fromY);
-    object.getComponent(Transform.class).setScaleX(prevWidth);
-    object.getComponent(Transform.class).setScaleY(prevHeight);
+    Transform t = object.getComponent(Transform.class);
+    t.setX(fromState.x());
+    t.setY(fromState.y());
+    t.setScaleX(fromState.width());
+    t.setScaleY(fromState.height());
   }
 
   @Override
-  public void redo()
-  {
-    object.getComponent(Transform.class).setX(toX);
-    object.getComponent(Transform.class).setY(toY);
-    object.getComponent(Transform.class).setScaleX(currWidth);
-    object.getComponent(Transform.class).setScaleY(currHeight);
+  public void redo() {
+    Transform t = object.getComponent(Transform.class);
+    t.setX(toState.x());
+    t.setY(toState.y());
+    t.setScaleX(toState.width());
+    t.setScaleY(toState.height());
   }
 }
