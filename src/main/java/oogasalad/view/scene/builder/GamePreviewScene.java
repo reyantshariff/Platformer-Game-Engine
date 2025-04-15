@@ -20,7 +20,7 @@ import oogasalad.view.scene.ViewScene;
  */
 public class GamePreviewScene extends ViewScene {
 
-  private final String PREVIEW_GAME_FILEPATH = "src/main/gameFiles/temp.json";
+  private static final String PREVIEW_GAME_FILEPATH = "src/main/gameFiles/temp.json";
 
   private final StackPane root;
   private final Button returnButton;
