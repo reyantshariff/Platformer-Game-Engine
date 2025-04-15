@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import javafx.stage.Stage;
 import org.reflections.Reflections;
 import oogasalad.model.config.GameConfig;
