@@ -51,6 +51,11 @@ public class BuilderScene extends ViewScene {
   public static final double MAX_ZOOM = 5.0;
   public static final double MIN_ZOOM = 0.1;
 
+  // Define the initial zoom and pan for the level preview, when opening a BuilderScene
+  public static final double DEFAULT_ZOOM = 0.5;
+  public static final double DEFAULT_ZOOM_START_X = -1400;
+  public static final double DEFAULT_ZOOM_START_Y = -200;
+
   private static final Logger logger = LogManager.getLogger(BuilderScene.class);
 
   private final BorderPane myWindow;
@@ -224,6 +229,11 @@ public class BuilderScene extends ViewScene {
   private void setupZoomAndPan(Pane container, Pane canvasHolder) {
     final ObjectProperty<Point2D> lastMousePosition = new SimpleObjectProperty<>();
 
+    // Set zoom to positional and scale defaults when view is set up
+    Point2D startZoomCenter = new Point2D(DEFAULT_ZOOM_START_X, DEFAULT_ZOOM_START_Y);
+    Point2D startZoomCenterInGroup = canvasHolder.parentToLocal(startZoomCenter);
+    zoomCanvas(canvasHolder, DEFAULT_ZOOM, startZoomCenter, startZoomCenterInGroup);
+
     // handle mouse pressed and dragged events
     container.setOnMousePressed(event -> {
       if (builder.objectIsSelected()) return;
@@ -270,15 +280,15 @@ public class BuilderScene extends ViewScene {
     });
   }
 
-  private static void zoomCanvas(Pane canvasHolder, double scale, Point2D mousePoint,
-      Point2D mouseInGroup) {
+  private static void zoomCanvas(Pane canvasHolder, double scale, Point2D zoomPoint,
+      Point2D pointInGroup) {
     scale = Math.min(Math.max(scale, MIN_ZOOM), MAX_ZOOM);
     canvasHolder.setScaleX(scale);
     canvasHolder.setScaleY(scale);
 
-    Point2D newMouseInGroup = canvasHolder.parentToLocal(mousePoint);
+    Point2D newMouseInGroup = canvasHolder.parentToLocal(zoomPoint);
 
-    Point2D delta = newMouseInGroup.subtract(mouseInGroup);
+    Point2D delta = newMouseInGroup.subtract(pointInGroup);
     canvasHolder.setTranslateX(canvasHolder.getTranslateX() + delta.getX() * scale);
     canvasHolder.setTranslateY(canvasHolder.getTranslateY() + delta.getY() * scale);
   }
