@@ -6,6 +6,9 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
@@ -25,6 +28,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import oogasalad.model.builder.Builder;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
@@ -207,7 +211,7 @@ public class BuilderScene extends ViewScene {
 
   private Pane createGamePreview() {
     // TODO: replace hardcoded canvas size with level map size
-    myGameCanvas = new Canvas(3000, 600);
+    myGameCanvas = new Canvas(4000, 600);
     updateGamePreview();
 
     canvasHolder = new Pane(myGameCanvas);
@@ -341,10 +345,15 @@ public class BuilderScene extends ViewScene {
      createObject(prefab, tilePane);
     }
 
-    // TODO: TilePane and its buttons should immediately be correctly sized without requiring mouse movement
-    tilePane.setOnMouseMoved(event -> {
-      tilePane.setPrefWidth(spriteScrollPane.getPrefWidth());
-    });
+    // Briefly animate the sprite tile options into their correct positions
+    Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1), event -> {
+      tilePane.setPrefWidth(spriteScrollPane.getWidth());
+    }));
+    timeline.setCycleCount(Animation.INDEFINITE); // Loop continuously
+    timeline.play();
+    new Timeline(new KeyFrame(Duration.seconds(3), event -> {
+      timeline.stop(); // Stop after 3 seconds
+    })).play();
 
     return spriteScrollPane;
   }
