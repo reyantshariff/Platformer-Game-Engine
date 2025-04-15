@@ -56,6 +56,9 @@ public class Builder {
     currentScene = game.getCurrentScene();
   }
 
+  /**
+   Allows for actions to be pushed into the undo deque outside of Builder.
+   * */
   public void pushAction(EditorAction action)
   {
     undoStack.push(action);
@@ -113,6 +116,9 @@ public class Builder {
     selectedObject=object;
   }
 
+  /**
+   * Sets selectedObject pointer to null
+   * */
   public void deselect()
   {
     selectedObject = null;
@@ -132,23 +138,6 @@ public class Builder {
     }
     return false;
   }
-
-
-//   private GameObject findObject(UUID id)
-//   {
-//     for (GameObject object : game.getCurrentScene().getAllObjects())
-//     {
-//       if (object.getId() == id)
-//       {
-//         return object;
-//       }
-// //      if (object.getComponent(Transform.class).getX() == x && object.getComponent(Transform.class).getY() == y)
-// //      {
-// //        return object;
-// //      }
-//     }
-//     return null;
-//   }
 
   /**
    *  Stops the preview if the user lifts mouse and cursor is not on the editor screen.
