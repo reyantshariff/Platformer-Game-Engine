@@ -60,17 +60,15 @@ public class BuilderScene extends ViewScene {
   private Pane canvasHolder; //
   private Canvas myGameCanvas;
   private VBox myComponentContainer;
-  private final String myGameType;
 
   /**
    * Constructor for BuilderView
    */
-  public BuilderScene(String gameFilepath, String gameType) {
+  public BuilderScene(String gameFilepath) {
     // Create the BorderPane as the root
     super(new BorderPane(), 1280, 720);
     myWindow = (BorderPane) getScene().getRoot();
     builder = new Builder(gameFilepath);
-    myGameType = gameType;
     initializeUI();
   }
 

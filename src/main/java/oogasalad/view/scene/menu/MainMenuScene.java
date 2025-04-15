@@ -48,8 +48,7 @@ public class MainMenuScene extends ViewScene {
 
     buildButton.setOnAction(e -> {
       String levelFile = JSON_PATH_PREFIX + gameSelector.getValue().replaceAll("\\s+", "") + ".json";
-      String gameName = gameSelector.getValue();
-      manager.switchTo(new BuilderScene(levelFile, gameName));
+      manager.switchTo(new BuilderScene(levelFile));
     });
 
     // Language and Theme Selections
