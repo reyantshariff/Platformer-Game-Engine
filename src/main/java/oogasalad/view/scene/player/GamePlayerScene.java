@@ -2,6 +2,7 @@ package oogasalad.view.scene.player;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import oogasalad.model.config.GameConfig;
 import oogasalad.view.scene.MainViewManager;
 import oogasalad.view.scene.ViewScene;
 import org.apache.logging.log4j.LogManager;
@@ -39,14 +40,14 @@ public class GamePlayerScene extends ViewScene {
       game = (Game) parser.parse(newNode);
       logger.debug(game.getAllScenes().values().stream().findFirst().getClass());
     } catch (ParsingException e) {
-      throw new IllegalStateException("Failed to parse game JSON file: " + e.getMessage(), e);
+      throw new IllegalStateException(GameConfig.getText("failureToParse", e.getMessage()), e);
     }
 
     game.goToScene(game.getLevelOrder().getFirst());
 
     gameRunner = new GameRunner(game);
 
-    Button returnButton = new Button("MAIN MENU");
+    Button returnButton = new Button(GameConfig.getText("returnToMainMenuButton"));
     returnButton.setId("returnButton");
     returnButton.setOnAction(e -> {
       deactivate();

@@ -3,6 +3,7 @@
   -fx-background-color: #FFFFFF; /* White background */
   -fx-text-fill: #1a1a1a; /* Very dark gray, almost black, for text */
   -fx-accent: #FFD700; /* Gold accent */
+  -fx-spacing: 20;
 }
 
 .button {

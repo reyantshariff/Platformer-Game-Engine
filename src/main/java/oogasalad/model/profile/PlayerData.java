@@ -1,6 +1,7 @@
 package oogasalad.model.profile;
 
 import com.google.cloud.Timestamp;
+import oogasalad.model.config.PasswordHashingException;
 
 /**
  * This class represents the data of a player profile. It a representation of the data stored in the database
@@ -10,6 +11,8 @@ import com.google.cloud.Timestamp;
  */
 public class PlayerData {
   private String username;
+  private String fullName;
+  private Password password;
   private Timestamp createdAt;
 
   /**
@@ -26,9 +29,11 @@ public class PlayerData {
    * @param username - the unique name for a user
    * @param createdAt - the time the player was created
    */
-  public PlayerData(String username, Timestamp createdAt) {
+  public PlayerData(String username, String fullName, Password password, Timestamp createdAt) {
     this.username = username;
+    this.password = password;
     this.createdAt = createdAt;
+    this.fullName = fullName;
   }
 
   /**
@@ -50,6 +55,24 @@ public class PlayerData {
   }
 
   /**
+   * Getter for the full-name
+   *
+   * @return - the full name of the user
+   */
+  public String getFullName() {
+    return fullName;
+  }
+
+  /**
+   * Setter for the full name
+   *
+   * @param fullName - the full name of the users
+   */
+  public void setFullName(String fullName) {
+    this.fullName = fullName;
+  }
+
+  /**
    * Getter for the time a player was created
    *
    * @return - the time at which a player was created
@@ -66,4 +89,45 @@ public class PlayerData {
   public void setCreatedAt(Timestamp createdAt) {
     this.createdAt = createdAt;
   }
+
+  /**
+   * Method that delegates verification logic to Password class
+   *
+   * @param input - the password being tried
+   * @return - true if the password is verified
+   * @throws PasswordHashingException - if failure occurs throughout the process
+   */
+  public boolean verifyPassword(String input) throws PasswordHashingException {
+    return password.verify(input);
+  }
+
+  /**
+   * A getter exclusively to be used internally or for Firebase
+   *
+   * @return - the Password object
+   */
+  public Password getPassword() {
+    return password;
+  }
+
+  /**
+   * Setter for the password -- exclusively to be used internally or for Firebase
+   *
+   * @param password - the Password object for a user
+   */
+  public void setPassword(Password password) {
+    this.password = password;
+  }
+
+  /**
+   * Override the toString to protect the password
+   *
+   * @return - a random string to protect the password
+   */
+  @Override
+  public String toString() {
+    return "[PROTECTED]";
+  }
+
+
 }

@@ -1,11 +1,13 @@
 package oogasalad.view.scene.menu;
 
+import java.io.File;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import oogasalad.model.config.GameConfig;
 import oogasalad.view.config.StyleConfig;
 import oogasalad.view.scene.MainViewManager;
@@ -18,7 +20,6 @@ import oogasalad.view.scene.player.GamePlayerScene;
  */
 @SuppressWarnings("unused")
 public class MainMenuScene extends ViewScene {
-  private static final String JSON_PATH_PREFIX = "data/GameJsons/";
 
   /**
    * Constructs a new MainMenuScene to display the main menu with game selection and builder options.
@@ -26,13 +27,12 @@ public class MainMenuScene extends ViewScene {
    * @param manager The MainViewManager used to switch scenes.
    */
   public MainMenuScene(MainViewManager manager) {
-    super(new VBox(), 1280, 720);
+    super(new VBox(), GameConfig.getNumber("windowWidth"), GameConfig.getNumber("windowHeight"));
 
     VBox root = (VBox) getScene().getRoot();
     root.setAlignment(Pos.CENTER);
-    root.setSpacing(20);
 
-    Label title = new Label("PLATFORMERS");
+    Label title = new Label(GameConfig.getText("mainMenuTitle"));
     title.setId("mainMenuTitle");
 
     ComboBox<String> gameSelector = setupGameSelector();
@@ -42,18 +42,28 @@ public class MainMenuScene extends ViewScene {
     Button buildButton = (Button) buttonBox.lookup("#buildButton");
 
     playButton.setOnAction(e -> {
-      String gameName = JSON_PATH_PREFIX + gameSelector.getValue().replaceAll("\\s+", "") + ".json";
-      manager.switchTo(new GamePlayerScene(gameName));
+      FileChooser fileChooser = new FileChooser();
+      fileChooser.setTitle("Select a Game JSON File");
+      fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON Files", "*.json"));
+      fileChooser.setInitialDirectory(new File("data/GameJsons"));
+
+      String gameType = gameSelector.getValue();
+
+      File selectedFile = fileChooser.showOpenDialog(getScene().getWindow());
+      if (selectedFile != null) {
+        String fileName = selectedFile.getName().replace(".json", "");
+
+        manager.registerSceneFactory("GamePlayerScene", vm -> new GamePlayerScene(vm, fileName, gameType));
+        manager.switchTo("GamePlayerScene");
+      }
     });
 
-    buildButton.setOnAction(e -> {
-      String levelFile = JSON_PATH_PREFIX + gameSelector.getValue().replaceAll("\\s+", "") + ".json";
-      manager.switchTo(new BuilderScene(levelFile));
-    });
+    buildButton.setOnAction(e -> manager.switchTo("BuilderScene"));
 
     // Language and Theme Selections
     HBox selectorBox = setupSelectorBox();
 
+    // Add to root
     root.getChildren().addAll(title, gameSelector, buttonBox, selectorBox);
 
     // Set default styles
@@ -62,11 +72,11 @@ public class MainMenuScene extends ViewScene {
 
   private HBox setupButtonBox() {
     HBox buttonBox = new HBox();
-    Button playButton = new Button("PLAY GAME");
+    Button playButton = new Button(GameConfig.getText("playButton"));
     playButton.setId("playButton");
-    Button buildButton = new Button("AUTHORING ENVIRONMENT");
+    Button buildButton = new Button(GameConfig.getText("buildButton"));
     buildButton.setId("buildButton");
-    Button socialHubButton = new Button("SOCIAL HUB");
+    Button socialHubButton = new Button(GameConfig.getText("socialHubButton"));
     socialHubButton.setId("socialHubButton");
     buttonBox.getChildren().addAll(playButton, buildButton, socialHubButton);
     buttonBox.setId("buttonBox");
@@ -75,8 +85,8 @@ public class MainMenuScene extends ViewScene {
 
   private ComboBox<String> setupGameSelector() {
     ComboBox<String> gameSelector = new ComboBox<>();
-    gameSelector.getItems().addAll("DinosaurGame", "GEOMETRY DASH");
-    gameSelector.setValue("SELECT A GAME");
+    gameSelector.getItems().addAll(GameConfig.getTextList("gameSelector"));
+    gameSelector.setValue(GameConfig.getText("gameSelectorInitialValue"));
     gameSelector.setId("gameSelector");
     return gameSelector;
   }
@@ -92,9 +102,9 @@ public class MainMenuScene extends ViewScene {
 
   private ComboBox<String> setupLanguageSelector() {
     ComboBox<String> languageSelector = new ComboBox<>();
-    languageSelector.setValue("SELECT A LANGUAGE");
+    languageSelector.setValue(GameConfig.getText("languageSelectorInitialValue"));
     languageSelector.setId("menuSelector");
-    languageSelector.getItems().addAll("ENGLISH", "ETC.");
+    languageSelector.getItems().addAll(GameConfig.getTextList("languageSelector"));
     languageSelector.setOnAction(e -> {
       GameConfig.setLanguage(languageSelector.getValue());});
     return languageSelector;
@@ -102,9 +112,9 @@ public class MainMenuScene extends ViewScene {
 
   private ComboBox<String> setupThemeSelector() {
     ComboBox<String> themeSelector = new ComboBox<>();
-    themeSelector.setValue("SELECT A THEME");
+    themeSelector.setValue(GameConfig.getText("themeSelectorInitialValue"));
     themeSelector.setId("menuSelector");
-    themeSelector.getItems().addAll("DARK", "LIGHT", "FREAKY", "CLASSY", "FAIL");
+    themeSelector.getItems().addAll(GameConfig.getTextList("themeSelector"));
     themeSelector.setOnAction(e -> {
       StyleConfig.setStylesheet(getScene(), themeSelector.getValue());
     });

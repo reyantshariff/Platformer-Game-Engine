@@ -1,5 +1,6 @@
 package oogasalad.database;
 
+import static oogasalad.model.config.GameConfig.LOGGER;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -24,14 +25,20 @@ public class FirebaseManager {
    * @throws IOException - if the credential file cannot be read, throws error
    */
   public static void initializeFirebase() throws IOException {
-    FileInputStream serviceAccount = new FileInputStream("data/DatabaseInformation/oogasalad-a908c-firebase-adminsdk-fbsvc-73ed2b05e6.json");
+    if (FirebaseApp.getApps().isEmpty()) {
+      FileInputStream serviceAccount = new FileInputStream("data/DatabaseInformation/oogasalad-a908c-firebase-adminsdk-fbsvc-73ed2b05e6.json");
 
-    FirebaseOptions options = new FirebaseOptions.Builder()
-        .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-        .build();
+      FirebaseOptions options = new FirebaseOptions.Builder()
+          .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+          .build();
 
-    FirebaseApp.initializeApp(options);
-    db = FirestoreClient.getFirestore();
+      FirebaseApp.initializeApp(options);
+      db = FirestoreClient.getFirestore();
+      LOGGER.info("Firebase initialized.");
+    } else {
+      LOGGER.info("Firebase already initialized.");
+
+    }
   }
 
   /**

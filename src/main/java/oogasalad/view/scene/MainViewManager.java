@@ -5,8 +5,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import javafx.stage.Stage;
 import org.reflections.Reflections;
+import oogasalad.model.config.GameConfig;
 
 
 /**
@@ -15,7 +17,10 @@ import org.reflections.Reflections;
  * @author Justin Aronwald
  */
 public class MainViewManager {
+  private final Map<String, java.util.function.Function<MainViewManager, ViewScene>> sceneFactories = new HashMap<>();
+
   private static final String SCENE_PACKAGE = "oogasalad.view.scene";
+  private static final String GAME_PLAYER = "GamePlayerScene";
 
   private final Stage stage;
   private static MainViewManager instance;
@@ -42,6 +47,14 @@ public class MainViewManager {
     return instance;
   }
 
+  /**
+   * @param viewSceneName - String name of the viewscene to be added
+   * @param factory - Factory function to be put in the map
+   */
+  public void registerSceneFactory(String viewSceneName, Function<MainViewManager, ViewScene> factory) {
+    sceneFactories.put(viewSceneName, factory);
+  }
+
 
   /**
    * Function that uses reflection to either create or switch to a ViewScene
@@ -61,18 +74,24 @@ public class MainViewManager {
         }
       }
       switchTo(viewScenes.get(viewSceneName));
-    } catch (NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException e) {
-      throw new SceneSwitchException("Failed to switch to scene: " + viewSceneName, e);
+      removeCachedGameScene(viewSceneName);
+    } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+      throw new SceneSwitchException(GameConfig.getText("noSuchScene", viewSceneName), e);
+    }
+  }
+
+  private void removeCachedGameScene(String viewSceneName) {
+    if (viewSceneName.equals(GAME_PLAYER)) {
+      viewScenes.remove(GAME_PLAYER);
     }
   }
 
   /**
    * Switches to the given ViewScene
-   * TODO: Deprecate this method to only use reflection above
    *
    * @param viewScene the new scene to display
    */
-  public void switchTo(ViewScene viewScene) {
+  private void switchTo(ViewScene viewScene) {
     // Stop current scene, if applicable
     if (currentScene != null) {
       currentScene.deactivate();
@@ -89,6 +108,6 @@ public class MainViewManager {
    * Shortcut to go to the main menu
    */
   public void switchToMainMenu() {
-    switchTo("MainMenuScene");
+    switchTo(GameConfig.getText("defaultScene"));
   }
 }

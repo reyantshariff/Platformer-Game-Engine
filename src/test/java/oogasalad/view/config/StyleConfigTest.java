@@ -52,7 +52,7 @@ public class StyleConfigTest extends DukeApplicationTest {
     StyleConfig.setStylesheet(scene, theme);
 
     assertEquals(1, scene.getStylesheets().size(), "Should have one stylesheet");
-    assertTrue(scene.getStylesheets().get(0).contains(defaultStylesheet),
+    assertTrue(scene.getStylesheets().getFirst().contains(defaultStylesheet),
         "Should be the default stylesheet");
   }
 
