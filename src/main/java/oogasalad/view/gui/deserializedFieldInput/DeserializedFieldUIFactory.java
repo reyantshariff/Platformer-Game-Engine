@@ -7,6 +7,28 @@ import javafx.scene.layout.HBox;
 import oogasalad.model.engine.base.serialization.SerializedField;
 import java.util.Map;
 
+/**
+ * A factory class for creating JavaFX UI components (HBox) for deserialized fields
+ * based on their types. This class supports both simple field types (e.g., Double, String)
+ * and complex field types such as Lists with specific generic types.
+ *
+ * <p>The factory uses reflection to determine the type of the field and dynamically
+ * creates the appropriate UI component. For simple types, it directly maps the type
+ * to a corresponding input box. For List types, it uses a map of factories to handle
+ * specific generic types of the List.</p>
+ *
+ * <p>Unsupported field types will result in an {@code IllegalStateException} being thrown.</p>
+ *
+ * <p>Example usage:</p>
+ * <pre>
+ * SerializedField<?> field = ...; // Obtain a SerializedField instance
+ * HBox uiComponent = DeserializedFieldUIFactory.createDeserializedFieldUI(field);
+ * </pre>
+ *
+ * <p>This class is designed to be extensible by adding new field input factories
+ * for additional types as needed.</p>
+ */
+
 public class DeserializedFieldUIFactory {
 
   /**
