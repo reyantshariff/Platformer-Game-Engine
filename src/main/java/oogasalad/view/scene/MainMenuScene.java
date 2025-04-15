@@ -1,10 +1,6 @@
 package oogasalad.view.scene;
 
-<<<<<<< HEAD
 import java.io.File;
-=======
-import static oogasalad.model.config.GameConfig.LOGGER;
->>>>>>> languageUiIntegration
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
