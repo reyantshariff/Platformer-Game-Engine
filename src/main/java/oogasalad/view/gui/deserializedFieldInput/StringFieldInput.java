@@ -8,6 +8,11 @@ import javafx.scene.layout.Priority;
 import oogasalad.model.engine.base.serialization.SerializedField;
 import oogasalad.view.gui.textField.StringTextField;
 
+/**
+ * A class that provides a JavaFX UI component for editing a string field in a serialized object.
+ * It extends the DeserializedFieldUI class and implements the showGUI method to create the UI.
+ * The UI consists of a label and a text field that only accepts string values.
+ */
 public class StringFieldInput extends DeserializedFieldUI<String> {
 
   @Override
