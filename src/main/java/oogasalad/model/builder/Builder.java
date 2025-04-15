@@ -113,7 +113,7 @@ public class Builder {
       selectedObjectPrevX = object.getComponent(Transform.class).getX();
       selectedObjectPrevY = object.getComponent(Transform.class).getY();
     }
-    selectedObject=object;
+    selectedObject = object;
   }
 
   /**
@@ -201,6 +201,7 @@ public class Builder {
     {
       game.getCurrentScene().unregisterObject(selectedObject);
       undoStack.push(new DeleteObjectAction(game, selectedObject));
+      deselect();
     }
   }
 

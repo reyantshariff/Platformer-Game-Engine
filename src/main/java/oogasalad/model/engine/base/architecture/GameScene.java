@@ -277,13 +277,15 @@ public class GameScene {
    */
   public final void unregisterObject(GameObject gameObject) {
     // Unregister components
+    List<GameComponent> componentsToDelete = new ArrayList<>();
     for (ComponentTag order : ComponentTag.values()) {
       for (GameComponent component : allComponents.get(order)) {
         if (component.getParent().equals(gameObject)) {
-          unregisterComponent(component);
+          componentsToDelete.add(component);
         }
       }
     }
+    componentsToDelete.forEach(this::unregisterComponent);
 
     gameObject.setScene(null);
     allObjects.remove(gameObject.getId());
