@@ -261,7 +261,7 @@ public class BehaviorParser implements Parser<Behavior> {
 
     BiConsumer<ObjectNode, Object> writer = TYPE_WRITERS.get(parameterClass);
     if (writer == null || oneAction == null) {
-      LOGGER.error(getText("writingActionError", parameterClass, data.getName());
+      LOGGER.error(getText("writingActionError", parameterClass, data.getName()));
       return null;
     }
 

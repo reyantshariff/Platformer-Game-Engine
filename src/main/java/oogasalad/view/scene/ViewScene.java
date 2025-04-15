@@ -12,7 +12,7 @@ import oogasalad.view.renderer.GameSceneRenderer;
 public abstract class ViewScene {
 
   private final Scene myScene;
-  private final GameSceneRenderer myObjectRenderer;
+  private final GameSceneRenderer mySceneRenderer;
 
   /**
    * Template for a program JavaFX window using a GameObjectRenderer
@@ -21,9 +21,9 @@ public abstract class ViewScene {
    * @param width  window width in pixels
    * @param height window height in pixels
    */
-  public ViewScene(Parent root, double width, double height) {
+  protected ViewScene(Parent root, double width, double height) {
     myScene = new Scene(root, width, height);
-    myObjectRenderer = new GameSceneRenderer(myScene);
+    mySceneRenderer = new GameSceneRenderer(myScene);
   }
 
   /**
@@ -48,6 +48,6 @@ public abstract class ViewScene {
    * @return GameObjectRenderer object
    */
   protected GameSceneRenderer getSceneRenderer() {
-    return myObjectRenderer;
+    return mySceneRenderer;
   }
 }

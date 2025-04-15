@@ -11,8 +11,6 @@ import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.engine.base.enumerate.KeyCode;
 import oogasalad.view.renderer.GameSceneRenderer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * The GUI class manages the canvas-based graphical rendering of the OOGASalad game engine.
@@ -24,33 +22,26 @@ import org.apache.logging.log4j.Logger;
  */
 public class GameRunner {
 
-  private final Game game;
   private final Canvas canvas;
   private final GraphicsContext gc;
   private final GameSceneRenderer objectRenderer;
   private Timeline gameLoop;
+  private Game game;
 
   /**
    * Constructs a new GUI instance for the given game.
-   *
-   * @param game The game instance to be displayed.
    */
-  public GameRunner(Game game) {
-    this.game = game;
+  public GameRunner() {
 
-    canvas = new Canvas(GameConfig.getNumber("windowWidth"),
-        GameConfig.getNumber("windowHeight"));
-
-
+    canvas = new Canvas(GameConfig.getNumber("windowWidth"), GameConfig.getNumber("windowHeight"));
     canvas.setFocusTraversable(true);
     canvas.setOnKeyPressed(this::handleKeyPressed);
     canvas.setOnKeyReleased(this::handleKeyReleased);
-
     canvas.requestFocus();
     gc = canvas.getGraphicsContext2D();
     objectRenderer = new GameSceneRenderer(null);
 
-    startGameLoop();
+    setUpGameLoop();
   }
 
   /**
@@ -66,34 +57,47 @@ public class GameRunner {
   /**
    * Starts the game loop, which updates and renders the game at a fixed frame rate.
    */
-  private void startGameLoop() {
+  private void setUpGameLoop() {
     if (gameLoop == null) {
       gameLoop = new Timeline();
       gameLoop.setCycleCount(Timeline.INDEFINITE);
       gameLoop.getKeyFrames().add(new KeyFrame(
           Duration.seconds(1.0 / GameConfig.getNumber("framesPerSecond")),
-          event -> step()));
-      gameLoop.play();
+          event -> step())
+      );
     }
+  }
+
+  public void setGame(Game game) {
+    this.game = game;
   }
 
   /**
    * Stops an existing game loop
    */
-  public void stop() {
+  public void pause() {
     if (gameLoop != null) {
-      gameLoop.stop();
-      gameLoop = null;
+      gameLoop.pause();
+    }
+  }
+
+  /**
+   * Resumes an existing game loop.
+   */
+  public void play() {
+    if (gameLoop != null) {
+      gameLoop.play();
     }
   }
 
   /**
    * Executes a single step of the game loop, updating the game state and rendering the scene.
    */
-  private void step() {
+  public void step() {
     GameScene current = game.getCurrentScene();
     if (current != null) {
       game.step(1.0 / GameConfig.getNumber("framesPerSecond"));
+
       if (current.hasCamera()) {
         objectRenderer.renderWithCamera(gc, current);
       } else {

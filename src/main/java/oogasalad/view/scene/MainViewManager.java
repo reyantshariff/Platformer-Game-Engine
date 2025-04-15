@@ -1,7 +1,9 @@
 package oogasalad.view.scene;
 
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +19,6 @@ import oogasalad.model.config.GameConfig;
  * @author Justin Aronwald
  */
 public class MainViewManager {
-  private final Map<String, java.util.function.Function<MainViewManager, ViewScene>> sceneFactories = new HashMap<>();
-
   private static final String SCENE_PACKAGE = "oogasalad.view.scene";
   private static final String GAME_PLAYER = "GamePlayerScene";
 
@@ -32,9 +32,17 @@ public class MainViewManager {
    *
    * @param stage the JavaFX primary stage
    */
-  public MainViewManager(Stage stage) {
+  private MainViewManager(Stage stage) {
     this.stage = stage;
     instance = this;
+  }
+
+  public static MainViewManager setInstance(Stage stage) {
+    if (instance == null) {
+      instance = new MainViewManager(stage);
+    }
+
+    return instance;
   }
 
 
@@ -48,18 +56,37 @@ public class MainViewManager {
   }
 
   /**
-   * @param viewSceneName - String name of the viewscene to be added
-   * @param factory - Factory function to be put in the map
+   * Creates and stores a ViewScene instance with the given class and constructor args.
+   *
+   * @param viewSceneClass The class of the ViewScene
+   * @param args           Arguments for the constructor
+   * @return The created instance
    */
-  public void registerSceneFactory(String viewSceneName, Function<MainViewManager, ViewScene> factory) {
-    sceneFactories.put(viewSceneName, factory);
+  public <T extends ViewScene> T addViewScene(Class<T> viewSceneClass, String name, Object... args) {
+    try {
+      Class<?>[] argTypes = Arrays.stream(args).map(Object::getClass).toArray(Class[]::new);
+      Constructor<T> constructor = viewSceneClass.getDeclaredConstructor(argTypes);
+      constructor.setAccessible(true);
+      T instance = constructor.newInstance(args);
+      viewScenes.put(name, instance);
+      return instance;
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to create or store ViewScene: " + viewSceneClass.getName(), e);
+    }
   }
 
 
   /**
+   * Gets the viewScene instance with the given name.
+   */
+  public ViewScene getViewScene(String name) {
+    return viewScenes.get(name);
+  }
+
+  /**
    * Function that uses reflection to either create or switch to a ViewScene
    *
-   * @param viewSceneName - Name of view scene to be switchted to - must match class name
+   * @param viewSceneName - Name of view scene to be switched to - must match class name
    */
   public void switchTo(String viewSceneName) {
     try {

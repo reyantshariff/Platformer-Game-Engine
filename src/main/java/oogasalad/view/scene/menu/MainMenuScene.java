@@ -21,12 +21,12 @@ import oogasalad.view.scene.player.GamePlayerScene;
 @SuppressWarnings("unused")
 public class MainMenuScene extends ViewScene {
 
+  private String selectedFilePath = "";
+
   /**
    * Constructs a new MainMenuScene to display the main menu with game selection and builder options.
-   *
-   * @param manager The MainViewManager used to switch scenes.
    */
-  public MainMenuScene(MainViewManager manager) {
+  private MainMenuScene() {
     super(new VBox(), GameConfig.getNumber("windowWidth"), GameConfig.getNumber("windowHeight"));
 
     VBox root = (VBox) getScene().getRoot();
@@ -35,30 +35,24 @@ public class MainMenuScene extends ViewScene {
     Label title = new Label(GameConfig.getText("mainMenuTitle"));
     title.setId("mainMenuTitle");
 
-    ComboBox<String> gameSelector = setupGameSelector();
+    Button gameSelector = setupGameSelector();
 
     HBox buttonBox = setupButtonBox();
     Button playButton = (Button) buttonBox.lookup("#playButton");
     Button buildButton = (Button) buttonBox.lookup("#buildButton");
 
+    MainViewManager.getInstance().addViewScene(GamePlayerScene.class, "GamePlayer");
     playButton.setOnAction(e -> {
-      FileChooser fileChooser = new FileChooser();
-      fileChooser.setTitle("Select a Game JSON File");
-      fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON Files", "*.json"));
-      fileChooser.setInitialDirectory(new File("data/GameJsons"));
-
-      String gameType = gameSelector.getValue();
-
-      File selectedFile = fileChooser.showOpenDialog(getScene().getWindow());
-      if (selectedFile != null) {
-        String fileName = selectedFile.getName().replace(".json", "");
-
-        manager.registerSceneFactory("GamePlayerScene", vm -> new GamePlayerScene(vm, fileName, gameType));
-        manager.switchTo("GamePlayerScene");
-      }
+      ((GamePlayerScene) MainViewManager.getInstance().getViewScene("GamePlayer")).play(selectedFilePath);
+      MainViewManager.getInstance().switchTo("GamePlayer");
     });
 
-    buildButton.setOnAction(e -> manager.switchTo("BuilderScene"));
+    // TODO: make this file chooser as well
+    MainViewManager.getInstance().addViewScene(BuilderScene.class, "Builder");
+    buildButton.setOnAction(e -> {
+      ((BuilderScene) MainViewManager.getInstance().getViewScene("Builder")).setUpBuilder(selectedFilePath);
+      MainViewManager.getInstance().switchTo("Builder");
+    });
 
     // Language and Theme Selections
     HBox selectorBox = setupSelectorBox();
@@ -83,11 +77,20 @@ public class MainMenuScene extends ViewScene {
     return buttonBox;
   }
 
-  private ComboBox<String> setupGameSelector() {
-    ComboBox<String> gameSelector = new ComboBox<>();
-    gameSelector.getItems().addAll(GameConfig.getTextList("gameSelector"));
-    gameSelector.setValue(GameConfig.getText("gameSelectorInitialValue"));
+  private Button setupGameSelector() {
+    Button gameSelector = new Button(GameConfig.getText("gameSelectorInitialValue"));
     gameSelector.setId("gameSelector");
+    gameSelector.setOnAction(e -> {
+      FileChooser fileChooser = new FileChooser();
+      fileChooser.setTitle("Select a Game JSON File");
+      fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON Files", "*.json"));
+      fileChooser.setInitialDirectory(new File("data/GameJsons"));
+
+      File selectedFile = fileChooser.showOpenDialog(getScene().getWindow());
+      if (selectedFile != null) {
+        selectedFilePath = selectedFile.getAbsolutePath();
+      }
+    });
     return gameSelector;
   }
 

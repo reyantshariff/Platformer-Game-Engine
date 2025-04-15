@@ -1,6 +1,5 @@
 package oogasalad.view.scene.builder;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -9,6 +8,7 @@ import java.util.List;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
@@ -30,6 +30,7 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import oogasalad.model.builder.Builder;
+import oogasalad.model.config.GameConfig;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.component.Transform;
@@ -63,22 +64,20 @@ public class BuilderScene extends ViewScene {
   private static final Logger logger = LogManager.getLogger(BuilderScene.class);
 
   private final BorderPane myWindow;
-  private final Builder builder;
+  private final ObjectDragger objectDragger;
 
-  private Pane myGamePreviewPane; // Container holding the game canvas
+  private Builder builder;
+  private Pane myGameViewPane; // Container holding the game canvas
   private Pane canvasHolder; //
   private Canvas myGameCanvas;
   private VBox myComponentContainer;
 
-  /**
-   * Constructor for BuilderView
-   */
-  public BuilderScene(String gameFilepath) {
+  private BuilderScene() {
     // Create the BorderPane as the root
-    super(new BorderPane(), 1280, 720);
+    super(new BorderPane(), GameConfig.getNumber("windowWidth"), GameConfig.getNumber("windowHeight"));
     myWindow = (BorderPane) getScene().getRoot();
-    builder = new Builder(gameFilepath);
     initializeUI();
+    objectDragger = new ObjectDragger(myGameCanvas, this, getSceneRenderer());
   }
 
   private void initializeUI() {
@@ -88,10 +87,14 @@ public class BuilderScene extends ViewScene {
     MainViewManager viewManager = MainViewManager.getInstance();
     mainMenuButton.setOnAction(e -> viewManager.switchToMainMenu());
     Button previewLevelButton = new Button("Preview Level");
+
+    viewManager.addViewScene(GamePreviewScene.class, "GamePreview");
     previewLevelButton.setOnAction(e -> {
-      JsonNode gameNode = builder.saveGameAs("temp.json");
-      viewManager.switchTo(new LevelPreviewScene(this, gameNode));
+      GamePreviewScene previewScene = (GamePreviewScene) viewManager.getViewScene("GamePreview");
+      previewScene.preview();
+      viewManager.switchTo("GamePreview");
     });
+
     topBar.getChildren().addAll(mainMenuButton, previewLevelButton);
     myWindow.setTop(topBar);
 
@@ -101,8 +104,8 @@ public class BuilderScene extends ViewScene {
     objectControlSplitPane.setDividerPositions(0.7);
 
     // Add SplitPane for splitting the view and object panel
-    myGamePreviewPane = createGamePreview();
-    SplitPane viewObjectSplitPane = new SplitPane(myGamePreviewPane, objectControlSplitPane);
+    myGameViewPane = createGamePreview();
+    SplitPane viewObjectSplitPane = new SplitPane(myGameViewPane, objectControlSplitPane);
     viewObjectSplitPane.setOrientation(Orientation.VERTICAL);
     viewObjectSplitPane.setDividerPositions(0.6);
 
@@ -144,6 +147,19 @@ public class BuilderScene extends ViewScene {
     scrollPane.setFitToWidth(true);
 
     return scrollPane;
+  }
+
+  /**
+   * Set up the builder for the given game filepath.
+   * This should be called when the new game file is to be edited.
+   * @param gameFilepath the given game filepath
+   */
+  public void setUpBuilder(String gameFilepath) {
+    builder = new Builder(gameFilepath);
+    objectDragger.setUpBuilder(builder);
+    objectDragger.setupListeners();
+    updateGamePreview();
+    Platform.runLater(this::resetCanvas);
   }
 
   /**
@@ -212,7 +228,6 @@ public class BuilderScene extends ViewScene {
   private Pane createGamePreview() {
     // TODO: replace hardcoded canvas size with level map size
     myGameCanvas = new Canvas(4000, 600);
-    updateGamePreview();
 
     canvasHolder = new Pane(myGameCanvas);
 
@@ -222,10 +237,6 @@ public class BuilderScene extends ViewScene {
 
     // Scene dragging and zooming
     setupZoomAndPan(container, canvasHolder);
-
-    // Object dragging and resizing
-    ObjectDragger objectDragger = new ObjectDragger(myGameCanvas, builder, this, getSceneRenderer());
-    objectDragger.setupListeners();
 
     return container;
   }
@@ -284,8 +295,20 @@ public class BuilderScene extends ViewScene {
     });
   }
 
-  private static void zoomCanvas(Pane canvasHolder, double scale, Point2D zoomPoint,
-      Point2D pointInGroup) {
+  private void resetCanvas() {
+    Point2D zoomOrigin = new Point2D(0, 0);
+    Point2D zoomOriginInCanvas = canvasHolder.parentToLocal(zoomOrigin);
+    zoomCanvas(canvasHolder, DEFAULT_ZOOM, zoomOrigin, zoomOriginInCanvas);
+    Point2D canvasTopLeftInContainer = canvasHolder.localToParent(0, 0);
+
+    double deltaX = -canvasTopLeftInContainer.getX();
+    double deltaY = -canvasTopLeftInContainer.getY();
+
+    canvasHolder.setTranslateX(canvasHolder.getTranslateX() + deltaX);
+    canvasHolder.setTranslateY(canvasHolder.getTranslateY() + deltaY);
+  }
+
+  private static void zoomCanvas(Pane canvasHolder, double scale, Point2D zoomPoint, Point2D pointInGroup) {
     scale = Math.min(Math.max(scale, MIN_ZOOM), MAX_ZOOM);
     canvasHolder.setScaleX(scale);
     canvasHolder.setScaleY(scale);
@@ -392,7 +415,7 @@ public class BuilderScene extends ViewScene {
         if (t == null) {
           logger.error("Error getting Transform component from prefab " + prefab.getName());
         } else {
-          alignObject(t, myGamePreviewPane);
+          alignObject(t, myGameViewPane);
         }
 
         // Register new object to the scene

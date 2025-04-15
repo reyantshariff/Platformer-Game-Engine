@@ -1,4 +1,4 @@
-package oogasalad.view.scene.player;
+package oogasalad.view.scene.builder;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +18,9 @@ import oogasalad.view.scene.ViewScene;
  * Preview a level from the Builder view using this Scene. Directly load in a GameScene to be
  * displayed.
  */
-public class GamePlayerScene extends ViewScene {
+public class GamePreviewScene extends ViewScene {
+
+  private final String PREVIEW_GAME_FILEPATH = "src/main/gameFiles/temp.json";
 
   private final StackPane root;
   private final Button returnButton;
@@ -28,16 +30,16 @@ public class GamePlayerScene extends ViewScene {
    * A LevelPreviewScene is similar to GamePlayerScene but is meant for previewing a
    * level-in-progress from the builder.
    */
-  private GamePlayerScene() {
+  private GamePreviewScene() {
     super(new StackPane(), GameConfig.getNumber("windowWidth"), GameConfig.getNumber("windowHeight"));
-
     gameRunner = new GameRunner();
 
     root = (StackPane) getScene().getRoot();
 
-    returnButton = new Button(GameConfig.getText("returnToMainMenuButton"));
+    returnButton = new Button(GameConfig.getText("returnToBuilderButton"));
     returnButton.setOnAction(e -> {
-      MainViewManager.getInstance().switchToMainMenu();
+      deactivate();
+      MainViewManager.getInstance().switchTo("Builder");
     });
 
     StackPane.setAlignment(returnButton, Pos.TOP_RIGHT);
@@ -47,12 +49,12 @@ public class GamePlayerScene extends ViewScene {
   /**
    * Play the preview to start the game.
    */
-  public void play(String filepath) {
+  public void preview() {
     root.getChildren().clear();
     root.getChildren().add(returnButton);
 
     try {
-      Parser<?> parser = new JsonParser(filepath);
+      Parser<?> parser = new JsonParser(PREVIEW_GAME_FILEPATH);
       ObjectMapper mapper = new ObjectMapper();
       JsonNode newNode = mapper.createObjectNode();
       gameRunner.setGame((Game) parser.parse(newNode));
@@ -63,6 +65,20 @@ public class GamePlayerScene extends ViewScene {
 
     root.getChildren().addFirst(gameRunner.getCanvas());
     gameRunner.getCanvas().requestFocus();
+  }
+
+  /**
+   * Pause the game preview.
+   */
+  public void pause() {
+    gameRunner.pause();
+  }
+
+  /**
+   * Resume the game preview.
+   */
+  public void resume() {
+    gameRunner.play();
   }
 
   /**

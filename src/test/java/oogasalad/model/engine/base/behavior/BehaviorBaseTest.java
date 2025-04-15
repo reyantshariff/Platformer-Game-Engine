@@ -28,7 +28,7 @@ public abstract class BehaviorBaseTest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) {
-        MainViewManager viewManager = new MainViewManager(stage);
+        MainViewManager viewManager = MainViewManager.setInstance(stage);
         viewManager.switchToMainMenu();
     }
 

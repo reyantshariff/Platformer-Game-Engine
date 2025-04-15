@@ -26,45 +26,44 @@ import oogasalad.view.scene.builder.BuilderScene;
  */
 public class ObjectDragger {
 
+  private static final double HANDLE_SIZE = 8;
+
   private final Canvas canvas;
-  private final Builder builder;
   private final BuilderScene builderScene;
-  private final GameScene gameScene;
   private final GameSceneRenderer renderer;
+  private final DragContext dragContext = new DragContext();
+  private final Map<ResizeHandle, BiConsumer<Double, Double>> enumMap;
 
-  private double dragOffsetX = 0;
-  private double dragOffsetY = 0;
-
-  private final double HANDLE_SIZE = 8;
+  private Builder builder;
+  private GameScene gameScene;
 
   private double oldX = 0;
   private double oldY = 0;
 
   private double newX, newY, newW, newH;
-
-  private final DragContext dragContext = new DragContext();
-  private List<Point2D> resize_handles;
-
-  private final Map<ResizeHandle, BiConsumer<Double, Double>> enumMap;
-
   private double resizeStartX, resizeStartY, resizeStartW, resizeStartH;
 
   /**
    * Constructor for ObjectDragger
    * @param canvas is the canvas to draw on
-   * @param builder is the builder object
    * @param builderScene is the builder scene
    * @param renderer is the renderer for the game scene
    */
-  public ObjectDragger(Canvas canvas, Builder builder, BuilderScene builderScene, GameSceneRenderer renderer) {
+  public ObjectDragger(Canvas canvas, BuilderScene builderScene, GameSceneRenderer renderer) {
     this.canvas = canvas;
-    this.builder = builder;
     this.builderScene = builderScene;
-    this.gameScene = builder.getCurrentScene();
     this.renderer = renderer;
-    enumMap = new HashMap<>();
-
+    this.enumMap = new HashMap<>();
   }
+
+  /**
+   * Sets up builder
+   */
+  public void setUpBuilder(Builder builder) {
+    this.builder = builder;
+    this.gameScene = builder.getCurrentScene();
+  }
+
   /**
    * Sets up mouse inputs
    */
@@ -159,8 +158,8 @@ public class ObjectDragger {
     resizeStartW = t.getScaleX();
     resizeStartH = t.getScaleY();
 
-    dragOffsetX = oldX - t.getX();
-    dragOffsetY = oldY - t.getY();
+    double dragOffsetX = oldX - t.getX();
+    double dragOffsetY = oldY - t.getY();
 
     dragContext.beginDrag(e, dragOffsetX, dragOffsetY, true);
   }
@@ -203,7 +202,7 @@ public class ObjectDragger {
       double w = t.getScaleX();
       double h = t.getScaleY();
 
-      resize_handles = List.of(
+      List<Point2D> resize_handles = List.of(
           new Point2D(t.getX(), t.getY()),
           new Point2D(t.getX() + w / 2, t.getY()),
           new Point2D(t.getX() + w, t.getY()),
