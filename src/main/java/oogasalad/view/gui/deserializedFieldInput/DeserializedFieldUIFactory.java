@@ -9,6 +9,13 @@ import java.util.Map;
 
 public class DeserializedFieldUIFactory {
 
+  /**
+   * Creates a UI component (HBox) for a given SerializedField based on its type.
+   *
+   * @param field the SerializedField for which the UI component is to be created
+   * @return an HBox representing the UI for the given SerializedField
+   * @throws IllegalStateException if the field type is unsupported
+   */
   public static HBox createDeserializedFieldUI(SerializedField<?> field) {
     String fieldType = field.getFieldType().getSimpleName();
 
@@ -19,6 +26,14 @@ public class DeserializedFieldUIFactory {
     return createSimpleInputBox(fieldType, field);
   }
 
+  /**
+   * Creates a UI component (HBox) for a simple field type (e.g., Double, String).
+   *
+   * @param fieldType the type of the field as a String
+   * @param field the SerializedField for which the UI component is to be created
+   * @return an HBox representing the UI for the given field
+   * @throws IllegalStateException if the field type is unsupported
+   */
   private static HBox createSimpleInputBox(String fieldType, SerializedField<?> field) {
     switch (fieldType) {
       case "Double", "double" -> {
@@ -58,6 +73,13 @@ public class DeserializedFieldUIFactory {
       }
   );
 
+  /**
+   * Creates a UI component (HBox) for a field of type List with a specific generic type.
+   *
+   * @param field the SerializedField of type List for which the UI component is to be created
+   * @return an HBox representing the UI for the given List field
+   * @throws IllegalStateException if the generic type of the List is unsupported
+   */
   private static HBox createListInputBox(SerializedField<?> field) {
     Type genericType = field.getFieldGenericType();
 
