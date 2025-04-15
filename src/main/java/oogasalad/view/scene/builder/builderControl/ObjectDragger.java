@@ -27,12 +27,13 @@ import oogasalad.view.scene.builder.BuilderScene;
 public class ObjectDragger {
 
   private static final double HANDLE_SIZE = 8;
-  private final int MIN_VALUE_BUILDER_WIDTH = 1;
+  private static final int MIN_VALUE_BUILDER_WIDTH = 1;
   private final Canvas canvas;
   private final BuilderScene builderScene;
   private final GameSceneRenderer renderer;
   private final DragContext dragContext = new DragContext();
   private final Map<ResizeHandle, BiConsumer<Double, Double>> enumMap;
+  private final double RADIUS=HANDLE_SIZE/2;
 
   private Builder builder;
   private GameScene gameScene;
@@ -118,7 +119,7 @@ public class ObjectDragger {
 
       Transform t = obj.getComponent(Transform.class);
 
-      if (isSelectedAndResizing(obj, t)) {
+      if (isSelectedAndResizing(obj)) {
         startResizing(e, t);
         return;
       }
@@ -133,7 +134,7 @@ public class ObjectDragger {
     builderScene.updateGamePreview();
   }
 
-  private boolean isSelectedAndResizing(GameObject obj, Transform t) {
+  private boolean isSelectedAndResizing(GameObject obj) {
     return builder.objectIsSelected() && builder.getSelectedObject().equals(obj) && isHoveringOverResizeHandle(oldX, oldY);
   }
 
@@ -218,7 +219,7 @@ public class ObjectDragger {
        meaning the user clicked on that handle.
        */
       for (int i = 0; i < resize_handles.size(); i++) {
-        if (mousePoint.distance(resize_handles.get(i)) <= HANDLE_SIZE / 2) {
+        if (mousePoint.distance(resize_handles.get(i)) <= RADIUS) {
           dragContext.activateHandle(ResizeHandle.values()[i]);  // Use enum here
           return true;
         }
