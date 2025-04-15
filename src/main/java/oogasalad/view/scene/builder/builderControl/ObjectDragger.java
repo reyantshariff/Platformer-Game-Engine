@@ -39,8 +39,12 @@ public class ObjectDragger {
   private double oldX = 0;
   private double oldY = 0;
 
+  private double newX, newY, newW, newH;
+
   private final DragContext dragContext = new DragContext();
   private List<Point2D> resize_handles;
+
+  private final Map<ResizeHandle, BiConsumer<Double, Double>> enumMap;
 
   private double resizeStartX, resizeStartY, resizeStartW, resizeStartH;
 
@@ -51,6 +55,7 @@ public class ObjectDragger {
     this.builderScene = builderScene;
     this.gameScene = builder.getCurrentScene();
     this.renderer = renderer;
+    enumMap = new HashMap<>();
 
   }
   /**
@@ -218,49 +223,60 @@ public class ObjectDragger {
     double w = t.getScaleX();
     double h = t.getScaleY();
 
-    double newX = x, newY = y, newW = w, newH = h;
+    initEnumMap(x, y, w, h);
 
-    switch (dragContext.getActiveHandle()) {
-      case TOP_LEFT -> {    // top-left
-        newX += dx;
-        newY += dy;
-        newW -= dx;
-        newH -= dy;
-      }
-      case TOP_CENTER -> {   // top-center
-        newY += dy;
-        newH -= dy;
-      }
-      case TOP_RIGHT -> {   // top-right
-        newY += dy;
-        newW += dx;
-        newH -= dy;
-      }
-      case MID_RIGHT ->  {  // mid-right
-        newW += dx;
-      }
-      case BOTTOM_RIGHT -> {   // bottom-right
-        newH += dy;
-        newW += dx;
-      }
-      case BOTTOM_CENTER -> {    // bottom-center
-        newH += dy;
-      }
-      case BOTTOM_LEFT -> {    // bottom-left
-        newX += dx;
-        newW -= dx;
-        newH += dy;
-      }
-      case MID_LEFT -> {   // mid-left
-        newX += dx;
-        newW -= dx;
-      }
+    ResizeHandle handle = dragContext.getActiveHandle();
+    BiConsumer<Double, Double> handleMapping = enumMap.get(handle);
+    if (handleMapping != null) {
+      handleMapping.accept(dx, dy);
     }
 
     if (newW > 1 && newH > 1) {
       builder.resizeObject(newX, newY, newW, newH);
     }
   }
+
+  private void initEnumMap(double x, double y, double w, double h) {
+    newX = x;
+    newY = y;
+    newW = w;
+    newH = h;
+
+    enumMap.clear(); // Ensure it's fresh each time
+
+    enumMap.put(ResizeHandle.TOP_LEFT, (dx, dy) -> {
+      newX += dx; newY += dy; newW -= dx; newH -= dy;
+    });
+
+    enumMap.put(ResizeHandle.TOP_CENTER, (dx, dy) -> {
+      newY += dy; newH -= dy;
+    });
+
+    enumMap.put(ResizeHandle.TOP_RIGHT, (dx, dy) -> {
+      newY += dy; newW += dx; newH -= dy;
+    });
+
+    enumMap.put(ResizeHandle.MID_RIGHT, (dx, dy) -> {
+      newW += dx;
+    });
+
+    enumMap.put(ResizeHandle.BOTTOM_RIGHT, (dx, dy) -> {
+      newH += dy; newW += dx;
+    });
+
+    enumMap.put(ResizeHandle.BOTTOM_CENTER, (dx, dy) -> {
+      newH += dy;
+    });
+
+    enumMap.put(ResizeHandle.BOTTOM_LEFT, (dx, dy) -> {
+      newX += dx; newW -= dx; newH += dy;
+    });
+
+    enumMap.put(ResizeHandle.MID_LEFT, (dx, dy) -> {
+      newX += dx; newW -= dx;
+    });
+  }
+
 
   private void handleReleased(MouseEvent e) {
     if (!isInCanvas(e) || !builder.objectIsSelected()) return;
