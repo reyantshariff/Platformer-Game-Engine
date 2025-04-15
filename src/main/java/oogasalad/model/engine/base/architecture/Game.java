@@ -178,8 +178,7 @@ public class Game {
     currentLevelIndex++;
     if (currentLevelIndex < levelOrder.size()) {
       changeScene(levelOrder.get(currentLevelIndex));
-    } 
-    // TODO: Handle win
+    }
   }
 
   /**

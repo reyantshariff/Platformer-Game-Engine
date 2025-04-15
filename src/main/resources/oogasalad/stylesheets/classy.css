@@ -27,7 +27,7 @@
   -fx-scale-y: 1.05;
 }
 
-#mainMenuTitle {
+.title {
   -fx-font-size: 72px; /* Large title, but not as extreme as the others */
   -fx-text-fill: #FFD700; /* Gold title */
   -fx-font-family: "serif";

@@ -61,8 +61,8 @@
   -fx-text-fill: #212529;
 }
 
-#mainMenuTitle {
-  -fx-font-size: 150px;
+.title {
+  -fx-font-size: 100px;
   -fx-text-fill: #212529; /* Dark text */
 }
 
