@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -172,7 +171,7 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
 
     List<SerializedField<?>> serializableFields = data.getSerializedFields();
     for (SerializedField<?> serializedField : serializableFields) {
-      serializeField(serializedField, configurations, mapper);
+      serializeField(serializedField, configurations);
     }
 
     return root;
@@ -189,7 +188,7 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
     SERIALIZERS.put(List.class, (field, config) -> serializeListField(field, config));  // Use a separate list serializer
   }
 
-  private void serializeField(SerializedField<?> serializedField, ObjectNode configurations, ObjectMapper mapper) {
+  private void serializeField(SerializedField<?> serializedField, ObjectNode configurations) {
     Class<?> fieldType = serializedField.getFieldType();
     BiConsumer<SerializedField<?>, ObjectNode> serializer = SERIALIZERS.get(fieldType);
 
