@@ -27,7 +27,7 @@ import oogasalad.view.scene.builder.BuilderScene;
 public class ObjectDragger {
 
   private static final double HANDLE_SIZE = 8;
-
+  private final int MIN_VALUE_BUILDER_WIDTH = 1;
   private final Canvas canvas;
   private final BuilderScene builderScene;
   private final GameSceneRenderer renderer;
@@ -243,7 +243,7 @@ public class ObjectDragger {
       handleMapping.accept(dx, dy);
     }
 
-    if (newW > 1 && newH > 1) {
+    if (newW > MIN_VALUE_BUILDER_WIDTH && newH > MIN_VALUE_BUILDER_WIDTH) {
       builder.resizeObject(newX, newY, newW, newH);
     }
   }
