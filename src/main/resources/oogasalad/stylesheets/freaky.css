@@ -31,7 +31,7 @@
   -fx-rotate: 5;
 }
 
-#mainMenuTitle {
+.title {
   -fx-font-size: 90px;
   -fx-text-fill: #220000;
   -fx-font-family: "Impact";
