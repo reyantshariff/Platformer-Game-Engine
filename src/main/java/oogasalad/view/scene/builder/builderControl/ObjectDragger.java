@@ -33,7 +33,7 @@ public class ObjectDragger {
   private final GameSceneRenderer renderer;
   private final DragContext dragContext = new DragContext();
   private final Map<ResizeHandle, BiConsumer<Double, Double>> enumMap;
-  private final double RADIUS=HANDLE_SIZE/2;
+  private static final double RADIUS=HANDLE_SIZE/2;
 
   private Builder builder;
   private GameScene gameScene;
