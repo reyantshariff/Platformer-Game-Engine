@@ -19,7 +19,7 @@ public class GameScene {
   private final Map<UUID, GameObject> allObjects;
   private final Map<ComponentTag, List<GameComponent>> allComponents;
   private final Queue<Runnable> subscribedEvents;
-  private Set<GameObject> awakeList;
+  private final Set<GameObject> awakeList;
 
   private String name;
   private Game game;

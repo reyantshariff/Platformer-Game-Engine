@@ -33,8 +33,8 @@ public class StringFieldInput extends DeserializedFieldUI<String> {
 
     // Container for the label and text field
     HBox hBox = new HBox(10, label, textField);
-    hBox.setAlignment(Pos.CENTER_LEFT);
     HBox.setHgrow(hBox, Priority.ALWAYS);
+    hBox.setAlignment(Pos.CENTER_LEFT);
     HBox.setHgrow(textField, Priority.ALWAYS);
 
     return hBox;
