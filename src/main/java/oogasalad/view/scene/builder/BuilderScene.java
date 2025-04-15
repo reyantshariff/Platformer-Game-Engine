@@ -52,7 +52,7 @@ import org.apache.logging.log4j.Logger;
 public class BuilderScene extends ViewScene {
 
   private static final String COMPONENT_PACKAGE_NAME = "oogasalad.model.engine.component";
-
+  private static final String GAME_PREVIEW = "GamePreview";
   public static final double MAX_ZOOM = 5.0;
   public static final double MIN_ZOOM = 0.1;
 
@@ -88,11 +88,11 @@ public class BuilderScene extends ViewScene {
     mainMenuButton.setOnAction(e -> viewManager.switchToMainMenu());
     Button previewLevelButton = new Button("Preview Level");
 
-    viewManager.addViewScene(GamePreviewScene.class, "GamePreview");
+    viewManager.addViewScene(GamePreviewScene.class, GAME_PREVIEW);
     previewLevelButton.setOnAction(e -> {
-      GamePreviewScene previewScene = (GamePreviewScene) viewManager.getViewScene("GamePreview");
+      GamePreviewScene previewScene = (GamePreviewScene) viewManager.getViewScene(GAME_PREVIEW);
       previewScene.preview();
-      viewManager.switchTo("GamePreview");
+      viewManager.switchTo(GAME_PREVIEW);
     });
 
     topBar.getChildren().addAll(mainMenuButton, previewLevelButton);
