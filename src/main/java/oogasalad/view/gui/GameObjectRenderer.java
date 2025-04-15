@@ -12,6 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.text.Text;
 import oogasalad.model.ResourceBundles;
+import oogasalad.model.config.GameConfig;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
@@ -52,12 +53,12 @@ public class GameObjectRenderer {
   public void renderWithCamera(GraphicsContext gc, GameScene scene) {
     Camera camera = scene.getCamera();
     if (camera == null) {
-      logger.error("Camera not found in scene");
+      logger.error(GameConfig.getText("noCamera"));
       return;
     }
     Transform cameraTransform = camera.getComponent(Transform.class);
     if (cameraTransform == null) {
-      logger.error("Camera transform not found");
+      logger.error(GameConfig.getText("noTransformWithCamera"));
       return;
     }
     relativeX = cameraTransform.getX();
@@ -73,11 +74,10 @@ public class GameObjectRenderer {
    * @param scene The game scene to render.
    */
   public void renderWithoutCamera(GraphicsContext gc, GameScene scene) {
-    String baseName = "oogasalad.gui.general";
-    int windowX = ResourceBundles.getInt(baseName, "windowX");
-    int windowY = ResourceBundles.getInt(baseName, "windowY");
-    double windowWidth = ResourceBundles.getDouble(baseName, "windowWidth");
-    double windowHeight = ResourceBundles.getDouble(baseName, "windowHeight");
+    double windowX = GameConfig.getNumber("windowX");
+    double windowY = GameConfig.getNumber("windowY");
+    double windowWidth = GameConfig.getNumber("windowWidth");
+    double windowHeight = GameConfig.getNumber("windowHeight");
     gc.clearRect(windowX, windowY, windowWidth, windowHeight);
 
     Collection<GameObject> objects;
@@ -115,7 +115,7 @@ public class GameObjectRenderer {
         method.setAccessible(true);
         method.invoke(this, component, gc);
       } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-        logger.info("No such component render method exists: " + clazz.getSimpleName());
+        logger.info(GameConfig.getText("noSuchRenderMethod", clazz.getSimpleName()));
       }
     }
 
@@ -148,7 +148,7 @@ public class GameObjectRenderer {
           transform.getScaleY() // height (scale)
       );
     } catch (IllegalArgumentException e) {
-      logger.error("Failed to render image: " + component.getImagePath());
+      logger.error(GameConfig.getText("failToRenderImage", component.getImagePath()));
     }
   }
 
@@ -163,7 +163,7 @@ public class GameObjectRenderer {
 
   private void applyStyleSheet(Node node, String styleSheet) {
     if (myScene == null) {
-      logger.error("Could not apply stylesheet: scene is null.");
+      logger.error(GameConfig.getText("noSuchStylesheet"));
       return;
     }
 

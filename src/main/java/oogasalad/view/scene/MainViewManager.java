@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.stage.Stage;
+import oogasalad.model.config.GameConfig;
 
 
 /**
@@ -59,7 +60,7 @@ public class MainViewManager {
         InstantiationException |
         IllegalAccessException |
              InvocationTargetException e) {
-      throw new SceneSwitchException("Failed to switch to scene: " + viewSceneName, e);
+      throw new SceneSwitchException(GameConfig.getText("noSuchScene", viewSceneName), e);
     }
   }
 
@@ -86,7 +87,7 @@ public class MainViewManager {
    * Shortcut to go to the main menu
    */
   public void switchToMainMenu() {
-    switchTo("MainMenuScene");
+    switchTo(GameConfig.getText("defaultScene"));
   }
 
   /**

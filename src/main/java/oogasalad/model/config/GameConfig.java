@@ -43,8 +43,13 @@ public class GameConfig {
    * @return - the value of the message you wish to display/log
    */
   public static String getText(String key, Object... args) {
-    String rawMessage = myMessages.getString(key);
-    return MessageFormat.format(rawMessage, args);
+    try {
+      String rawMessage = myMessages.getString(key);
+      return MessageFormat.format(rawMessage, args);
+    } catch (MissingResourceException e) {
+      LOGGER.warn("Key does not exist for '{}'. Returning key.", key);
+    }
+    return key;
   }
 
   /**
@@ -54,8 +59,15 @@ public class GameConfig {
    * @return - the value of the message you wish to display/log
    */
   public static Double getNumber(String key) {
-    String rawMessage = myMessages.getString(key);
-    return Double.parseDouble(rawMessage);
+    try {
+      String rawMessage = myMessages.getString(key);
+      return Double.parseDouble(rawMessage);
+    } catch (MissingResourceException e) {
+      LOGGER.warn("Key does not exist for '{}'. Returning default.", key);
+    } catch (NumberFormatException e) {
+      LOGGER.warn("Key does not contain a number. Returning default.");
+    }
+    return 0.0;
   }
 
   /**
@@ -65,8 +77,13 @@ public class GameConfig {
    * @return - the value of the message you wish to display/log
    */
   public static List<String> getTextList(String key) {
-    String rawMessage = myMessages.getString(key);
-    return List.of(rawMessage.split(","));
+    try {
+      String rawMessage = myMessages.getString(key);
+      return List.of(rawMessage.split(","));
+    } catch (MissingResourceException e) {
+      LOGGER.warn("Key does not exist for '{}'. Returning empty list.", key);
+    }
+    return List.of();
   }
 
 }
