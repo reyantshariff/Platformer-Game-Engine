@@ -14,6 +14,9 @@ import javafx.util.converter.DoubleStringConverter;
  */
 public class DoubleTextField extends TextField {
 
+  private static final String DASH = "-";
+  private static final String DOT = ".";
+
   private Double originalValue;
   private Predicate<Double> changeListener;
 
@@ -28,8 +31,12 @@ public class DoubleTextField extends TextField {
 
     setTextFormatter(createTextFormatter(initialValue));
     setOnKeyPressed(this::handleKeyEvents);
-    textProperty().addListener(this::handleTextChange);
-    focusedProperty().addListener(this::handleFocusChange);
+    textProperty().addListener((observable, oldValue, newValue) -> {
+      handleTextChange(newValue);
+    });
+    focusedProperty().addListener((observable, oldValue, newValue) -> {
+      handleFocusChange(oldValue, newValue);
+    });
   }
 
   private TextFormatter<Double> createTextFormatter(Double initialValue) {
@@ -38,7 +45,7 @@ public class DoubleTextField extends TextField {
         initialValue,
         change -> {
           String newText = change.getControlNewText();
-          if (newText.isEmpty() || newText.equals("-") || newText.equals(".")) return change;
+          if (newText.isEmpty() || newText.equals(DASH) || newText.equals(DOT)) return change;
           try {
             Double.parseDouble(newText);
             return change;
@@ -56,7 +63,7 @@ public class DoubleTextField extends TextField {
     e.consume();
   }
 
-  private void handleTextChange(javafx.beans.value.ObservableValue<? extends String> obs, String wasText, String isNowText) {
+  private void handleTextChange(String isNowText) {
     if (onSubmit(Double.parseDouble(isNowText))) {
       setStyle("-fx-text-fill: black;");
     } else {
@@ -64,7 +71,7 @@ public class DoubleTextField extends TextField {
     }
   }
 
-  private void handleFocusChange(javafx.beans.value.ObservableValue<? extends Boolean> obs, Boolean wasFocused, Boolean isNowFocused) {
+  private void handleFocusChange(boolean wasFocused, boolean isNowFocused) {
     if (!isNowFocused) {
       onComplete();
     } else if (!wasFocused) {

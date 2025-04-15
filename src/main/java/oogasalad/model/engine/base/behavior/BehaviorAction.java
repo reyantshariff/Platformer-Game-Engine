@@ -1,7 +1,6 @@
 package oogasalad.model.engine.base.behavior;
 
 import oogasalad.model.engine.base.architecture.GameComponent;
-import oogasalad.model.engine.base.enumerate.ComponentTag;
 import oogasalad.model.engine.base.serialization.Serializable;
 import oogasalad.model.engine.base.serialization.SerializableField;
 

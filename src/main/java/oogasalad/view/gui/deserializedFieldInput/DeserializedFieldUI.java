@@ -1,7 +1,6 @@
 package oogasalad.view.gui.deserializedFieldInput;
 
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import oogasalad.model.engine.base.serialization.SerializedField;
 

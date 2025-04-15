@@ -6,16 +6,16 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import oogasalad.model.config.GameConfig;
 import oogasalad.model.engine.base.behavior.BehaviorAction;
 import oogasalad.model.engine.base.serialization.SerializedField;
+import oogasalad.model.engine.base.serialization.SetSerializedFieldException;
 import oogasalad.view.gui.dropDown.ClassSelectionDropDownList;
 import oogasalad.view.gui.textField.StringTextField;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
 import java.util.stream.Collectors;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * GUI component for editing a List<BehaviorAction<?>> field.
@@ -148,8 +148,9 @@ public class ActionListFieldInput extends DeserializedFieldUI<List<BehaviorActio
     try {
       Class<?> clazz = Class.forName(ACTION_PACKAGE + "." + className);
       return (BehaviorAction<?>) clazz.getDeclaredConstructor().newInstance();
-    } catch (RuntimeException | NoSuchMethodException | ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-      throw new RuntimeException("Failed to instantiate: " + className, e);
+    } catch (NoSuchMethodException | ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+      GameConfig.LOGGER.error(e);
+      return null;
     }
   }
 
@@ -161,10 +162,10 @@ public class ActionListFieldInput extends DeserializedFieldUI<List<BehaviorActio
       switch (typeName) {
         case "String" -> ((SerializedField<String>) param).setValue(newVal);
         case "Double" -> ((SerializedField<Double>) param).setValue(Double.parseDouble(newVal));
-        default -> throw new RuntimeException("Unsupported type: " + typeName);
+        default -> { return false; }
       }
       return true;
-    } catch (Exception e) {
+    } catch (SetSerializedFieldException | NumberFormatException e) {
       return false;
     }
   }

@@ -1,7 +1,6 @@
 package oogasalad.view.gui.dropDown;
 
 import java.util.List;
-import java.util.function.Consumer;
 import javafx.scene.control.ComboBox;
 import org.reflections.Reflections;
 

@@ -2,6 +2,7 @@ package oogasalad.view.gui.deserializedFieldInput;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.function.Function;
 import javafx.scene.layout.HBox;
 import oogasalad.model.engine.base.serialization.SerializedField;
@@ -41,7 +42,7 @@ public class DeserializedFieldUIFactory {
   public static HBox createDeserializedFieldUI(SerializedField<?> field) {
     String fieldType = field.getFieldType().getSimpleName();
 
-    if (fieldType.equals("List")) {
+    if (fieldType.equals(List.class.getSimpleName())) {
       return createListInputBox(field);
     }
 

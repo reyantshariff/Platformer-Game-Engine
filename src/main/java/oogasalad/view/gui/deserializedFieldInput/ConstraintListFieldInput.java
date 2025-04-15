@@ -1,14 +1,17 @@
 package oogasalad.view.gui.deserializedFieldInput;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import oogasalad.model.config.GameConfig;
 import oogasalad.model.engine.base.behavior.BehaviorConstraint;
 import oogasalad.model.engine.base.enumerate.KeyCode;
 import oogasalad.model.engine.base.serialization.SerializedField;
+import oogasalad.model.engine.base.serialization.SetSerializedFieldException;
 import oogasalad.view.gui.dropDown.ClassSelectionDropDownList;
 import oogasalad.view.gui.textField.StringTextField;
 
@@ -24,7 +27,6 @@ import org.apache.logging.log4j.Logger;
  */
 public class ConstraintListFieldInput extends DeserializedFieldUI<List<BehaviorConstraint<?>>> {
 
-  private static final Logger logger = LogManager.getLogger(ConstraintListFieldInput.class);
   private static final String CONSTRAINT_PACKAGE = "oogasalad.model.engine.constraint";
 
   private VBox listContainer;
@@ -75,7 +77,7 @@ public class ConstraintListFieldInput extends DeserializedFieldUI<List<BehaviorC
     if (constraint == null) return;
 
     dropDown.setValue(constraint.getClass().getSimpleName());
-    if (getGenericTypeName(constraint).equals("Void")) {
+    if (getGenericTypeName(constraint).equals(Void.class.getSimpleName())) {
       hideField(paramField);
     } else {
       SerializedField<?> param = constraint.getSerializedFields().getFirst();
@@ -90,7 +92,7 @@ public class ConstraintListFieldInput extends DeserializedFieldUI<List<BehaviorC
       constraintRef[0] = newConstraint;
 
       SerializedField<?> param = newConstraint.getSerializedFields().getFirst();
-      if (getGenericTypeName(newConstraint).equals("Void")) {
+      if (getGenericTypeName(newConstraint).equals(Void.class.getSimpleName())) {
         hideField(paramField);
       } else {
         showField(paramField);
@@ -147,8 +149,9 @@ public class ConstraintListFieldInput extends DeserializedFieldUI<List<BehaviorC
     try {
       Class<?> clazz = Class.forName(CONSTRAINT_PACKAGE + "." + className);
       return (BehaviorConstraint<?>) clazz.getDeclaredConstructor().newInstance();
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to instantiate: " + className, e);
+    } catch (NoSuchMethodException | ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+      GameConfig.LOGGER.error(e);
+      return null;
     }
   }
 
@@ -161,10 +164,10 @@ public class ConstraintListFieldInput extends DeserializedFieldUI<List<BehaviorC
         case "String" -> ((SerializedField<String>) param).setValue(newVal);
         case "Double" -> ((SerializedField<Double>) param).setValue(Double.parseDouble(newVal));
         case "KeyCode" -> ((SerializedField<KeyCode>) param).setValue(KeyCode.valueOf(newVal));
-        default -> throw new RuntimeException("Unsupported type: " + typeName);
+        default -> { return false; }
       }
       return true;
-    } catch (Exception e) {
+    } catch (SetSerializedFieldException | NumberFormatException e) {
       return false;
     }
   }
