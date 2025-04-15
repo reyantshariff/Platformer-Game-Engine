@@ -28,7 +28,7 @@ public class MainMenuScene extends ViewScene {
     root.setAlignment(Pos.CENTER);
 
     Label title = new Label(GameConfig.getText("mainMenuTitle"));
-    title.setId("mainMenuTitle");
+    title.getStyleClass().add("title");
 
     ComboBox<String> gameSelector = setupGameSelector();
 
