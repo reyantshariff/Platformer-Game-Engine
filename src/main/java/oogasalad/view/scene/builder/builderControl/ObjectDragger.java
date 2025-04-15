@@ -1,5 +1,8 @@
 package oogasalad.view.scene.builder.builderControl;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
@@ -41,14 +44,15 @@ public class ObjectDragger {
 
   private double resizeStartX, resizeStartY, resizeStartW, resizeStartH;
 
+
   public ObjectDragger(Canvas canvas, Builder builder, BuilderScene builderScene, GameSceneRenderer renderer) {
     this.canvas = canvas;
     this.builder = builder;
     this.builderScene = builderScene;
     this.gameScene = builder.getCurrentScene();
     this.renderer = renderer;
-  }
 
+  }
   /**
    * Sets up mouse inputs
    */
@@ -171,13 +175,11 @@ public class ObjectDragger {
   }
 
 
-  private boolean isHoveringOverResizeHandle(double x, double y)
-  {
+  private boolean isHoveringOverResizeHandle(double x, double y) {
     Point2D mousePoint = new Point2D(x, y);
     List<GameObject> objects = new ArrayList<>(gameScene.getAllObjects());
     objects = removeCamerasFromObjects(objects);
-    for (GameObject obj : objects)
-    {
+    for (GameObject obj : objects) {
       Transform t = obj.getComponent(Transform.class);
 
       double w = t.getScaleX();
@@ -194,13 +196,13 @@ public class ObjectDragger {
           new Point2D(t.getX(), t.getY() + h / 2)
       );
 
+      /**
+       checks if the mouse is within a small circular area (radius = half the handle size) around a handle,
+       meaning the user clicked on that handle.
+       */
       for (int i = 0; i < resize_handles.size(); i++) {
-        /**
-         checks if the mouse is within a small circular area (radius = half the handle size) around a handle,
-         meaning the user clicked on that handle.
-         */
         if (mousePoint.distance(resize_handles.get(i)) <= HANDLE_SIZE / 2) {
-          dragContext.activateHandle(i);
+          dragContext.activateHandle(ResizeHandle.values()[i]);  // Use enum here
           return true;
         }
       }
@@ -218,38 +220,38 @@ public class ObjectDragger {
 
     double newX = x, newY = y, newW = w, newH = h;
 
-    switch (dragContext.getActiveHandleIndex()) {
-      case 0 -> {    // top-left
+    switch (dragContext.getActiveHandle()) {
+      case TOP_LEFT -> {    // top-left
         newX += dx;
         newY += dy;
         newW -= dx;
         newH -= dy;
       }
-      case 1 -> {   // top-center
+      case TOP_CENTER -> {   // top-center
         newY += dy;
         newH -= dy;
       }
-      case 2 -> {   // top-right
+      case TOP_RIGHT -> {   // top-right
         newY += dy;
         newW += dx;
         newH -= dy;
       }
-      case 3 ->  {  // mid-right
+      case MID_RIGHT ->  {  // mid-right
         newW += dx;
       }
-      case 4 -> {   // bottom-right
+      case BOTTOM_RIGHT -> {   // bottom-right
         newH += dy;
         newW += dx;
       }
-      case 5 -> {    // bottom-center
+      case BOTTOM_CENTER -> {    // bottom-center
         newH += dy;
       }
-      case 6 -> {    // bottom-left
+      case BOTTOM_LEFT -> {    // bottom-left
         newX += dx;
         newW -= dx;
         newH += dy;
       }
-      case 7 -> {   // mid-left
+      case MID_LEFT -> {   // mid-left
         newX += dx;
         newW -= dx;
       }

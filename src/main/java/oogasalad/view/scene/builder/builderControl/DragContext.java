@@ -11,7 +11,7 @@ public class DragContext {
 
   private double oldX, oldY;
   private double dragOffsetX, dragOffsetY;
-  private int activeHandleIndex;
+  private ResizeHandle activeHandle;
   private boolean dragging;
   private boolean resizing;
 
@@ -23,7 +23,7 @@ public class DragContext {
     oldY = 0;
     dragOffsetX = 0;
     dragOffsetY = 0;
-    activeHandleIndex = -1;
+    activeHandle = null;
     dragging = false;
     resizing = false;
   }
@@ -41,7 +41,7 @@ public class DragContext {
     dragging = true;
     this.resizing = resizing;
     if (!resizing) {
-      activeHandleIndex = -1;
+      activeHandle = null;
     }
   }
 
@@ -59,13 +59,13 @@ public class DragContext {
   public void endInteraction() {
     dragging = false;
     resizing = false;
-    activeHandleIndex = -1;
+    activeHandle = null;
   }
   /**
    * sets handle index value
    * */
-  public void activateHandle(int handleIndex) {
-    activeHandleIndex = handleIndex;
+  public void activateHandle(ResizeHandle handle) {
+    activeHandle = handle;
     resizing = true;
   }
 
@@ -153,9 +153,9 @@ public class DragContext {
   }
 
   /**
-   *returns the handle index
+   *returns the handle enum
    */
-  public int getActiveHandleIndex() {
-    return activeHandleIndex;
+  public ResizeHandle getActiveHandle() {
+    return activeHandle;
   }
 }
