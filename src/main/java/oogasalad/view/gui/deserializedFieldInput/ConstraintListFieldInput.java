@@ -17,8 +17,6 @@ import oogasalad.view.gui.textField.StringTextField;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * GUI component for editing a List<BehaviorConstraint<?>> field.
