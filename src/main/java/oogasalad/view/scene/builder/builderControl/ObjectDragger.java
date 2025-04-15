@@ -110,10 +110,8 @@ public class ObjectDragger {
     for (GameObject obj : objects) {
       if (!obj.hasComponent(Transform.class)) continue;
 
-      Transform t = obj.getComponent(Transform.class);
-      double w = t.getScaleX();
-      double h = t.getScaleY();
       boolean isSelected = builder.objectIsSelected() && builder.getSelectedObject().equals(obj);
+      Transform t = obj.getComponent(Transform.class);
 
       if (isSelected && isHoveringOverResizeHandle(oldX, oldY)) {
         startResizing(e, t);
@@ -121,16 +119,21 @@ public class ObjectDragger {
       }
 
       if (isInsideBoundingBox(oldX, oldY, t)) {
-        builder.selectExistingObject(obj);
-        double offsetX = e.getX() - t.getX();
-        double offsetY = e.getY() - t.getY();
-        dragContext.beginDrag(e, offsetX, offsetY, false);
+        startMoving(obj, e, t);
         clickedObject = true;
       }
     }
 
     handleDeselection(prevObject, clickedObject);
     builderScene.updateGamePreview();
+  }
+
+  private void startMoving(GameObject obj, MouseEvent e, Transform t)
+  {
+    builder.selectExistingObject(obj);
+    double offsetX = e.getX() - t.getX();
+    double offsetY = e.getY() - t.getY();
+    dragContext.beginDrag(e, offsetX, offsetY, false);
   }
 
   private boolean isInsideBoundingBox(double mouseX, double mouseY, Transform t) {
