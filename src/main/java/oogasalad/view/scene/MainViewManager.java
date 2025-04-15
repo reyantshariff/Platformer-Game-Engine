@@ -37,6 +37,9 @@ public class MainViewManager {
     instance = this;
   }
 
+  /**
+   * Set the instance for the mainView manager.
+   */
   public static MainViewManager setInstance(Stage stage) {
     if (instance == null) {
       instance = new MainViewManager(stage);

@@ -68,6 +68,10 @@ public class GameRunner {
     }
   }
 
+  /**
+   * Set the Game instance for the game runner.
+   * @param game The given game instance
+   */
   public void setGame(Game game) {
     this.game = game;
   }

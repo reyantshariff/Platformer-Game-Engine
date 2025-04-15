@@ -24,7 +24,7 @@ import oogasalad.model.parser.ParsingException;
 
 public class Builder {
   private GameObject selectedObject; // Should be passed from front end to back end. Front end should pass string ID.
-  private String filepath = "";
+  private final String filepath;
   private Game game; // Front end should pass a list of selected objects to the backend.
   private boolean fileSaved = false;
   private GameScene currentScene;

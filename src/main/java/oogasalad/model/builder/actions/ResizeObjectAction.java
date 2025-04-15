@@ -11,17 +11,17 @@ import oogasalad.model.engine.component.Transform;
  */
 
 public class ResizeObjectAction implements EditorAction {
-/**
- * Class constructor
- * @param object - GameObject
- * @param fromState - Transform State pre resizing
- * @param toState - Transform State post resizing
- * */
-
+  
   private final GameObject object;
   private final TransformState fromState;
   private final TransformState toState;
 
+  /**
+   * Construct the action for resizing the Action.
+   * @param object the selected object.
+   * @param fromState the old transform state
+   * @param toState the new transform state
+   */
   public ResizeObjectAction(GameObject object, TransformState fromState, TransformState toState) {
     this.object = object;
     this.fromState = fromState;
