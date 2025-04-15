@@ -64,8 +64,7 @@ public class MainViewManager {
    * @param args           Arguments for the constructor
    * @return The created instance
    */
-  public <T extends ViewScene> T addViewScene(Class<T> viewSceneClass, String name, Object... args)
-      throws NoSuchMethodException {
+  public <T extends ViewScene> T addViewScene(Class<T> viewSceneClass, String name, Object... args) {
     try {
       Class<?>[] argTypes = Arrays.stream(args).map(Object::getClass).toArray(Class[]::new);
       Constructor<T> constructor = viewSceneClass.getDeclaredConstructor(argTypes);
@@ -74,7 +73,8 @@ public class MainViewManager {
       viewScenes.put(name, instance);
       return instance;
     } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-      //TODO: Add statement that is not a raw exception
+      GameConfig.LOGGER.error(e);
+      // TODO: Add statement that is not a raw exception
     }
     return null;
   }
