@@ -48,7 +48,13 @@ public class ObjectDragger {
 
   private double resizeStartX, resizeStartY, resizeStartW, resizeStartH;
 
-
+  /**
+   * Constructor for ObjectDragger
+   * @param canvas is the canvas to draw on
+   * @param builder is the builder object
+   * @param builderScene is the builder scene
+   * @param renderer is the renderer for the game scene
+   */
   public ObjectDragger(Canvas canvas, Builder builder, BuilderScene builderScene, GameSceneRenderer renderer) {
     this.canvas = canvas;
     this.builder = builder;
