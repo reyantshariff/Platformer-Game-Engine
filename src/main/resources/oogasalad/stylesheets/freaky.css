@@ -3,6 +3,7 @@
   -fx-background-color: #440101; /* Very Dark Red */
   -fx-text-fill: #FF4500; /* Orange Red */
   -fx-accent: #8B0000; /* Dark Red */
+  -fx-spacing: 20;
 }
 
 .button {

@@ -3,6 +3,7 @@
   -fx-background-color: #F8F9FA; /* Light background */
   -fx-text-fill: #212529; /* Dark text */
   -fx-accent: #808080; /* Keep accent the same or change as needed */
+  -fx-spacing: 20;
 }
 
 .button {
