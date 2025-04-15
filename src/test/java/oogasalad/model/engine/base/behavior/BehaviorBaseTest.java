@@ -1,5 +1,7 @@
 package oogasalad.model.engine.base.behavior;
 
+import oogasalad.model.config.GameConfig;
+import oogasalad.view.scene.menu.MainMenuScene;
 import org.junit.jupiter.api.BeforeEach;
 import org.testfx.framework.junit5.ApplicationTest;
 import javafx.stage.Stage;
@@ -29,6 +31,7 @@ public abstract class BehaviorBaseTest extends ApplicationTest {
     @Override
     public void start(Stage stage) {
         MainViewManager viewManager = MainViewManager.setInstance(stage);
+        viewManager.addViewScene(MainMenuScene.class, GameConfig.getText("defaultScene"));
         viewManager.switchToMainMenu();
     }
 
