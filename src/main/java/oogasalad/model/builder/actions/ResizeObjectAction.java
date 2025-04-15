@@ -11,7 +11,7 @@ import oogasalad.model.engine.component.Transform;
  */
 
 public class ResizeObjectAction implements EditorAction {
-  
+
   private final GameObject object;
   private final TransformState fromState;
   private final TransformState toState;

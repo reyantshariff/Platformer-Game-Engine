@@ -20,6 +20,9 @@ import oogasalad.view.scene.player.GamePlayerScene;
  */
 @SuppressWarnings("unused")
 public class MainMenuScene extends ViewScene {
+  
+  private static final String GAME_PLAYER_SCENE_NAME = "GamePlayer";
+  private static final String BUILDER_SCENE_NAME = "Builder";
 
   private String selectedFilePath = "";
 
@@ -41,17 +44,17 @@ public class MainMenuScene extends ViewScene {
     Button playButton = (Button) buttonBox.lookup("#playButton");
     Button buildButton = (Button) buttonBox.lookup("#buildButton");
 
-    MainViewManager.getInstance().addViewScene(GamePlayerScene.class, "GamePlayer");
+    MainViewManager.getInstance().addViewScene(GamePlayerScene.class, GAME_PLAYER_SCENE_NAME);
     playButton.setOnAction(e -> {
-      ((GamePlayerScene) MainViewManager.getInstance().getViewScene("GamePlayer")).play(selectedFilePath);
-      MainViewManager.getInstance().switchTo("GamePlayer");
+      ((GamePlayerScene) MainViewManager.getInstance().getViewScene(GAME_PLAYER_SCENE_NAME)).play(selectedFilePath);
+      MainViewManager.getInstance().switchTo(GAME_PLAYER_SCENE_NAME);
     });
 
     // TODO: make this file chooser as well
-    MainViewManager.getInstance().addViewScene(BuilderScene.class, "Builder");
+    MainViewManager.getInstance().addViewScene(BuilderScene.class, BUILDER_SCENE_NAME);
     buildButton.setOnAction(e -> {
-      ((BuilderScene) MainViewManager.getInstance().getViewScene("Builder")).setUpBuilder(selectedFilePath);
-      MainViewManager.getInstance().switchTo("Builder");
+      ((BuilderScene) MainViewManager.getInstance().getViewScene(BUILDER_SCENE_NAME)).setUpBuilder(selectedFilePath);
+      MainViewManager.getInstance().switchTo(BUILDER_SCENE_NAME);
     });
 
     // Language and Theme Selections
