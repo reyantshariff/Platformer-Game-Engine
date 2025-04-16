@@ -105,16 +105,17 @@ public class BehaviorParser implements Parser<Behavior> {
     }
   }
 
+  // TODO: Combine constraints and actions
   private void createAndAddAction(Behavior behaviorInstance, JsonNode actionNode, Class<?> clazz)
       throws InstantiationException, IllegalAccessException,
       InvocationTargetException, NoSuchMethodException, ParsingException {
     BehaviorAction<?> action = (BehaviorAction<?>) clazz.getDeclaredConstructor().newInstance();
     action.setBehavior(behaviorInstance);
 
-    SerializedField<?> paramField = action.getParentSerializableField();
+    SerializedField<?> paramField = action.getSerializedFields().stream().filter(field -> field.getFieldName().equals(PARAMETER)).findAny().orElse(null);
     JsonNode valueNode = actionNode.get(PARAMETER);
 
-    if (valueNode == null) {
+    if (paramField == null || valueNode == null) {
       throw new IllegalArgumentException(getText("missingParameter"));
     }
 
@@ -152,10 +153,10 @@ public class BehaviorParser implements Parser<Behavior> {
         .newInstance();
     constraint.setBehavior(behaviorInstance);
 
-    SerializedField<?> paramField = constraint.getParentSerializableField();
+    SerializedField<?> paramField = constraint.getSerializedFields().stream().filter(field -> field.getFieldName().equals(PARAMETER)).findAny().orElse(null);
     JsonNode valueNode = constraintNode.get(PARAMETER);
 
-    if (valueNode == null) {
+    if (paramField == null || valueNode == null) {
       throw new IllegalArgumentException(getText("missingParameter"));
     }
 

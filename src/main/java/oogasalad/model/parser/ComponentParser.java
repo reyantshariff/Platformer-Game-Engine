@@ -31,6 +31,16 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
   private static final String CLASS_PATH = "oogasalad.model.engine.component.";
 
   private static final Map<Class<?>, Function<JsonNode, Object>> EXTRACTORS = new HashMap<>();
+  private static final Map<Class<?>, BiConsumer<SerializedField<?>, ObjectNode>> SERIALIZERS = new HashMap<>();
+
+  static {
+    SERIALIZERS.put(String.class, (field, config) -> config.put(field.getFieldName(), (String) field.getValue()));
+    SERIALIZERS.put(Integer.class, (field, config) -> config.put(field.getFieldName(), (Integer) field.getValue()));
+    SERIALIZERS.put(int.class, (field, config) -> config.put(field.getFieldName(), (Integer) field.getValue()));
+    SERIALIZERS.put(Double.class, (field, config) -> config.put(field.getFieldName(), (Double) field.getValue()));
+    SERIALIZERS.put(double.class, (field, config) -> config.put(field.getFieldName(), (Double) field.getValue()));
+    SERIALIZERS.put(List.class, (field, config) -> serializeListField(field, config));  // Use a separate list serializer
+  }
 
   static {
     EXTRACTORS.put(int.class, JsonNode::asInt);
@@ -175,17 +185,6 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
     }
 
     return root;
-  }
-
-  private static final Map<Class<?>, BiConsumer<SerializedField<?>, ObjectNode>> SERIALIZERS = new HashMap<>();
-
-  static {
-    SERIALIZERS.put(String.class, (field, config) -> config.put(field.getFieldName(), (String) field.getValue()));
-    SERIALIZERS.put(Integer.class, (field, config) -> config.put(field.getFieldName(), (Integer) field.getValue()));
-    SERIALIZERS.put(int.class, (field, config) -> config.put(field.getFieldName(), (Integer) field.getValue()));
-    SERIALIZERS.put(Double.class, (field, config) -> config.put(field.getFieldName(), (Double) field.getValue()));
-    SERIALIZERS.put(double.class, (field, config) -> config.put(field.getFieldName(), (Double) field.getValue()));
-    SERIALIZERS.put(List.class, (field, config) -> serializeListField(field, config));  // Use a separate list serializer
   }
 
   private void serializeField(SerializedField<?> serializedField, ObjectNode configurations) {

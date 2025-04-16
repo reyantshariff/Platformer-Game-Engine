@@ -60,6 +60,7 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent<T>> ext
     return root;
   }
 
+  @SuppressWarnings("unchecked")
   private HBox createComponentRow(T initialComponent) {
     T[] componentRef = (T[]) Array.newInstance(componentClass, 1);
     componentRef[0] = initialComponent;
@@ -88,7 +89,7 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent<T>> ext
     if (getGenericTypeName(component).equals(Void.class.getSimpleName())) {
       hide(paramField);
     } else {
-      SerializedField<?> param = ((Serializable) component).getSerializedFields().getFirst();
+      SerializedField<?> param = component.getSerializedFields().getFirst();
       paramField.setText(Optional.ofNullable(param.getValue()).map(Object::toString).orElse(""));
     }
   }
@@ -99,7 +100,7 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent<T>> ext
       T newComponent = instantiateComponent(className);
       componentRef[0] = newComponent;
 
-      SerializedField<?> param = ((Serializable) newComponent).getSerializedFields().getFirst();
+      SerializedField<?> param = newComponent.getSerializedFields().getFirst();
       if (getGenericTypeName(newComponent).equals(Void.class.getSimpleName())) {
         hide(paramField);
       } else {
@@ -117,7 +118,7 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent<T>> ext
 
   private boolean updateParamField(T[] componentRef, StringTextField paramField) {
     return Optional.ofNullable(componentRef[0]).map(component -> {
-      SerializedField<?> param = ((Serializable) component).getSerializedFields().getFirst();
+      SerializedField<?> param = component.getSerializedFields().getFirst();
       return updateParameter(component, param, paramField.getText());
     }).orElse(false);
   }
@@ -129,6 +130,7 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent<T>> ext
     });
   }
 
+  @SuppressWarnings("uncheck")
   private void updateFieldList() {
     List<T> updated = listContainer.getChildren().stream()
         .filter(HBox.class::isInstance)
@@ -149,7 +151,7 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent<T>> ext
       return componentClass.cast(clazz.getDeclaredConstructor().newInstance());
     } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
              | IllegalAccessException | InvocationTargetException e) {
-      GameConfig.LOGGER.error("Error instantiating component: " + className, e);
+      GameConfig.LOGGER.error("Error instantiating component: {}", className, e);
     }
     return null;
   }
