@@ -30,6 +30,11 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent> extend
   private VBox listContainer;
   private SerializedField<List<T>> field;
 
+  /**
+   * Class constructor
+   * @param componentPackage: shows components
+   * @param componentClass: shows component type
+   */
   public BehaviorComponentListFieldInput(String componentPackage, Class<T> componentClass) {
     this.componentPackage = componentPackage;
     this.componentClass = componentClass;
@@ -141,11 +146,13 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent> extend
     try {
       Class<?> clazz = Class.forName(componentPackage + "." + className);
       return componentClass.cast(clazz.getDeclaredConstructor().newInstance());
-    } catch (Exception e) {
-      GameConfig.LOGGER.error(e);
-      return null;
+    } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
+             | IllegalAccessException | InvocationTargetException e) {
+      GameConfig.LOGGER.error("Error instantiating component: " + className, e);
     }
+    return null;
   }
+
 
   @SuppressWarnings("unchecked")
   private boolean updateParameter(T component, SerializedField<?> param, String newVal) {
