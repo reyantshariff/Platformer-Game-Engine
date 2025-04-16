@@ -5,12 +5,14 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import oogasalad.model.config.GameConfig;
@@ -148,22 +150,29 @@ public class GameSceneRenderer {
       textNode.setX(transform.getX());
       textNode.setY(transform.getY());
 
+      StackPane wrapper = new StackPane(textNode);
+      StackPane.setAlignment(textNode, Pos.CENTER);
+      wrapper.getStyleClass().add(component.getStyleClass() + "-container");
 
-
-      applyStyleSheet(textNode, component.getStyleClass());
-      textNode.applyCss();
+      applyStyleSheet(wrapper, component.getStyleClass());
+      wrapper.applyCss();
+      wrapper.layout();
 
       double fontSize = transform.getScaleY();
       textNode.setFont(Font.font(fontSize));
 
-      double renderedWidth = textNode.getLayoutBounds().getWidth();
-      double renderedHeight = textNode.getLayoutBounds().getHeight();
+      WritableImage snapshot = wrapper.snapshot(null, null);
 
+      double renderedWidth = snapshot.getWidth();
+      double renderedHeight = snapshot.getHeight();
       transform.setScaleX(renderedWidth);
 
-      WritableImage snapshot = textNode.snapshot(null, null);
-
       double drawX = transform.getX() - relativeX;
+      if (component.isCentered()) {
+        double screenWidth = GameConfig.getNumber("windowWidth");
+        drawX = (screenWidth - renderedWidth) / 2.0;
+      }
+
       double drawY = transform.getY() - relativeY;
 
       gc.drawImage(snapshot, drawX, drawY);
