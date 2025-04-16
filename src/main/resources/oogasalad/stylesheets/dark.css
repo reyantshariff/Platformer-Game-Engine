@@ -133,6 +133,33 @@
 
 /* SPLASH SCREENS */
 .splashText {
-  -fx-font-size: 1px;
-  -fx-text-fill: #FFFFFF;
+  -fx-font-size: 36px;
+  -fx-fill: #E9ECEF;
+  -fx-font-family: "Lato";
+}
+
+.splashText-container {
+  -fx-padding: 10 24;
+  -fx-background-color: #343A40;
+  -fx-border-color: #6C757D;
+  -fx-border-width: 2px;
+  -fx-background-radius: 12px;
+  -fx-border-radius: 12px;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 8, 0.5, 0, 0);
+}
+
+.splashButton {
+  -fx-font-size: 28px;
+  -fx-fill: #FFFFFF;
+  -fx-font-family: "Lato";
+}
+
+.splashButton-container {
+  -fx-padding: 10 24;
+  -fx-background-color: #495057;
+  -fx-border-color: #6C757D;
+  -fx-border-width: 2px;
+  -fx-background-radius: 12px;
+  -fx-border-radius: 12px;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 8, 0.5, 0, 0);
 }
