@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.stage.Stage;
+import oogasalad.view.config.StyleConfig;
 import org.reflections.Reflections;
 import oogasalad.model.config.GameConfig;
 
@@ -123,12 +124,12 @@ public class MainViewManager {
    * @param viewScene the new scene to display
    */
   private void switchTo(ViewScene viewScene) {
-    // Stop current scene, if applicable
+    StyleConfig.setStylesheet(viewScene.getScene(), StyleConfig.getCurrentTheme());
+
     if (currentScene != null) {
       currentScene.deactivate();
     }
 
-    // Set new scene
     stage.setScene(viewScene.getScene());
     currentScene = viewScene;
     stage.show();
