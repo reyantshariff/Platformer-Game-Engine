@@ -1,6 +1,7 @@
 package oogasalad.view.scene.menu;
 
 import java.io.File;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -8,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import oogasalad.controller.GameController;
 import oogasalad.model.config.GameConfig;
 import oogasalad.view.config.StyleConfig;
 import oogasalad.view.scene.MainViewManager;
@@ -20,18 +22,18 @@ import oogasalad.view.scene.display.GameDisplayScene;
  */
 @SuppressWarnings("unused")
 public class MainMenuScene extends ViewScene {
-  
+
   private static final String GAME_PLAYER_SCENE_NAME = "GamePlayer";
   private static final String BUILDER_SCENE_NAME = "Builder";
 
   private String selectedFilePath = "";
-
+  private final GameController gameController;
   /**
    * Constructs a new MainMenuScene to display the main menu with game selection and builder options.
    */
   private MainMenuScene() {
     super(new VBox(), GameConfig.getNumber("windowWidth"), GameConfig.getNumber("windowHeight"));
-
+    gameController = new GameController(MainViewManager.getInstance());
     VBox root = (VBox) getScene().getRoot();
     root.setAlignment(Pos.CENTER);
 
@@ -59,9 +61,10 @@ public class MainMenuScene extends ViewScene {
 
     // Language and Theme Selections
     HBox selectorBox = setupSelectorBox();
+    HBox logOutBox = setUpLogOutBox();
 
     // Add to root
-    root.getChildren().addAll(title, gameSelector, buttonBox, selectorBox);
+    root.getChildren().addAll(title, gameSelector, buttonBox, selectorBox, logOutBox);
 
     // Set default styles
     StyleConfig.setStylesheet(getScene(), "");
@@ -126,4 +129,24 @@ public class MainMenuScene extends ViewScene {
     });
     return themeSelector;
   }
+
+  private HBox setUpLogOutBox() {
+    HBox logOutBox = new HBox();
+    logOutBox.setAlignment(Pos.CENTER);
+    logOutBox.setSpacing(10);
+    logOutBox.setPadding(new Insets(20, 0, 0, 0));
+
+
+    Button logOutButton = new Button(GameConfig.getText("logOutButton"));
+    logOutButton.setOnMouseClicked((event) -> {
+      gameController.handleLogout();
+    });
+    logOutButton.setId("logOutButton");
+    logOutBox.getChildren().add(logOutButton);
+    logOutBox.setId("logOutBox");
+
+    return logOutBox;
+  }
+
 }
+
