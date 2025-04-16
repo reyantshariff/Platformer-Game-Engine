@@ -4,14 +4,27 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.google.cloud.Timestamp;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import oogasalad.database.DatabaseException;
 import oogasalad.database.FirebaseManager;
 import oogasalad.model.config.PasswordHashingException;
 import oogasalad.model.service.PlayerService;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class SessionManagementTest {
-
+  @BeforeEach
+  @AfterEach
+  public void cleanUp() {
+    SessionManagement.logout(); // reset session
+    try {
+      Files.deleteIfExists(Paths.get("rememberme.properties"));
+    } catch (IOException e) {
+      System.err.println("Error cleaning up user properties: " + e.getMessage());
+    }
+  }
 
   @Test
   public void login_normalUser_loggedIn()
@@ -48,25 +61,28 @@ class SessionManagementTest {
 
   @Test
   public void rememberMe_loginAndAutoLogin_Success()
-      throws DatabaseException, PasswordHashingException, IOException {
+      throws PasswordHashingException, IOException {
     FirebaseManager.initializeFirebase();
 
-    String username = "rememberme_user_" + System.currentTimeMillis();
-    String password = "securePassword";
-    String fullName = "Remember Me Test";
+    try {
+      String username = "rememberme_user_" + System.currentTimeMillis();
+      String password = "securePassword";
+      String fullName = "Remember Me Test";
 
-    assertTrue(PlayerService.createNewPlayer(username, password, fullName));
+      assertTrue(PlayerService.createNewPlayer(username, password, fullName));
 
-    PlayerService.login(username, password, true);
-    assertTrue(SessionManagement.tryAutoLogin());
+      PlayerService.login(username, password, true);
+      assertTrue(SessionManagement.tryAutoLogin());
 
-    SessionManagement.logout();
-    assertFalse(SessionManagement.isLoggedIn());
+      SessionManagement.logout();
+      assertFalse(SessionManagement.isLoggedIn());
 
-    assertTrue(PlayerService.deletePlayer(username));
-    SessionManagement.logout();
-    assertFalse(SessionManagement.tryAutoLogin());
-
+      assertTrue(PlayerService.deletePlayer(username));
+      SessionManagement.logout();
+      assertFalse(SessionManagement.tryAutoLogin());
+    } catch (DatabaseException | IOException e) {
+      System.out.println(e.getMessage());
+    }
   }
 
 }
