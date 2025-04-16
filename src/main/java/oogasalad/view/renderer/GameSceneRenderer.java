@@ -142,13 +142,12 @@ public class GameSceneRenderer {
   @SuppressWarnings(UNUSED)
   private void renderTextRenderer(TextRenderer component, GraphicsContext gc) {
       Transform transform = component.getParent().getComponent(Transform.class);
+      TextRenderer textRenderer = component.getComponent(TextRenderer.class);
       if (transform == null) return;
 
       javafx.scene.text.Text textNode = new javafx.scene.text.Text(component.getText());
       textNode.getStyleClass().add(component.getStyleClass());
 
-      textNode.setX(transform.getX());
-      textNode.setY(transform.getY());
 
       StackPane wrapper = new StackPane(textNode);
       StackPane.setAlignment(textNode, Pos.CENTER);
@@ -158,7 +157,7 @@ public class GameSceneRenderer {
       wrapper.applyCss();
       wrapper.layout();
 
-      double fontSize = transform.getScaleY();
+      double fontSize = textRenderer.getFontSize();
       textNode.setFont(Font.font(fontSize));
 
       WritableImage snapshot = wrapper.snapshot(null, null);
@@ -166,14 +165,17 @@ public class GameSceneRenderer {
       double renderedWidth = snapshot.getWidth();
       double renderedHeight = snapshot.getHeight();
       transform.setScaleX(renderedWidth);
+      transform.setScaleY(renderedHeight);
 
       double drawX = transform.getX() - relativeX;
       if (component.isCentered()) {
         double screenWidth = GameConfig.getNumber("windowWidth");
         drawX = (screenWidth - renderedWidth) / 2.0;
       }
+      transform.setX(drawX);
 
       double drawY = transform.getY() - relativeY;
+      transform.setY(drawY);
 
       gc.drawImage(snapshot, drawX, drawY);
   }

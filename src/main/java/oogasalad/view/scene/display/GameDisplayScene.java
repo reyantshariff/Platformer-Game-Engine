@@ -10,7 +10,6 @@ import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.parser.JsonParser;
 import oogasalad.model.parser.Parser;
 import oogasalad.model.parser.ParsingException;
-import oogasalad.view.config.StyleConfig;
 import oogasalad.view.player.GameRunner;
 import oogasalad.view.scene.MainViewManager;
 import oogasalad.view.scene.ViewScene;
