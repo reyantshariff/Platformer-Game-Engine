@@ -1,6 +1,7 @@
 package oogasalad.controller;
 
 import java.io.IOException;
+import oogasalad.database.DatabaseException;
 import oogasalad.model.config.PasswordHashingException;
 import oogasalad.model.profile.SessionManagement;
 import oogasalad.model.service.PlayerService;
@@ -52,5 +53,19 @@ public class GameController {
   public void handleLogout(){
     PlayerService.logout();
     mainViewManager.switchTo("LogInScene");
+  }
+
+  public void handleSignUp(String username, String password, String firstName, String lastName)
+      throws PasswordHashingException, DatabaseException {
+    String fullName = firstName + " " + lastName;
+    try {
+      if (PlayerService.createNewPlayer(username, password, fullName)) {
+        mainViewManager.switchTo("MainMenuScene");
+      }
+    } catch (PasswordHashingException e) {
+      throw new PasswordHashingException("Error hashing password", e);
+    } catch (DatabaseException e) {
+      throw new DatabaseException("Error storing database", e);
+    }
   }
 }

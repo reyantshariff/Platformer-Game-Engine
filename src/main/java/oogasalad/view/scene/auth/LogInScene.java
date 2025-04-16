@@ -143,15 +143,19 @@ public class LogInScene extends ViewScene {
         }
 
         try {
-          if (gameController.handleLogin(username, password, rememberMe.isSelected())) {
-            LOGGER.info("Successfully logged in");
-          } else {
-            LOGGER.info("Failed to log in");
-          }
+          handleGameControllerLogin(username, password);
         } catch (IOException e) {
           LOGGER.warn("Error setting up autologin:", e);
         }
     });
+  }
+
+  private void handleGameControllerLogin(String username, String password) throws IOException {
+    if (gameController.handleLogin(username, password, rememberMe.isSelected())) {
+      LOGGER.info("Successfully logged in");
+    } else {
+      LOGGER.info("Failed to log in");
+    }
   }
 
   private String getTrimmedPassword() {
@@ -163,6 +167,7 @@ public class LogInScene extends ViewScene {
   private void setupSignUpButton(VBox card) {
     Button signUpButton = new Button(GameConfig.getText(SOCIAL_SIGN_UP_BUTTON_ID));
     signUpButton.setId(SOCIAL_SIGN_UP_BUTTON_ID);
+    signUpButton.setOnAction(event -> MainViewManager.getInstance().switchTo("SignUpScene"));
     card.getChildren().add(signUpButton);
   }
 

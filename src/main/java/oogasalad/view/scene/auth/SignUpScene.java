@@ -1,13 +1,17 @@
 package oogasalad.view.scene.auth;
 
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import oogasalad.controller.GameController;
+import oogasalad.database.DatabaseException;
 import oogasalad.model.config.GameConfig;
+import oogasalad.model.config.PasswordHashingException;
 import oogasalad.view.scene.MainViewManager;
 import oogasalad.view.scene.ViewScene;
+import static oogasalad.model.config.GameConfig.LOGGER;
 
 /**
  * This is the scene
@@ -48,6 +52,7 @@ public class SignUpScene extends ViewScene {
     setUpLastNameField(card);
     handleUsernameField(card);
     handlePasswordField(card);
+    handleSignUpButton(card);
 
     gameController = new GameController(manager);
 
@@ -90,8 +95,38 @@ public class SignUpScene extends ViewScene {
   private void handlePasswordField(VBox card) {
     passwordField = new TextField();
     passwordField.setPromptText(GameConfig.getText(SOCIAL_PASSWORD_PROMPT_ID));
-    passwordField.setId(SOCIAL_EMAIL_PROMPT_ID);
+    passwordField.setId(SOCIAL_PASSWORD_PROMPT_ID);
     card.getChildren().add(passwordField);
+  }
+
+  private void handleSignUpButton(VBox card) {
+    Button signUpButton = new Button(GameConfig.getText(SIGNUP_LABEL_ID));
+    signUpButton.setId("SignUpButton");
+    signUpButton.setOnAction(e -> {
+      String username = usernameField.getText().trim();
+      String password = passwordField.getText().trim();
+      String firstName = usernameField.getText().trim();
+      String lastName = passwordField.getText().trim();
+
+      if (username.isEmpty() || password.isEmpty() || firstName.isEmpty() || lastName.isEmpty()) {
+        LOGGER.warn("One or more field is missing");
+        return;
+      }
+      handleGameControllerSignUp(username, password, firstName, lastName);
+    });
+    card.getChildren().add(signUpButton);
+  }
+
+  private void handleGameControllerSignUp(String username, String password, String firstName, String lastName) {
+    try {
+      gameController.handleSignUp(username, password, firstName, lastName);
+    } catch (PasswordHashingException ex) {
+      LOGGER.error("Error hashing password:{}", ex.getMessage());
+      //show on front
+    } catch (DatabaseException ex) {
+      LOGGER.error("Error storing user in database:{}", ex.getMessage());
+      //show on front
+    }
   }
 
 }
