@@ -20,32 +20,8 @@ public class TextRenderer extends GameComponent {
   @SerializableField
   private String styleClass = "defaultText";
 
-  /**
-   * Default constructor — initializes with empty text.
-   */
-  public TextRenderer() {
-    this.text = "";
-  }
-
-  /**
-   * Constructor that initializes the text field only.
-   *
-   * @param text the string to display
-   */
-  public TextRenderer(String text) {
-    this.text = text;
-  }
-
-  /**
-   * Constructor that initializes both text and style class.
-   *
-   * @param text the string to display
-   * @param styleClass the CSS style class to apply
-   */
-  public TextRenderer(String text, String styleClass) {
-    this.text = text;
-    this.styleClass = styleClass;
-  }
+  @SerializableField
+  private boolean isCentered = false;
 
   /**
    * Identifies this component's category/tag.
@@ -91,5 +67,19 @@ public class TextRenderer extends GameComponent {
    */
   public void setStyleClass(String styleClass) {
     this.styleClass = styleClass;
+  }
+
+  /**
+   * @return - whether the text object should be centered or not
+   */
+  public boolean isCentered() {
+    return isCentered;
+  }
+
+  /**
+   * @param centered - Boolean of whether the text should be centered on the page or not
+   */
+  public void setCentered(boolean centered) {
+    this.isCentered = centered;
   }
 }
