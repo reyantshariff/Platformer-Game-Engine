@@ -100,6 +100,7 @@ public class PlayerServiceTest {
 
   @Test
   public void login_notRealUser_ThrowsError() throws PasswordHashingException, DatabaseException {
+    SessionManagement.logout();
     String username = "testuser_" + System.currentTimeMillis();
     String password = "testpassworddsadasdas";
 
