@@ -1,0 +1,93 @@
+{
+  "Information": {
+    "Name": "DinoRunner",
+    "Description": "A playable dino runner game",
+    "Author": "Logan Dracos",
+    "Resolution": {
+      "Width": 1280,
+      "Height": 720
+    }
+  },
+  "Data": {
+    "Scene": [
+      {
+        "Name": "LossScene",
+        "GameObjects": [
+          {
+            "Name": "LossText",
+            "Tag": "UI",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 100,
+                  "y": 300,
+                  "rotation": 0,
+                  "scaleY": 45
+                }
+              },
+              {
+                "Name": "TextRenderer",
+                "Configurations": {
+                  "text": "You Lost! Click to Return to Menu",
+                  "styleClass": "splashText"
+                }
+              },
+              {
+                "Name": "InputHandler",
+                "Configurations": {}
+              }
+            ],
+            "BehaviorController": {
+              "Behaviors": [
+                {
+                  "Name": "ClickToMenu",
+                  "constraints": [
+                    {
+                      "name": "MouseClickConstraint",
+                      "parameter": null,
+                      "parameterType": "Void"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "ChangeViewSceneAction",
+                      "parameter": "MainMenuScene",
+                      "parameterType": "String"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "Name": "Camera",
+            "Tag": "Camera",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 0,
+                  "y": 0,
+                  "rotation": 0,
+                  "scaleX": 1300,
+                  "scaleY": 1000
+                }
+              },
+              {
+                "Name": "Camera",
+                "Configurations": {}
+              },
+              {
+                "Name": "Follower",
+                "Configurations": {
+                  "followObjectName": "LossText"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
