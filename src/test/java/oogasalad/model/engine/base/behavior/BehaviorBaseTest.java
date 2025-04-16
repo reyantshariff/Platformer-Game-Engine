@@ -7,6 +7,7 @@ import oogasalad.model.config.PasswordHashingException;
 import oogasalad.model.profile.Password;
 import oogasalad.model.profile.PlayerData;
 import oogasalad.model.profile.SessionManagement;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.testfx.framework.junit5.ApplicationTest;
 import javafx.stage.Stage;
@@ -77,6 +78,11 @@ public abstract class BehaviorBaseTest extends ApplicationTest {
         game.addScene(scene1);
         game.addScene(scene2);
         customSetUp();
+    }
+
+    @AfterEach
+    public void cleanUp() {
+        SessionManagement.logout();
     }
 
     public abstract void customSetUp();
