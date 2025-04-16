@@ -1,7 +1,6 @@
 package oogasalad.model.engine.component;
 
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 
 import static oogasalad.model.config.GameConfig.LOGGER;
 import oogasalad.model.engine.base.architecture.GameComponent;
