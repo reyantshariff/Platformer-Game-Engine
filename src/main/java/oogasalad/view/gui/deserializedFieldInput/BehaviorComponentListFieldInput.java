@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import oogasalad.model.config.GameConfig;
 import oogasalad.model.engine.base.behavior.BehaviorComponent;
+import oogasalad.model.engine.base.enumerate.KeyCode;
 import oogasalad.model.engine.base.serialization.Serializable;
 import oogasalad.model.engine.base.serialization.SerializedField;
 import oogasalad.model.engine.base.serialization.SetSerializedFieldException;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
  *
  * @author Hsuan-Kai Liao
  */
-public class BehaviorComponentListFieldInput<T extends BehaviorComponent> extends DeserializedFieldUI<List<T>> {
+public class BehaviorComponentListFieldInput<T extends BehaviorComponent<T>> extends DeserializedFieldUI<List<T>> {
 
   private final String componentPackage;
   private final Class<T> componentClass;
@@ -159,11 +160,13 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent> extend
     String typeName = getGenericTypeName(component);
 
     try {
-      return switch (typeName) {
-        case "String" -> { ((SerializedField<String>) param).setValue(newVal); yield true; }
-        case "Double" -> { ((SerializedField<Double>) param).setValue(Double.parseDouble(newVal)); yield true; }
-        default -> false;
+      switch (typeName) {
+        case "String" -> ((SerializedField<String>) param).setValue(newVal);
+        case "Double" -> ((SerializedField<Double>) param).setValue(Double.parseDouble(newVal));
+        case "KeyCode" -> ((SerializedField<KeyCode>) param).setValue(KeyCode.valueOf(newVal));
+        default -> throw new IllegalArgumentException("Unsupported type: " + typeName);
       };
+      return true;
     } catch (SetSerializedFieldException | IllegalArgumentException e) {
       return false;
     }
