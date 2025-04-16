@@ -66,6 +66,10 @@ public abstract class TypedTextField<T> extends TextField {
     }
   }
 
+  /**
+   * Set the change listener to this field.
+   * @param listener the predicate listener to be subscribed.
+   */
   public void setChangeListener(Predicate<T> listener) {
     this.changeListener = listener;
   }
