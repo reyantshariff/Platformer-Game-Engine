@@ -1,4 +1,4 @@
-package oogasalad.view.scene;
+package oogasalad.view.scene.menu;
 
 import java.io.File;
 import javafx.geometry.Insets;
@@ -11,66 +11,63 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import oogasalad.controller.GameController;
 import oogasalad.model.config.GameConfig;
-import oogasalad.model.profile.SessionException;
-import oogasalad.model.profile.SessionManagement;
 import oogasalad.view.config.StyleConfig;
+import oogasalad.view.scene.MainViewManager;
+import oogasalad.view.scene.ViewScene;
+import oogasalad.view.scene.builder.BuilderScene;
+import oogasalad.view.scene.display.GameDisplayScene;
 
 /**
  * Main menu view with play and builder options
  */
+@SuppressWarnings("unused")
 public class MainMenuScene extends ViewScene {
-  private GameController gameController;
+
+  private static final String GAME_PLAYER_SCENE_NAME = "GamePlayer";
+  private static final String BUILDER_SCENE_NAME = "Builder";
+
+  private String selectedFilePath = "";
+  private final GameController gameController;
   /**
    * Constructs a new MainMenuScene to display the main menu with game selection and builder options.
-   *
-   * @param manager The MainViewManager used to switch scenes.
    */
-  public MainMenuScene(MainViewManager manager) throws SessionException {
+  private MainMenuScene() {
     super(new VBox(), GameConfig.getNumber("windowWidth"), GameConfig.getNumber("windowHeight"));
-    gameController = new GameController(manager);
+    gameController = new GameController(MainViewManager.getInstance());
     VBox root = (VBox) getScene().getRoot();
     root.setAlignment(Pos.CENTER);
 
     Label title = new Label(GameConfig.getText("mainMenuTitle"));
     title.setId("mainMenuTitle");
 
-    Label username = new Label(GameConfig.getText("mainMenuUsername", SessionManagement.getCurrentUser().getUsername()));
-
-    ComboBox<String> gameSelector = setupGameSelector();
+    Button gameSelector = setupGameSelector();
 
     HBox buttonBox = setupButtonBox();
     Button playButton = (Button) buttonBox.lookup("#playButton");
     Button buildButton = (Button) buttonBox.lookup("#buildButton");
 
-    handlePlayButton(manager, playButton, gameSelector);
+    GameDisplayScene playScene = MainViewManager.getInstance().addViewScene(GameDisplayScene.class, GAME_PLAYER_SCENE_NAME);
+    playScene.setReturnSceneName(GameConfig.getText("defaultScene"));
+    playButton.setOnAction(e -> {
+      ((GameDisplayScene) MainViewManager.getInstance().getViewScene(GAME_PLAYER_SCENE_NAME)).play(selectedFilePath);
+      MainViewManager.getInstance().switchTo(GAME_PLAYER_SCENE_NAME);
+    });
 
-    buildButton.setOnAction(e -> manager.switchTo("BuilderScene")
-    );
+    MainViewManager.getInstance().addViewScene(BuilderScene.class, BUILDER_SCENE_NAME);
+    buildButton.setOnAction(e -> {
+      ((BuilderScene) MainViewManager.getInstance().getViewScene(BUILDER_SCENE_NAME)).setUpBuilder(selectedFilePath);
+      MainViewManager.getInstance().switchTo(BUILDER_SCENE_NAME);
+    });
+
     // Language and Theme Selections
     HBox selectorBox = setupSelectorBox();
     HBox logOutBox = setUpLogOutBox();
 
-    root.getChildren().addAll(title, username, gameSelector, buttonBox, selectorBox, logOutBox);
-  }
+    // Add to root
+    root.getChildren().addAll(title, gameSelector, buttonBox, selectorBox, logOutBox);
 
-  private void handlePlayButton(MainViewManager manager, Button playButton,
-      ComboBox<String> gameSelector) {
-    playButton.setOnAction(e -> {
-      FileChooser fileChooser = new FileChooser();
-      fileChooser.setTitle("Select a Game JSON File");
-      fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON Files", "*.json"));
-      fileChooser.setInitialDirectory(new File("data/GameJsons"));
-
-      String gameType = gameSelector.getValue();
-
-      File selectedFile = fileChooser.showOpenDialog(getScene().getWindow());
-      if (selectedFile != null) {
-        String fileName = selectedFile.getName().replace(".json", "");
-
-        manager.registerSceneFactory("GamePlayerScene", vm -> new GamePlayerScene(vm, fileName, gameType));
-        manager.switchTo("GamePlayerScene");
-      }
-    });
+    // Set default styles
+    StyleConfig.setStylesheet(getScene(), "");
   }
 
   private HBox setupButtonBox() {
@@ -86,11 +83,20 @@ public class MainMenuScene extends ViewScene {
     return buttonBox;
   }
 
-  private ComboBox<String> setupGameSelector() {
-    ComboBox<String> gameSelector = new ComboBox<>();
-    gameSelector.getItems().addAll(GameConfig.getTextList("gameSelector"));
-    gameSelector.setValue(GameConfig.getText("gameSelectorInitialValue"));
+  private Button setupGameSelector() {
+    Button gameSelector = new Button(GameConfig.getText("gameSelectorInitialValue"));
     gameSelector.setId("gameSelector");
+    gameSelector.setOnAction(e -> {
+      FileChooser fileChooser = new FileChooser();
+      fileChooser.setTitle("Select a Game JSON File");
+      fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON Files", "*.json"));
+      fileChooser.setInitialDirectory(new File("data/GameJsons"));
+
+      File selectedFile = fileChooser.showOpenDialog(getScene().getWindow());
+      if (selectedFile != null) {
+        selectedFilePath = selectedFile.getAbsolutePath();
+      }
+    });
     return gameSelector;
   }
 
@@ -101,24 +107,6 @@ public class MainMenuScene extends ViewScene {
     selectorBox.getChildren().addAll(languageSelector, themeSelector);
     selectorBox.setId("selectorBox");
     return selectorBox;
-  }
-
-  private HBox setUpLogOutBox() {
-    HBox logOutBox = new HBox();
-    logOutBox.setAlignment(Pos.CENTER);
-    logOutBox.setSpacing(10);
-    logOutBox.setPadding(new Insets(20, 0, 0, 0));
-
-
-    Button logOutButton = new Button(GameConfig.getText("logOutButton"));
-    logOutButton.setOnMouseClicked((event) -> {
-      gameController.handleLogout();
-    });
-    logOutButton.setId("logOutButton");
-    logOutBox.getChildren().add(logOutButton);
-    logOutBox.setId("logOutBox");
-
-    return logOutBox;
   }
 
   private ComboBox<String> setupLanguageSelector() {
@@ -141,4 +129,24 @@ public class MainMenuScene extends ViewScene {
     });
     return themeSelector;
   }
+
+  private HBox setUpLogOutBox() {
+    HBox logOutBox = new HBox();
+    logOutBox.setAlignment(Pos.CENTER);
+    logOutBox.setSpacing(10);
+    logOutBox.setPadding(new Insets(20, 0, 0, 0));
+
+
+    Button logOutButton = new Button(GameConfig.getText("logOutButton"));
+    logOutButton.setOnMouseClicked((event) -> {
+      gameController.handleLogout();
+    });
+    logOutButton.setId("logOutButton");
+    logOutBox.getChildren().add(logOutButton);
+    logOutBox.setId("logOutBox");
+
+    return logOutBox;
+  }
+
 }
+
