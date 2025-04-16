@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.stage.Stage;
+import oogasalad.view.config.StyleConfig;
 import org.reflections.Reflections;
 import oogasalad.model.config.GameConfig;
 
@@ -18,6 +19,7 @@ import oogasalad.model.config.GameConfig;
  * @author Justin Aronwald
  */
 public class MainViewManager {
+
   private static final String SCENE_PACKAGE = "oogasalad.view.scene";
   private static final String GAME_PLAYER = "GamePlayerScene";
 
@@ -64,7 +66,8 @@ public class MainViewManager {
    * @param args           Arguments for the constructor
    * @return The created instance
    */
-  public <T extends ViewScene> T addViewScene(Class<T> viewSceneClass, String name, Object... args) {
+  public <T extends ViewScene> T addViewScene(Class<T> viewSceneClass, String name,
+      Object... args) {
     try {
       Class<?>[] argTypes = Arrays.stream(args).map(Object::getClass).toArray(Class[]::new);
       Constructor<T> constructor = viewSceneClass.getDeclaredConstructor(argTypes);
@@ -72,7 +75,8 @@ public class MainViewManager {
       T instance = constructor.newInstance(args);
       viewScenes.put(name, instance);
       return instance;
-    } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+    } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
+             InvocationTargetException e) {
       GameConfig.LOGGER.error(e);
       // TODO: Add statement that is not a raw exception
     }
@@ -97,16 +101,19 @@ public class MainViewManager {
       if (!viewScenes.containsKey(viewSceneName)) {
         Reflections reflections = new Reflections(SCENE_PACKAGE);
         List<Class<?>> classes = List.copyOf(reflections.getSubTypesOf(ViewScene.class));
-        Class<?> clazz = classes.stream().filter(c -> c.getSimpleName().equals(viewSceneName)).findFirst().orElse(null);
+        Class<?> clazz = classes.stream().filter(c -> c.getSimpleName().equals(viewSceneName))
+            .findFirst().orElse(null);
 
         if (clazz != null) {
-          ViewScene viewScene = (ViewScene) clazz.getDeclaredConstructor(MainViewManager.class).newInstance(this);
+          ViewScene viewScene = (ViewScene) clazz.getDeclaredConstructor(MainViewManager.class)
+              .newInstance(this);
           viewScenes.put(viewSceneName, viewScene);
         }
       }
       switchTo(viewScenes.get(viewSceneName));
       removeCachedGameScene(viewSceneName);
-    } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+    } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
+             InvocationTargetException e) {
       throw new SceneSwitchException(GameConfig.getText("noSuchScene", viewSceneName), e);
     }
   }
@@ -123,12 +130,12 @@ public class MainViewManager {
    * @param viewScene the new scene to display
    */
   private void switchTo(ViewScene viewScene) {
-    // Stop current scene, if applicable
+    StyleConfig.setStylesheet(viewScene.getScene(), StyleConfig.getCurrentTheme());
+
     if (currentScene != null) {
       currentScene.deactivate();
     }
 
-    // Set new scene
     stage.setScene(viewScene.getScene());
     currentScene = viewScene;
     stage.show();
@@ -140,5 +147,16 @@ public class MainViewManager {
    */
   public void switchToMainMenu() {
     switchTo(GameConfig.getText("defaultScene"));
+  }
+
+  /**
+   * @return - Name of current scene
+   */
+  public String getCurrentSceneName() {
+    return viewScenes.entrySet().stream()
+        .filter(entry -> entry.getValue().equals(currentScene))
+        .map(Map.Entry::getKey)
+        .findFirst()
+        .orElse(null);
   }
 }

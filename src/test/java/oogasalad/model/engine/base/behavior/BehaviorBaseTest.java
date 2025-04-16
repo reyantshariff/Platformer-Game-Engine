@@ -33,6 +33,7 @@ public abstract class BehaviorBaseTest extends ApplicationTest {
     private GameScene scene2;
     private GameObject obj1;
     private GameObject obj2;
+    private MainViewManager viewManager;
     private Behavior behavior1;
     private Behavior behavior2;
 
@@ -70,6 +71,7 @@ public abstract class BehaviorBaseTest extends ApplicationTest {
         scene2 = new GameScene("Scene2");
         scene1.registerObject(obj1);
         scene1.registerObject(obj2);
+        setupViewManager();
         GameObject camera = new GameObject("Camera");
         Transform cameraTransform = camera.addComponent(Transform.class);
         camera.addComponent(Camera.class);
@@ -87,6 +89,20 @@ public abstract class BehaviorBaseTest extends ApplicationTest {
         behavior2.setBehaviorController(obj2.getComponent(BehaviorController.class));
         behavior1.awake();
         behavior2.awake();
+    }
+
+    private void setupViewManager() {
+        CountDownLatch latch = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            viewManager = MainViewManager.setInstance(new Stage());
+            latch.countDown();
+        });
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
     }
 
     @AfterEach
@@ -122,6 +138,10 @@ public abstract class BehaviorBaseTest extends ApplicationTest {
 
     protected GameScene getScene2() {
         return scene2;
+    }
+
+    protected MainViewManager getViewManager() {
+        return viewManager;
     }
 
     protected void step() {

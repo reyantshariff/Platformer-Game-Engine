@@ -6,10 +6,12 @@ import oogasalad.model.engine.component.Transform;
 
 /**
  * Class that tracks when GameObjects are moved
- *@author Reyan Shariff
+ *
+ * @author Reyan Shariff
  */
 
 public class MoveObjectAction implements EditorAction {
+
   private final GameObject object;
   private final double fromX, fromY;
   private final double toX, toY;
@@ -18,10 +20,10 @@ public class MoveObjectAction implements EditorAction {
    * Constructor for MoveObjectAction
    *
    * @param object - GameObject that is being moved
-   * @param fromX - X coordinate of the object before the move
-   * @param fromY - Y coordinate of the object before the move
-   * @param toX - X coordinate of the object after the move
-   * @param toY - Y coordinate of the object after the move
+   * @param fromX  - X coordinate of the object before the move
+   * @param fromY  - Y coordinate of the object before the move
+   * @param toX    - X coordinate of the object after the move
+   * @param toY    - Y coordinate of the object after the move
    */
   public MoveObjectAction(GameObject object, double fromX, double fromY, double toX, double toY) {
     this.object = object;
@@ -38,8 +40,7 @@ public class MoveObjectAction implements EditorAction {
   }
 
   @Override
-  public void redo()
-  {
+  public void redo() {
     object.getComponent(Transform.class).setX(toX);
     object.getComponent(Transform.class).setY(toY);
   }

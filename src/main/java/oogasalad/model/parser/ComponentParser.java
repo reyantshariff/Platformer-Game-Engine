@@ -49,7 +49,8 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
       List<String> list = new ArrayList<>();
       for (JsonNode element : node) {
         if (!element.isTextual()) {
-          throw new IllegalArgumentException("Expected string in List<String>, but found: " + element);
+          throw new IllegalArgumentException(
+              "Expected string in List<String>, but found: " + element);
         }
         list.add(element.asText());
       }
@@ -180,12 +181,18 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
   private static final Map<Class<?>, BiConsumer<SerializedField<?>, ObjectNode>> SERIALIZERS = new HashMap<>();
 
   static {
-    SERIALIZERS.put(String.class, (field, config) -> config.put(field.getFieldName(), (String) field.getValue()));
-    SERIALIZERS.put(Integer.class, (field, config) -> config.put(field.getFieldName(), (Integer) field.getValue()));
-    SERIALIZERS.put(int.class, (field, config) -> config.put(field.getFieldName(), (Integer) field.getValue()));
-    SERIALIZERS.put(Double.class, (field, config) -> config.put(field.getFieldName(), (Double) field.getValue()));
-    SERIALIZERS.put(double.class, (field, config) -> config.put(field.getFieldName(), (Double) field.getValue()));
-    SERIALIZERS.put(List.class, (field, config) -> serializeListField(field, config));  // Use a separate list serializer
+    SERIALIZERS.put(String.class,
+        (field, config) -> config.put(field.getFieldName(), (String) field.getValue()));
+    SERIALIZERS.put(Integer.class,
+        (field, config) -> config.put(field.getFieldName(), (Integer) field.getValue()));
+    SERIALIZERS.put(int.class,
+        (field, config) -> config.put(field.getFieldName(), (Integer) field.getValue()));
+    SERIALIZERS.put(Double.class,
+        (field, config) -> config.put(field.getFieldName(), (Double) field.getValue()));
+    SERIALIZERS.put(double.class,
+        (field, config) -> config.put(field.getFieldName(), (Double) field.getValue()));
+    SERIALIZERS.put(List.class,
+        (field, config) -> serializeListField(field, config));  // Use a separate list serializer
   }
 
   private void serializeField(SerializedField<?> serializedField, ObjectNode configurations) {
@@ -199,7 +206,8 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
     }
   }
 
-  private static void serializeListField(SerializedField<?> serializedField, ObjectNode configurations) {
+  private static void serializeListField(SerializedField<?> serializedField,
+      ObjectNode configurations) {
     ParameterizedType pt = (ParameterizedType) serializedField.getFieldGenericType();
     Type argType = pt.getActualTypeArguments()[0];
 

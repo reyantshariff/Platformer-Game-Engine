@@ -16,9 +16,8 @@ import oogasalad.view.scene.ViewScene;
 import static oogasalad.model.config.GameConfig.LOGGER;
 
 /**
- * This is the scene
- * that visualizes the sign-up process
- * so that users can put their information in the Firebase database.
+ * This is the scene that visualizes the sign-up process so that users can put their information in
+ * the Firebase database.
  *
  * @author Daniel Rodriguez-Florido, Justin Aronwald
  */
@@ -43,7 +42,8 @@ public class SignUpScene extends ViewScene {
    *                scene
    */
   public SignUpScene(MainViewManager manager) {
-    super(new StackPane(), GameConfig.getNumber("windowWidth"), GameConfig.getNumber("windowHeight"));
+    super(new StackPane(), GameConfig.getNumber("windowWidth"),
+        GameConfig.getNumber("windowHeight"));
 
     VBox card = new VBox(20);
     card.setId(SIGNUP_CARD_ID);

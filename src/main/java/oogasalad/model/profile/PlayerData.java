@@ -4,12 +4,14 @@ import com.google.cloud.Timestamp;
 import oogasalad.model.config.PasswordHashingException;
 
 /**
- * This class represents the data of a player profile. It a representation of the data stored in the database
- * This would be a record, but the firebase deserialization doesn't work well with records.
+ * This class represents the data of a player profile. It a representation of the data stored in the
+ * database This would be a record, but the firebase deserialization doesn't work well with
+ * records.
  *
  * @author Justin Aronwald
  */
 public class PlayerData {
+
   private String username;
   private String fullName;
   private Password password;
@@ -17,7 +19,6 @@ public class PlayerData {
 
   /**
    * This a required constructor for the Firestone deserialization
-   *
    */
   public PlayerData() {
     //This is a required no-arg constructor for Firestore deserialization
@@ -26,7 +27,7 @@ public class PlayerData {
   /**
    * PlayerData constructor for creating a new player
    *
-   * @param username - the unique name for a user
+   * @param username  - the unique name for a user
    * @param createdAt - the time the player was created
    */
   public PlayerData(String username, String fullName, Password password, Timestamp createdAt) {

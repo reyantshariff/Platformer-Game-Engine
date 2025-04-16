@@ -7,8 +7,8 @@ import javafx.scene.control.MenuItem;
 import org.reflections.Reflections;
 
 /**
- * A drop-down menu for selecting classes from a specified package.
- * This class is used to create a GUI component.
+ * A drop-down menu for selecting classes from a specified package. This class is used to create a
+ * GUI component.
  */
 public class ClassSelectionDropDownMenu extends MenuButton {
 
@@ -16,8 +16,9 @@ public class ClassSelectionDropDownMenu extends MenuButton {
 
   /**
    * Constructor for ClassSelectionDropDown.
+   *
    * @param packageName the package name to search for classes
-   * @param superClass the superclass to filter classes by
+   * @param superClass  the superclass to filter classes by
    */
   public ClassSelectionDropDownMenu(String title, String packageName, Class<?> superClass) {
     super(title);
@@ -39,6 +40,7 @@ public class ClassSelectionDropDownMenu extends MenuButton {
 
   /**
    * Sets the action to be performed when a class is selected.
+   *
    * @param callback the callback to be invoked when an item is selected
    */
   public void setOnClassSelected(Consumer<String> callback) {

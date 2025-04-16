@@ -11,7 +11,6 @@ import java.util.function.Predicate;
  * A generic TextField that supports type-safe input with validation and change listeners.
  *
  * @param <T> The type of the input value (e.g., Double, Integer, String)
- *
  * @author Hsuan-Kai Liao
  */
 public abstract class TypedTextField<T> extends TextField {
@@ -21,8 +20,9 @@ public abstract class TypedTextField<T> extends TextField {
 
   /**
    * Create a basic TextField abstractions.
+   *
    * @param initialValue the initialValue of the text input
-   * @param prompt the showing prompt
+   * @param prompt       the showing prompt
    */
   public TypedTextField(T initialValue, String prompt) {
     super();
@@ -37,6 +37,7 @@ public abstract class TypedTextField<T> extends TextField {
 
   /**
    * Make the text formatter to restrict user input.
+   *
    * @param initialValue the given initial value
    * @return the textFormatter restriction
    */
@@ -68,6 +69,7 @@ public abstract class TypedTextField<T> extends TextField {
 
   /**
    * Set the change listener to this field.
+   *
    * @param listener the predicate listener to be subscribed.
    */
   public void setChangeListener(Predicate<T> listener) {
@@ -76,7 +78,9 @@ public abstract class TypedTextField<T> extends TextField {
 
   private void onCancel() {
     setText(originalValue == null ? "" : originalValue.toString());
-    if (changeListener != null) changeListener.test(originalValue);
+    if (changeListener != null) {
+      changeListener.test(originalValue);
+    }
   }
 
   private boolean onSubmit(T newValue) {

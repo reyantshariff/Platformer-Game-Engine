@@ -31,7 +31,7 @@
   -fx-rotate: 5;
 }
 
-#mainMenuTitle {
+.title {
   -fx-font-size: 90px;
   -fx-text-fill: #220000;
   -fx-font-family: "Impact";
@@ -149,4 +149,39 @@
   -fx-background-color: #440101;
   -fx-text-fill: #FFFAFA;
   -fx-font-family: "Comic Sans MS";
+}
+
+/* SPLASH SCREENS */
+.splashText {
+  -fx-font-size: 48px;
+  -fx-fill: #FF4500;
+  -fx-font-family: "Impact";
+  -fx-rotate: -3;
+}
+
+.splashText-container {
+  -fx-padding: 12 32;
+  -fx-background-color: #220000;
+  -fx-border-color: #8B0000;
+  -fx-border-width: 3px;
+  -fx-background-radius: 20px;
+  -fx-border-radius: 20px;
+  -fx-effect: dropshadow(gaussian, rgba(255, 69, 0, 0.6), 10, 0.8, 0, 0);
+}
+
+.splashButton {
+  -fx-font-size: 36px;
+  -fx-fill: #FFFAFA;
+  -fx-font-family: "Comic Sans MS";
+  -fx-rotate: 2;
+}
+
+.splashButton-container {
+  -fx-padding: 12 24;
+  -fx-background-color: #440101;
+  -fx-border-color: #FF4500;
+  -fx-border-width: 3px;
+  -fx-background-radius: 25px;
+  -fx-border-radius: 25px;
+  -fx-effect: dropshadow(gaussian, rgba(255, 69, 0, 0.7), 10, 0.6, 0, 0);
 }

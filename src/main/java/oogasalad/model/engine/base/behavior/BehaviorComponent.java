@@ -5,10 +5,10 @@ import oogasalad.model.engine.base.serialization.Serializable;
 import oogasalad.model.engine.base.serialization.SerializableField;
 
 /**
- * Abstract base class for behavior components that use a parameter and reference a parent behavior.
+ * Abstract base class for behavior components that use a parameter and reference a parent
+ * behavior.
  *
  * @param <T> the type of parameter this component handles
- *
  * @author Hsuan-Kai Liao
  */
 public abstract class BehaviorComponent<T> implements Serializable {
@@ -55,6 +55,7 @@ public abstract class BehaviorComponent<T> implements Serializable {
 
   /**
    * This method is called to get the default parameter.
+   *
    * @return the default parameter
    */
   protected abstract T defaultParameter();

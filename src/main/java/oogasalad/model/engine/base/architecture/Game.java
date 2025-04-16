@@ -2,6 +2,7 @@ package oogasalad.model.engine.base.architecture;
 
 import static oogasalad.model.config.GameConfig.LOGGER;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import oogasalad.model.parser.GameSceneParser;
+import oogasalad.model.parser.ParsingException;
 
 /**
  * The Game class is the main entry point for the game engine. It manages the game loop, scene
@@ -18,8 +21,10 @@ import java.util.UUID;
  * @author Hsuan-Kai Liao, Christian Bepler
  */
 public class Game {
+
   private final Map<UUID, GameScene> allScenes = new HashMap<>();
   private final Set<Integer> inputKeys = new HashSet<>();
+  private Map<String, JsonNode> originalSceneJsonMap = new HashMap<>();
 
   private GameScene currentScene;
   private GameInfo myGameInfo;
@@ -63,8 +68,7 @@ public class Game {
   /**
    * Returns the current scene.
    */
-  public GameScene getCurrentScene()
-  {
+  public GameScene getCurrentScene() {
     return currentScene;
   }
 
@@ -113,12 +117,26 @@ public class Game {
    * @param sceneName The name of the scene to reset
    */
   public void resetScene(String sceneName) {
-    //TODO: Store the file paths and reload the scene with the parser or store original versions of all scenes
+    JsonNode sceneNode = originalSceneJsonMap.get(sceneName);
+    if (sceneNode == null) {
+      LOGGER.error("No original JSON found for scene '{}'", sceneName);
+      return;
+    }
+
+    try {
+      GameScene newScene = new GameSceneParser().parse(sceneNode.deepCopy());
+      removeScene(sceneName);
+      addScene(newScene);
+      LOGGER.info("Scene '{}' reset successfully", sceneName);
+    } catch (ParsingException e) {
+      LOGGER.error("Failed to reset scene '{}': {}", sceneName, e.getMessage());
+    }
   }
 
   /**
-   * Called externally when a key is pressed.
-   * Note: This method need to be subscribed to the outer input event bus.
+   * Called externally when a key is pressed. Note: This method need to be subscribed to the outer
+   * input event bus.
+   *
    * @param keyCode the key code of the pressed key
    */
   public void keyPressed(int keyCode) {
@@ -126,8 +144,9 @@ public class Game {
   }
 
   /**
-   * Called externally when a key is released.
-   * Note: This method need to be subscribed to the outer input event bus.
+   * Called externally when a key is released. Note: This method need to be subscribed to the outer
+   * input event bus.
+   *
    * @param keyCode the key code of the released key
    */
   public void keyReleased(int keyCode) {
@@ -136,6 +155,7 @@ public class Game {
 
   /**
    * Returns a set of all the input keys currently pressed.
+   *
    * @return a unmodifiable set of all the input keys currently pressed
    */
   public Set<Integer> getCurrentInputKeys() {
@@ -171,14 +191,13 @@ public class Game {
 
   /**
    * Method that handles advancing levels -- moves the currentIndex of the level and changes scenes
-   *
    */
   public void goToNextLevel() {
+    resetScene(levelOrder.get(currentLevelIndex));
     currentLevelIndex++;
     if (currentLevelIndex < levelOrder.size()) {
       changeScene(levelOrder.get(currentLevelIndex));
-    } 
-    // TODO: Handle win
+    }
   }
 
   /**
@@ -198,9 +217,19 @@ public class Game {
   public void goToScene(String sceneName) {
     int index = levelOrder.indexOf(sceneName);
     if (index != -1) {
+      resetScene(levelOrder.get(currentLevelIndex));
       currentLevelIndex = index;
       changeScene(sceneName);
     }
+  }
+
+  /**
+   * Sets a map from string of sceneName to their jsonNodes
+   *
+   * @param map - Map to store all original jsonNodes
+   */
+  public void setOriginalSceneJsonMap(Map<String, JsonNode> map) {
+    originalSceneJsonMap = map;
   }
 
 }

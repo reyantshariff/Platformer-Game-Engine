@@ -7,12 +7,14 @@ import oogasalad.model.profile.SessionManagement;
 import oogasalad.model.profile.SignUpRequest;
 import oogasalad.model.service.PlayerService;
 import oogasalad.view.scene.MainViewManager;
+
 import static oogasalad.model.config.GameConfig.LOGGER;
 
 /**
  * GameController is a class to separate model and view logic and calls the APIs
  */
 public class GameController {
+
   private final MainViewManager mainViewManager;
 
   /**
@@ -31,7 +33,8 @@ public class GameController {
    * @param password - the inputted password
    * @return - true if login is successful
    */
-  public boolean handleLogin(String username, String password, boolean rememberMe) throws IOException {
+  public boolean handleLogin(String username, String password, boolean rememberMe)
+      throws IOException {
     try {
       PlayerService.login(username, password, rememberMe);
       if (SessionManagement.isLoggedIn()) {
@@ -49,9 +52,8 @@ public class GameController {
 
   /**
    * Method called by the view to handle logging out
-   *
    */
-  public void handleLogout(){
+  public void handleLogout() {
     PlayerService.logout();
     mainViewManager.switchTo("LogInScene");
   }
@@ -61,13 +63,14 @@ public class GameController {
    *
    * @param signUpRequest - object containing the strings used to log in
    * @throws PasswordHashingException - true if there's an issue hashing the password
-   * @throws DatabaseException - true if there's a database error or username exists
+   * @throws DatabaseException        - true if there's a database error or username exists
    */
   public void handleSignUp(SignUpRequest signUpRequest)
       throws PasswordHashingException, DatabaseException {
     String fullName = signUpRequest.firstName() + " " + signUpRequest.lastName();
     try {
-      if (PlayerService.createNewPlayer(signUpRequest.username(), signUpRequest.password(), fullName)) {
+      if (PlayerService.createNewPlayer(signUpRequest.username(), signUpRequest.password(),
+          fullName)) {
         mainViewManager.switchTo("MainMenuScene");
       }
     } catch (PasswordHashingException e) {

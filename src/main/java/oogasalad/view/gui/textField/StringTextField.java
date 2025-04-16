@@ -3,8 +3,8 @@ package oogasalad.view.gui.textField;
 import javafx.scene.control.TextFormatter;
 
 /**
- * A TextField that only accepts English letters and common symbols.
- * Provides ESC cancel, enter/blur validation, and failure recovery.
+ * A TextField that only accepts English letters and common symbols. Provides ESC cancel, enter/blur
+ * validation, and failure recovery.
  */
 public class StringTextField extends TypedTextField<String> {
 

@@ -23,7 +23,8 @@ import java.util.stream.Collectors;
  *
  * @author Hsuan-Kai Liao
  */
-public class BehaviorComponentListFieldInput<T extends BehaviorComponent<T>> extends DeserializedFieldUI<List<T>> {
+public class BehaviorComponentListFieldInput<T extends BehaviorComponent<T>> extends
+    DeserializedFieldUI<List<T>> {
 
   private final String componentPackage;
   private final Class<T> componentClass;
@@ -33,8 +34,9 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent<T>> ext
 
   /**
    * Class constructor
+   *
    * @param componentPackage: shows components
-   * @param componentClass: shows component type
+   * @param componentClass:   shows component type
    */
   public BehaviorComponentListFieldInput(String componentPackage, Class<T> componentClass) {
     this.componentPackage = componentPackage;
@@ -64,7 +66,8 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent<T>> ext
     T[] componentRef = (T[]) Array.newInstance(componentClass, 1);
     componentRef[0] = initialComponent;
 
-    ClassSelectionDropDownList dropDown = new ClassSelectionDropDownList("Select Component", componentPackage, componentClass);
+    ClassSelectionDropDownList dropDown = new ClassSelectionDropDownList("Select Component",
+        componentPackage, componentClass);
     StringTextField paramField = new StringTextField("", "param...");
     Button removeButton = new Button("−");
 
@@ -81,8 +84,11 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent<T>> ext
     return row;
   }
 
-  private void initializeIfComponentExists(T component, ClassSelectionDropDownList dropDown, StringTextField paramField) {
-    if (component == null) return;
+  private void initializeIfComponentExists(T component, ClassSelectionDropDownList dropDown,
+      StringTextField paramField) {
+    if (component == null) {
+      return;
+    }
 
     dropDown.setValue(component.getClass().getSimpleName());
     if (getGenericTypeName(component).equals(Void.class.getSimpleName())) {
@@ -93,7 +99,8 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent<T>> ext
     }
   }
 
-  private void setDropDownAction(ClassSelectionDropDownList dropDown, T[] componentRef, StringTextField paramField) {
+  private void setDropDownAction(ClassSelectionDropDownList dropDown, T[] componentRef,
+      StringTextField paramField) {
     dropDown.setOnAction(e -> {
       String className = dropDown.getValue();
       T newComponent = instantiateComponent(className);

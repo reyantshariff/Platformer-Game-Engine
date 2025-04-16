@@ -19,10 +19,10 @@ public class MissingParentSceneException extends RuntimeException {
    * Constructor for MissingParentSceneException with a cause.
    *
    * @param message the error message
-   * @param cause the cause of the exception
+   * @param cause   the cause of the exception
    */
   public MissingParentSceneException(String message, Throwable cause) {
     super(message, cause);
   }
-    
+
 }

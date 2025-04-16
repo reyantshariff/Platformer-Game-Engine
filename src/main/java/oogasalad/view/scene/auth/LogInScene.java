@@ -18,7 +18,8 @@ import oogasalad.view.scene.ViewScene;
 import static oogasalad.model.config.GameConfig.LOGGER;
 
 /**
- * This is the scene that visualizes the login process which also initializes the logged in user within the Session Management
+ * This is the scene that visualizes the login process which also initializes the logged in user
+ * within the Session Management
  *
  * @author Daniel Rodriguez-Florido, Justin Aronwald
  */
@@ -47,7 +48,8 @@ public class LogInScene extends ViewScene {
    * @param manager - the view switcher that handles the various scenes
    */
   public LogInScene(MainViewManager manager) {
-    super(new StackPane(), GameConfig.getNumber("windowWidth"), GameConfig.getNumber("windowHeight"));
+    super(new StackPane(), GameConfig.getNumber("windowWidth"),
+        GameConfig.getNumber("windowHeight"));
 
     VBox card = new VBox(20);
     card.setId(SOCIAL_CARD_ID);
@@ -97,7 +99,8 @@ public class LogInScene extends ViewScene {
     card.getChildren().add(passwordStack);
   }
 
-  private Button createShowPasswordButton(TextField nakedPasswordField, PasswordField passwordField) {
+  private Button createShowPasswordButton(TextField nakedPasswordField,
+      PasswordField passwordField) {
     String showText = GameConfig.getText(SHOW_PASS_TEXT_ID);
     String hideText = GameConfig.getText(HIDE_PASS_TEXT_ID);
 
@@ -134,19 +137,19 @@ public class LogInScene extends ViewScene {
 
   private void setButtonOnClick(Button loginButton) {
     loginButton.setOnMouseClicked(event -> {
-        String username = usernameField.getText().trim();
-        String password = getTrimmedPassword();
+      String username = usernameField.getText().trim();
+      String password = getTrimmedPassword();
 
-        if (username.isEmpty() || password.isEmpty()) {
-          LOGGER.info("Missing username or password");
-          return;
-        }
+      if (username.isEmpty() || password.isEmpty()) {
+        LOGGER.info("Missing username or password");
+        return;
+      }
 
-        try {
-          handleGameControllerLogin(username, password);
-        } catch (IOException e) {
-          LOGGER.warn("Error setting up autologin:", e);
-        }
+      try {
+        handleGameControllerLogin(username, password);
+      } catch (IOException e) {
+        LOGGER.warn("Error setting up autologin:", e);
+      }
     });
   }
 

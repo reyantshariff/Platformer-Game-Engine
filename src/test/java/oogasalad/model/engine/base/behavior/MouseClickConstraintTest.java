@@ -1,0 +1,38 @@
+package oogasalad.model.engine.base.behavior;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import oogasalad.model.engine.component.Transform;
+import org.junit.jupiter.api.Test;
+import oogasalad.model.engine.component.InputHandler;
+import oogasalad.model.engine.constraint.MouseClickConstraint;
+
+public class MouseClickConstraintTest extends ConstraintsTest<MouseClickConstraint> {
+
+  @Override
+  public void customSetUp() {
+    getObj1().addComponent(InputHandler.class);
+    getObj1().getComponent(Transform.class).setX(200);
+    getObj1().getComponent(Transform.class).setY(250);
+    getObj1().getComponent(Transform.class).setScaleX(100);
+    getObj1().getComponent(Transform.class).setScaleY(100);
+
+    MouseClickConstraint constraint = getBehavior1().addConstraint(MouseClickConstraint.class);
+    setConstraint(constraint);
+  }
+
+  @Override
+  @Test
+  public void check_checkPositive_returnsTrue() {
+    getObj1().getComponent(InputHandler.class).registerMouseClick(250.0, 300.0);
+    assertTrue(getConstraint().onCheck(null), "Expected mouse click to register within object's bounds");
+
+  }
+
+  @Override
+  @Test
+  public void check_checkNegative_returnsFalse() {
+    step();
+    assertFalse(getConstraint().onCheck(null));
+  }
+}

@@ -1,0 +1,165 @@
+{
+  "Information": {
+    "Name": "DinoRunner",
+    "Description": "A playable dino runner game",
+    "Author": "Logan Dracos",
+    "Resolution": {
+      "Width": 1280,
+      "Height": 720
+    }
+  },
+  "Data": {
+    "Scene": [
+      {
+        "Name": "WinScene",
+        "GameObjects": [
+          {
+            "Name": "WinTextTitle",
+            "Tag": "UI",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 460,
+                  "y": 200,
+                  "rotation": 0
+                }
+              },
+              {
+                "Name": "TextRenderer",
+                "Configurations": {
+                  "text": "You Won!",
+                  "styleClass": "splashText",
+                  "isCentered": true,
+                  "fontSize": 80
+                }
+              }
+            ]
+          },
+          {
+            "Name": "ReturnToMenuText",
+            "Tag": "UI",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 400,
+                  "y": 400,
+                  "rotation": 0
+                }
+              },
+              {
+                "Name": "TextRenderer",
+                "Configurations": {
+                  "text": "Click to return to main menu",
+                  "styleClass": "splashButton",
+                  "isCentered": true,
+                  "fontSize": 30
+                }
+              },
+              {
+                "Name": "InputHandler",
+                "Configurations": {}
+              }
+            ],
+            "BehaviorController": {
+              "Behaviors": [
+                {
+                  "Name": "ClickToMenu",
+                  "constraints": [
+                    {
+                      "name": "MouseClickConstraint",
+                      "parameter": null,
+                      "parameterType": "Void"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "ChangeViewSceneAction",
+                      "parameter": "MainMenuScene",
+                      "parameterType": "String"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "Name": "PlayAgainText",
+            "Tag": "UI",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 520,
+                  "y": 480,
+                  "rotation": 0
+                }
+              },
+              {
+                "Name": "TextRenderer",
+                "Configurations": {
+                  "text": "Play again!",
+                  "styleClass": "splashButton",
+                  "isCentered": true,
+                  "fontSize": 30
+                }
+              },
+              {
+                "Name": "InputHandler",
+                "Configurations": {}
+              }
+            ],
+            "BehaviorController": {
+              "Behaviors": [
+                {
+                  "Name": "PlayAgainBehavior",
+                  "constraints": [
+                    {
+                      "name": "MouseClickConstraint",
+                      "parameter": null,
+                      "parameterType": "Void"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "ChangeGameSceneAction",
+                      "parameter": 0,
+                      "parameterType": "Integer"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "Name": "Camera",
+            "Tag": "Camera",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 0,
+                  "y": 0,
+                  "rotation": 0,
+                  "scaleX": 1300,
+                  "scaleY": 1000
+                }
+              },
+              {
+                "Name": "Camera",
+                "Configurations": {}
+              },
+              {
+                "Name": "Follower",
+                "Configurations": {
+                  "followObjectName": "WinTextTitle"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -19,10 +19,10 @@ public class PrefabLoadException extends RuntimeException {
    * Constructor for PrefabLoadException with a cause.
    *
    * @param message the error message
-   * @param cause the cause of the exception
+   * @param cause   the cause of the exception
    */
   public PrefabLoadException(String message, Throwable cause) {
     super(message, cause);
   }
-    
+
 }
