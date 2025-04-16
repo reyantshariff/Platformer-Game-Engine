@@ -16,9 +16,14 @@ import java.util.function.Predicate;
  */
 public abstract class TypedTextField<T> extends TextField {
 
-  protected T originalValue;
-  protected Predicate<T> changeListener;
+  private T originalValue;
+  private Predicate<T> changeListener;
 
+  /**
+   * Create a basic TextField abstractions.
+   * @param initialValue the initialValue of the text input
+   * @param prompt the showing prompt
+   */
   public TypedTextField(T initialValue, String prompt) {
     super();
     setPromptText(prompt);
@@ -30,6 +35,11 @@ public abstract class TypedTextField<T> extends TextField {
     focusedProperty().addListener((obs, oldVal, newVal) -> handleFocusChange(oldVal, newVal));
   }
 
+  /**
+   * Make the text formatter to restrict user input.
+   * @param initialValue the given initial value
+   * @return the textFormatter restriction
+   */
   protected abstract TextFormatter<T> createTextFormatter(T initialValue);
 
   private void handleKeyEvents(javafx.scene.input.KeyEvent e) {
