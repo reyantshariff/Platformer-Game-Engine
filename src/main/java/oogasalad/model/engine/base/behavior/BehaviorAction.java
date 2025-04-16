@@ -11,7 +11,7 @@ import oogasalad.model.engine.base.serialization.SerializableField;
  * @param <T> the type of the parameter that the action will take as input parameter
  * @author Hsuan-Kai Liao
  */
-public abstract class BehaviorAction<T> implements Serializable {
+public abstract class BehaviorAction<T> implements Serializable, BehaviorComponent {
   @SerializableField
   private T parameter;
 

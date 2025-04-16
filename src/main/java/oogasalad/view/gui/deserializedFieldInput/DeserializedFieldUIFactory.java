@@ -5,6 +5,8 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.function.Function;
 import javafx.scene.layout.HBox;
+import oogasalad.model.engine.base.behavior.BehaviorAction;
+import oogasalad.model.engine.base.behavior.BehaviorConstraint;
 import oogasalad.model.engine.base.serialization.SerializedField;
 import java.util.Map;
 
@@ -31,6 +33,9 @@ import java.util.Map;
  */
 
 public class DeserializedFieldUIFactory {
+
+  private static final String BEHAVIOR_ACTION_PACKAGE = "oogasalad.model.engine.action";
+  private static final String BEHAVIOR_CONSTRAINT_PACKAGE = "oogasalad.model.engine.constraint";
 
   /**
    * Creates a UI component (HBox) for a given SerializedField based on its type.
@@ -85,12 +90,12 @@ public class DeserializedFieldUIFactory {
         return box;
       },
       "BehaviorConstraint<?>", field -> {
-        ConstraintListFieldInput box = new ConstraintListFieldInput();
+        BehaviorComponentListFieldInput<?> box = new BehaviorComponentListFieldInput<>(BEHAVIOR_CONSTRAINT_PACKAGE, BehaviorConstraint.class);
         box.initGUI(field);
         return box;
       },
       "BehaviorAction<?>", field -> {
-        ActionListFieldInput box = new ActionListFieldInput();
+        BehaviorComponentListFieldInput<?> box = new BehaviorComponentListFieldInput<>(BEHAVIOR_ACTION_PACKAGE, BehaviorAction.class);
         box.initGUI(field);
         return box;
       }

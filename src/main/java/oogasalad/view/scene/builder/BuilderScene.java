@@ -67,8 +67,8 @@ public class BuilderScene extends ViewScene {
   private final ObjectDragger objectDragger;
 
   private Builder builder;
-  private Pane myGameViewPane; // Container holding the game canvas
-  private Pane canvasHolder; //
+  private Pane myGameViewPane;
+  private Pane canvasHolder;
   private Canvas myGameCanvas;
   private VBox myComponentContainer;
 

@@ -50,7 +50,6 @@ public class MainMenuScene extends ViewScene {
       MainViewManager.getInstance().switchTo(GAME_PLAYER_SCENE_NAME);
     });
 
-    // TODO: make this file chooser as well
     MainViewManager.getInstance().addViewScene(BuilderScene.class, BUILDER_SCENE_NAME);
     buildButton.setOnAction(e -> {
       ((BuilderScene) MainViewManager.getInstance().getViewScene(BUILDER_SCENE_NAME)).setUpBuilder(selectedFilePath);

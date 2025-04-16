@@ -11,7 +11,7 @@ import oogasalad.model.engine.base.serialization.SerializableField;
  * @param <T> the type of the parameter that the constraint will check against
  * @author Hsuan-Kai Liao 
  */
-public abstract class BehaviorConstraint<T> implements Serializable {
+public abstract class BehaviorConstraint<T> implements Serializable, BehaviorComponent {
   @SerializableField
   private T parameter;
 
