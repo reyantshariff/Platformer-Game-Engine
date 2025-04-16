@@ -1,6 +1,7 @@
 package oogasalad.view.scene;
 
 import java.io.File;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -8,27 +9,32 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import oogasalad.controller.GameController;
 import oogasalad.model.config.GameConfig;
+import oogasalad.model.profile.SessionException;
+import oogasalad.model.profile.SessionManagement;
 import oogasalad.view.config.StyleConfig;
 
 /**
  * Main menu view with play and builder options
  */
 public class MainMenuScene extends ViewScene {
-
+  private GameController gameController;
   /**
    * Constructs a new MainMenuScene to display the main menu with game selection and builder options.
    *
    * @param manager The MainViewManager used to switch scenes.
    */
-  public MainMenuScene(MainViewManager manager) {
+  public MainMenuScene(MainViewManager manager) throws SessionException {
     super(new VBox(), GameConfig.getNumber("windowWidth"), GameConfig.getNumber("windowHeight"));
-
+    gameController = new GameController(manager);
     VBox root = (VBox) getScene().getRoot();
     root.setAlignment(Pos.CENTER);
 
     Label title = new Label(GameConfig.getText("mainMenuTitle"));
     title.setId("mainMenuTitle");
+
+    Label username = new Label(GameConfig.getText("mainMenuUsername", SessionManagement.getCurrentUser().getUsername()));
 
     ComboBox<String> gameSelector = setupGameSelector();
 
@@ -36,6 +42,19 @@ public class MainMenuScene extends ViewScene {
     Button playButton = (Button) buttonBox.lookup("#playButton");
     Button buildButton = (Button) buttonBox.lookup("#buildButton");
 
+    handlePlayButton(manager, playButton, gameSelector);
+
+    buildButton.setOnAction(e -> manager.switchTo("BuilderScene")
+    );
+    // Language and Theme Selections
+    HBox selectorBox = setupSelectorBox();
+    HBox logOutBox = setUpLogOutBox();
+
+    root.getChildren().addAll(title, username, gameSelector, buttonBox, selectorBox, logOutBox);
+  }
+
+  private void handlePlayButton(MainViewManager manager, Button playButton,
+      ComboBox<String> gameSelector) {
     playButton.setOnAction(e -> {
       FileChooser fileChooser = new FileChooser();
       fileChooser.setTitle("Select a Game JSON File");
@@ -52,13 +71,6 @@ public class MainMenuScene extends ViewScene {
         manager.switchTo("GamePlayerScene");
       }
     });
-
-    buildButton.setOnAction(e -> manager.switchTo("BuilderScene")
-    );
-    // Language and Theme Selections
-    HBox selectorBox = setupSelectorBox();
-
-    root.getChildren().addAll(title, gameSelector, buttonBox, selectorBox);
   }
 
   private HBox setupButtonBox() {
@@ -89,6 +101,24 @@ public class MainMenuScene extends ViewScene {
     selectorBox.getChildren().addAll(languageSelector, themeSelector);
     selectorBox.setId("selectorBox");
     return selectorBox;
+  }
+
+  private HBox setUpLogOutBox() {
+    HBox logOutBox = new HBox();
+    logOutBox.setAlignment(Pos.CENTER);
+    logOutBox.setSpacing(10);
+    logOutBox.setPadding(new Insets(20, 0, 0, 0));
+
+
+    Button logOutButton = new Button(GameConfig.getText("logOutButton"));
+    logOutButton.setOnMouseClicked((event) -> {
+      gameController.handleLogout();
+    });
+    logOutButton.setId("logOutButton");
+    logOutBox.getChildren().add(logOutButton);
+    logOutBox.setId("logOutBox");
+
+    return logOutBox;
   }
 
   private ComboBox<String> setupLanguageSelector() {
