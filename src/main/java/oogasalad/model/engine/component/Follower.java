@@ -78,6 +78,10 @@ public class Follower extends GameComponent {
     }
   }
 
+  /**
+   * Smooths the movement of the follower to prevent jittering.
+   * @param deltaTime the time since the last update
+   */
   private void smoothMovement(double deltaTime) {
     double minSpeed = Math.sqrt(Math.pow(physicsHandler.getVelocityX(), 2) + Math.pow(physicsHandler.getVelocityY(), 2));
     double playerAcceleration = Math.sqrt(Math.pow(physicsHandler.getAccelerationX(), 2) + Math.pow(physicsHandler.getAccelerationY(), 2));
