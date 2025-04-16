@@ -9,6 +9,7 @@ import oogasalad.controller.GameController;
 import oogasalad.database.DatabaseException;
 import oogasalad.model.config.GameConfig;
 import oogasalad.model.config.PasswordHashingException;
+import oogasalad.model.profile.SignUpRequest;
 import oogasalad.view.scene.MainViewManager;
 import oogasalad.view.scene.ViewScene;
 
@@ -114,20 +115,20 @@ public class SignUpScene extends ViewScene {
         LOGGER.warn("One or more field is missing");
         return;
       }
-      handleGameControllerSignUp(username, password, firstName, lastName);
+      handleGameControllerSignUp(new SignUpRequest(username, password, firstName, lastName));
     });
     card.getChildren().add(signUpButton);
   }
 
-  private void handleGameControllerSignUp(String username, String password, String firstName, String lastName) {
+  private void handleGameControllerSignUp(SignUpRequest signUpRequest) {
     try {
-      gameController.handleSignUp(username, password, firstName, lastName);
+      gameController.handleSignUp(signUpRequest);
     } catch (PasswordHashingException ex) {
       LOGGER.error("Error hashing password:{}", ex.getMessage());
       //show on front
     } catch (DatabaseException ex) {
-      LOGGER.error("Error storing user in database:{}", ex.getMessage());
-      //show on front
+      LOGGER.error("User already exists in database:{}", ex.getMessage());
+      //show on front - IMPORTANT
     }
   }
 

@@ -4,6 +4,7 @@ import java.io.IOException;
 import oogasalad.database.DatabaseException;
 import oogasalad.model.config.PasswordHashingException;
 import oogasalad.model.profile.SessionManagement;
+import oogasalad.model.profile.SignUpRequest;
 import oogasalad.model.service.PlayerService;
 import oogasalad.view.scene.MainViewManager;
 import static oogasalad.model.config.GameConfig.LOGGER;
@@ -55,17 +56,24 @@ public class GameController {
     mainViewManager.switchTo("LogInScene");
   }
 
-  public void handleSignUp(String username, String password, String firstName, String lastName)
+  /**
+   * Method called by the view to sign a user up
+   *
+   * @param signUpRequest - object containing the strings used to log in
+   * @throws PasswordHashingException - true if there's an issue hashing the password
+   * @throws DatabaseException - true if there's a database error or username exists
+   */
+  public void handleSignUp(SignUpRequest signUpRequest)
       throws PasswordHashingException, DatabaseException {
-    String fullName = firstName + " " + lastName;
+    String fullName = signUpRequest.firstName() + " " + signUpRequest.lastName();
     try {
-      if (PlayerService.createNewPlayer(username, password, fullName)) {
+      if (PlayerService.createNewPlayer(signUpRequest.username(), signUpRequest.password(), fullName)) {
         mainViewManager.switchTo("MainMenuScene");
       }
     } catch (PasswordHashingException e) {
       throw new PasswordHashingException("Error hashing password", e);
     } catch (DatabaseException e) {
-      throw new DatabaseException("Error storing database", e);
+      throw new DatabaseException("Username already exists", e);
     }
   }
 }
