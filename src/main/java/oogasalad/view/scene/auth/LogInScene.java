@@ -33,6 +33,7 @@ public class LogInScene extends ViewScene {
   private static final String TOGGLE_PASSWORD_BUTTON_ID = "togglePasswordButton";
   private static final String SHOW_PASS_TEXT_ID = "showPassText";
   private static final String HIDE_PASS_TEXT_ID = "hidePassText";
+  private static final String REMEMBER_ME_ID = "rememberMeCheckbox";
 
   private final GameController gameController;
   private TextField usernameField;
@@ -142,11 +143,19 @@ public class LogInScene extends ViewScene {
         }
 
         try {
-          gameController.handleLogin(username, password, rememberMe.isSelected());
+          handleGameControllerLogin(username, password);
         } catch (IOException e) {
           LOGGER.warn("Error setting up autologin:", e);
         }
     });
+  }
+
+  private void handleGameControllerLogin(String username, String password) throws IOException {
+    if (gameController.handleLogin(username, password, rememberMe.isSelected())) {
+      LOGGER.info("Successfully logged in");
+    } else {
+      LOGGER.info("Failed to log in");
+    }
   }
 
   private String getTrimmedPassword() {
@@ -158,11 +167,13 @@ public class LogInScene extends ViewScene {
   private void setupSignUpButton(VBox card) {
     Button signUpButton = new Button(GameConfig.getText(SOCIAL_SIGN_UP_BUTTON_ID));
     signUpButton.setId(SOCIAL_SIGN_UP_BUTTON_ID);
+    signUpButton.setOnAction(event -> MainViewManager.getInstance().switchTo("SignUpScene"));
     card.getChildren().add(signUpButton);
   }
 
   private void setUpCheckbox(VBox card) {
     rememberMe = new CheckBox("Remember Me");
+    rememberMe.setId(REMEMBER_ME_ID);
     card.getChildren().add(rememberMe);
   }
 
