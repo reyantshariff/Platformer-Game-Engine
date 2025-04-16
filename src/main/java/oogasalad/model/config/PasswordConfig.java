@@ -8,12 +8,14 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 /**
- * This class services to provide the means to hash a password for a player profile. It also decrypts to verify the password.
- * Much of this class was either assisted through online code or ChatGPT
+ * This class services to provide the means to hash a password for a player profile. It also
+ * decrypts to verify the password. Much of this class was either assisted through online code or
+ * ChatGPT
  *
  * @author Justin Aronwald
  */
 public class PasswordConfig {
+
   private static final int ITERATIONS = 5000; // lower for testing;
   private static final int KEY_LENGTH = 256;
   private static final String ALGORITHM = "PBKDF2WithHmacSHA256";
@@ -33,7 +35,7 @@ public class PasswordConfig {
    * Hashes a String password with a given String salt value
    *
    * @param password - the string password inputted
-   * @param salt - a String random value added to a password before hashing
+   * @param salt     - a String random value added to a password before hashing
    * @return - the hashed String password
    * @throws PasswordHashingException - an exception notifying of a failure to hash the password
    */
@@ -53,8 +55,8 @@ public class PasswordConfig {
    * Method to determine if an inputted password matches a stored, hashed password
    *
    * @param inputPassword - the current password being inputted
-   * @param salt - the String random value added to a password before hashing
-   * @param storedHash - the stored, already-hashed password
+   * @param salt          - the String random value added to a password before hashing
+   * @param storedHash    - the stored, already-hashed password
    * @return true - if the password is the same
    * @throws PasswordHashingException - will throw if failure occurs
    */

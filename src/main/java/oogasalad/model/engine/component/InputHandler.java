@@ -12,6 +12,7 @@ import oogasalad.model.engine.base.enumerate.KeyCode;
  * @author Hsuan-Kai Liao
  */
 public final class InputHandler extends GameComponent {
+
   private final Set<Integer> currentKeys = new HashSet<>();
   private final Set<Integer> previousKeys = new HashSet<>();
 
@@ -43,8 +44,7 @@ public final class InputHandler extends GameComponent {
   }
 
   /**
-   * Method for testing functinoality of inputHandler without having to set up
-   * an entire game
+   * Method for testing functinoality of inputHandler without having to set up an entire game
    *
    * @param pressedKeys - Keys to be pressed
    */
@@ -57,7 +57,9 @@ public final class InputHandler extends GameComponent {
    * Returns true if the key was just pressed this frame.
    */
   public boolean isKeyPressed(KeyCode keyCode) {
-    if (keyCode == null) return false;
+    if (keyCode == null) {
+      return false;
+    }
     return currentKeys.contains(keyCode.getValue()) && !previousKeys.contains(keyCode.getValue());
   }
 
@@ -65,7 +67,9 @@ public final class InputHandler extends GameComponent {
    * Returns true if the key is being held down.
    */
   public boolean isKeyHold(KeyCode keyCode) {
-    if (keyCode == null) return false;
+    if (keyCode == null) {
+      return false;
+    }
     return currentKeys.contains(keyCode.getValue());
   }
 
@@ -73,7 +77,9 @@ public final class InputHandler extends GameComponent {
    * Returns true if the key was just released this frame.
    */
   public boolean isKeyReleased(KeyCode keyCode) {
-    if (keyCode == null) return false;
+    if (keyCode == null) {
+      return false;
+    }
     return !currentKeys.contains(keyCode.getValue()) && previousKeys.contains(keyCode.getValue());
   }
 

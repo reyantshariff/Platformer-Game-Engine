@@ -96,6 +96,7 @@ public enum KeyCode {
 
   /**
    * Finds a KeyCode by its string representation.
+   *
    * @param keyCode The string representation of the key code.
    * @return The matching KeyCode, or null if not found.
    */

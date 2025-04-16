@@ -10,6 +10,7 @@ import oogasalad.model.engine.base.serialization.SerializableField;
  * stores the image path and its intended render coordinates (x, y).
  */
 public class SpriteRenderer extends GameComponent {
+
   @Override
   public ComponentTag componentTag() {
     return ComponentTag.RENDER;

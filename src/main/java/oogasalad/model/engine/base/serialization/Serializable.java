@@ -50,7 +50,8 @@ public interface Serializable {
       superClass = superClass.getSuperclass();
     }
 
-    throw new IllegalStateException("No @SerializableField found in parent class for: " + this.getClass().getSimpleName());
+    throw new IllegalStateException(
+        "No @SerializableField found in parent class for: " + this.getClass().getSimpleName());
   }
 
   private SerializedField<?> createSerializedField(Class<?> clazz, Field field) {

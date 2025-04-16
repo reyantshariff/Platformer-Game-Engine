@@ -1,11 +1,13 @@
 package oogasalad.model.engine.base.architecture;
 
 import static oogasalad.model.config.GameConfig.LOGGER;
+
 import java.lang.reflect.InvocationTargetException;
 
 import oogasalad.model.engine.base.enumerate.ComponentTag;
 import oogasalad.model.engine.base.serialization.Serializable;
 import oogasalad.model.engine.base.serialization.SerializedField;
+
 /**
  * The GameComponent class is the base class for all game components. It is used to define the
  * behavior of game objects. Each game object can have multiple components, and each component can
@@ -14,12 +16,13 @@ import oogasalad.model.engine.base.serialization.SerializedField;
  * @author Hsuan-Kai Liao, Christian Bepler
  */
 public abstract class GameComponent implements Serializable {
+
   private GameObject parent;
 
   /**
    * This method is called after all objects have been created and initialized. It is used to set up
-   * references to other objects and components. If an object is made mid-game, this method is called
-   * right after the constructor.
+   * references to other objects and components. If an object is made mid-game, this method is
+   * called right after the constructor.
    */
   protected void awake() {
     // NOTE: Override this method if references are needed
@@ -35,6 +38,7 @@ public abstract class GameComponent implements Serializable {
   /**
    * This method is called every frame. It is used to update the object and perform any necessary
    * game logic.
+   *
    * @param deltaTime The time since the last frame, in seconds.
    */
   protected void update(double deltaTime) {
@@ -58,7 +62,8 @@ public abstract class GameComponent implements Serializable {
       return copy;
     } catch (InstantiationException | IllegalAccessException |
              NoSuchMethodException | InvocationTargetException e) {
-      throw new FailedCopyException("Failed to deep copy component: " + this.getClass().getSimpleName(), e);
+      throw new FailedCopyException(
+          "Failed to deep copy component: " + this.getClass().getSimpleName(), e);
     }
   }
 
@@ -94,8 +99,8 @@ public abstract class GameComponent implements Serializable {
   }
 
   /**
-   * This is the actual updating order of the component.
-   * NOTE: This method MUST be override.
+   * This is the actual updating order of the component. NOTE: This method MUST be override.
+   *
    * @return the specified component tag
    */
   public abstract ComponentTag componentTag();
@@ -116,6 +121,7 @@ public abstract class GameComponent implements Serializable {
 
   /**
    * Change the scene to the specified scene name.
+   *
    * @param sceneName the name of the scene to be changed to
    */
   public final void changeScene(String sceneName) {

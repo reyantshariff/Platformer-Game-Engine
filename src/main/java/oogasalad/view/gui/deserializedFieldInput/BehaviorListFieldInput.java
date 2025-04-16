@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * GUI component for editing a List<Behavior> field.
- * Each Behavior can be dynamically added, removed, and edited.
+ * GUI component for editing a List<Behavior> field. Each Behavior can be dynamically added,
+ * removed, and edited.
  *
  * @author Hsuan-Kai Liao
  */

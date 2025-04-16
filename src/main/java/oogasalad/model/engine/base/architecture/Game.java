@@ -21,6 +21,7 @@ import oogasalad.model.parser.ParsingException;
  * @author Hsuan-Kai Liao, Christian Bepler
  */
 public class Game {
+
   private final Map<UUID, GameScene> allScenes = new HashMap<>();
   private final Set<Integer> inputKeys = new HashSet<>();
   private Map<String, JsonNode> originalSceneJsonMap = new HashMap<>();
@@ -67,8 +68,7 @@ public class Game {
   /**
    * Returns the current scene.
    */
-  public GameScene getCurrentScene()
-  {
+  public GameScene getCurrentScene() {
     return currentScene;
   }
 
@@ -134,8 +134,9 @@ public class Game {
   }
 
   /**
-   * Called externally when a key is pressed.
-   * Note: This method need to be subscribed to the outer input event bus.
+   * Called externally when a key is pressed. Note: This method need to be subscribed to the outer
+   * input event bus.
+   *
    * @param keyCode the key code of the pressed key
    */
   public void keyPressed(int keyCode) {
@@ -143,8 +144,9 @@ public class Game {
   }
 
   /**
-   * Called externally when a key is released.
-   * Note: This method need to be subscribed to the outer input event bus.
+   * Called externally when a key is released. Note: This method need to be subscribed to the outer
+   * input event bus.
+   *
    * @param keyCode the key code of the released key
    */
   public void keyReleased(int keyCode) {
@@ -153,6 +155,7 @@ public class Game {
 
   /**
    * Returns a set of all the input keys currently pressed.
+   *
    * @return a unmodifiable set of all the input keys currently pressed
    */
   public Set<Integer> getCurrentInputKeys() {
@@ -188,7 +191,6 @@ public class Game {
 
   /**
    * Method that handles advancing levels -- moves the currentIndex of the level and changes scenes
-   *
    */
   public void goToNextLevel() {
     resetScene(levelOrder.get(currentLevelIndex));

@@ -3,8 +3,6 @@ package oogasalad.view.renderer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -81,11 +79,12 @@ public class GameSceneRenderer {
   /**
    * For scenes WITHOUT a camera: renders all game objects in the given scene onto the canvas.
    *
-   * @param gc    The graphics context of the canvas.
-   * @param scene The game scene to render.
+   * @param gc                 The graphics context of the canvas.
+   * @param scene              The game scene to render.
    * @param selectedGameObject The game object to highlight (if any)
    */
-  public void renderWithoutCamera(GraphicsContext gc, GameScene scene, GameObject selectedGameObject) {
+  public void renderWithoutCamera(GraphicsContext gc, GameScene scene,
+      GameObject selectedGameObject) {
     renderScene(gc);
 
     Collection<GameObject> objects = scene.getAllObjects();
@@ -107,77 +106,81 @@ public class GameSceneRenderer {
   }
 
   private void renderGameObject(GraphicsContext gc, GameObject obj) {
-    boolean hasSprite = obj.hasComponent(SpriteRenderer.class);
-    boolean hasText = obj.hasComponent(TextRenderer.class);
-
     if (obj.hasComponent(Camera.class)) {
       return;
     }
 
-    for (Map.Entry<Class<? extends GameComponent>, GameComponent> entry : obj.getAllComponents()
-        .entrySet()) {
-      Class<? extends GameComponent> clazz = entry.getKey();
+    boolean hasSprite = obj.hasComponent(SpriteRenderer.class);
+    boolean hasText = obj.hasComponent(TextRenderer.class);
 
-      if ((hasSprite || hasText) && clazz.equals(Transform.class)) {
-        continue;
-      }
-
-      GameComponent component = entry.getValue();
-      try {
-        String renderMethod = "render" + clazz.getSimpleName();
-        Method method =
-            this.getClass().getDeclaredMethod(renderMethod, clazz, GraphicsContext.class);
-        method.setAccessible(true);
-        method.invoke(this, component, gc);
-      } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-        logger.info(GameConfig.getText("noSuchRenderMethod", clazz.getSimpleName()));
-      }
-    }
-
+    obj.getAllComponents()
+        .entrySet()
+        .stream()
+        .filter(entry -> shouldRenderComponent(entry.getKey(), hasSprite, hasText))
+        .forEach(entry -> invokeRenderMethod(entry.getKey(), entry.getValue(), gc));
   }
+
+  private boolean shouldRenderComponent(Class<? extends GameComponent> clazz, boolean hasSprite,
+      boolean hasText) {
+    return !(clazz.equals(Transform.class) && (hasSprite || hasText));
+  }
+
+  private void invokeRenderMethod(Class<? extends GameComponent> clazz, GameComponent component,
+      GraphicsContext gc) {
+    String renderMethod = "render" + clazz.getSimpleName();
+    try {
+      Method method = this.getClass().getDeclaredMethod(renderMethod, clazz, GraphicsContext.class);
+      method.setAccessible(true);
+      method.invoke(this, component, gc);
+    } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+      logger.info(GameConfig.getText("noSuchRenderMethod", clazz.getSimpleName()));
+    }
+  }
+
 
   /**
    * renders a javaFX Text object
    */
   @SuppressWarnings(UNUSED)
   private void renderTextRenderer(TextRenderer component, GraphicsContext gc) {
-      Transform transform = component.getParent().getComponent(Transform.class);
-      TextRenderer textRenderer = component.getComponent(TextRenderer.class);
-      if (transform == null) return;
+    Transform transform = component.getParent().getComponent(Transform.class);
+    TextRenderer textRenderer = component.getComponent(TextRenderer.class);
+    if (transform == null) {
+      return;
+    }
 
-      javafx.scene.text.Text textNode = new javafx.scene.text.Text(component.getText());
-      textNode.getStyleClass().add(component.getStyleClass());
+    javafx.scene.text.Text textNode = new javafx.scene.text.Text(component.getText());
+    textNode.getStyleClass().add(component.getStyleClass());
 
+    StackPane wrapper = new StackPane(textNode);
+    StackPane.setAlignment(textNode, Pos.CENTER);
+    wrapper.getStyleClass().add(component.getStyleClass() + "-container");
 
-      StackPane wrapper = new StackPane(textNode);
-      StackPane.setAlignment(textNode, Pos.CENTER);
-      wrapper.getStyleClass().add(component.getStyleClass() + "-container");
+    applyStyleSheet(wrapper, component.getStyleClass());
+    wrapper.applyCss();
+    wrapper.layout();
 
-      applyStyleSheet(wrapper, component.getStyleClass());
-      wrapper.applyCss();
-      wrapper.layout();
+    double fontSize = textRenderer.getFontSize();
+    textNode.setFont(Font.font(fontSize));
 
-      double fontSize = textRenderer.getFontSize();
-      textNode.setFont(Font.font(fontSize));
+    WritableImage snapshot = wrapper.snapshot(null, null);
 
-      WritableImage snapshot = wrapper.snapshot(null, null);
+    double renderedWidth = snapshot.getWidth();
+    double renderedHeight = snapshot.getHeight();
+    transform.setScaleX(renderedWidth);
+    transform.setScaleY(renderedHeight);
 
-      double renderedWidth = snapshot.getWidth();
-      double renderedHeight = snapshot.getHeight();
-      transform.setScaleX(renderedWidth);
-      transform.setScaleY(renderedHeight);
+    double drawX = transform.getX() - relativeX;
+    if (component.isCentered()) {
+      double screenWidth = GameConfig.getNumber("windowWidth");
+      drawX = (screenWidth - renderedWidth) / 2.0;
+    }
+    transform.setX(drawX);
 
-      double drawX = transform.getX() - relativeX;
-      if (component.isCentered()) {
-        double screenWidth = GameConfig.getNumber("windowWidth");
-        drawX = (screenWidth - renderedWidth) / 2.0;
-      }
-      transform.setX(drawX);
+    double drawY = transform.getY() - relativeY;
+    transform.setY(drawY);
 
-      double drawY = transform.getY() - relativeY;
-      transform.setY(drawY);
-
-      gc.drawImage(snapshot, drawX, drawY);
+    gc.drawImage(snapshot, drawX, drawY);
   }
 
 
@@ -217,23 +220,26 @@ public class GameSceneRenderer {
     tempScene.setFill(Color.TRANSPARENT);
 
     if (myScene != null && !myScene.getStylesheets().isEmpty()) {
-        tempScene.getStylesheets().addAll(myScene.getStylesheets());
+      tempScene.getStylesheets().addAll(myScene.getStylesheets());
+    } else {
+      String theme = StyleConfig.getCurrentTheme();
+      String themePath = "/oogasalad/stylesheets/" + theme.toLowerCase() + ".css";
+      var resource = getClass().getResource(themePath);
+
+      if (resource != null) {
+        tempScene.getStylesheets().add(resource.toExternalForm());
       } else {
-        String theme = StyleConfig.getCurrentTheme();
-        String themePath = "/oogasalad/stylesheets/" + theme.toLowerCase() + ".css";
-        try {
-          String css = Objects.requireNonNull(getClass().getResource(themePath)).toExternalForm();
-          tempScene.getStylesheets().add(css);
-        } catch (NullPointerException e) {
-          logger.error("Could not load fallback stylesheet: {}", themePath);
-        }
+        logger.error("Could not load fallback stylesheet: {}", themePath);
       }
+    }
 
     node.applyCss();
   }
 
   private void renderSelectionOverlay(GraphicsContext gc, GameObject obj) {
-    if (!obj.hasComponent(Transform.class)) return;
+    if (!obj.hasComponent(Transform.class)) {
+      return;
+    }
 
     Transform t = obj.getComponent(Transform.class);
     double x = t.getX();

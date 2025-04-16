@@ -9,13 +9,13 @@ import oogasalad.model.engine.base.architecture.GameObject;
 
 public class CameraObj extends GameObject {
 
-    /**
-     * Constructor for Camera
-     *
-     * @param name the name of the Camera
-     */
-    public CameraObj(String name) {
-        super(name, "camera");
-    }
+  /**
+   * Constructor for Camera
+   *
+   * @param name the name of the Camera
+   */
+  public CameraObj(String name) {
+    super(name, "camera");
+  }
 
 }

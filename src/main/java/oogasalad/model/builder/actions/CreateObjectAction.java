@@ -6,10 +6,12 @@ import oogasalad.model.engine.base.architecture.GameObject;
 
 /**
  * Class that tracks when GameObjects are registered
- *@author Reyan Shariff
+ *
+ * @author Reyan Shariff
  */
 
 public class CreateObjectAction implements EditorAction {
+
   private GameObject placedObject;
   private Game game;
 
@@ -17,7 +19,7 @@ public class CreateObjectAction implements EditorAction {
    * Constructor for CreateObjectAction
    *
    * @param game - Game that the object is being placed in
-   * @param obj - GameObject that is being placed
+   * @param obj  - GameObject that is being placed
    */
   public CreateObjectAction(Game game, GameObject obj) {
     this.game = game;

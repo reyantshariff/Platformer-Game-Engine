@@ -16,6 +16,7 @@ import oogasalad.model.service.PlayerService;
  * @author Justin Aronwald
  */
 public class SessionManagement {
+
   private static final String FILE_PATH = "src/main/resources/oogasalad/auth/rememberme.properties";
   private static final String USERNAME_KEY = "rememberedUser";
 
@@ -38,7 +39,6 @@ public class SessionManagement {
 
   /**
    * Authentication to end a session and log out a user
-   *
    */
   public static void logout() {
     currentUser = null;
@@ -122,7 +122,7 @@ public class SessionManagement {
   private static void clearRememberedUser() {
     File file = new File(FILE_PATH);
     if (file.exists()) {
-      if(file.delete()) {
+      if (file.delete()) {
         LOGGER.info("Remember Me Preferences deleted");
       }
     }

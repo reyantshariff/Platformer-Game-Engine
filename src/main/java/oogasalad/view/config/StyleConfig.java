@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
  * @author Jack F. Regan
  */
 public class StyleConfig {
+
   private static final Logger LOGGER = LogManager.getLogger();
   private static final String DEFAULT_STYLE = "light";
   private static final String STYLE_FILE_TYPE = ".css";
@@ -27,15 +28,18 @@ public class StyleConfig {
     String path = STYLE_FILE_PREFIX + currentTheme + STYLE_FILE_TYPE;
     scene.getStylesheets().clear();
     try {
-      scene.getStylesheets().add(Objects.requireNonNull(StyleConfig.class.getResource(path)).toExternalForm());
-    } catch (Exception e) {
+      scene.getStylesheets().add(
+          Objects.requireNonNull(StyleConfig.class.getResource(path)).toExternalForm());
+    } catch (NullPointerException e) {
       LOGGER.warn("Stylesheet '{}' not found. Falling back to default.", path);
       scene.getStylesheets().add(
           Objects.requireNonNull(
-              StyleConfig.class.getResource(STYLE_FILE_PREFIX + DEFAULT_STYLE + STYLE_FILE_TYPE)).toExternalForm());
+              StyleConfig.class.getResource(STYLE_FILE_PREFIX + DEFAULT_STYLE + STYLE_FILE_TYPE)
+          ).toExternalForm());
       currentTheme = DEFAULT_STYLE;
     }
   }
+
 
   /**
    * @return - The current stylesheet string

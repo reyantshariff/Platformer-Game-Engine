@@ -5,21 +5,23 @@ package oogasalad.model.engine.base.serialization;
  */
 
 public class GetSerializedFieldException extends RuntimeException {
-    
-    /**
-     * Constructor for GetSerializedFieldException.
-     * @param message the error message
-     */
-    public GetSerializedFieldException(String message) {
-        super(message);
-    }
 
-    /**
-     * Constructor for GetSerializedFieldException with a cause.
-     * @param message the error message
-     * @param cause the cause of the exception
-     */
-    public GetSerializedFieldException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  /**
+   * Constructor for GetSerializedFieldException.
+   *
+   * @param message the error message
+   */
+  public GetSerializedFieldException(String message) {
+    super(message);
+  }
+
+  /**
+   * Constructor for GetSerializedFieldException with a cause.
+   *
+   * @param message the error message
+   * @param cause   the cause of the exception
+   */
+  public GetSerializedFieldException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

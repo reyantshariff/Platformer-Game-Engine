@@ -9,6 +9,7 @@ import oogasalad.view.scene.MainViewManager;
  * @author Hsuan-Kai Liao
  */
 public class ChangeViewSceneAction extends BehaviorAction<String> {
+
   private MainViewManager mainViewManager;
 
   @Override

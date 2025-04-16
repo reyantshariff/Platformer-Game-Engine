@@ -6,8 +6,8 @@ import oogasalad.model.engine.base.serialization.SerializedField;
 
 /**
  * Abstract class for creating a GUI element for a SerializedField.
- * @param <T> the type of the input
  *
+ * @param <T> the type of the input
  * @author Hsuan-Kai Liao
  */
 public abstract class DeserializedFieldUI<T> extends HBox {
@@ -27,6 +27,7 @@ public abstract class DeserializedFieldUI<T> extends HBox {
 
   /**
    * Create a GUI element for the given SerializedField.
+   *
    * @param field the SerializedField to create a GUI element for
    * @return a Node representing the GUI element
    */

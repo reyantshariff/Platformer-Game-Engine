@@ -18,7 +18,7 @@ public class KeyReleaseConstraint extends BehaviorConstraint<KeyCode> {
   protected KeyCode defaultParameter() {
     return KeyCode.NONE;
   }
-  
+
   @Override
   protected void awake() {
     inputHandler = getComponent(InputHandler.class);
@@ -26,6 +26,6 @@ public class KeyReleaseConstraint extends BehaviorConstraint<KeyCode> {
 
   @Override
   public boolean check(KeyCode parameter) {
-    return inputHandler!= null && inputHandler.isKeyReleased(parameter);
+    return inputHandler != null && inputHandler.isKeyReleased(parameter);
   }
 }

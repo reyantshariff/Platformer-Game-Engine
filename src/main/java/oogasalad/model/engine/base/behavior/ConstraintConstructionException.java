@@ -6,20 +6,22 @@ package oogasalad.model.engine.base.behavior;
 
 public class ConstraintConstructionException extends RuntimeException {
 
-    /**
-     * Constructor for ConstraintConstructionException.
-     * @param message the error message
-     */
-    public ConstraintConstructionException(String message) {
+  /**
+   * Constructor for ConstraintConstructionException.
+   *
+   * @param message the error message
+   */
+  public ConstraintConstructionException(String message) {
     super(message);
-    }
+  }
 
-    /**
-     * Constructor for ConstraintConstructionException with a cause.
-     * @param message the error message
-     * @param cause the cause of the exception
-     */
-    public ConstraintConstructionException(String message, Throwable cause) {
+  /**
+   * Constructor for ConstraintConstructionException with a cause.
+   *
+   * @param message the error message
+   * @param cause   the cause of the exception
+   */
+  public ConstraintConstructionException(String message, Throwable cause) {
     super(message, cause);
-    }
+  }
 }

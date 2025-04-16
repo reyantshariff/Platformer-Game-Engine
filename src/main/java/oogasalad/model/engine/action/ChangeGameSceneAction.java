@@ -4,20 +4,21 @@ import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.base.behavior.BehaviorAction;
 
 /**
- * Changes the current GameScene within the Game.
- * - If parameter == -2, go to last level
- * - If parameter == -1, go to next level
- * - If parameter >= 0, go to level at that index
+ * Changes the current GameScene within the Game. - If parameter == -2, go to last level - If
+ * parameter == -1, go to next level - If parameter >= 0, go to level at that index
  */
 public class ChangeGameSceneAction extends BehaviorAction<Integer> {
+
+  private static final int LAST_LEVEL = -2;
+  private static final int NEXT_LEVEL = -1;
 
   @Override
   protected void perform(Integer levelIndex) {
     Game game = getBehavior().getController().getParent().getScene().getGame();
 
-    if (levelIndex == -2) {
+    if (levelIndex == LAST_LEVEL) {
       goToLastLevel(game);
-    } else if (levelIndex == -1) {
+    } else if (levelIndex == NEXT_LEVEL) {
       goToNextLevel(game);
     } else if (isValidLevelIndex(levelIndex, game)) {
       goToSpecificLevel(levelIndex, game);
@@ -44,6 +45,6 @@ public class ChangeGameSceneAction extends BehaviorAction<Integer> {
 
   @Override
   protected Integer defaultParameter() {
-    return -1;
+    return NEXT_LEVEL;
   }
 }

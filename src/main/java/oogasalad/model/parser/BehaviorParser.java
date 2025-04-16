@@ -45,6 +45,7 @@ public class BehaviorParser implements Parser<Behavior> {
   );
 
   private static final Map<Class<?>, BiConsumer<ObjectNode, Object>> TYPE_WRITERS = new HashMap<>();
+
   static {
     TYPE_WRITERS.put(String.class, (node, value) -> node.put(PARAMETER, (String) value));
     TYPE_WRITERS.put(Integer.class, (node, value) -> node.put(PARAMETER, (Integer) value));
@@ -177,7 +178,8 @@ public class BehaviorParser implements Parser<Behavior> {
       typedField.setValue(value);
 
     } catch (IllegalArgumentException e) {
-      throw new ParsingException(getText("invalidEnumValue", field.getFieldName(), valueNode.asText()), e);
+      throw new ParsingException(
+          getText("invalidEnumValue", field.getFieldName(), valueNode.asText()), e);
     } catch (ClassCastException e) {
       throw new ParsingException(getText("typeMismatchError", field.getFieldName(),
           type.getSimpleName()), e);
@@ -226,17 +228,17 @@ public class BehaviorParser implements Parser<Behavior> {
       ObjectNode oneConstraint = mapper.createObjectNode();
       BiConsumer<ObjectNode, Object> writer = TYPE_WRITERS.get(
           constraint.getParameter().getClass());
-        
-        if(writer == null || constraint.getParameter() == null || oneConstraint == null) {
-          LOGGER.error(getText("writingConstraintError",
-              constraint.getParameter().getClass().getSimpleName(), data.getName()));
-          return;
-        }
 
-        oneConstraint.put(LOWER_NAME, constraint.getClass().getSimpleName());
-        writer.accept(oneConstraint, constraint.getParameter()); // Catching this error
-        oneConstraint.put(PARAMETER_TYPE, constraint.getParameter().getClass().getSimpleName());
-        constraintArray.add(oneConstraint);
+      if (writer == null || constraint.getParameter() == null || oneConstraint == null) {
+        LOGGER.error(getText("writingConstraintError",
+            constraint.getParameter().getClass().getSimpleName(), data.getName()));
+        return;
+      }
+
+      oneConstraint.put(LOWER_NAME, constraint.getClass().getSimpleName());
+      writer.accept(oneConstraint, constraint.getParameter()); // Catching this error
+      oneConstraint.put(PARAMETER_TYPE, constraint.getParameter().getClass().getSimpleName());
+      constraintArray.add(oneConstraint);
 
       root.set(CONSTRAINTS, constraintArray);
     });
@@ -276,7 +278,8 @@ public class BehaviorParser implements Parser<Behavior> {
     return action.getParameter() == null ? Void.class : action.getParameter().getClass();
   }
 
-  private void writeActionParameter(BiConsumer<ObjectNode, Object> writer, ObjectNode oneAction, BehaviorAction<?> action) {
+  private void writeActionParameter(BiConsumer<ObjectNode, Object> writer, ObjectNode oneAction,
+      BehaviorAction<?> action) {
     if (action.getParameter() == null) {
       writer.accept(oneAction, "");
     } else {

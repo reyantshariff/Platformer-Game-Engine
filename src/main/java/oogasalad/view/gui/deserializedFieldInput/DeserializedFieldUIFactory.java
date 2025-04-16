@@ -11,14 +11,14 @@ import oogasalad.model.engine.base.serialization.SerializedField;
 import java.util.Map;
 
 /**
- * A factory class for creating JavaFX UI components (HBox) for deserialized fields
- * based on their types. This class supports both simple field types (e.g., Double, String)
- * and complex field types such as Lists with specific generic types.
+ * A factory class for creating JavaFX UI components (HBox) for deserialized fields based on their
+ * types. This class supports both simple field types (e.g., Double, String) and complex field types
+ * such as Lists with specific generic types.
  *
  * <p>The factory uses reflection to determine the type of the field and dynamically
- * creates the appropriate UI component. For simple types, it directly maps the type
- * to a corresponding input box. For List types, it uses a map of factories to handle
- * specific generic types of the List.</p>
+ * creates the appropriate UI component. For simple types, it directly maps the type to a
+ * corresponding input box. For List types, it uses a map of factories to handle specific generic
+ * types of the List.</p>
  *
  * <p>Unsupported field types will result in an {@code IllegalStateException} being thrown.</p>
  *
@@ -58,7 +58,7 @@ public class DeserializedFieldUIFactory {
    * Creates a UI component (HBox) for a simple field type (e.g., Double, String).
    *
    * @param fieldType the type of the field as a String
-   * @param field the SerializedField for which the UI component is to be created
+   * @param field     the SerializedField for which the UI component is to be created
    * @return an HBox representing the UI for the given field
    * @throws IllegalStateException if the field type is unsupported
    */
@@ -90,12 +90,14 @@ public class DeserializedFieldUIFactory {
         return box;
       },
       "BehaviorConstraint<?>", field -> {
-        BehaviorComponentListFieldInput<?> box = new BehaviorComponentListFieldInput<>(BEHAVIOR_CONSTRAINT_PACKAGE, BehaviorConstraint.class);
+        BehaviorComponentListFieldInput<?> box = new BehaviorComponentListFieldInput<>(
+            BEHAVIOR_CONSTRAINT_PACKAGE, BehaviorConstraint.class);
         box.initGUI(field);
         return box;
       },
       "BehaviorAction<?>", field -> {
-        BehaviorComponentListFieldInput<?> box = new BehaviorComponentListFieldInput<>(BEHAVIOR_ACTION_PACKAGE, BehaviorAction.class);
+        BehaviorComponentListFieldInput<?> box = new BehaviorComponentListFieldInput<>(
+            BEHAVIOR_ACTION_PACKAGE, BehaviorAction.class);
         box.initGUI(field);
         return box;
       }

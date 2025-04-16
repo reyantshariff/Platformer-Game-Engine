@@ -27,6 +27,7 @@ public class StringListFieldInput extends DeserializedFieldUI<List<String>> {
 
   /**
    * Displays the GUI for editing a List<String> field.
+   *
    * @param field the serialized field to bind to this input
    * @return a Node representing the interactive list input UI
    */

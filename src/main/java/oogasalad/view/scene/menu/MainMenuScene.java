@@ -28,8 +28,10 @@ public class MainMenuScene extends ViewScene {
 
   private String selectedFilePath = "";
   private final GameController gameController;
+
   /**
-   * Constructs a new MainMenuScene to display the main menu with game selection and builder options.
+   * Constructs a new MainMenuScene to display the main menu with game selection and builder
+   * options.
    */
   private MainMenuScene() {
     super(new VBox(), GameConfig.getNumber("windowWidth"), GameConfig.getNumber("windowHeight"));
@@ -46,16 +48,19 @@ public class MainMenuScene extends ViewScene {
     Button playButton = (Button) buttonBox.lookup("#playButton");
     Button buildButton = (Button) buttonBox.lookup("#buildButton");
 
-    GameDisplayScene playScene = MainViewManager.getInstance().addViewScene(GameDisplayScene.class, GAME_PLAYER_SCENE_NAME);
+    GameDisplayScene playScene = MainViewManager.getInstance()
+        .addViewScene(GameDisplayScene.class, GAME_PLAYER_SCENE_NAME);
     playScene.setReturnSceneName(GameConfig.getText("defaultScene"));
     playButton.setOnAction(e -> {
-      ((GameDisplayScene) MainViewManager.getInstance().getViewScene(GAME_PLAYER_SCENE_NAME)).play(selectedFilePath);
+      ((GameDisplayScene) MainViewManager.getInstance().getViewScene(GAME_PLAYER_SCENE_NAME)).play(
+          selectedFilePath);
       MainViewManager.getInstance().switchTo(GAME_PLAYER_SCENE_NAME);
     });
 
     MainViewManager.getInstance().addViewScene(BuilderScene.class, BUILDER_SCENE_NAME);
     buildButton.setOnAction(e -> {
-      ((BuilderScene) MainViewManager.getInstance().getViewScene(BUILDER_SCENE_NAME)).setUpBuilder(selectedFilePath);
+      ((BuilderScene) MainViewManager.getInstance().getViewScene(BUILDER_SCENE_NAME)).setUpBuilder(
+          selectedFilePath);
       MainViewManager.getInstance().switchTo(BUILDER_SCENE_NAME);
     });
 
@@ -89,7 +94,8 @@ public class MainMenuScene extends ViewScene {
     gameSelector.setOnAction(e -> {
       FileChooser fileChooser = new FileChooser();
       fileChooser.setTitle("Select a Game JSON File");
-      fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON Files", "*.json"));
+      fileChooser.getExtensionFilters()
+          .add(new FileChooser.ExtensionFilter("JSON Files", "*.json"));
       fileChooser.setInitialDirectory(new File("data/GameJsons"));
 
       File selectedFile = fileChooser.showOpenDialog(getScene().getWindow());
@@ -115,7 +121,8 @@ public class MainMenuScene extends ViewScene {
     languageSelector.setId("menuSelector");
     languageSelector.getItems().addAll(GameConfig.getTextList("languageSelector"));
     languageSelector.setOnAction(e -> {
-      GameConfig.setLanguage(languageSelector.getValue());});
+      GameConfig.setLanguage(languageSelector.getValue());
+    });
     return languageSelector;
   }
 
@@ -135,7 +142,6 @@ public class MainMenuScene extends ViewScene {
     logOutBox.setAlignment(Pos.CENTER);
     logOutBox.setSpacing(10);
     logOutBox.setPadding(new Insets(20, 0, 0, 0));
-
 
     Button logOutButton = new Button(GameConfig.getText("logOutButton"));
     logOutButton.setOnMouseClicked((event) -> {

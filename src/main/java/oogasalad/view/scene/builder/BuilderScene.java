@@ -77,7 +77,8 @@ public class BuilderScene extends ViewScene {
 
   private BuilderScene() {
     // Create the BorderPane as the root
-    super(new BorderPane(), GameConfig.getNumber("windowWidth"), GameConfig.getNumber("windowHeight"));
+    super(new BorderPane(), GameConfig.getNumber("windowWidth"),
+        GameConfig.getNumber("windowHeight"));
     myWindow = (BorderPane) getScene().getRoot();
     initializeUI();
     objectDragger = new ObjectDragger(myGameCanvas, this, getSceneRenderer());
@@ -104,7 +105,8 @@ public class BuilderScene extends ViewScene {
     myWindow.setTop(topBar);
 
     // Add SplitPane for sprite button options and object control panel
-    SplitPane objectControlSplitPane = new SplitPane(createAddSpriteButtonOptions(), createObjectControlPanel());
+    SplitPane objectControlSplitPane = new SplitPane(createAddSpriteButtonOptions(),
+        createObjectControlPanel());
     objectControlSplitPane.setOrientation(Orientation.HORIZONTAL);
     objectControlSplitPane.setDividerPositions(0.7);
 
@@ -126,10 +128,12 @@ public class BuilderScene extends ViewScene {
   @SuppressWarnings("unchecked")
   private ScrollPane createComponentPanel() {
     myComponentContainer = new VBox(10);
-    ClassSelectionDropDownMenu addComponentMenuButton = new ClassSelectionDropDownMenu("Add A Component", COMPONENT_PACKAGE_NAME, GameComponent.class);
+    ClassSelectionDropDownMenu addComponentMenuButton = new ClassSelectionDropDownMenu(
+        "Add A Component", COMPONENT_PACKAGE_NAME, GameComponent.class);
     addComponentMenuButton.setOnClassSelected(className -> {
       try {
-        Class<? extends GameComponent> componentClass = (Class<? extends GameComponent>) Class.forName(COMPONENT_PACKAGE_NAME + "." + className);
+        Class<? extends GameComponent> componentClass = (Class<? extends GameComponent>) Class.forName(
+            COMPONENT_PACKAGE_NAME + "." + className);
         GameObject selectedObject = builder.getSelectedObject();
 
         if (selectedObject != null && !selectedObject.hasComponent(componentClass)) {
@@ -155,8 +159,9 @@ public class BuilderScene extends ViewScene {
   }
 
   /**
-   * Set up the builder for the given game filepath.
-   * This should be called when the new game file is to be edited.
+   * Set up the builder for the given game filepath. This should be called when the new game file is
+   * to be edited.
+   *
    * @param gameFilepath the given game filepath
    */
   public void setUpBuilder(String gameFilepath) {
@@ -174,7 +179,8 @@ public class BuilderScene extends ViewScene {
   public void updateGamePreview() {
     GraphicsContext gc = myGameCanvas.getGraphicsContext2D();
     gc.clearRect(0, 0, myGameCanvas.getWidth(), myGameCanvas.getHeight());
-    getSceneRenderer().renderWithoutCamera(gc, builder.getCurrentScene(), builder.getSelectedObject());
+    getSceneRenderer().renderWithoutCamera(gc, builder.getCurrentScene(),
+        builder.getSelectedObject());
   }
 
   /**
@@ -256,12 +262,16 @@ public class BuilderScene extends ViewScene {
 
     // handle mouse pressed and dragged events
     container.setOnMousePressed(event -> {
-      if (builder.objectIsSelected()) return;
+      if (builder.objectIsSelected()) {
+        return;
+      }
       lastMousePosition.set(new Point2D(event.getSceneX(), event.getSceneY()));
       container.requestFocus();
     });
     container.setOnMouseDragged(event -> {
-      if (builder.objectIsSelected()) return;
+      if (builder.objectIsSelected()) {
+        return;
+      }
 
       Point2D currentMousePosition = new Point2D(event.getSceneX(), event.getSceneY());
       Point2D delta = currentMousePosition.subtract(lastMousePosition.get());
@@ -313,7 +323,8 @@ public class BuilderScene extends ViewScene {
     canvasHolder.setTranslateY(canvasHolder.getTranslateY() + deltaY);
   }
 
-  private static void zoomCanvas(Pane canvasHolder, double scale, Point2D zoomPoint, Point2D pointInGroup) {
+  private static void zoomCanvas(Pane canvasHolder, double scale, Point2D zoomPoint,
+      Point2D pointInGroup) {
     scale = Math.min(Math.max(scale, MIN_ZOOM), MAX_ZOOM);
     canvasHolder.setScaleX(scale);
     canvasHolder.setScaleY(scale);
@@ -338,7 +349,6 @@ public class BuilderScene extends ViewScene {
       builder.redoLastAction();
       updateGamePreview();
     });
-
 
     Button deleteButton = new Button("Delete");
     deleteButton.setOnAction(event -> {
@@ -370,7 +380,7 @@ public class BuilderScene extends ViewScene {
     // TODO: remove hardcoded game type
     List<GameObject> prefabObjects = PrefabLoader.loadAvailablePrefabs("dinosaur");
     for (GameObject prefab : prefabObjects) {
-     createObject(prefab, tilePane);
+      createObject(prefab, tilePane);
     }
 
     // Briefly animate the sprite tile options into their correct positions
