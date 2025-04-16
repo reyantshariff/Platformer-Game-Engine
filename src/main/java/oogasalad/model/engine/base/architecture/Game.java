@@ -215,6 +215,7 @@ public class Game {
   public void goToScene(String sceneName) {
     int index = levelOrder.indexOf(sceneName);
     if (index != -1) {
+      resetScene(levelOrder.get(currentLevelIndex));
       currentLevelIndex = index;
       changeScene(sceneName);
     }

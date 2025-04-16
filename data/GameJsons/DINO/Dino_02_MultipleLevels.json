@@ -132,8 +132,8 @@
                   "actions": [
                     {
                       "name": "CrouchAction",
-                      "parameter": "",
-                      "parameterType": "Void"
+                      "parameter": 50,
+                      "parameterType": "Double"
                     }
                   ]
                 }
@@ -160,7 +160,7 @@
                   "offsetX": 0,
                   "offsetY": 0,
                   "imagePaths": [
-                    "oogasalad/dinosaur/Bird1.png"
+                    "oogasalad/dinosaur/LargeCactus1.png"
                   ]
                 }
               },
@@ -197,9 +197,9 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeViewSceneAction",
-                      "parameter": "nextLevel",
-                      "parameterType": "String"
+                      "name": "ChangeGameSceneAction",
+                      "parameter": -2,
+                      "parameterType": "Integer"
                     }
                   ]
                 }
@@ -226,7 +226,7 @@
                   "offsetX": 0,
                   "offsetY": 0,
                   "imagePaths": [
-                    "oogasalad/dinosaur/Bird1.png"
+                    "oogasalad/dinosaur/LargeCactus1.png"
                   ]
                 }
               },
@@ -263,9 +263,9 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeViewSceneAction",
-                      "parameter": "MainMenuScene",
-                      "parameterType": "String"
+                      "name": "ChangeGameSceneAction",
+                      "parameter": -2,
+                      "parameterType": "Integer"
                     }
                   ]
                 }
@@ -292,7 +292,7 @@
                   "offsetX": 0,
                   "offsetY": 0,
                   "imagePaths": [
-                    "oogasalad/dinosaur/Bird1.png"
+                    "oogasalad/dinosaur/LargeCactus1.png"
                   ]
                 }
               },
@@ -329,9 +329,9 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeViewSceneAction",
-                      "parameter": "MainMenuScene",
-                      "parameterType": "String"
+                      "name": "ChangeGameSceneAction",
+                      "parameter": -2,
+                      "parameterType": "Integer"
                     }
                   ]
                 }
@@ -395,9 +395,9 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeViewSceneAction",
-                      "parameter": "MainMenuScene",
-                      "parameterType": "String"
+                      "name": "ChangeGameSceneAction",
+                      "parameter": -2,
+                      "parameterType": "Integer"
                     }
                   ]
                 }
@@ -405,7 +405,7 @@
             }
           },
           {
-            "Name": "Bird2",
+            "Name": "FlagpoleLevel1",
             "Tag": "Obstacle",
             "Components": [
               {
@@ -424,7 +424,7 @@
                   "offsetX": 0,
                   "offsetY": 0,
                   "imagePaths": [
-                    "oogasalad/dinosaur/Bird1.png"
+                    "oogasalad/dinosaur/MarioFlagpole.png"
                   ]
                 }
               },
@@ -441,7 +441,7 @@
                 "Name": "PhysicsHandler",
                 "Configurations": {
                   "mass": 1,
-                  "velocityX": -100,
+                  "velocityX": 0,
                   "velocityY": 0,
                   "accelerationX": 0,
                   "accelerationY": 0
@@ -461,9 +461,9 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeViewSceneAction",
-                      "parameter": "MainMenuScene",
-                      "parameterType": "String"
+                      "name": "ChangeGameSceneAction",
+                      "parameter": -1,
+                      "parameterType": "Integer"
                     }
                   ]
                 }
@@ -648,7 +648,7 @@
                   "offsetX": 0,
                   "offsetY": 0,
                   "imagePaths": [
-                    "oogasalad/dinosaur/Bird1.png"
+                    "oogasalad/dinosaur/LargeCactus1.png"
                   ]
                 }
               },
@@ -685,9 +685,9 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeViewSceneAction",
-                      "parameter": "MainMenuScene",
-                      "parameterType": "String"
+                      "name": "ChangeGameSceneAction",
+                      "parameter": -2,
+                      "parameterType": "Integer"
                     }
                   ]
                 }
@@ -714,7 +714,7 @@
                   "offsetX": 0,
                   "offsetY": 0,
                   "imagePaths": [
-                    "oogasalad/dinosaur/Bird1.png"
+                    "oogasalad/dinosaur/LargeCactus1.png"
                   ]
                 }
               },
@@ -751,9 +751,9 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeViewSceneAction",
-                      "parameter": "MainMenuScene",
-                      "parameterType": "String"
+                      "name": "ChangeGameSceneAction",
+                      "parameter": -2,
+                      "parameterType": "Integer"
                     }
                   ]
                 }
@@ -780,7 +780,7 @@
                   "offsetX": 0,
                   "offsetY": 0,
                   "imagePaths": [
-                    "oogasalad/dinosaur/Bird1.png"
+                    "oogasalad/dinosaur/LargeCactus1.png"
                   ]
                 }
               },
@@ -817,9 +817,9 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeViewSceneAction",
-                      "parameter": "MainMenuScene",
-                      "parameterType": "String"
+                      "name": "ChangeGameSceneAction",
+                      "parameter": -2,
+                      "parameterType": "Integer"
                     }
                   ]
                 }
@@ -883,9 +883,9 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeViewSceneAction",
-                      "parameter": "MainMenuScene",
-                      "parameterType": "String"
+                      "name": "ChangeGameSceneAction",
+                      "parameter": -2,
+                      "parameterType": "Integer"
                     }
                   ]
                 }
@@ -893,7 +893,7 @@
             }
           },
           {
-            "Name": "Bird2",
+            "Name": "FlagpoleLevel2",
             "Tag": "Obstacle",
             "Components": [
               {
@@ -912,7 +912,7 @@
                   "offsetX": 0,
                   "offsetY": 0,
                   "imagePaths": [
-                    "oogasalad/dinosaur/Bird1.png"
+                    "oogasalad/dinosaur/MarioFlagpole.png"
                   ]
                 }
               },
@@ -929,7 +929,7 @@
                 "Name": "PhysicsHandler",
                 "Configurations": {
                   "mass": 1,
-                  "velocityX": -100,
+                  "velocityX": 0,
                   "velocityY": 0,
                   "accelerationX": 0,
                   "accelerationY": 0
@@ -949,9 +949,9 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeViewSceneAction",
-                      "parameter": "MainMenuScene",
-                      "parameterType": "String"
+                      "name": "ChangeGameSceneAction",
+                      "parameter": -1,
+                      "parameterType": "Integer"
                     }
                   ]
                 }
@@ -980,6 +980,306 @@
                 "Name": "Follower",
                 "Configurations": {
                   "followObjectName": "Dino"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "WinScene",
+        "GameObjects": [
+          {
+            "Name": "WinTextTitle",
+            "Tag": "UI",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 460,
+                  "y": 200,
+                  "rotation": 0
+                }
+              },
+              {
+                "Name": "TextRenderer",
+                "Configurations": {
+                  "text": "You Won!",
+                  "styleClass": "splashText",
+                  "isCentered": true,
+                  "fontSize": 80
+                }
+              }
+            ]
+          },
+          {
+            "Name": "ReturnToMenuText",
+            "Tag": "UI",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 400,
+                  "y": 400,
+                  "rotation": 0
+                }
+              },
+              {
+                "Name": "TextRenderer",
+                "Configurations": {
+                  "text": "Click to return to main menu",
+                  "styleClass": "splashButton",
+                  "isCentered": true,
+                  "fontSize": 30
+                }
+              },
+              {
+                "Name": "InputHandler",
+                "Configurations": {}
+              }
+            ],
+            "BehaviorController": {
+              "Behaviors": [
+                {
+                  "Name": "ClickToMenu",
+                  "constraints": [
+                    {
+                      "name": "MouseClickConstraint",
+                      "parameter": null,
+                      "parameterType": "Void"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "ChangeViewSceneAction",
+                      "parameter": "MainMenuScene",
+                      "parameterType": "String"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "Name": "PlayAgainText",
+            "Tag": "UI",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 520,
+                  "y": 480,
+                  "rotation": 0
+                }
+              },
+              {
+                "Name": "TextRenderer",
+                "Configurations": {
+                  "text": "Play again!",
+                  "styleClass": "splashButton",
+                  "isCentered": true,
+                  "fontSize": 30
+                }
+              },
+              {
+                "Name": "InputHandler",
+                "Configurations": {}
+              }
+            ],
+            "BehaviorController": {
+              "Behaviors": [
+                {
+                  "Name": "PlayAgainBehavior",
+                  "constraints": [
+                    {
+                      "name": "MouseClickConstraint",
+                      "parameter": null,
+                      "parameterType": "Void"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "ChangeGameSceneAction",
+                      "parameter": 0,
+                      "parameterType": "Integer"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "Name": "Camera",
+            "Tag": "Camera",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 0,
+                  "y": 0,
+                  "rotation": 0,
+                  "scaleX": 1300,
+                  "scaleY": 1000
+                }
+              },
+              {
+                "Name": "Camera",
+                "Configurations": {}
+              },
+              {
+                "Name": "Follower",
+                "Configurations": {
+                  "followObjectName": "WinTextTitle"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LossScene",
+        "GameObjects": [
+          {
+            "Name": "LossTextTitle",
+            "Tag": "UI",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 460,
+                  "y": 200,
+                  "rotation": 0
+                }
+              },
+              {
+                "Name": "TextRenderer",
+                "Configurations": {
+                  "text": "You Lost!",
+                  "styleClass": "splashText",
+                  "isCentered": true,
+                  "fontSize": 80
+                }
+              }
+            ]
+          },
+          {
+            "Name": "ReturnToMenuText",
+            "Tag": "UI",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 400,
+                  "y": 400,
+                  "rotation": 0
+                }
+              },
+              {
+                "Name": "TextRenderer",
+                "Configurations": {
+                  "text": "Click to return to main menu",
+                  "styleClass": "splashButton",
+                  "isCentered": true,
+                  "fontSize": 30
+                }
+              },
+              {
+                "Name": "InputHandler",
+                "Configurations": {}
+              }
+            ],
+            "BehaviorController": {
+              "Behaviors": [
+                {
+                  "Name": "ClickToMenu",
+                  "constraints": [
+                    {
+                      "name": "MouseClickConstraint",
+                      "parameter": null,
+                      "parameterType": "Void"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "ChangeViewSceneAction",
+                      "parameter": "MainMenuScene",
+                      "parameterType": "String"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "Name": "TryAgainText",
+            "Tag": "UI",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 520,
+                  "y": 480,
+                  "rotation": 0
+                }
+              },
+              {
+                "Name": "TextRenderer",
+                "Configurations": {
+                  "text": "Try again",
+                  "styleClass": "splashButton",
+                  "isCentered": true,
+                  "fontSize": 30
+                }
+              },
+              {
+                "Name": "InputHandler",
+                "Configurations": {}
+              }
+            ],
+            "BehaviorController": {
+              "Behaviors": [
+                {
+                  "Name": "TryAgainBehavior",
+                  "constraints": [
+                    {
+                      "name": "MouseClickConstraint",
+                      "parameter": null,
+                      "parameterType": "Void"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "ChangeGameSceneAction",
+                      "parameter": 0,
+                      "parameterType": "Integer"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "Name": "Camera",
+            "Tag": "Camera",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 0,
+                  "y": 0,
+                  "rotation": 0,
+                  "scaleX": 1300,
+                  "scaleY": 1000
+                }
+              },
+              {
+                "Name": "Camera",
+                "Configurations": {}
+              },
+              {
+                "Name": "Follower",
+                "Configurations": {
+                  "followObjectName": "LossTextTitle"
                 }
               }
             ]
