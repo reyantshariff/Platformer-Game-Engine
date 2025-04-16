@@ -233,7 +233,61 @@
             ]
           }
         ]
+      },
+      {
+        "Name": "LossScene",
+        "GameObjects": [
+          {
+            "Name": "LossText",
+            "Tag": "UI",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 500,
+                  "y": 300,
+                  "rotation": 0,
+                  "scaleX": 1,
+                  "scaleY": 1
+                }
+              },
+              {
+                "Name": "TextRenderer",
+                "Configurations": {
+                  "text": "You Lost! Click to Restart",
+                  "styleClass": "title"
+                }
+              },
+              {
+                "Name": "InputHandler",
+                "Configurations": {}
+              }
+            ],
+            "BehaviorController": {
+              "Behaviors": [
+                {
+                  "Name": "ClickToRestart",
+                  "constraints": [
+                    {
+                      "name": "MouseClickConstraint",
+                      "parameter": null,
+                      "parameterType": "Void"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "ChangeSceneAction",
+                      "parameter": "Level2",
+                      "parameterType": "String"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
       }
+
     ]
   }
 }
