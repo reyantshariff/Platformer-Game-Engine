@@ -8,6 +8,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.util.Duration;
 import oogasalad.model.config.GameConfig;
 import oogasalad.model.engine.base.architecture.Game;
+import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.engine.base.enumerate.KeyCode;
 import oogasalad.model.engine.component.InputHandler;
@@ -49,10 +50,10 @@ public class GameRunner {
   }
 
   private void handleMouseClick(double x, double y) {
-      var scene = game.getCurrentScene();
+      GameScene scene = game.getCurrentScene();
       if (scene == null) return;
 
-      for (var obj : scene.getAllObjects()) {
+      for (GameObject obj : scene.getAllObjects()) {
         if (obj.hasComponent(InputHandler.class)) {
           obj.getComponent(InputHandler.class).registerMouseClick(x,y);
         }
