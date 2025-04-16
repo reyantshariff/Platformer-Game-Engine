@@ -131,7 +131,7 @@ class FollowerTest {
 
 
   @Test
-  void componentTag_Always_ReturnsTransformTag() {
-    assertEquals(ComponentTag.TRANSFORM, follower.componentTag());
+  void componentTag_Always_ReturnsSmoothMovementTag() {
+    assertEquals(ComponentTag.SMOOTH_MOVEMENT, follower.componentTag());
   }
 }
