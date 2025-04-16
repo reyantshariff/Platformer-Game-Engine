@@ -1,5 +1,12 @@
 package oogasalad.model.engine.base.behavior;
 
+import com.google.cloud.Timestamp;
+import java.io.IOException;
+import oogasalad.model.config.PasswordConfig;
+import oogasalad.model.config.PasswordHashingException;
+import oogasalad.model.profile.Password;
+import oogasalad.model.profile.PlayerData;
+import oogasalad.model.profile.SessionManagement;
 import org.junit.jupiter.api.BeforeEach;
 import org.testfx.framework.junit5.ApplicationTest;
 import javafx.stage.Stage;
@@ -27,8 +34,15 @@ public abstract class BehaviorBaseTest extends ApplicationTest {
     private Behavior behavior2;
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws PasswordHashingException, IOException {
         MainViewManager viewManager = new MainViewManager(stage);
+
+        String username = "justin1";
+        Password password = Password.fromPlaintext("justin1");
+        String fullName = "justin";
+
+        SessionManagement.login((new PlayerData(username, fullName, password, Timestamp.now())), false);
+        SessionManagement.tryAutoLogin();
         viewManager.switchToMainMenu();
     }
 
