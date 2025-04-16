@@ -37,7 +37,7 @@ class BehaviorParserTest {
             ],
             "actions": [
               {
-                "name": "ChangeSceneAction",
+                "name": "ChangeViewSceneAction",
                 "parameter": "Example Main Scene",
                 "parameterType": "String"
               }
@@ -81,7 +81,7 @@ class BehaviorParserTest {
               ],
               "actions": [
                 {
-                  "name": "ChangeSceneAction",
+                  "name": "ChangeViewSceneAction",
                   "parameter": "Example Main Scene",
                   "parameterType": "String"
                 }
@@ -112,7 +112,7 @@ class BehaviorParserTest {
               ],
               "actions": [
                 {
-                  "name": "ChangeSceneAction",
+                  "name": "ChangeViewSceneAction",
                   "parameter": "Example Main Scene",
                   "parameterType": "String"
                 }
@@ -144,12 +144,12 @@ class BehaviorParserTest {
               ],
               "actions": [
                 {
-                  "name": "ChangeSceneAction",
+                  "name": "ChangeViewSceneAction",
                   "parameter": "Example Main Scene",
                   "parameterType": "String"
                 },
                 {
-                  "name": "ChangeSceneAction",
+                  "name": "ChangeViewSceneAction",
                   "parameter": "Example Main Scene",
                   "parameterType": "String"
                 }
@@ -212,7 +212,7 @@ class BehaviorParserTest {
               ],
               "actions": [
                 {
-                  "name": "ChangeSceneAction",
+                  "name": "ChangeViewSceneAction",
                   "parameter": "Example Main Scene",
                   "parameterType": "String"
                 }
@@ -324,7 +324,7 @@ class BehaviorParserTest {
               ],
               "actions": [
                 {
-                  "name": "ChangeSceneAction",
+                  "name": "ChangeViewSceneAction",
                   "parameter": "Example Main Scene",
                   "parameterType": "OogaObject"
                 }
@@ -351,7 +351,7 @@ class BehaviorParserTest {
               ],
               "actions": [
                 {
-                  "name": "ChangeSceneAction",
+                  "name": "ChangeViewSceneAction",
                   "parameter": "Example Main Scene",
                   "parameterType": "String"
                 }

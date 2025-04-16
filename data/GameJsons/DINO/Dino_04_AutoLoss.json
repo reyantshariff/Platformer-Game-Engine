@@ -197,7 +197,7 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeSceneAction",
+                      "name": "ChangeViewSceneAction",
                       "parameter": "nextLevel",
                       "parameterType": "String"
                     }
@@ -276,7 +276,7 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeSceneAction",
+                      "name": "ChangeViewSceneAction",
                       "parameter": "Level2",
                       "parameterType": "String"
                     }

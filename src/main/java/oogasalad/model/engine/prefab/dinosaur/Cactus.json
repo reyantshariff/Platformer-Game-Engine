@@ -49,7 +49,7 @@
         ],
         "actions": [
           {
-            "name": "ChangeSceneAction",
+            "name": "ChangeViewSceneAction",
             "parameter": "MainGame"
           }
         ]

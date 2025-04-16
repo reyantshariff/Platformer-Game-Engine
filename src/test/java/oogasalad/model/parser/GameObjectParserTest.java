@@ -58,7 +58,7 @@ class GameObjectParserTest {
                     ],
                     "actions": [
                       {
-                        "name": "ChangeSceneAction",
+                        "name": "ChangeViewSceneAction",
                         "parameter": "Example Main Scene"
                       }
                     ]
@@ -107,7 +107,7 @@ class GameObjectParserTest {
                     ],
                     "actions": [
                       {
-                        "name": "ChangeSceneAction",
+                        "name": "ChangeViewSceneAction",
                         "parameter": "Example Main Scene"
                       }
                     ]
@@ -150,7 +150,7 @@ class GameObjectParserTest {
                     ],
                     "actions": [
                       {
-                        "name": "ChangeSceneAction",
+                        "name": "ChangeViewSceneAction",
                         "parameter": "Example Main Scene"
                       }
                     ]
