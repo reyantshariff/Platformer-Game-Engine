@@ -197,9 +197,9 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeViewSceneAction",
-                      "parameter": "nextLevel",
-                      "parameterType": "String"
+                      "name": "ChangeGameSceneAction",
+                      "parameter": -1,
+                      "parameterType": "Integer"
                     }
                   ]
                 }
@@ -244,7 +244,7 @@
               {
                 "Name": "Transform",
                 "Configurations": {
-                  "x": 500,
+                  "x": 100,
                   "y": 300,
                   "rotation": 0,
                   "scaleX": 1,
@@ -254,8 +254,8 @@
               {
                 "Name": "TextRenderer",
                 "Configurations": {
-                  "text": "You Lost! Click to Restart",
-                  "styleClass": "title"
+                  "text": "You Lost! Click to Return to Menu",
+                  "styleClass": "splashText"
                 }
               },
               {
@@ -266,7 +266,7 @@
             "BehaviorController": {
               "Behaviors": [
                 {
-                  "Name": "ClickToRestart",
+                  "Name": "ClickToMenu",
                   "constraints": [
                     {
                       "name": "MouseClickConstraint",
@@ -277,17 +277,42 @@
                   "actions": [
                     {
                       "name": "ChangeViewSceneAction",
-                      "parameter": "Level2",
+                      "parameter": "MainMenuScene",
                       "parameterType": "String"
                     }
                   ]
                 }
               ]
             }
+          },
+          {
+            "Name": "Camera",
+            "Tag": "Camera",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 0,
+                  "y": 0,
+                  "rotation": 0,
+                  "scaleX": 1300,
+                  "scaleY": 1000
+                }
+              },
+              {
+                "Name": "Camera",
+                "Configurations": {}
+              },
+              {
+                "Name": "Follower",
+                "Configurations": {
+                  "followObjectName": "LossText"
+                }
+              }
+            ]
           }
         ]
       }
-
     ]
   }
 }

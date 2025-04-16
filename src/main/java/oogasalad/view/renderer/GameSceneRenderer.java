@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -11,14 +12,15 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import oogasalad.model.config.GameConfig;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.engine.component.SpriteRenderer;
+import oogasalad.model.engine.component.TextRenderer;
 import oogasalad.model.engine.component.Transform;
 import oogasalad.model.engine.component.Camera;
+import oogasalad.view.config.StyleConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -103,6 +105,7 @@ public class GameSceneRenderer {
 
   private void renderGameObject(GraphicsContext gc, GameObject obj) {
     boolean hasSprite = obj.hasComponent(SpriteRenderer.class);
+    boolean hasText = obj.hasComponent(TextRenderer.class);
 
     if (obj.hasComponent(Camera.class)) {
       return;
@@ -112,7 +115,7 @@ public class GameSceneRenderer {
         .entrySet()) {
       Class<? extends GameComponent> clazz = entry.getKey();
 
-      if (hasSprite && clazz.equals(Transform.class)) {
+      if ((hasSprite || hasText) && clazz.equals(Transform.class)) {
         continue;
       }
 
@@ -134,12 +137,21 @@ public class GameSceneRenderer {
    * renders a javaFX Text object
    */
   @SuppressWarnings(UNUSED)
-  private void renderTextComponent(Text component, GraphicsContext gc) {
-    javafx.scene.text.Text text = new javafx.scene.text.Text(component.getText());
-    applyStyleSheet(text, String.valueOf(component.getStyleClass()));
-    WritableImage snapshot = text.snapshot(null, null);
-    gc.drawImage(snapshot, component.getX() - relativeX, component.getY() - relativeY);
+  private void renderTextRenderer(TextRenderer component, GraphicsContext gc) {
+    Transform transform = component.getParent().getComponent(Transform.class);
+    if (transform == null) return;
+
+    javafx.scene.text.Text textNode = new javafx.scene.text.Text(component.getText());
+    textNode.getStyleClass().add(component.getStyleClass());
+    textNode.setX(transform.getX() - relativeX);
+    textNode.setY(transform.getY() - relativeY);
+
+    applyStyleSheet(textNode, component.getStyleClass());
+
+    WritableImage snapshot = textNode.snapshot(null, null);
+    gc.drawImage(snapshot, textNode.getX(), textNode.getY());
   }
+
 
   /**
    * renders a javaFX Image object
@@ -171,15 +183,22 @@ public class GameSceneRenderer {
   }
 
   private void applyStyleSheet(Node node, String styleSheet) {
-    if (myScene == null) {
-      logger.error(GameConfig.getText("noSuchStylesheet"));
-      return;
-    }
+      node.getStyleClass().add(styleSheet);
+      Group tempRoot = new Group(node);
+      Scene tempScene = new Scene(tempRoot);
 
-    node.getStyleClass().add(styleSheet);
-    Group tempRoot = new Group(node);
-    Scene tempScene = new Scene(tempRoot);
-    tempScene.getStylesheets().addAll(myScene.getStylesheets());
+      if (myScene != null && !myScene.getStylesheets().isEmpty()) {
+        tempScene.getStylesheets().addAll(myScene.getStylesheets());
+      } else {
+        String theme = StyleConfig.getCurrentTheme();
+        String themePath = "/oogasalad/stylesheets/" + theme.toLowerCase() + ".css";
+        try {
+          String css = Objects.requireNonNull(getClass().getResource(themePath)).toExternalForm();
+          tempScene.getStylesheets().add(css);
+        } catch (NullPointerException e) {
+          logger.error("Could not load fallback stylesheet: {}", themePath);
+        }
+      }
   }
 
   private void renderSelectionOverlay(GraphicsContext gc, GameObject obj) {

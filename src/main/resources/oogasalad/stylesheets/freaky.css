@@ -150,3 +150,11 @@
   -fx-text-fill: #FFFAFA;
   -fx-font-family: "Comic Sans MS";
 }
+
+/* SPLASH SCREENS */
+.splashText {
+  -fx-font-size: 45px;
+  -fx-text-fill: #220000;
+  -fx-font-family: "Impact";
+  -fx-text-effect: emboss;
+}

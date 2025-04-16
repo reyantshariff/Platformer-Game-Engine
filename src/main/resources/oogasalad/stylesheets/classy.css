@@ -146,3 +146,11 @@
   -fx-text-fill: #1a1a1a;
   -fx-font-family: "serif";
 }
+
+/* SPLASH SCREENS */
+.splashText {
+  -fx-font-size: 36px;
+  -fx-text-fill: #FFD700;
+  -fx-font-family: "serif";
+  -fx-text-effect: emboss;
+}
