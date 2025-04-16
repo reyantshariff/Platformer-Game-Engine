@@ -19,7 +19,7 @@ public class GameScene {
   private final Map<UUID, GameObject> allObjects;
   private final Map<ComponentTag, List<GameComponent>> allComponents;
   private final Queue<Runnable> subscribedEvents;
-  private Set<GameObject> awakeList;
+  private final Set<GameObject> awakeList;
 
   private String name;
   private Game game;
@@ -199,9 +199,8 @@ public class GameScene {
 
   private void updateComponents(Collection<GameObject> objectsInView, double deltaTime) {
     for (ComponentTag order : ComponentTag.values()) {
-      if (order == ComponentTag.NONE)
-        continue;
-        updateObjects(order, objectsInView, deltaTime);
+      if (order == ComponentTag.NONE) continue;
+      updateObjects(order, objectsInView, deltaTime);
     }
   }
 
@@ -278,13 +277,15 @@ public class GameScene {
    */
   public final void unregisterObject(GameObject gameObject) {
     // Unregister components
+    List<GameComponent> componentsToDelete = new ArrayList<>();
     for (ComponentTag order : ComponentTag.values()) {
       for (GameComponent component : allComponents.get(order)) {
         if (component.getParent().equals(gameObject)) {
-          unregisterComponent(component);
+          componentsToDelete.add(component);
         }
       }
     }
+    componentsToDelete.forEach(this::unregisterComponent);
 
     gameObject.setScene(null);
     allObjects.remove(gameObject.getId());

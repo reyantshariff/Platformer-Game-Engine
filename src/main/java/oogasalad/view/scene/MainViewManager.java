@@ -1,10 +1,14 @@
 package oogasalad.view.scene;
 
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javafx.stage.Stage;
+import org.reflections.Reflections;
 import oogasalad.model.config.GameConfig;
 
 
@@ -14,8 +18,7 @@ import oogasalad.model.config.GameConfig;
  * @author Justin Aronwald
  */
 public class MainViewManager {
-  private final Map<String, java.util.function.Function<MainViewManager, ViewScene>> sceneFactories = new HashMap<>();
-
+  private static final String SCENE_PACKAGE = "oogasalad.view.scene";
   private static final String GAME_PLAYER = "GamePlayerScene";
 
   private final Stage stage;
@@ -28,9 +31,20 @@ public class MainViewManager {
    *
    * @param stage the JavaFX primary stage
    */
-  public MainViewManager(Stage stage) {
+  private MainViewManager(Stage stage) {
     this.stage = stage;
     instance = this;
+  }
+
+  /**
+   * Set the instance for the mainView manager.
+   */
+  public static MainViewManager setInstance(Stage stage) {
+    if (instance == null) {
+      instance = new MainViewManager(stage);
+    }
+
+    return instance;
   }
 
 
@@ -44,47 +58,61 @@ public class MainViewManager {
   }
 
   /**
-   * @param viewSceneName - String name of the viewscene to be added
-   * @param factory - Factory function to be put in the map
+   * Creates and stores a ViewScene instance with the given class and constructor args.
+   *
+   * @param viewSceneClass The class of the ViewScene
+   * @param args           Arguments for the constructor
+   * @return The created instance
    */
-  public void registerSceneFactory(String viewSceneName, java.util.function.Function<MainViewManager, ViewScene> factory) {
-    sceneFactories.put(viewSceneName, factory);
+  public <T extends ViewScene> T addViewScene(Class<T> viewSceneClass, String name, Object... args) {
+    try {
+      Class<?>[] argTypes = Arrays.stream(args).map(Object::getClass).toArray(Class[]::new);
+      Constructor<T> constructor = viewSceneClass.getDeclaredConstructor(argTypes);
+      constructor.setAccessible(true);
+      T instance = constructor.newInstance(args);
+      viewScenes.put(name, instance);
+      return instance;
+    } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+      GameConfig.LOGGER.error(e);
+      // TODO: Add statement that is not a raw exception
+    }
+    return null;
   }
 
 
   /**
+   * Gets the viewScene instance with the given name.
+   */
+  public ViewScene getViewScene(String name) {
+    return viewScenes.get(name);
+  }
+
+  /**
    * Function that uses reflection to either create or switch to a ViewScene
    *
-   * @param viewSceneName - Name of view scene to be switchted to - must match class name
+   * @param viewSceneName - Name of view scene to be switched to - must match class name
    */
   public void switchTo(String viewSceneName) {
     try {
       if (!viewScenes.containsKey(viewSceneName)) {
-        ViewScene viewScene;
+        Reflections reflections = new Reflections(SCENE_PACKAGE);
+        List<Class<?>> classes = List.copyOf(reflections.getSubTypesOf(ViewScene.class));
+        Class<?> clazz = classes.stream().filter(c -> c.getSimpleName().equals(viewSceneName)).findFirst().orElse(null);
 
-        if (sceneFactories.containsKey(viewSceneName)) {
-          viewScene = sceneFactories.get(viewSceneName).apply(this);
-        } else {
-          Class<?> clazz = Class.forName("oogasalad.view.scene." + viewSceneName);
-          viewScene = (ViewScene)
-              clazz.getDeclaredConstructor(MainViewManager.class).newInstance(this);
+        if (clazz != null) {
+          ViewScene viewScene = (ViewScene) clazz.getDeclaredConstructor(MainViewManager.class).newInstance(this);
+          viewScenes.put(viewSceneName, viewScene);
         }
-
-        viewScenes.put(viewSceneName, viewScene);
       }
       switchTo(viewScenes.get(viewSceneName));
       removeCachedGameScene(viewSceneName);
-    } catch (ClassNotFoundException |
-        NoSuchMethodException |
-        InstantiationException |
-        IllegalAccessException |
-             InvocationTargetException e) {
+    } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
       throw new SceneSwitchException(GameConfig.getText("noSuchScene", viewSceneName), e);
     }
   }
 
   private void removeCachedGameScene(String viewSceneName) {
-    if(viewSceneName.equals(GAME_PLAYER)) {
+    if (viewSceneName.equals(GAME_PLAYER)) {
       viewScenes.remove(GAME_PLAYER);
     }
   }
@@ -113,20 +141,4 @@ public class MainViewManager {
   public void switchToMainMenu() {
     switchTo(GameConfig.getText("defaultScene"));
   }
-
-  /**
-   * Custom exception for any issues with scene switching. Especially for the
-   * reflection in String
-   */
-  public static class SceneSwitchException extends RuntimeException {
-    /**
-     * Constructor for SceneSwitchException
-     * @param message exception messages
-     * @param cause the cause of the exception
-     */
-    public SceneSwitchException(String message, Throwable cause) {
-      super(message, cause);
-    }
-  }
-
 }

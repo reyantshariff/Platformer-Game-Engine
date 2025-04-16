@@ -24,7 +24,15 @@ public final class BehaviorController extends GameComponent {
   private List<Behavior> behaviors = new ArrayList<>();
 
   @Override
-  public void update(double deltaTime) {
+  protected void awake() {
+    for (Behavior behavior : behaviors) {
+      behavior.setBehaviorController(this);
+      behavior.awake();
+    }
+  }
+
+  @Override
+  protected void update(double deltaTime) {
     for (Behavior behavior : behaviors) {
       behavior.execute();
     }
@@ -35,7 +43,6 @@ public final class BehaviorController extends GameComponent {
    */
   public Behavior addBehavior() {
     Behavior behavior = new Behavior();
-    behavior.setBehaviorController(this);
     behaviors.add(behavior);
     return behavior;
   }
@@ -46,14 +53,6 @@ public final class BehaviorController extends GameComponent {
    */
   public void addBehavior(Behavior behavior) {
     behaviors.add(behavior);
-  }
-
-  @Override
-  public void awake() {
-    for (Behavior behavior : behaviors) {
-      behavior.setBehaviorController(this);
-      behavior.awake();
-    }
   }
 
   /**

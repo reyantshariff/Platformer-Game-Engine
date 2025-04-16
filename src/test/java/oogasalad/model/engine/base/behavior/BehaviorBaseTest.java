@@ -77,7 +77,13 @@ public abstract class BehaviorBaseTest extends ApplicationTest {
         game.setGameInfo(new GameInfo("", "", "", new Dimension(10000, 10000)));
         game.addScene(scene1);
         game.addScene(scene2);
+
         customSetUp();
+
+        behavior1.setBehaviorController(obj1.getComponent(BehaviorController.class));
+        behavior2.setBehaviorController(obj2.getComponent(BehaviorController.class));
+        behavior1.awake();
+        behavior2.awake();
     }
 
     @AfterEach

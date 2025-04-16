@@ -52,9 +52,13 @@ public class GameParser implements Parser<Game> {
     }
 
     Game newGame = new Game();
-    JsonNode data = node.get(DATA);
 
-    handleInformationParsing(data, newGame);
+    // Information
+    JsonNode info = node.get(INFORMATION);
+    handleInformationParsing(info, newGame);
+
+    // Data
+    JsonNode data = node.get(DATA);
     handleResourceParsing(data);
     handleSceneParsing(data, newGame);
 
@@ -63,11 +67,9 @@ public class GameParser implements Parser<Game> {
     return newGame;
   }
 
-  private void handleInformationParsing(JsonNode data, Game newGame) throws ParsingException {
-    if (data.has(INFORMATION)) {
-      GameInfo gameInfo = informationParser.parse(data.get(INFORMATION));
-      newGame.setGameInfo(gameInfo);
-    }
+  private void handleInformationParsing(JsonNode info, Game newGame) throws ParsingException {
+    GameInfo gameInfo = informationParser.parse(info);
+    newGame.setGameInfo(gameInfo);
   }
 
   private void handleResourceParsing(JsonNode data) throws ParsingException {

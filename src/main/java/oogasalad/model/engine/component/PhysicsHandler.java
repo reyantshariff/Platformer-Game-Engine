@@ -17,7 +17,7 @@ public class PhysicsHandler extends GameComponent {
   }
 
   @SerializableField
-  private double mass;
+  private double mass = 1.0;
   @SerializableField
   private double velocityX;
   @SerializableField
@@ -32,11 +32,6 @@ public class PhysicsHandler extends GameComponent {
   @Override
   public void awake() {
     transform = getComponent(Transform.class);
-  }
-
-  @Override
-  public void start() {
-    mass = 1.0;
   }
 
   @Override

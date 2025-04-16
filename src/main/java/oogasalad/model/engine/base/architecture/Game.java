@@ -115,7 +115,6 @@ public class Game {
   public void resetScene(String sceneName) {
     //TODO: Store the file paths and reload the scene with the parser or store original versions of all scenes
   }
-  
 
   /**
    * Called externally when a key is pressed.

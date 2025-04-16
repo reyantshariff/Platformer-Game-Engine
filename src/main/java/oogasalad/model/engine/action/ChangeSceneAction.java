@@ -1,7 +1,6 @@
 package oogasalad.model.engine.action;
 
 import oogasalad.model.engine.base.behavior.BehaviorAction;
-import oogasalad.model.engine.base.enumerate.ComponentTag;
 import oogasalad.view.scene.MainViewManager;
 
 /**
@@ -11,12 +10,13 @@ import oogasalad.view.scene.MainViewManager;
  */
 public class ChangeSceneAction extends BehaviorAction<String> {
   private static final String NEXT_LEVEL = "nextLevel";
-  @Override
-  public ComponentTag ActionType() {
-    return ComponentTag.TRANSFORM;
-  }
 
   private MainViewManager mainViewManager;
+
+  @Override
+  protected String defaultParameter() {
+    return "";
+  }
 
   @Override
   protected void awake() {

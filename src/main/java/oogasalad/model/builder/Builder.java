@@ -1,16 +1,20 @@
 package oogasalad.model.builder;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.Deque;
 import java.util.ArrayDeque;
 import oogasalad.model.builder.actions.DeleteObjectAction;
+import oogasalad.model.builder.actions.CreateObjectAction;
 import oogasalad.model.builder.actions.MoveObjectAction;
+import oogasalad.model.builder.actions.ResizeObjectAction;
 import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.engine.component.Transform;
 import oogasalad.model.parser.JsonParser;
+import oogasalad.model.parser.Parser;
 import oogasalad.model.parser.ParsingException;
 
 /**
@@ -19,49 +23,45 @@ import oogasalad.model.parser.ParsingException;
  */
 
 public class Builder {
-  private GameObject selectedObject; //Should be passed from front end to back end. Front end should pass string ID.
-  private String filepath = " ";
-  private Game game; //Front end should pass a list of selected objects to the backend.
+  private GameObject selectedObject; // Should be passed from front end to back end. Front end should pass string ID.
+  private final String filepath;
+  private Game game; // Front end should pass a list of selected objects to the backend.
   private boolean fileSaved = false;
-  private GameScene gameScene;
+  private GameScene currentScene;
+  private double selectedObjectPrevX;
+  private double selectedObjectPrevY;
 
-  //Add Backend boolean to keep track of whether user has saved Game.
+  private final Deque<EditorAction> undoStack = new ArrayDeque<>();
+  private final Deque<EditorAction> redoStack = new ArrayDeque<>();
+
   /**
    * Constructor for Loading a Game
    *
    * @param filepath - JSON filepath of Game
    */
-
   public Builder(String filepath) {
-
     this.filepath = filepath;
-    //game would then load filepath
+
+    try {
+      Parser<?> parser = new JsonParser(filepath);
+      ObjectMapper mapper = new ObjectMapper();
+      JsonNode newNode = mapper.createObjectNode();
+      game = (Game) parser.parse(newNode);
+    } catch (ParsingException e) {
+      throw new IllegalStateException("Failed to parse game JSON file: " + e.getMessage(), e);
+    }
+
+    game.goToScene(game.getLevelOrder().getFirst());
+    game.step(0);
+    currentScene = game.getCurrentScene();
   }
 
   /**
-   * Constructor for Creating a Game from Scratch
-   */
-
-  public Builder()
+   Allows for actions to be pushed into the undo deque outside of Builder.
+   * */
+  public void pushAction(EditorAction action)
   {
-    game = new Game();
-    this.gameScene = new GameScene("new GameScene");
-    game.addScene(gameScene);
-  }
-
-  private Deque<EditorAction> undoStack = new ArrayDeque<>();
-  private Deque<EditorAction> redoStack = new ArrayDeque<>();
-
-  /**
-   * Constructs a new Builder instance with the specified Game.
-   *
-   * @param scene The GameScene instance to be used by the builder.
-   */
-  public Builder(GameScene scene) {
-    game = new Game();
-    gameScene = scene;
-    game.addScene(gameScene);
-    game.changeScene(scene.getName());
+    undoStack.push(action);
   }
 
   /**
@@ -108,9 +108,21 @@ public class Builder {
    */
   public void selectExistingObject(GameObject object)
   {
-    selectedObject= object;
+    if (object.hasComponent(Transform.class))
+    {
+      selectedObjectPrevX = object.getComponent(Transform.class).getX();
+      selectedObjectPrevY = object.getComponent(Transform.class).getY();
+    }
+    selectedObject = object;
   }
 
+  /**
+   * Sets selectedObject pointer to null
+   * */
+  public void deselect()
+  {
+    selectedObject = null;
+  }
 
   /**
    *  Records when two game objects overlap
@@ -119,7 +131,7 @@ public class Builder {
   {
     for (GameObject object : game.getCurrentScene().getAllObjects())
     {
-      if (object.hasComponent(Transform.class) && object.getComponent(Transform.class).getX() == currentObject.getComponent(Transform.class).getX() && object.getComponent(Transform.class).getY() == currentObject.getComponent(Transform.class).getY() && currentObject.getId() != object.getId())
+      if (!currentObject.equals(object) && object.hasComponent(Transform.class) && object.getComponent(Transform.class).getX() == currentObject.getComponent(Transform.class).getX() && object.getComponent(Transform.class).getY() == currentObject.getComponent(Transform.class).getY())
       {
         return true;
       }
@@ -127,34 +139,17 @@ public class Builder {
     return false;
   }
 
-
-//   private GameObject findObject(UUID id)
-//   {
-//     for (GameObject object : game.getCurrentScene().getAllObjects())
-//     {
-//       if (object.getId() == id)
-//       {
-//         return object;
-//       }
-// //      if (object.getComponent(Transform.class).getX() == x && object.getComponent(Transform.class).getY() == y)
-// //      {
-// //        return object;
-// //      }
-//     }
-//     return null;
-//   }
-
   /**
    *  Stops the preview if the user lifts mouse and cursor is not on the editor screen.
    *  Game object should be instantiated after mouse is released
    */
   public void placeObject(double x, double y) {
     if (selectedObject != null && selectedObject.hasComponent(Transform.class)) {
-      undoStack.push(new MoveObjectAction(selectedObject, selectedObject.getComponent(Transform.class).getX(), selectedObject.getComponent(Transform.class).getY(), x, y));
+      undoStack.push(new MoveObjectAction(selectedObject, selectedObjectPrevX, selectedObjectPrevY, x, y));
       selectedObject.getComponent(Transform.class).setX(x);
       selectedObject.getComponent(Transform.class).setY(y);
     }
-    selectedObject = null; //should I add exception?
+  //  selectedObject = null; //should I add exception?
   }
 
   /**
@@ -165,14 +160,36 @@ public class Builder {
   }
 
   /**
-   *  Moves the game object to a new location
-   */
+   * Tracks coordinates of the object as its dragged
+   * @param x tracks the x position of the object
+   * @param y tracks the y position of the object
+   * */
   public void moveObject(double x, double y)
   {
     if (selectedObject != null && selectedObject.hasComponent(Transform.class))
     {
       selectedObject.getComponent(Transform.class).setX(x);
       selectedObject.getComponent(Transform.class).setY(y);
+    }
+  }
+
+  /**
+   * Loads new objects into the scene
+   * @param object prefabricated game object
+   * @param previewHorizontalMidpoint horizontal midpoint of the screen
+   * @param previewVerticalMidpoint vertical midpoint of the screen.
+   * */
+  public void addObject(GameObject object, double previewHorizontalMidpoint, double previewVerticalMidpoint)
+  {
+    Transform t = object.getComponent(Transform.class);
+    if (t != null)
+    {
+      double objectWidth = object.getComponent(Transform.class).getScaleX();
+      double objectHeight = object.getComponent(Transform.class).getScaleY();
+      object.getComponent(Transform.class).setX(previewHorizontalMidpoint - (objectWidth / 2));
+      object.getComponent(Transform.class).setY(previewVerticalMidpoint - (objectHeight / 2));
+      currentScene.registerObject(object);
+      undoStack.add(new CreateObjectAction(game, object));
     }
   }
 
@@ -184,7 +201,46 @@ public class Builder {
     {
       game.getCurrentScene().unregisterObject(selectedObject);
       undoStack.push(new DeleteObjectAction(game, selectedObject));
+      deselect();
     }
+  }
+
+  /**
+   *  Resizes the selected object
+   * @param x - x position
+   * @param y  - y position
+   * @param h - height
+   * @param w - width
+   */
+  public void resizeObject(double x, double y, double w, double h) {
+    if (selectedObject != null && selectedObject.hasComponent(Transform.class)) {
+      Transform t = selectedObject.getComponent(Transform.class);
+      TransformState prev = new TransformState(t.getX(), t.getY(), t.getScaleX(), t.getScaleY());
+      TransformState next = new TransformState(x, y, w, h);
+      undoStack.push(new ResizeObjectAction(selectedObject, prev, next));
+      t.setX(x);
+      t.setY(y);
+      t.setScaleX(w);
+      t.setScaleY(h);
+    }
+  }
+
+
+  /**
+   *  Returns the currently selected object
+   */
+  public GameObject getSelectedObject()
+  {
+    return selectedObject;
+  }
+
+  /**
+   *  Returns the current scene
+   */
+
+  public GameScene getCurrentScene()
+  {
+    return currentScene;
   }
 
   /**
@@ -192,6 +248,7 @@ public class Builder {
    * @param filepath location of JSON file
    */
   public JsonNode saveGameAs(String filepath) {
+    // TODO: Need to create a new file if it doesn't exist
     JsonParser parser = new JsonParser(filepath);
     try {
       return parser.write(game);
@@ -208,7 +265,7 @@ public class Builder {
     try {
       game = parser.parse(node);
     } catch (ParsingException e) {
-      throw new loadGameException("Error loading game from JSON: " + e.getMessage(), e);
+      throw new LoadGameException("Error loading game from JSON: " + e.getMessage(), e);
     }
   }
 }

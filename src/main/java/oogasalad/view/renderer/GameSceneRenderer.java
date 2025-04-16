@@ -1,4 +1,4 @@
-package oogasalad.view.gui;
+package oogasalad.view.renderer;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import oogasalad.model.config.GameConfig;
 import oogasalad.model.engine.base.architecture.GameComponent;
@@ -25,9 +26,9 @@ import org.apache.logging.log4j.Logger;
  * The GameObjectRenderer class is responsible for rendering game objects and their components
  */
 
-public class GameObjectRenderer {
+public class GameSceneRenderer {
 
-  private static final Logger logger = LogManager.getLogger(GameObjectRenderer.class);
+  private static final Logger logger = LogManager.getLogger(GameSceneRenderer.class);
   private final Scene myScene;
   private double relativeX;
   private double relativeY;
@@ -39,7 +40,7 @@ public class GameObjectRenderer {
    *
    * @param scene the scene to render the game objects in
    */
-  public GameObjectRenderer(Scene scene) {
+  public GameSceneRenderer(Scene scene) {
     myScene = scene;
   }
 
@@ -60,35 +61,44 @@ public class GameObjectRenderer {
       logger.error(GameConfig.getText("noTransformWithCamera"));
       return;
     }
+
     relativeX = cameraTransform.getX();
     relativeY = cameraTransform.getY();
 
-    renderWithoutCamera(gc, scene);
+    renderScene(gc);
+
+    Collection<GameObject> objects = scene.getAllObjectsInView();
+    for (GameObject obj : objects) {
+      renderGameObject(gc, obj);
+    }
   }
 
   /**
-   * For scenes WITHOUT a camera: renders the game objects in the given scene onto the canvas.
+   * For scenes WITHOUT a camera: renders all game objects in the given scene onto the canvas.
    *
    * @param gc    The graphics context of the canvas.
    * @param scene The game scene to render.
+   * @param selectedGameObject The game object to highlight (if any)
    */
-  public void renderWithoutCamera(GraphicsContext gc, GameScene scene) {
+  public void renderWithoutCamera(GraphicsContext gc, GameScene scene, GameObject selectedGameObject) {
+    renderScene(gc);
+
+    Collection<GameObject> objects = scene.getAllObjects();
+    for (GameObject obj : objects) {
+      renderGameObject(gc, obj);
+    }
+
+    if (selectedGameObject != null) {
+      renderSelectionOverlay(gc, selectedGameObject);
+    }
+  }
+
+  private void renderScene(GraphicsContext gc) {
     double windowX = GameConfig.getNumber("windowX");
     double windowY = GameConfig.getNumber("windowY");
     double windowWidth = GameConfig.getNumber("windowWidth");
     double windowHeight = GameConfig.getNumber("windowHeight");
     gc.clearRect(windowX, windowY, windowWidth, windowHeight);
-
-    Collection<GameObject> objects;
-    if (scene.getCamera() != null) {
-      objects = scene.getAllObjectsInView();
-    } else {
-      objects = scene.getAllObjects(); // if no camera component in scene, get all objects in scene
-    }
-
-    for (GameObject obj : objects) {
-      renderGameObject(gc, obj);
-    }
   }
 
   private void renderGameObject(GraphicsContext gc, GameObject obj) {
@@ -171,4 +181,31 @@ public class GameObjectRenderer {
     Scene tempScene = new Scene(tempRoot);
     tempScene.getStylesheets().addAll(myScene.getStylesheets());
   }
+
+  private void renderSelectionOverlay(GraphicsContext gc, GameObject obj) {
+    if (!obj.hasComponent(Transform.class)) return;
+
+    Transform t = obj.getComponent(Transform.class);
+    double x = t.getX();
+    double y = t.getY();
+    double w = t.getScaleX();
+    double h = t.getScaleY();
+
+    gc.setStroke(Color.LIGHTBLUE);
+    gc.setLineWidth(2);
+    gc.strokeRect(x, y, w, h);
+
+    double handleSize = 8;
+    double[][] positions = {
+        {x, y}, {x + w / 2, y}, {x + w, y},
+        {x + w, y + h / 2}, {x + w, y + h},
+        {x + w / 2, y + h}, {x, y + h}, {x, y + h / 2}
+    };
+
+    gc.setFill(Color.LIGHTBLUE);
+    for (double[] pos : positions) {
+      gc.fillRect(pos[0] - handleSize / 2, pos[1] - handleSize / 2, handleSize, handleSize);
+    }
+  }
+
 }

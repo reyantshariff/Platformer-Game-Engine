@@ -102,9 +102,11 @@ public class Behavior implements Serializable {
    */
   public void awake() {
     for (BehaviorConstraint<?> constraint : constraints) {
+      constraint.setBehavior(this);
       constraint.awake();
     }
     for (BehaviorAction<?> action : actions) {
+      action.setBehavior(this);
       action.awake();
     }
   }
@@ -117,11 +119,6 @@ public class Behavior implements Serializable {
   public <T extends BehaviorConstraint<?>> T addConstraint(Class<T> constraintClass) {
     try {
       T constraint = constraintClass.getDeclaredConstructor().newInstance();
-      if (isDuplicateConstraint(constraint)) {
-        return constraint; // Do not add if an instance of this action already exists
-      }
-      constraint.setBehavior(this);
-      constraint.awake();
       constraints.add(constraint);
       return constraint;
     } catch (NoSuchMethodException | IllegalAccessException | InstantiationException
@@ -136,11 +133,7 @@ public class Behavior implements Serializable {
    * @param constraintInstance the instance of the constraint we wish to add
    */
   public void addConstraint(BehaviorConstraint<?> constraintInstance) {
-    if (isDuplicateConstraint(constraintInstance)) {
-      return; // Do not add if an instance of this action already exists
-    }
     try {
-      constraintInstance.setBehavior(this);
       constraints.add(constraintInstance);
     } catch (UnsupportedOperationException | IllegalArgumentException | ClassCastException e) {
       LOGGER.error("Failed to create constraint: {}", constraintInstance.getClass().getName());
@@ -148,21 +141,12 @@ public class Behavior implements Serializable {
     }
   }
 
-  private boolean isDuplicateConstraint(BehaviorConstraint<?> constraintInstance) {
-    if (constraints.contains(constraintInstance)) {
-      LOGGER.error("Constraint already exists: {}. Ignoring addition.", constraintInstance);
-      return true;
-    }
-    return false;
-  }
-
   /**
-   * Remove a constraint from the behavior. This method is used to remove a constraint from the
-   * @param constraintClass the constraint class specified
-   * @param <T> the type of the constraint
+   * Remove a constraint from the behavior.
+   * @param constraint the constraint to be removed
    */
-  public <T extends BehaviorConstraint<?>> void removeConstraint(Class<T> constraintClass) {
-    constraints.removeIf(constraint -> constraint.getClass().equals(constraintClass));
+  public void removeConstraint(BehaviorConstraint<?> constraint) {
+    constraints.remove(constraint);
   }
 
   /**
@@ -173,12 +157,6 @@ public class Behavior implements Serializable {
   public <T extends BehaviorAction<?>> T addAction(Class<T> actionClass) {
     try {
       T action = actionClass.getDeclaredConstructor().newInstance();
-
-      if (isDuplicateAction(action))
-        return action;
-
-      action.setBehavior(this);
-      action.awake();
       actions.add(action);
       return action;
     } catch (NoSuchMethodException | IllegalAccessException | InstantiationException
@@ -193,11 +171,7 @@ public class Behavior implements Serializable {
    * @param actionInstance the action instance we wish to add
    */
   public void addAction(BehaviorAction<?> actionInstance) {
-    if (isDuplicateAction(actionInstance)) {
-      return; // Do not add if an instance of this action already exists
-    }
     try {
-      actionInstance.setBehavior(this);
       actions.add(actionInstance);
     } catch (UnsupportedOperationException | IllegalArgumentException | ClassCastException e) {
       LOGGER.error("Failed to add action: {}", actionInstance.getClass().getName());
@@ -205,22 +179,12 @@ public class Behavior implements Serializable {
     }
   }
 
-  private boolean isDuplicateAction(BehaviorAction<?> actionInstance) {
-    if (actions.contains(actionInstance)) {
-      LOGGER.error("Action {} already exists in behavior. Ignoring addition.",
-          actionInstance);
-      return true;
-    }
-    return false;
-  }
-
   /**
-   * Remove an action from the behavior. This method is used to remove an action from the
-   * @param actionClass the action class specified
-   * @param <T> the type of the action
+   * Remove an action from the behavior.
+   * @param action the action to be removed
    */
-  public <T extends BehaviorAction<?>> void removeAction(Class<T> actionClass) {
-    actions.removeIf(action -> action.getClass().equals(actionClass));
+  public void removeAction(BehaviorAction<?> action) {
+    actions.remove(action);
   }
 
 }

@@ -36,13 +36,21 @@ public class BehaviorParser implements Parser<Behavior> {
   private static final String PARAMETER = "parameter";
   private static final String LOWER_NAME = "name";
 
-  private static final Map<Class<?>, BiConsumer<ObjectNode, Object>> TYPE_WRITERS = new HashMap<>();
+  private static final Map<String, Class<?>> PARAMETER_TYPE_MAP = Map.of(
+      "KeyCode", oogasalad.model.engine.base.enumerate.KeyCode.class,
+      "String", String.class,
+      "Integer", Integer.class,
+      "Double", Double.class,
+      "Void", Void.class
+  );
 
+  private static final Map<Class<?>, BiConsumer<ObjectNode, Object>> TYPE_WRITERS = new HashMap<>();
   static {
     TYPE_WRITERS.put(String.class, (node, value) -> node.put(PARAMETER, (String) value));
     TYPE_WRITERS.put(Integer.class, (node, value) -> node.put(PARAMETER, (Integer) value));
     TYPE_WRITERS.put(Double.class, (node, value) -> node.put(PARAMETER, (Double) value));
     TYPE_WRITERS.put(KeyCode.class, (node, value) -> node.put(PARAMETER, value.toString()));
+    TYPE_WRITERS.put(Void.class, (node, value) -> node.put(PARAMETER, ""));
   }
 
   private final ObjectMapper mapper = new ObjectMapper();
@@ -201,9 +209,10 @@ public class BehaviorParser implements Parser<Behavior> {
     String behaviorName = data.getName();
     root.put(NAME, behaviorName);
 
-    //I understand that the two methods below are quite similar in structure, but the alternative
-    // would be to create a method with about 6 or more parameters to account for both,
-    // which I think is less readable and coder friendly than two similar methods.
+    // NOTE: I understand that the two methods below are quite similar in structure, but the alternative
+    //       would be to create a method with about 6 or more parameters to account for both,
+    //       which I think is less readable and coder friendly than two similar methods.
+    //   BY: Daniel Rodriguez-Florido
     writeConstraints(data, root);
     writeActions(data, root);
 
@@ -237,40 +246,55 @@ public class BehaviorParser implements Parser<Behavior> {
     ArrayNode actionsArray = mapper.createArrayNode();
 
     data.getActions().forEach(action -> {
-      ObjectNode oneAction = mapper.createObjectNode();
-      BiConsumer<ObjectNode, Object> writer = TYPE_WRITERS.get(action.getParameter().getClass());
-
-      if(writer == null || action.getParameter() == null || oneAction == null) {
-        LOGGER.error(getText("writingActionError",
-            action.getParameter().getClass().getSimpleName(), data.getName()));
-        return;
-      }
-
-        oneAction.put(LOWER_NAME, action.getClass().getSimpleName());
-        writer.accept(oneAction, action.getParameter()); // Catching this error
-        oneAction.put(PARAMETER_TYPE, action.getParameter().getClass().getSimpleName());
-
+      ObjectNode oneAction = createActionNode(action, data);
+      if (oneAction != null) {
         actionsArray.add(oneAction);
+      }
     });
 
     root.set(ACTIONS, actionsArray);
   }
 
+  private ObjectNode createActionNode(BehaviorAction<?> action, Behavior data) {
+    ObjectNode oneAction = mapper.createObjectNode();
+    Class<?> parameterClass = getParameterClass(action);
 
-  //unsure how to handle this without using switch
+    BiConsumer<ObjectNode, Object> writer = TYPE_WRITERS.get(parameterClass);
+    if (writer == null || oneAction == null) {
+      LOGGER.error(getText("writingActionError", parameterClass, data.getName()));
+      return null;
+    }
+
+    oneAction.put(LOWER_NAME, action.getClass().getSimpleName());
+    writeActionParameter(writer, oneAction, action);
+    oneAction.put(PARAMETER_TYPE, parameterClass.getSimpleName());
+
+    return oneAction;
+  }
+
+  private Class<?> getParameterClass(BehaviorAction<?> action) {
+    return action.getParameter() == null ? Void.class : action.getParameter().getClass();
+  }
+
+  private void writeActionParameter(BiConsumer<ObjectNode, Object> writer, ObjectNode oneAction, BehaviorAction<?> action) {
+    if (action.getParameter() == null) {
+      writer.accept(oneAction, "");
+    } else {
+      writer.accept(oneAction, action.getParameter());
+    }
+  }
+
   private Class<?> getParameterType(JsonNode node, Class<?> defaultType) throws ParsingException {
     if (!node.has(PARAMETER_TYPE)) {
       return defaultType;
     }
 
     String typeName = node.get(PARAMETER_TYPE).asText();
-    return switch (typeName) {
-      case "KeyCode" -> oogasalad.model.engine.base.enumerate.KeyCode.class;
-      case "String" -> String.class;
-      case "Integer" -> Integer.class;
-      case "Double" -> Double.class;
-      default -> throw new ParsingException(getText("unknownParameterError", typeName));
-    };
+    Class<?> typeClass = PARAMETER_TYPE_MAP.get(typeName);
+    if (typeClass == null) {
+      throw new ParsingException(getText("unknownParameterError", typeName));
+    }
+    return typeClass;
   }
 
 }

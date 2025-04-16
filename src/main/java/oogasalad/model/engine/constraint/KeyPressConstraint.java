@@ -1,7 +1,6 @@
 package oogasalad.model.engine.constraint;
 
 import oogasalad.model.engine.base.behavior.BehaviorConstraint;
-import oogasalad.model.engine.base.enumerate.ComponentTag;
 import oogasalad.model.engine.base.enumerate.KeyCode;
 import oogasalad.model.engine.component.InputHandler;
 
@@ -12,12 +11,13 @@ import oogasalad.model.engine.component.InputHandler;
  * @author Hsuan-Kai Liao
  */
 public class KeyPressConstraint extends BehaviorConstraint<KeyCode> {
-  @Override
-  public ComponentTag ConstraintType() {
-    return ComponentTag.INPUT;
-  }
 
   private InputHandler inputHandler;
+
+  @Override
+  protected KeyCode defaultParameter() {
+    return KeyCode.NONE;
+  }
 
   @Override
   protected void awake() {

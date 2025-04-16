@@ -5,13 +5,13 @@ package oogasalad.model.builder;
  * It extends the RuntimeException class.
  */
 
-public class loadGameException extends RuntimeException {
+public class LoadGameException extends RuntimeException {
     /**
      * Constructs a new loadGameException with the specified detail message.
      *
      * @param message the detail message
      */
-    public loadGameException(String message) {
+    public LoadGameException(String message) {
         super(message);
     }
 
@@ -21,7 +21,7 @@ public class loadGameException extends RuntimeException {
      * @param message the detail message
      * @param cause   the cause of the exception
      */
-    public loadGameException(String message, Throwable cause) {
+    public LoadGameException(String message, Throwable cause) {
         super(message, cause);
     }
     
