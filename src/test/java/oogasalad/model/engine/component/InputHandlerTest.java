@@ -23,8 +23,16 @@ class InputHandlerTest {
     game.addScene(gameScene);
     Player player = new Player("player");
     gameScene.registerObject(player);
+
     inputHandler = new InputHandler();
     player.addComponent(inputHandler);
+
+    Transform transform = new Transform();
+    transform.setX(100);
+    transform.setY(50);
+    transform.setScaleX(200);
+    transform.setScaleY(200);
+    player.addComponent(transform);
   }
 
   @Test
@@ -126,8 +134,10 @@ class InputHandlerTest {
   }
 
   @Test
-  void update_ClearsMouseClickedFlag() {
-    inputHandler.registerMouseClick(200.0, 250.0);
+  void update_ClearsMouseClickedFlag_AfterTwoUpdates() {
+    inputHandler.registerMouseClick(200.0, 200.0);
+    assertTrue(inputHandler.isMouseClicked());
+    inputHandler.update(0.016);
     assertTrue(inputHandler.isMouseClicked());
     inputHandler.update(0.016);
     assertFalse(inputHandler.isMouseClicked());
