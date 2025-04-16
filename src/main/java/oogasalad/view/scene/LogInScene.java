@@ -1,14 +1,13 @@
 package oogasalad.view.scene;
 
+import java.io.IOException;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import oogasalad.controller.GameController;
@@ -25,12 +24,14 @@ public class LogInScene extends ViewScene {
   private static final String SOCIAL_LOGIN_BUTTON_ID = "socialLoginButton";
   private static final String SOCIAL_SIGN_UP_BUTTON_ID = "socialSignUpButton";
   private static final String TOGGLE_PASSWORD_BUTTON_ID = "togglePasswordButton";
-  private GameController gameController;
+  private static final String SHOW_PASS_TEXT_ID = "showPassText";
+  private static final String HIDE_PASS_TEXT_ID = "hidePassText";
+
+  private final GameController gameController;
   private TextField usernameField;
   private TextField nakedPasswordField;
   private PasswordField passwordField;
-  private static final String SHOW_PASS_TEXT_ID = "showPassText";
-  private static final String HIDE_PASS_TEXT_ID = "hidePassText";
+  private CheckBox rememberMe;
 
   /**
    * Template for a program JavaFX window using a GameObjectRenderer
@@ -44,6 +45,7 @@ public class LogInScene extends ViewScene {
     setupWelcomeMessage(card);
     setUsernameField(card);
     setupPasswordField(card);
+    setUpCheckbox(card);
     setupLoginButton(card);
     setupSignUpButton(card);
     gameController = new GameController(manager);
@@ -123,7 +125,11 @@ public class LogInScene extends ViewScene {
             : passwordField.getText().trim();
 
       if (!username.isEmpty() && !password.isEmpty()) {
-        gameController.handleLogin(username, password);
+        try {
+          gameController.handleLogin(username, password, rememberMe.isSelected());
+        } catch (IOException e) {
+          LOGGER.warn("Error setting up autologin:", e);
+        }
       } else {
         LOGGER.info("Missing username or password");
         // Show to user
@@ -136,6 +142,11 @@ public class LogInScene extends ViewScene {
     Button signUpButton = new Button(GameConfig.getText(SOCIAL_SIGN_UP_BUTTON_ID));
     signUpButton.setId(SOCIAL_SIGN_UP_BUTTON_ID);
     card.getChildren().add(signUpButton);
+  }
+
+  private void setUpCheckbox(VBox card) {
+    rememberMe = new CheckBox("Remember Me");
+    card.getChildren().add(rememberMe);
   }
 
 }
