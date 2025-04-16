@@ -1,4 +1,4 @@
-package oogasalad.view.scene;
+package oogasalad.view.scene.auth;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -6,6 +6,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import oogasalad.controller.GameController;
 import oogasalad.model.config.GameConfig;
+import oogasalad.view.scene.MainViewManager;
+import oogasalad.view.scene.ViewScene;
 
 /**
  * This is the scene

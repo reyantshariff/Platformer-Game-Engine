@@ -1,4 +1,4 @@
-package oogasalad.view.scene;
+package oogasalad.view.scene.auth;
 
 import java.io.IOException;
 import javafx.geometry.Insets;
@@ -12,6 +12,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import oogasalad.controller.GameController;
 import oogasalad.model.config.GameConfig;
+import oogasalad.view.scene.MainViewManager;
+import oogasalad.view.scene.ViewScene;
+
 import static oogasalad.model.config.GameConfig.LOGGER;
 
 /**

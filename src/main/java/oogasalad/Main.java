@@ -7,7 +7,7 @@ import oogasalad.database.FirebaseManager;
 import oogasalad.model.config.GameConfig;
 import oogasalad.model.profile.SessionManagement;
 import oogasalad.view.scene.MainViewManager;
-import oogasalad.view.scene.LogInScene;
+import oogasalad.view.scene.auth.LogInScene;
 import oogasalad.view.scene.menu.MainMenuScene;
 
 /**
