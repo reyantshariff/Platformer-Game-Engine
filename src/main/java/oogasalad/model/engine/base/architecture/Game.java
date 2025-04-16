@@ -2,9 +2,11 @@ package oogasalad.model.engine.base.architecture;
 
 import static oogasalad.model.config.GameConfig.LOGGER;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -21,6 +23,9 @@ public class Game {
 
   private GameScene currentScene;
   private GameInfo myGameInfo;
+
+  private List<String> levelOrder = new ArrayList<>();
+  private int currentLevelIndex = 0;
 
   /**
    * The main game loop. This method should be called every frame. It updates the current scene and
@@ -110,7 +115,6 @@ public class Game {
   public void resetScene(String sceneName) {
     //TODO: Store the file paths and reload the scene with the parser or store original versions of all scenes
   }
-  
 
   /**
    * Called externally when a key is pressed.
@@ -155,4 +159,48 @@ public class Game {
   public GameInfo getGameInfo() {
     return myGameInfo;
   }
+
+  /**
+   * Setter for the order of the levels
+   *
+   * @param levelOrder - a list of strings containing the ordering of levels by name
+   */
+  public void setLevelOrder(List<String> levelOrder) {
+    this.levelOrder = levelOrder;
+  }
+
+  /**
+   * Method that handles advancing levels -- moves the currentIndex of the level and changes scenes
+   *
+   */
+  public void goToNextLevel() {
+    currentLevelIndex++;
+    if (currentLevelIndex < levelOrder.size()) {
+      changeScene(levelOrder.get(currentLevelIndex));
+    } 
+    // TODO: Handle win
+  }
+
+  /**
+   * Getter for the order of the levels
+   *
+   * @return - a list of strings containing the ordering of levels by name
+   */
+  public List<String> getLevelOrder() {
+    return levelOrder;
+  }
+
+  /**
+   * Method to go to a new scene based on scene name
+   *
+   * @param sceneName - the name of the scene that will be switched too
+   */
+  public void goToScene(String sceneName) {
+    int index = levelOrder.indexOf(sceneName);
+    if (index != -1) {
+      currentLevelIndex = index;
+      changeScene(sceneName);
+    }
+  }
+
 }

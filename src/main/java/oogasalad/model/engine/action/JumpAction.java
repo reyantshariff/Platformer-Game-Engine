@@ -1,7 +1,6 @@
 package oogasalad.model.engine.action;
 
 import oogasalad.model.engine.base.behavior.BehaviorAction;
-import oogasalad.model.engine.base.enumerate.ComponentTag;
 import oogasalad.model.engine.component.PhysicsHandler;
 
 /**
@@ -13,8 +12,8 @@ public class JumpAction extends BehaviorAction<Double> {
   private PhysicsHandler physicsHandler;
 
   @Override
-  public ComponentTag ActionType() {
-    return ComponentTag.INPUT;
+  protected Double defaultParameter() {
+    return 0.0;
   }
 
   @Override

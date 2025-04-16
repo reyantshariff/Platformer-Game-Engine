@@ -1,10 +1,8 @@
 package oogasalad.model.engine.base.architecture;
 
 import static oogasalad.model.config.GameConfig.LOGGER;
+import java.lang.reflect.InvocationTargetException;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import java.util.Map;
-import java.util.function.Function;
 import oogasalad.model.engine.base.enumerate.ComponentTag;
 import oogasalad.model.engine.base.serialization.Serializable;
 import oogasalad.model.engine.base.serialization.SerializedField;
@@ -28,13 +26,6 @@ public abstract class GameComponent implements Serializable {
   }
 
   /**
-   * This method is called before the object calls its update method for the first time
-   */
-  protected void start() {
-    // NOTE: This method should be override if needed
-  }
-
-  /**
    * This method is called when the component is removed.
    */
   protected void onRemove() {
@@ -49,6 +40,43 @@ public abstract class GameComponent implements Serializable {
   protected void update(double deltaTime) {
     // NOTE: This method should be override if needed.
   }
+
+  /**
+   * Return a copy of this GameComponent and its parameters
+   *
+   * @return new GameComponent object with same characteristics
+   */
+  public GameComponent copy() {
+    try {
+      // Create a new instance of the same class using its no-arg constructor.
+      GameComponent copy = this.getClass().getDeclaredConstructor().newInstance();
+
+      // Iterate over each serialized field in the original.
+      for (SerializedField<?> field : this.getSerializedFields()) {
+        setCopyField(copy, field);
+      }
+      return copy;
+    } catch (InstantiationException | IllegalAccessException |
+             NoSuchMethodException | InvocationTargetException e) {
+      throw new FailedCopyException("Failed to deep copy component: " + this.getClass().getSimpleName(), e);
+    }
+  }
+
+  private void setCopyField(GameComponent copy, SerializedField<?> field) {
+    String fieldName = field.getFieldName();
+    Object value = field.getValue();
+    for (SerializedField<?> copyField : copy.getSerializedFields()) {
+      if (copyField.getFieldName().equals(fieldName) &&
+          copyField.getFieldType().equals(field.getFieldType())) {
+        // For immutable types (e.g. primitives, Strings) a simple assignment is enough.
+        // If the field value is mutable and requires further deep copying,
+        // you'll need to handle that separately.
+        ((SerializedField<Object>) copyField).setValue(value);
+        break;
+      }
+    }
+  }
+
 
   /**
    * Get the component based on

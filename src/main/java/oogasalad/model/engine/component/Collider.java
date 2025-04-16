@@ -15,6 +15,7 @@ import oogasalad.model.engine.base.serialization.SerializableField;
  */
 public class Collider extends GameComponent {
   private static final double COLLISION_OFFSET =0.1;
+  private static final double OVERLAP_TOLERANCE =2;
 
   @Override
   public ComponentTag componentTag() {
@@ -22,25 +23,22 @@ public class Collider extends GameComponent {
   }
 
   @SerializableField
-  private List<String> collidableTags;
+  private List<String> collidableTags = new ArrayList<>();
 
   private final Set<Collider> collidedColliders = new HashSet<>();
   private Transform transform;
 
-
-
   @Override
   protected void awake() {
     transform = getComponent(Transform.class);
-    collidableTags = new ArrayList<>();
   }
 
   @Override
   protected void update(double deltaTime) {
     collidedColliders.clear();
-    for (GameObject obj : getParent().getScene().getAllObjects()) {
-      if(obj.hasComponent(Collider.class)){
-        processCollision(obj);
+    for (GameComponent collider : getParent().getScene().getAllComponents().get(ComponentTag.COLLISION)) {
+      if(collidableTags.contains(collider.getParent().getTag())){
+        processCollision(collider.getParent());
       }
     }
     if(getParent().hasComponent(PhysicsHandler.class)){
@@ -51,7 +49,7 @@ public class Collider extends GameComponent {
   private void processCollision(GameObject obj) {
     Collider collider = obj.getComponent(Collider.class);
 
-    if (collider == this || collidableTags.contains(collider.getParent().getTag())) {
+    if (collider == this) {
       return;
     }
 
@@ -71,7 +69,7 @@ public class Collider extends GameComponent {
       if (overlapX < overlapY) {
         resolveCollisionX(transform, other, overlapX);
       } else {
-        resolveCollisionY(transform, other, overlapY);
+        resolveCollisionY(transform, other);
       }
     }
   }
@@ -106,23 +104,26 @@ public class Collider extends GameComponent {
     }
   }
 
-  private void resolveCollisionY(Transform thisTransform, Transform otherTransform, double overlapY) {
+
+  private void resolveCollisionY(Transform thisTransform, Transform otherTransform) {
     double thisBottom = thisTransform.getY() + thisTransform.getScaleY();
-    double thisTop = thisTransform.getY();
     double otherTop = otherTransform.getY();
 
-    if (thisBottom > otherTop && thisTop < otherTop) {
-      thisTransform.setY(thisTransform.getY() - overlapY - COLLISION_OFFSET);
-    } else {
-      thisTransform.setY(thisTransform.getY() + overlapY + COLLISION_OFFSET);
+    if (thisBottom > otherTop && thisTransform.getY() < otherTop) {
+      thisTransform.setY(otherTop - thisTransform.getScaleY());
+
+      if (getParent().hasComponent(PhysicsHandler.class)) {
+        PhysicsHandler physics = getParent().getComponent(PhysicsHandler.class);
+        physics.setVelocityY(0);
+      }
     }
   }
 
-  private boolean isOverlapping(Transform collidedTransform) {
-    return transform.getX() < collidedTransform.getX() + collidedTransform.getScaleX() &&
-        transform.getX() + transform.getScaleX() > collidedTransform.getX() &&
-        transform.getY() < collidedTransform.getY() + collidedTransform.getScaleY() &&
-        transform.getY() + transform.getScaleY() > collidedTransform.getY();
+  private boolean isOverlapping(Transform other) {
+    return transform.getX() < other.getX() + other.getScaleX() + OVERLAP_TOLERANCE &&
+        transform.getX() + transform.getScaleX() > other.getX() - OVERLAP_TOLERANCE &&
+        transform.getY() < other.getY() + other.getScaleY() + OVERLAP_TOLERANCE &&
+        transform.getY() + transform.getScaleY() > other.getY() - OVERLAP_TOLERANCE;
   }
 
   /**

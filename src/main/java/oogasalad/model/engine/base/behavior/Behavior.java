@@ -3,6 +3,7 @@ package oogasalad.model.engine.base.behavior;
 import static oogasalad.model.config.GameConfig.LOGGER;
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.reflect.InvocationTargetException;
 import oogasalad.model.engine.base.serialization.Serializable;
 import oogasalad.model.engine.base.serialization.SerializableField;
 import oogasalad.model.engine.component.BehaviorController;
@@ -37,10 +38,19 @@ public class Behavior implements Serializable {
     this.behaviorName = behaviorName;
   }
 
+
+  /**
+   * Gets the name for the behavior
+   * @return String being behavior name
+   */
+  public String getName() {
+    return behaviorName;
+  }
+
   /**
    * Get the controller of the behavior. This is used to get the controller that the behavior
    */
-  BehaviorController getController() {
+  public BehaviorController getController() {
     return controller;
   }
 
@@ -51,6 +61,24 @@ public class Behavior implements Serializable {
    */
   public void setBehaviorController(BehaviorController controller) {
     this.controller = controller;
+  }
+
+  /**
+   * Getter for the constraints
+   *
+   * @return - a list of the behavior constraints
+   */
+  public List<BehaviorConstraint<?>> getConstraints() {
+    return constraints;
+  }
+
+  /**
+   * Getter for the actions
+   *
+   * @return - a list of behavior actions
+   */
+  public List<BehaviorAction<?>> getActions() {
+    return actions;
   }
 
   /**
@@ -74,9 +102,11 @@ public class Behavior implements Serializable {
    */
   public void awake() {
     for (BehaviorConstraint<?> constraint : constraints) {
+      constraint.setBehavior(this);
       constraint.awake();
     }
     for (BehaviorAction<?> action : actions) {
+      action.setBehavior(this);
       action.awake();
     }
   }
@@ -89,16 +119,12 @@ public class Behavior implements Serializable {
   public <T extends BehaviorConstraint<?>> T addConstraint(Class<T> constraintClass) {
     try {
       T constraint = constraintClass.getDeclaredConstructor().newInstance();
-      if (isDuplicateConstraint(constraint)) {
-        return constraint; // Do not add if an instance of this action already exists
-      }
-      constraint.setBehavior(this);
-      constraint.awake();
       constraints.add(constraint);
       return constraint;
-    } catch (Exception e) {
+    } catch (NoSuchMethodException | IllegalAccessException | InstantiationException
+        | InvocationTargetException e) {
       LOGGER.error("Failed to create constraint: {}", constraintClass.getName(), e);
-      throw new RuntimeException("Failed to create constraint: " + constraintClass.getName(), e);
+      throw new ConstraintConstructionException("Failed to create constraint: " + constraintClass.getName(), e);
     }
   }
 
@@ -107,33 +133,20 @@ public class Behavior implements Serializable {
    * @param constraintInstance the instance of the constraint we wish to add
    */
   public void addConstraint(BehaviorConstraint<?> constraintInstance) {
-    if (isDuplicateConstraint(constraintInstance)) {
-      return; // Do not add if an instance of this action already exists
-    }
     try {
-      constraintInstance.setBehavior(this);
       constraints.add(constraintInstance);
-    } catch (Exception e) {
+    } catch (UnsupportedOperationException | IllegalArgumentException | ClassCastException e) {
       LOGGER.error("Failed to create constraint: {}", constraintInstance.getClass().getName());
-      throw new RuntimeException("Failed to create constraint: " + constraintInstance.getClass().getName());
+      throw new ConstraintConstructionException("Failed to create constraint: " + constraintInstance.getClass().getName(), e);
     }
-  }
-
-  private boolean isDuplicateConstraint(BehaviorConstraint<?> constraintInstance) {
-    if (constraints.contains(constraintInstance)) {
-      LOGGER.error("Constraint already exists: {}. Ignoring addition.", constraintInstance);
-      return true;
-    }
-    return false;
   }
 
   /**
-   * Remove a constraint from the behavior. This method is used to remove a constraint from the
-   * @param constraintClass the constraint class specified
-   * @param <T> the type of the constraint
+   * Remove a constraint from the behavior.
+   * @param constraint the constraint to be removed
    */
-  public <T extends BehaviorConstraint<?>> void removeConstraint(Class<T> constraintClass) {
-    constraints.removeIf(constraint -> constraint.getClass().equals(constraintClass));
+  public void removeConstraint(BehaviorConstraint<?> constraint) {
+    constraints.remove(constraint);
   }
 
   /**
@@ -144,17 +157,12 @@ public class Behavior implements Serializable {
   public <T extends BehaviorAction<?>> T addAction(Class<T> actionClass) {
     try {
       T action = actionClass.getDeclaredConstructor().newInstance();
-
-      if (isDuplicateAction(action))
-        return action;
-
-      action.setBehavior(this);
-      action.awake();
       actions.add(action);
       return action;
-    } catch (Exception e) {
+    } catch (NoSuchMethodException | IllegalAccessException | InstantiationException
+        | InvocationTargetException e) {
       LOGGER.error("Failed to create action: {}", actionClass.getName(), e);
-      throw new RuntimeException("Failed to create action: " + actionClass.getName(), e);
+      throw new ActionConstructionException("Failed to create action: " + actionClass.getName(), e);
     }
   }
 
@@ -163,34 +171,20 @@ public class Behavior implements Serializable {
    * @param actionInstance the action instance we wish to add
    */
   public void addAction(BehaviorAction<?> actionInstance) {
-    if (isDuplicateAction(actionInstance)) {
-      return; // Do not add if an instance of this action already exists
-    }
     try {
-      actionInstance.setBehavior(this);
       actions.add(actionInstance);
-    } catch (Exception e) {
+    } catch (UnsupportedOperationException | IllegalArgumentException | ClassCastException e) {
       LOGGER.error("Failed to add action: {}", actionInstance.getClass().getName());
-      throw new RuntimeException("Failed to create action: " + actionInstance.getClass().getName());
+      throw new ActionConstructionException("Failed to create action: " + actionInstance.getClass().getName(), e);
     }
-  }
-
-  private boolean isDuplicateAction(BehaviorAction<?> actionInstance) {
-    if (actions.contains(actionInstance)) {
-      LOGGER.error("Action {} already exists in behavior. Ignoring addition.",
-          actionInstance);
-      return true;
-    }
-    return false;
   }
 
   /**
-   * Remove an action from the behavior. This method is used to remove an action from the
-   * @param actionClass the action class specified
-   * @param <T> the type of the action
+   * Remove an action from the behavior.
+   * @param action the action to be removed
    */
-  public <T extends BehaviorAction<?>> void removeAction(Class<T> actionClass) {
-    actions.removeIf(action -> action.getClass().equals(actionClass));
+  public void removeAction(BehaviorAction<?> action) {
+    actions.remove(action);
   }
 
 }

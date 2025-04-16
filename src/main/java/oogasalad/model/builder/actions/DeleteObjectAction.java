@@ -5,7 +5,7 @@ import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.base.architecture.GameObject;
 
 /**
- * Record Class that tracks when GameObjects are unregistered
+ * Class that tracks when GameObjects are unregistered
  *@author Reyan Shariff
  */
 

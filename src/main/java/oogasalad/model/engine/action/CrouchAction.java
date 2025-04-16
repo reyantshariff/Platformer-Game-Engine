@@ -1,7 +1,6 @@
 package oogasalad.model.engine.action;
 
 import oogasalad.model.engine.base.behavior.BehaviorAction;
-import oogasalad.model.engine.base.enumerate.ComponentTag;
 import oogasalad.model.engine.component.Transform;
 
 /**
@@ -9,9 +8,10 @@ import oogasalad.model.engine.component.Transform;
  * position.
  */
 
-public class CrouchAction extends BehaviorAction {
+public class CrouchAction extends BehaviorAction<Void> {
 
   private boolean isCrouched = false;
+  private Transform transform;
 
   /**
    * Default constructor for the CrouchAction class.
@@ -20,33 +20,21 @@ public class CrouchAction extends BehaviorAction {
     super();
   }
 
-  /**
-   * The type of the constraint. This is used to classify the constraints being checked. Note: This
-   * method MUST be override.
-   *
-   * @return the type of the constraint
-   */
   @Override
-  public ComponentTag ActionType() {
-    return ComponentTag.INPUT;
+  protected Void defaultParameter() {
+    return null;
+  }
+
+  @Override
+  protected void awake() {
+    transform = getComponent(Transform.class);
   }
 
   /**
    * Check if the constraint is met.
-   *
-   * @param parameter the parameter to check against
-   * @return true if the constraint is met, false otherwise
    */
   @Override
-  protected void perform(Object parameter) {
-    Transform transform;
-    try {
-      transform = (Transform) getComponent(Transform.class);
-    } catch (Exception e) {
-      return;
-    }
-
-
+  protected void perform(Void unused) {
     if (!isCrouched) {
       transform.setScaleY(transform.getScaleY() / 2);
       transform.setY(transform.getY() + transform.getScaleY());

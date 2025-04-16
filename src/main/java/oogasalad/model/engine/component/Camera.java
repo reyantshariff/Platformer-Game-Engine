@@ -2,7 +2,9 @@ package oogasalad.model.engine.component;
 
 import static oogasalad.model.config.GameConfig.LOGGER;
 import java.util.ArrayList;
+import oogasalad.model.engine.base.architecture.MissingParentSceneException;
 import java.util.List;
+import java.awt.Dimension;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
@@ -26,7 +28,13 @@ public class Camera extends GameComponent {
 
   @Override
   public void awake() {
-    transform = getParent().getComponent(Transform.class);
+      transform = getParent().getComponent(Transform.class);
+      if (transform == null) {
+        throw new IllegalArgumentException("Camera must have a Transform component");
+      }
+      Dimension screenDimensions = getParent().getScene().getGame().getGameInfo().resolution();
+      transform.setScaleX(screenDimensions.getWidth());
+      transform.setScaleY(screenDimensions.getHeight());
   }
 
   @Override
@@ -40,21 +48,28 @@ public class Camera extends GameComponent {
    * @return a list of GameObjects that are in the view of the camera.
    */
   public List<GameObject> getObjectsInView() {
+    List<GameObject> objects;
     try {
       GameScene scene = getParent().getScene();
-      List<GameObject> objects = new ArrayList<>(scene.getAllObjects());
-      List<GameObject> objectsInView = new ArrayList<>();
-      for (GameObject object : objects) {
-        Transform transform = object.getComponent(Transform.class);
-        if (isInView(transform)) {
-          objectsInView.add(object);
-        }
-      }
-      return objectsInView;
-    } catch (NullPointerException e) {
-      LOGGER.warn("Missing GameScene or Transform Component");
+      objects = new ArrayList<>(scene.getAllObjects());
+    } catch (MissingParentSceneException e) {
+      LOGGER.error("Camera does not have a parent scene", e);
       return new ArrayList<>();
     }
+    List<GameObject> objectsInView = new ArrayList<>();
+    for (GameObject object : objects) {
+      Transform transform;
+      try {
+      transform = object.getComponent(Transform.class);
+      } catch (IllegalArgumentException e) {
+        LOGGER.warn("GameObject {} does not have a Transform component", object.getName());
+        continue;
+      }
+      if (isInView(transform)) {
+        objectsInView.add(object);
+      }
+    }
+    return objectsInView;
   }
 
   private boolean isInView(Transform transform) {

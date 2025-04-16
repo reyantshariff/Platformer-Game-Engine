@@ -1,0 +1,148 @@
+.root {
+  -fx-font-family: "serif"; /* Use a serif font for a classic look */
+  -fx-background-color: #FFFFFF; /* White background */
+  -fx-text-fill: #1a1a1a; /* Very dark gray, almost black, for text */
+  -fx-accent: #FFD700; /* Gold accent */
+  -fx-spacing: 20;
+}
+
+.button {
+  -fx-font-family: "serif";
+  -fx-border-color: #FFD700; /* Gold border */
+  -fx-fill-color: #FFFFFF; /* White fill */
+  -fx-text-fill: #1a1a1a; /* Very dark gray text */
+  -fx-padding: 12px 24px;
+  -fx-font-size: 20px;
+  -fx-border-radius: 10px; /* Slightly less rounded corners */
+  -fx-background-radius: 10px;
+  -fx-border-width: 2px;
+  -fx-spacing: 5px;
+  -fx-background-color: linear-gradient(to bottom, #FFFFFF, #F8F8FF); /* White to off-white gradient */
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 8, 0.8, 0, 0); /* Subtle shadow */
+}
+
+.button:hover {
+  -fx-effect:  dropShadow(gaussian, rgba(0, 0, 0, 0.3), 12, 0.5, 0, 0); /* Slightly stronger shadow on hover */
+  -fx-scale-x: 1.05; /* Slight scale on hover */
+  -fx-scale-y: 1.05;
+}
+
+#mainMenuTitle {
+  -fx-font-size: 72px; /* Large title, but not as extreme as the others */
+  -fx-text-fill: #FFD700; /* Gold title */
+  -fx-font-family: "serif";
+  -fx-text-effect: emboss;
+}
+
+#buttonBox {
+  -fx-alignment: center;
+  -fx-spacing: 40px;
+  -fx-padding: 10px;
+}
+
+#gameSelector {
+  -fx-font-family: "serif";
+  -fx-border-color: #FFD700;
+  -fx-fill-color: #FFFFFF;
+  -fx-text-fill: #1a1a1a;
+  -fx-padding: 8px 16px;
+  -fx-font-size: 18px;
+  -fx-border-radius: 8px;
+  -fx-background-radius: 8px;
+  -fx-border-width: 2px;
+  -fx-background-color: linear-gradient(to bottom, #FFFFFF, #F8F8FF);
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 6, 0.5, 0, 0);
+}
+
+#gameSelector:hover {
+  -fx-effect:  dropShadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.5, 0, 0);
+  -fx-scale-x: 1.05;
+  -fx-scale-y: 1.05;
+}
+
+#selectorBox {
+  -fx-alignment: center;
+  -fx-spacing: 20px;
+  -fx-padding: 10px;
+}
+
+#menuSelector {
+  -fx-font-family: "serif";
+  -fx-border-color: #FFD700;
+  -fx-fill-color: #FFFFFF;
+  -fx-text-fill: #1a1a1a;
+  -fx-padding: 5px 10px;
+  -fx-font-size: 14px;
+  -fx-border-radius: 5px; /* Less rounded corners */
+  -fx-background-radius: 5px;
+  -fx-border-width: 1px;
+  -fx-background-color: linear-gradient(to bottom, #FFFFFF, #F8F8FF);
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 4, 0.5, 0, 0); /* Very subtle shadow */
+}
+
+#menuSelector:hover {
+  -fx-scale-x: 1.05;
+  -fx-scale-y: 1.05;
+}
+
+/* GAME PLAYER */
+#returnButton {
+  -fx-font-family: "serif";
+  -fx-border-color: #FFD700;
+  -fx-fill-color: #FFFFFF;
+  -fx-text-fill: #1a1a1a;
+  -fx-font-size: 16px;
+  -fx-border-radius: 5px;
+  -fx-background-radius: 5px;
+  -fx-effect:  dropshadow(gaussian, rgba(0, 0, 0, 0.1), 4, 0.5, 0, 0);
+}
+
+#gameCanvas {
+  -fx-border-color: #FFD700;
+  -fx-border-width: 2px;
+  -fx-padding: 10px;
+  -fx-effect:  dropshadow(gaussian, rgba(0, 0, 0, 0.2), 6, 0.5, 0, 0);
+  -fx-margin: 20px;
+}
+
+/* ComboBox Styles */
+.combo-box {
+  -fx-background-color: #FFFFFF;
+  -fx-border-color: #FFD700;
+  -fx-border-radius: 5px;
+}
+
+.combo-box .list-cell {
+  -fx-text-fill: #1a1a1a;
+  -fx-background-color: transparent;
+  -fx-font-family: "serif";
+}
+
+.combo-box .list-view {
+  -fx-background-color: #FFFFFF;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 8, 0.8, 0, 0);
+  -fx-padding: 5px;
+}
+
+.combo-box .list-view .list-cell {
+  -fx-text-fill: #1a1a1a;
+  -fx-background-color: transparent;
+  -fx-font-family: "serif";
+}
+
+.combo-box .list-view .list-cell:hover,
+.combo-box .list-view .list-cell:focused {
+  -fx-text-fill: #FFFFFF;
+  -fx-background-color: rgba(255, 215, 0, 0.7); /* Gold with opacity */
+}
+
+.combo-box-base .label {
+  -fx-text-fill: #1a1a1a;
+  -fx-font-family: "serif";
+}
+
+.combo-box-popup .list-view .list-cell:filled:selected {
+  -fx-background-color: #FFD700;
+  -fx-text-fill: #1a1a1a;
+  -fx-font-family: "serif";
+}

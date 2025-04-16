@@ -1,0 +1,132 @@
+.root {
+  -fx-font-family: "Hevletica";
+  -fx-background-color: #212529;
+  -fx-text-fill: #E9ECEF;
+  -fx-accent: #808080;
+  -fx-spacing: 20;
+}
+
+.button {
+  -fx-font-family: "Lato";
+  -fx-border-color: #6C757D;
+  -fx-fill-color: #495057;
+  -fx-text-fill: #E9ECEF;
+  -fx-padding: 10px 10px 10px 10px;
+  -fx-font-size: 20px;
+  -fx-border-color: #6C757D;
+  -fx-border-radius: 20px;
+  -fx-background-radius: 20px;
+  -fx-border-width: 1px;
+  -fx-spacing: 5px;
+  -fx-background-color: linear-gradient(to bottom, #495057, #343A40);
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0.5, 2, 2);
+}
+
+.button:hover {
+  -fx-effect: innershadow(gaussian, rgba(150, 150, 150, 0.4), 100, 0.5, 0, 0);
+}
+
+/* ComboBox Styles */
+.combo-box {
+  -fx-background-color: #495057;  /* Dark background for the entire ComboBox */
+  -fx-border-color: #6C757D;
+  -fx-border-radius: 5px;
+}
+
+.combo-box .list-cell {
+  -fx-text-fill: #E9ECEF; /* Light text for selected item */
+  -fx-background-color: transparent;
+}
+
+.combo-box .list-view {
+  -fx-background-color: #343a40;
+  -fx-background-color: rgba(108, 117, 125, 0.5);
+}
+
+.combo-box .list-view .list-cell {
+  -fx-text-fill: #212529;
+  -fx-background-color: rgba(108, 117, 125, 0.5);
+}
+
+.combo-box .list-view .list-cell:hover,
+.combo-box .list-view .list-cell:focused {
+  -fx-text-fill: #FFFFFF;
+  -fx-background-color: rgba(108, 117, 125, 0.5);
+}
+
+.combo-box-base .label {
+  -fx-text-fill: #E9ECEF;
+}
+
+.combo-box-popup .list-view .list-cell:filled:selected {
+  -fx-background-color: #6c757d;
+  -fx-text-fill: #fff;
+}
+
+#mainMenuTitle {
+  -fx-font-size: 150px;
+  -fx-text-fill: #FFFFFF;
+}
+
+#buttonBox {
+  -fx-alignment: center;
+  -fx-spacing: 40px;
+}
+
+#gameSelector {
+  -fx-font-family: "Lato";
+  -fx-border-color: #6C757D;
+  -fx-fill-color: #495057;
+  -fx-text-fill: #E9ECEF;
+  -fx-padding: 6px 6px 6px 6px;
+  -fx-font-size: 20px;
+  -fx-border-radius: 20px;
+  -fx-background-radius: 20px;
+  -fx-border-width: 1px;
+  -fx-background-color: linear-gradient(to bottom, #495057, #343A40);
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0.5, 2, 2);
+}
+
+#gameSelector:hover {
+  -fx-effect: innershadow(gaussian, rgba(150, 150, 150, 0.4), 100, 0.5, 0, 0);
+}
+
+#selectorBox {
+  -fx-alignment: center;
+  -fx-spacing: 20px;
+}
+
+#menuSelector {
+  -fx-font-family: "Lato";
+  -fx-border-color: #6C757D;
+  -fx-fill-color: #495057;
+  -fx-text-fill: #E9ECEF;
+  -fx-padding: 3px 3px 3px 3px;
+  -fx-font-size: 14px;
+  -fx-border-radius: 10px;
+  -fx-background-radius: 10px;
+  -fx-border-width: 1px;
+  -fx-background-color: linear-gradient(to bottom, #495057, #343A40);
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0.5, 2, 2);
+}
+
+#menuSelector:hover {
+  -fx-effect: innershadow(gaussian, rgba(150, 150, 150, 0.4), 100, 0.5, 0, 0);
+}
+
+/* GAME PLAYER */
+#returnButton {
+  -fx-font-family: "Lato";
+  -fx-border-color: #6C757D;
+  -fx-fill-color: #495057;
+  -fx-text-fill: #E9ECEF;
+  -fx-font-size: 14px;
+  -fx-border-radius: 5px;
+  -fx-background-radius: 5px;
+}
+
+#gameCanvas {
+  -fx-border-color: #6C757D;
+  -fx-border-width: 1px;
+  -fx-padding: 5px, 5px, 5px, 5px;
+}

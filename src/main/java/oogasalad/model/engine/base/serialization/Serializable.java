@@ -14,20 +14,43 @@ import java.util.List;
 public interface Serializable {
 
   /**
-   * Get all the field annotated @SerializableField.
+   * Get all the field annotated @SerializableField, including fields from parent classes.
    */
   default List<SerializedField<?>> getSerializedFields() {
     List<SerializedField<?>> serializedFields = new ArrayList<>();
     Class<?> clazz = this.getClass();
 
-    for (Field field : clazz.getDeclaredFields()) {
-      if (field.isAnnotationPresent(SerializableField.class)) {
-        SerializedField<?> serializedField = createSerializedField(clazz, field);
-        serializedFields.add(serializedField);
+    // Traverse class hierarchy to include parent classes
+    while (clazz != null) {
+      for (Field field : clazz.getDeclaredFields()) {
+        if (field.isAnnotationPresent(SerializableField.class)) {
+          SerializedField<?> serializedField = createSerializedField(clazz, field);
+          serializedFields.add(serializedField);
+        }
       }
+      clazz = clazz.getSuperclass(); // Move to the parent class
     }
 
     return serializedFields;
+  }
+
+  /**
+   * Get the field annotated @SerializableField in the parent class.
+   */
+  default SerializedField<?> getParentSerializableField() {
+    Class<?> superClass = this.getClass().getSuperclass();
+
+    while (superClass != null) {
+      for (Field field : superClass.getDeclaredFields()) {
+        if (field.isAnnotationPresent(SerializableField.class)) {
+          field.setAccessible(true);
+          return createSerializedField(superClass, field);
+        }
+      }
+      superClass = superClass.getSuperclass();
+    }
+
+    throw new IllegalStateException("No @SerializableField found in parent class for: " + this.getClass().getSimpleName());
   }
 
   private SerializedField<?> createSerializedField(Class<?> clazz, Field field) {
@@ -49,6 +72,4 @@ public interface Serializable {
 
     return new SerializedField<>(this, field, getter, setter);
   }
-
 }
-

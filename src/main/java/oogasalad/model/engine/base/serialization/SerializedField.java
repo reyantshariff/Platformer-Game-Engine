@@ -3,6 +3,7 @@ package oogasalad.model.engine.base.serialization;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 /**
  * The class that represents the serialized field from field annotated @SerializableField
@@ -49,40 +50,48 @@ public class SerializedField<T> {
   }
 
   /**
+   * Get the generic type of the serializedField.
+   */
+  public Type getFieldGenericType() {
+    return field.getGenericType();
+  }
+
+  /**
    * Get the value of the serializedField.
    */
+  @SuppressWarnings("unchecked")
   public T getValue() {
     if (getter != null) {
       try {
         return (T) getter.invoke(targetObject);
       } catch (IllegalAccessException | InvocationTargetException e) {
-        throw new RuntimeException("Cannot get the value to SerializedField: " + fieldName);
+        throw new GetSerializedFieldException("Cannot get the value to SerializedField: " + fieldName, e);
       }
     }
     try {
       return (T) field.get(targetObject);
     } catch (IllegalAccessException e) {
-      throw new RuntimeException("Cannot get the value to SerializedField: " + fieldName);
+      throw new GetSerializedFieldException("Cannot get the value to SerializedField: " + fieldName, e);
     }
   }
 
   /**
-   * Set the value of the serializedField
+   * Set the value of the serializedField. This is automatically casted to the type of the field.
    *
-   * @param value
+   * @param value - Value to set
    */
   public void setValue(T value) {
     if (setter != null) {
       try {
         setter.invoke(targetObject, value);
       } catch (IllegalAccessException | InvocationTargetException e) {
-        throw new RuntimeException("Cannot set the value to SerializedField: " + fieldName);
+        throw new SetSerializedFieldException("Cannot set the value to SerializedField: " + fieldName, e);
       }
     } else {
       try {
         field.set(targetObject, value);
       } catch (IllegalAccessException e) {
-        throw new RuntimeException("Cannot set the value to SerializedField: " + fieldName);
+        throw new SetSerializedFieldException("Cannot set the value to SerializedField: " + fieldName, e);
       }
     }
   }

@@ -5,7 +5,7 @@ import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.component.Transform;
 
 /**
- * Record Class that tracks when GameObjects are moved
+ * Class that tracks when GameObjects are moved
  *@author Reyan Shariff
  */
 
