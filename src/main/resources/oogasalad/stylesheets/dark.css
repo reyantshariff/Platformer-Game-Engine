@@ -13,7 +13,6 @@
   -fx-text-fill: #E9ECEF;
   -fx-padding: 10px 10px 10px 10px;
   -fx-font-size: 20px;
-  -fx-border-color: #6C757D;
   -fx-border-radius: 20px;
   -fx-background-radius: 20px;
   -fx-border-width: 1px;
@@ -129,4 +128,11 @@
   -fx-border-color: #6C757D;
   -fx-border-width: 1px;
   -fx-padding: 5px, 5px, 5px, 5px;
+}
+
+
+/* SPLASH SCREENS */
+.splashText {
+  -fx-font-size: 50px;
+  -fx-text-fill: #FFFFFF;
 }
