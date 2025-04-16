@@ -118,6 +118,22 @@ class InputHandlerTest {
   }
 
   @Test
+  void registerMouseClick_ValidClick_MouseIsClicked() {
+    inputHandler.registerMouseClick(150.0, 100.0);
+    assertTrue(inputHandler.isMouseClicked());
+    assertEquals(150.0, inputHandler.getMouseX());
+    assertEquals(100.0, inputHandler.getMouseY());
+  }
+
+  @Test
+  void update_ClearsMouseClickedFlag() {
+    inputHandler.registerMouseClick(200.0, 250.0);
+    assertTrue(inputHandler.isMouseClicked());
+    inputHandler.update(0.016);
+    assertFalse(inputHandler.isMouseClicked());
+  }
+
+  @Test
   void componentTag_Always_ReturnsInputTag() {
     assertEquals(ComponentTag.INPUT, inputHandler.componentTag());
   }
