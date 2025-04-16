@@ -13,7 +13,7 @@ import oogasalad.view.config.StyleConfig;
 import oogasalad.view.scene.MainViewManager;
 import oogasalad.view.scene.ViewScene;
 import oogasalad.view.scene.builder.BuilderScene;
-import oogasalad.view.scene.player.GamePlayerScene;
+import oogasalad.view.scene.display.GameDisplayScene;
 
 /**
  * Main menu view with play and builder options
@@ -44,9 +44,10 @@ public class MainMenuScene extends ViewScene {
     Button playButton = (Button) buttonBox.lookup("#playButton");
     Button buildButton = (Button) buttonBox.lookup("#buildButton");
 
-    MainViewManager.getInstance().addViewScene(GamePlayerScene.class, GAME_PLAYER_SCENE_NAME);
+    GameDisplayScene playScene = MainViewManager.getInstance().addViewScene(GameDisplayScene.class, GAME_PLAYER_SCENE_NAME);
+    playScene.setReturnSceneName(GameConfig.getText("defaultScene"));
     playButton.setOnAction(e -> {
-      ((GamePlayerScene) MainViewManager.getInstance().getViewScene(GAME_PLAYER_SCENE_NAME)).play(selectedFilePath);
+      ((GameDisplayScene) MainViewManager.getInstance().getViewScene(GAME_PLAYER_SCENE_NAME)).play(selectedFilePath);
       MainViewManager.getInstance().switchTo(GAME_PLAYER_SCENE_NAME);
     });
 

@@ -1,4 +1,4 @@
-package oogasalad.view.scene.builder.builderControl;
+package oogasalad.view.scene.builder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +18,6 @@ import oogasalad.view.renderer.GameSceneRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
-import oogasalad.view.scene.builder.BuilderScene;
 
 /**
  * ObjectDragger manages mouse drag and drop for Builder pages

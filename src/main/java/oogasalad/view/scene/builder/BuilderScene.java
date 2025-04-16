@@ -40,7 +40,7 @@ import oogasalad.view.gui.dropDown.ClassSelectionDropDownMenu;
 import oogasalad.view.gui.panel.ComponentPanel;
 import oogasalad.view.scene.MainViewManager;
 import oogasalad.view.scene.ViewScene;
-import oogasalad.view.scene.builder.builderControl.ObjectDragger;
+import oogasalad.view.scene.display.GameDisplayScene;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -52,7 +52,10 @@ import org.apache.logging.log4j.Logger;
 public class BuilderScene extends ViewScene {
 
   private static final String COMPONENT_PACKAGE_NAME = "oogasalad.model.engine.component";
+  private static final String PREVIEW_TEMP_GAME_PATH = "src/main/gameFiles/temp.json";
   private static final String GAME_PREVIEW = "GamePreview";
+  private static final String BUILDER = "Builder";
+
   public static final double MAX_ZOOM = 5.0;
   public static final double MIN_ZOOM = 0.1;
 
@@ -88,11 +91,12 @@ public class BuilderScene extends ViewScene {
     mainMenuButton.setOnAction(e -> viewManager.switchToMainMenu());
 
     Button previewLevelButton = new Button("Preview Level");
-    viewManager.addViewScene(GamePreviewScene.class, GAME_PREVIEW);
+    GameDisplayScene preview = viewManager.addViewScene(GameDisplayScene.class, GAME_PREVIEW);
+    preview.setReturnSceneName(BUILDER);
     previewLevelButton.setOnAction(e -> {
-      GamePreviewScene previewScene = (GamePreviewScene) viewManager.getViewScene(GAME_PREVIEW);
+      GameDisplayScene previewScene = (GameDisplayScene) viewManager.getViewScene(GAME_PREVIEW);
       builder.saveGameAs("temp.json");
-      previewScene.preview();
+      previewScene.play(PREVIEW_TEMP_GAME_PATH);
       viewManager.switchTo(GAME_PREVIEW);
     });
 

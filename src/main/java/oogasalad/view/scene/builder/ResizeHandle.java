@@ -1,4 +1,4 @@
-package oogasalad.view.scene.builder.builderControl;
+package oogasalad.view.scene.builder;
 
 /**
  * @author Reyan Shariff
