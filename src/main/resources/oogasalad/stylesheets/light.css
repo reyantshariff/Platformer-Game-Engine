@@ -164,28 +164,6 @@
   -fx-max-width: 350px;
 }
 
-/*#socialLoginButton {*/
-/*  -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #B3E5FC, #81D4FA);*/
-/*  -fx-text-fill: #333333;*/
-/*  -fx-padding: 10 30;*/
-/*  -fx-background-radius: 20;*/
-/*}*/
-
-/*#socialSignUpButton {*/
-/*  -fx-background-color: #ffffff;*/
-/*  -fx-text-fill: #4A00E0;*/
-/*  -fx-padding: 10 30;*/
-/*  -fx-border-color: #4A00E0;*/
-/*  -fx-border-width: 2;*/
-/*  -fx-background-radius: 20;*/
-/*  -fx-border-radius: 20;*/
-/*  -fx-max-height: 10px;*/
-/*  -fx-max-width: 200px;*/
-/*}*/
-
 #togglePasswordButton {
-  -fx-font-size: 7;
-  -fx-max-height: 10px;
-  -fx-padding: 4px 4px 4px 4px;
+  -fx-font-size: 12;
 }
-

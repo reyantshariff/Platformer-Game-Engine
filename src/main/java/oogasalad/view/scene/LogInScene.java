@@ -1,5 +1,6 @@
 package oogasalad.view.scene;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -7,6 +8,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import oogasalad.model.config.GameConfig;
@@ -20,6 +22,8 @@ public class LogInScene extends ViewScene {
   private static final String SOCIAL_LOGIN_BUTTON_ID = "socialLoginButton";
   private static final String SOCIAL_SIGN_UP_BUTTON_ID = "socialSignUpButton";
   private static final String TOGGLE_PASSWORD_BUTTON_ID = "togglePasswordButton";
+  private static final String SHOW_PASS_TEXT_ID = "showPassText";
+  private static final String HIDE_PASS_TEXT_ID = "hidePassText";
 
   /**
    * Template for a program JavaFX window using a GameObjectRenderer
@@ -57,27 +61,27 @@ public class LogInScene extends ViewScene {
     nakedPasswordField.setPromptText(GameConfig.getText(SOCIAL_PASSWORD_PROMPT_ID));
     nakedPasswordField.setVisible(false);
     nakedPasswordField.setManaged(false);
+    nakedPasswordField.setId(SOCIAL_PASSWORD_PROMPT_ID);
 
     PasswordField passwordField = new PasswordField();
     passwordField.setPromptText(GameConfig.getText(SOCIAL_PASSWORD_PROMPT_ID));
+    passwordField.setId(SOCIAL_PASSWORD_PROMPT_ID);
 
     Button toggleButton = createShowPasswordButton(nakedPasswordField, passwordField);
 
-    StackPane fieldStack = new StackPane(nakedPasswordField, passwordField, toggleButton);
-    fieldStack.setId(SOCIAL_PASSWORD_PROMPT_ID);
-    fieldStack.setAlignment(Pos.CENTER_RIGHT);
+    StackPane passwordStack = new StackPane(nakedPasswordField, passwordField, toggleButton);
+    passwordStack.setPadding(new Insets(10));
 
-    card.getChildren().add(fieldStack);
+    StackPane.setAlignment(toggleButton, Pos.CENTER_RIGHT);
+
+    card.getChildren().add(passwordStack);
   }
 
   private Button createShowPasswordButton(TextField nakedPasswordField, PasswordField passwordField) {
-    Button eyeButton = new Button();
-    Image image = new Image("file:/src/main/resources/oogasalad/button/eyeimage.jpg");
-    ImageView eyeImageView = new ImageView(image);
-    eyeImageView.setFitWidth(16);    // Adjust width as needed
-    eyeImageView.setFitHeight(16);   // Adjust height as needed
-    eyeImageView.setPreserveRatio(true);
-    eyeButton.setGraphic(eyeImageView);
+    String showText = GameConfig.getText(SHOW_PASS_TEXT_ID);
+    String hideText = GameConfig.getText(HIDE_PASS_TEXT_ID);
+
+    Button eyeButton = new Button(showText);
     eyeButton.setId(TOGGLE_PASSWORD_BUTTON_ID);
 
     eyeButton.setOnAction(event -> {
@@ -87,12 +91,13 @@ public class LogInScene extends ViewScene {
         nakedPasswordField.setVisible(true);
         nakedPasswordField.setManaged(true);
         nakedPasswordField.setText(passwordField.getText());
+        eyeButton.setText(hideText);
       } else {
         passwordField.setVisible(true);
         passwordField.setManaged(true);
-        passwordField.setText(nakedPasswordField.getText());
         nakedPasswordField.setVisible(false);
         nakedPasswordField.setManaged(false);
+        eyeButton.setText(showText);
       }
     });
 
