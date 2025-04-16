@@ -8,6 +8,8 @@ import oogasalad.model.profile.SessionException;
 import oogasalad.model.profile.SessionManagement;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import static oogasalad.model.config.ProfileServiceConfig.documentExists;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PlayerServiceTest {
@@ -97,12 +99,16 @@ public class PlayerServiceTest {
   }
 
   @Test
-  public void login_notRealUser_ThrowsError() throws PasswordHashingException {
-    // FIXME
-//    String username = "testuser_" + System.currentTimeMillis();
-//    String password = "testpassword";
-//    PlayerService.login(username, password);
-//    assertFalse(SessionManagement.isLoggedIn());
+  public void login_notRealUser_ThrowsError() throws PasswordHashingException, DatabaseException {
+    String username = "testuser_" + System.currentTimeMillis();
+    String password = "testpassworddsadasdas";
+
+    if (documentExists(username, "players")) {
+      PlayerService.deletePlayer(username);
+    }
+
+    PlayerService.login(username, password);
+    assertFalse(SessionManagement.isLoggedIn());
   }
 
   @Test

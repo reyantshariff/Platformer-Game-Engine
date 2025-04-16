@@ -1,5 +1,7 @@
 package oogasalad.model.engine.component;
 
+import java.awt.geom.Point2D;
+
 import static oogasalad.model.config.GameConfig.LOGGER;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
@@ -18,15 +20,24 @@ public class Follower extends GameComponent {
 
   @Override
   public ComponentTag componentTag() {
-    return ComponentTag.TRANSFORM;
+    return ComponentTag.SMOOTH_MOVEMENT;
   }
 
   @SerializableField
   private String followObjectName;
+  @SerializableField
+  private boolean smoothMovement;
+
   private double offsetX;
   private double offsetY;
   private Transform myTransform;
   private GameObject followObject;
+
+
+  private Point2D previousPosition;
+  private Point2D currentPosition;
+  private PhysicsHandler physicsHandler;
+  private double speedLimit;
 
   /**
    * Constructor for Follower. Sets default values for the offset and the follow object.
@@ -45,6 +56,12 @@ public class Follower extends GameComponent {
     Transform attachTransform = followObject.getComponent(Transform.class);
     offsetX = myTransform.getX() - attachTransform.getX();
     offsetY = myTransform.getY() - attachTransform.getY();
+    if(smoothMovement) {
+      currentPosition = new Point2D.Double(myTransform.getX(), myTransform.getY());
+      previousPosition = new Point2D.Double(currentPosition.getX(), currentPosition.getY());
+      physicsHandler = followObject.getComponent(PhysicsHandler.class);
+      speedLimit = 0;
+    }
   }
 
   @Override
@@ -56,6 +73,37 @@ public class Follower extends GameComponent {
     }
     myTransform.setX(targetTransform.getX() + offsetX);
     myTransform.setY(targetTransform.getY() + offsetY);
+    if(smoothMovement) {
+      smoothMovement(deltaTime);
+    }
+  }
+
+  /**
+   * Smooths the movement of the follower to prevent jittering.
+   * @param deltaTime the time since the last update
+   */
+  private void smoothMovement(double deltaTime) {
+    double minSpeed = Math.sqrt(Math.pow(physicsHandler.getVelocityX(), 2) + Math.pow(physicsHandler.getVelocityY(), 2));
+    double playerAcceleration = Math.sqrt(Math.pow(physicsHandler.getAccelerationX(), 2) + Math.pow(physicsHandler.getAccelerationY(), 2));
+    double acceleration = Math.max(1, playerAcceleration);
+
+    currentPosition = new Point2D.Double(myTransform.getX(), myTransform.getY());
+    double distance = Math.sqrt(Math.pow(currentPosition.getX() - previousPosition.getX(), 2)
+            + Math.pow(currentPosition.getY() - previousPosition.getY(), 2));
+    double maxDistance = speedLimit * deltaTime;
+
+    if (distance > maxDistance) {
+        speedLimit = Math.max(minSpeed + acceleration * deltaTime, speedLimit + acceleration * deltaTime);
+        maxDistance = speedLimit * deltaTime;
+        double ratio = maxDistance / distance;
+        double newX = previousPosition.getX() + (currentPosition.getX() - previousPosition.getX()) * ratio;
+        double newY = previousPosition.getY() + (currentPosition.getY() - previousPosition.getY()) * ratio;
+        myTransform.setX(newX);
+        myTransform.setY(newY);
+    } else {
+        speedLimit = Math.max(minSpeed, speedLimit - acceleration * deltaTime);
+    }
+    previousPosition = new Point2D.Double(myTransform.getX(), myTransform.getY());
   }
 
   /**
@@ -139,5 +187,23 @@ public class Follower extends GameComponent {
    */
   public String getFollowObjectName() {
     return followObjectName;
+  }
+
+  /**
+   * Sets the smooth movement flag.
+   *
+   * @param smoothMovement true if smooth movement is enabled, false otherwise
+   */
+  public void setSmoothMovement(boolean smoothMovement) {
+    this.smoothMovement = smoothMovement;
+  }
+
+  /**
+   * Gets the smooth movement flag.
+   *
+   * @return true if smooth movement is enabled, false otherwise
+   */
+  public boolean isSmoothMovement() {
+    return smoothMovement;
   }
 }
