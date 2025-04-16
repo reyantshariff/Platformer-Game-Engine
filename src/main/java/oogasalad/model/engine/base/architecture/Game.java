@@ -2,6 +2,7 @@ package oogasalad.model.engine.base.architecture;
 
 import static oogasalad.model.config.GameConfig.LOGGER;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import oogasalad.model.parser.GameSceneParser;
+import oogasalad.model.parser.ParsingException;
 
 /**
  * The Game class is the main entry point for the game engine. It manages the game loop, scene
@@ -20,6 +23,7 @@ import java.util.UUID;
 public class Game {
   private final Map<UUID, GameScene> allScenes = new HashMap<>();
   private final Set<Integer> inputKeys = new HashSet<>();
+  private Map<String, JsonNode> originalSceneJsonMap = new HashMap<>();
 
   private GameScene currentScene;
   private GameInfo myGameInfo;
@@ -113,7 +117,20 @@ public class Game {
    * @param sceneName The name of the scene to reset
    */
   public void resetScene(String sceneName) {
-    //TODO: Store the file paths and reload the scene with the parser or store original versions of all scenes
+    JsonNode sceneNode = originalSceneJsonMap.get(sceneName);
+    if (sceneNode == null) {
+      LOGGER.error("No original JSON found for scene '{}'", sceneName);
+      return;
+    }
+
+    try {
+      GameScene newScene = new GameSceneParser().parse(sceneNode.deepCopy());
+      removeScene(sceneName);
+      addScene(newScene);
+      LOGGER.info("Scene '{}' reset successfully", sceneName);
+    } catch (ParsingException e) {
+      LOGGER.error("Failed to reset scene '{}': {}", sceneName, e.getMessage());
+    }
   }
 
   /**
@@ -174,6 +191,7 @@ public class Game {
    *
    */
   public void goToNextLevel() {
+    resetScene(levelOrder.get(currentLevelIndex));
     currentLevelIndex++;
     if (currentLevelIndex < levelOrder.size()) {
       changeScene(levelOrder.get(currentLevelIndex));
@@ -200,6 +218,15 @@ public class Game {
       currentLevelIndex = index;
       changeScene(sceneName);
     }
+  }
+
+  /**
+   * Sets a map from string of sceneName to their jsonNodes
+   *
+   * @param map - Map to store all original jsonNodes
+   */
+  public void setOriginalSceneJsonMap(Map<String, JsonNode> map) {
+    originalSceneJsonMap = map;
   }
 
 }

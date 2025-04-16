@@ -27,6 +27,7 @@ public class GameParser implements Parser<Game> {
   private final GameSceneParser sceneParser = new GameSceneParser();
   private final ResourceParser resourceParser = new ResourceParser();
   private final InformationParser informationParser = new InformationParser();
+  private final Map<String, JsonNode> sceneJsonMap = new HashMap<>();
 
   private static final String DATA = "Data";
   private static final String INFORMATION = "Information";
@@ -63,6 +64,7 @@ public class GameParser implements Parser<Game> {
     handleSceneParsing(data, newGame);
 
     newGame.setLevelOrder(levelOrder);
+    newGame.setOriginalSceneJsonMap(sceneJsonMap);
 
     return newGame;
   }
@@ -96,6 +98,8 @@ public class GameParser implements Parser<Game> {
       newGame.addScene(gameScene);
       String sceneName = sceneNode.get(NAME).asText();
       levelOrder.add(sceneName);
+
+      sceneJsonMap.put(sceneName, sceneNode.deepCopy());
     } else {
       LOGGER.error("Scene with name {} not found and therefore will not be added "
           + "to Game.", sceneNode.get(NAME));
@@ -133,6 +137,15 @@ public class GameParser implements Parser<Game> {
       sceneArray.add(sceneParser.write(scene));
     }
     dataNode.set(SCENE, sceneArray);
+  }
+
+  /**
+   * Returns the map of string to jsonNodes for scene resetting
+   *
+   * @return - The scene Json map
+   */
+  public Map<String, JsonNode> getSceneJsonMap() {
+    return sceneJsonMap;
   }
 
 //  private void handleResourceWriting(Game data, ObjectNode dataNode) throws IOException {
