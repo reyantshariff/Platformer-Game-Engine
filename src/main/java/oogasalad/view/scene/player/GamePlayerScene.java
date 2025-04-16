@@ -2,74 +2,44 @@ package oogasalad.view.scene.player;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
 import oogasalad.model.config.GameConfig;
 import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.parser.JsonParser;
 import oogasalad.model.parser.Parser;
 import oogasalad.model.parser.ParsingException;
-import oogasalad.view.player.GameRunner;
-import oogasalad.view.scene.MainViewManager;
-import oogasalad.view.scene.ViewScene;
+import oogasalad.view.scene.GameDisplayScene;
 
 /**
  * Preview a level from the Builder view using this Scene. Directly load in a GameScene to be
  * displayed.
  */
-public class GamePlayerScene extends ViewScene {
-
-  private final StackPane root;
-  private final Button returnButton;
-  private final GameRunner gameRunner;
+public class GamePlayerScene extends GameDisplayScene {
 
   /**
    * A LevelPreviewScene is similar to GamePlayerScene but is meant for previewing a
    * level-in-progress from the builder.
    */
   private GamePlayerScene() {
-    super(new StackPane(), GameConfig.getNumber("windowWidth"), GameConfig.getNumber("windowHeight"));
-
-    gameRunner = new GameRunner();
-
-    root = (StackPane) getScene().getRoot();
-
-    returnButton = new Button(GameConfig.getText("returnToMainMenuButton"));
-    returnButton.setOnAction(e -> {
-      MainViewManager.getInstance().switchToMainMenu();
-    });
-
-    StackPane.setAlignment(returnButton, Pos.TOP_RIGHT);
-    root.getChildren().add(returnButton);
   }
 
   /**
    * Play the preview to start the game.
    */
   public void play(String filepath) {
-    root.getChildren().clear();
-    root.getChildren().add(returnButton);
+    getRoot().getChildren().clear();
+    getRoot().getChildren().add(getReturnButton());
 
     try {
       Parser<?> parser = new JsonParser(filepath);
       ObjectMapper mapper = new ObjectMapper();
       JsonNode newNode = mapper.createObjectNode();
-      gameRunner.setGame((Game) parser.parse(newNode));
-      gameRunner.play();
+      getGameRunner().setGame((Game) parser.parse(newNode));
+      getGameRunner().play();
     } catch (ParsingException e) {
       throw new IllegalStateException(GameConfig.getText("failureToParse", e.getMessage()), e);
     }
 
-    root.getChildren().addFirst(gameRunner.getCanvas());
-    gameRunner.getCanvas().requestFocus();
-  }
-
-  /**
-   * Deactivates the game engine for this scene.
-   */
-  @Override
-  public void deactivate() {
-    gameRunner.pause();
+    getRoot().getChildren().addFirst(getGameRunner().getCanvas());
+    getGameRunner().getCanvas().requestFocus();
   }
 }
