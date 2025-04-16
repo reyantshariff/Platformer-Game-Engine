@@ -133,6 +133,6 @@
 
 /* SPLASH SCREENS */
 .splashText {
-  -fx-font-size: 50px;
+  -fx-font-size: 1px;
   -fx-text-fill: #FFFFFF;
 }
