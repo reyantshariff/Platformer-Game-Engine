@@ -86,11 +86,12 @@ public class BuilderScene extends ViewScene {
     Button mainMenuButton = new Button("Main Menu");
     MainViewManager viewManager = MainViewManager.getInstance();
     mainMenuButton.setOnAction(e -> viewManager.switchToMainMenu());
-    Button previewLevelButton = new Button("Preview Level");
 
+    Button previewLevelButton = new Button("Preview Level");
     viewManager.addViewScene(GamePreviewScene.class, GAME_PREVIEW);
     previewLevelButton.setOnAction(e -> {
       GamePreviewScene previewScene = (GamePreviewScene) viewManager.getViewScene(GAME_PREVIEW);
+      builder.saveGameAs("temp.json");
       previewScene.preview();
       viewManager.switchTo(GAME_PREVIEW);
     });

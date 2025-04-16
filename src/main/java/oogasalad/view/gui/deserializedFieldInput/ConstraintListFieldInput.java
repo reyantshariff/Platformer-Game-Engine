@@ -89,6 +89,7 @@ public class ConstraintListFieldInput extends DeserializedFieldUI<List<BehaviorC
       BehaviorConstraint<?> newConstraint = instantiateConstraint(className);
       constraintRef[0] = newConstraint;
 
+      assert newConstraint != null;
       SerializedField<?> param = newConstraint.getSerializedFields().getFirst();
       if (getGenericTypeName(newConstraint).equals(Void.class.getSimpleName())) {
         hideField(paramField);
@@ -165,7 +166,7 @@ public class ConstraintListFieldInput extends DeserializedFieldUI<List<BehaviorC
         default -> { return false; }
       }
       return true;
-    } catch (SetSerializedFieldException | NumberFormatException e) {
+    } catch (SetSerializedFieldException | IllegalArgumentException e) {
       return false;
     }
   }

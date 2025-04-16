@@ -165,7 +165,7 @@ public class ActionListFieldInput extends DeserializedFieldUI<List<BehaviorActio
         default -> { return false; }
       }
       return true;
-    } catch (SetSerializedFieldException | NumberFormatException e) {
+    } catch (SetSerializedFieldException | IllegalArgumentException e) {
       return false;
     }
   }
