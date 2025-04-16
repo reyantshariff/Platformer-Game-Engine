@@ -9,7 +9,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import oogasalad.controller.GameController;
 import oogasalad.model.config.GameConfig;
+import static oogasalad.model.config.GameConfig.LOGGER;
+
 
 public class LogInScene extends ViewScene {
 
@@ -20,6 +23,10 @@ public class LogInScene extends ViewScene {
   private static final String SOCIAL_LOGIN_BUTTON_ID = "socialLoginButton";
   private static final String SOCIAL_SIGN_UP_BUTTON_ID = "socialSignUpButton";
   private static final String TOGGLE_PASSWORD_BUTTON_ID = "togglePasswordButton";
+  private GameController gameController;
+  private TextField usernameField;
+  private TextField nakedPasswordField;
+  private PasswordField passwordField;
 
   /**
    * Template for a program JavaFX window using a GameObjectRenderer
@@ -31,10 +38,11 @@ public class LogInScene extends ViewScene {
     card.setId(SOCIAL_CARD_ID);
 
     setupWelcomeMessage(card);
-    setupEmailField(card);
+    setUsernameField(card);
     setupPasswordField(card);
     setupLoginButton(card);
     setupSignUpButton(card);
+    gameController = new GameController(manager);
 
     ((StackPane) getScene().getRoot()).getChildren().add(card);
   }
@@ -45,20 +53,20 @@ public class LogInScene extends ViewScene {
     card.getChildren().add(welcomeMessage);
   }
 
-  private void setupEmailField(VBox card) {
-    TextField emailField = new TextField();
-    emailField.setPromptText(GameConfig.getText(SOCIAL_EMAIL_PROMPT_ID));
-    emailField.setId(SOCIAL_EMAIL_PROMPT_ID);
-    card.getChildren().add(emailField);
+  private void setUsernameField(VBox card) {
+    usernameField = new TextField();
+    usernameField.setPromptText(GameConfig.getText(SOCIAL_EMAIL_PROMPT_ID));
+    usernameField.setId(SOCIAL_EMAIL_PROMPT_ID);
+    card.getChildren().add(usernameField);
   }
 
   private void setupPasswordField(VBox card) {
-    TextField nakedPasswordField = new TextField();
+    nakedPasswordField = new TextField();
     nakedPasswordField.setPromptText(GameConfig.getText(SOCIAL_PASSWORD_PROMPT_ID));
     nakedPasswordField.setVisible(false);
     nakedPasswordField.setManaged(false);
 
-    PasswordField passwordField = new PasswordField();
+    passwordField = new PasswordField();
     passwordField.setPromptText(GameConfig.getText(SOCIAL_PASSWORD_PROMPT_ID));
 
     Button toggleButton = createShowPasswordButton(nakedPasswordField, passwordField);
@@ -102,6 +110,20 @@ public class LogInScene extends ViewScene {
   private void setupLoginButton(VBox card) {
     Button loginButton = new Button(GameConfig.getText(SOCIAL_LOGIN_BUTTON_ID));
     loginButton.setId(SOCIAL_LOGIN_BUTTON_ID);
+
+    loginButton.setOnMouseClicked(event -> {
+        String username = usernameField.getText().trim();
+        String password = nakedPasswordField.isVisible()
+            ? nakedPasswordField.getText().trim()
+            : passwordField.getText().trim();
+
+      if (!username.isEmpty() && !password.isEmpty()) {
+        gameController.handleLogin(username, password);
+      } else {
+        LOGGER.info("Missing username or password");
+        // Show to user
+      }
+    });
     card.getChildren().add(loginButton);
   }
 

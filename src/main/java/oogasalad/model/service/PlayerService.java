@@ -104,6 +104,7 @@ public class PlayerService {
 
       if (!curUser.verifyPassword(password)){
         LOGGER.warn("Invalid password");
+        throw new PasswordHashingException("Password is incorrect");
       }
 
       SessionManagement.login(curUser);

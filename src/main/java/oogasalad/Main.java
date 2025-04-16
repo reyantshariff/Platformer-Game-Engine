@@ -1,7 +1,9 @@
 package oogasalad;
 
+import java.io.IOException;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import oogasalad.database.FirebaseManager;
 import oogasalad.view.scene.MainViewManager;
 import oogasalad.view.scene.LogInScene;
 
@@ -26,7 +28,8 @@ public class Main extends Application {
    *              stages.
    */
   @Override
-  public void start(Stage stage) {
+  public void start(Stage stage) throws IOException {
+    FirebaseManager.initializeFirebase();
     MainViewManager viewManager = new MainViewManager(stage);
 //    viewManager.switchToMainMenu();
     LogInScene splashScene = new LogInScene(viewManager);

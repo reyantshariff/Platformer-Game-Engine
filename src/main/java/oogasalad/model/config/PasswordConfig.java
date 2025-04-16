@@ -14,7 +14,7 @@ import javax.crypto.spec.PBEKeySpec;
  * @author Justin Aronwald
  */
 public class PasswordConfig {
-  private static final int ITERATIONS = 65536;
+  private static final int ITERATIONS = 5000; // lower for testing;
   private static final int KEY_LENGTH = 256;
   private static final String ALGORITHM = "PBKDF2WithHmacSHA256";
 
@@ -39,7 +39,8 @@ public class PasswordConfig {
    */
   public static String hashPassword(String password, String salt) throws PasswordHashingException {
     try {
-      PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt.getBytes(), ITERATIONS, KEY_LENGTH);
+      byte[] saltBytes = Base64.getDecoder().decode(salt);
+      PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), saltBytes, ITERATIONS, KEY_LENGTH);
       SecretKeyFactory skf = SecretKeyFactory.getInstance(ALGORITHM);
       byte[] hash = skf.generateSecret(spec).getEncoded();
       return Base64.getEncoder().encodeToString(hash);
