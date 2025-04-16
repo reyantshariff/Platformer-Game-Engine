@@ -505,12 +505,9 @@
               {
                 "Name": "Follower",
                 "Configurations": {
-                  "followObjectName": "Dino"
+                  "followObjectName": "Dino",
+                  "smoothMovement": true
                 }
-              },
-              {
-                "Name": "SmoothMovement",
-                "Configurations": {}
               }
             ]
           }
