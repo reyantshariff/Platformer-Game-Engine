@@ -153,8 +153,8 @@
 
 /* SPLASH SCREENS */
 .splashText {
-  -fx-font-size: 45px;
-  -fx-text-fill: #220000;
+  -fx-font-size: 1px;
+  -fx-fill: #220000;
   -fx-font-family: "Impact";
   -fx-text-effect: emboss;
 }

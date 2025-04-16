@@ -149,7 +149,7 @@
 
 /* SPLASH SCREENS */
 .splashText {
-  -fx-font-size: 36px;
+  -fx-font-size: 1px;
   -fx-text-fill: #FFD700;
   -fx-font-family: "serif";
   -fx-text-effect: emboss;

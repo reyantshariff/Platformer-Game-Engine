@@ -149,8 +149,8 @@
 }
 /* SPLASH SCREENS */
 .splashText {
-  -fx-font-size: 50px;
-  -fx-text-fill: #212529; /* Dark text */
+  -fx-font-size: 1px;
+  -fx-fill: #212529; /* Dark text */
 }
 
 #socialEmailPrompt {

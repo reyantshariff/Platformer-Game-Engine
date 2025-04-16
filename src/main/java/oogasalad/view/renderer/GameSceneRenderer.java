@@ -12,6 +12,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import oogasalad.model.config.GameConfig;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
@@ -138,18 +139,34 @@ public class GameSceneRenderer {
    */
   @SuppressWarnings(UNUSED)
   private void renderTextRenderer(TextRenderer component, GraphicsContext gc) {
-    Transform transform = component.getParent().getComponent(Transform.class);
-    if (transform == null) return;
+      Transform transform = component.getParent().getComponent(Transform.class);
+      if (transform == null) return;
 
-    javafx.scene.text.Text textNode = new javafx.scene.text.Text(component.getText());
-    textNode.getStyleClass().add(component.getStyleClass());
-    textNode.setX(transform.getX() - relativeX);
-    textNode.setY(transform.getY() - relativeY);
+      javafx.scene.text.Text textNode = new javafx.scene.text.Text(component.getText());
+      textNode.getStyleClass().add(component.getStyleClass());
 
-    applyStyleSheet(textNode, component.getStyleClass());
+      textNode.setX(transform.getX());
+      textNode.setY(transform.getY());
 
-    WritableImage snapshot = textNode.snapshot(null, null);
-    gc.drawImage(snapshot, textNode.getX(), textNode.getY());
+
+
+      applyStyleSheet(textNode, component.getStyleClass());
+      textNode.applyCss();
+
+      double fontSize = transform.getScaleY();
+      textNode.setFont(Font.font(fontSize));
+
+      double renderedWidth = textNode.getLayoutBounds().getWidth();
+      double renderedHeight = textNode.getLayoutBounds().getHeight();
+
+      transform.setScaleX(renderedWidth);
+
+      WritableImage snapshot = textNode.snapshot(null, null);
+
+      double drawX = transform.getX() - relativeX;
+      double drawY = transform.getY() - relativeY;
+
+      gc.drawImage(snapshot, drawX, drawY);
   }
 
 
@@ -183,11 +200,12 @@ public class GameSceneRenderer {
   }
 
   private void applyStyleSheet(Node node, String styleSheet) {
-      node.getStyleClass().add(styleSheet);
-      Group tempRoot = new Group(node);
-      Scene tempScene = new Scene(tempRoot);
+    node.getStyleClass().add(styleSheet);
+    Group tempRoot = new Group(node);
+    Scene tempScene = new Scene(tempRoot);
+    tempScene.setFill(Color.TRANSPARENT);
 
-      if (myScene != null && !myScene.getStylesheets().isEmpty()) {
+    if (myScene != null && !myScene.getStylesheets().isEmpty()) {
         tempScene.getStylesheets().addAll(myScene.getStylesheets());
       } else {
         String theme = StyleConfig.getCurrentTheme();
@@ -199,6 +217,8 @@ public class GameSceneRenderer {
           logger.error("Could not load fallback stylesheet: {}", themePath);
         }
       }
+
+    node.applyCss();
   }
 
   private void renderSelectionOverlay(GraphicsContext gc, GameObject obj) {
