@@ -49,7 +49,7 @@ public class LogInScene extends ViewScene {
     card.setId(SOCIAL_CARD_ID);
 
     setupWelcomeMessage(card);
-    setUsernameField(card);
+    setupUsernameField(card);
     setupPasswordField(card);
     setUpCheckbox(card);
     setupLoginButton(card);
@@ -65,7 +65,7 @@ public class LogInScene extends ViewScene {
     card.getChildren().add(welcomeMessage);
   }
 
-  private void setUsernameField(VBox card) {
+  private void setupUsernameField(VBox card) {
     usernameField = new TextField();
     usernameField.setPromptText(GameConfig.getText(SOCIAL_EMAIL_PROMPT_ID));
     usernameField.setId(SOCIAL_EMAIL_PROMPT_ID);
@@ -131,21 +131,25 @@ public class LogInScene extends ViewScene {
   private void setButtonOnClick(Button loginButton) {
     loginButton.setOnMouseClicked(event -> {
         String username = usernameField.getText().trim();
-        String password = nakedPasswordField.isVisible()
-            ? nakedPasswordField.getText().trim()
-            : passwordField.getText().trim();
+        String password = getTrimmedPassword();
 
-      if (!username.isEmpty() && !password.isEmpty()) {
+        if (username.isEmpty() || password.isEmpty()) {
+          LOGGER.info("Missing username or password");
+          return;
+        }
+
         try {
           gameController.handleLogin(username, password, rememberMe.isSelected());
         } catch (IOException e) {
           LOGGER.warn("Error setting up autologin:", e);
         }
-      } else {
-        LOGGER.info("Missing username or password");
-        // Show to user
-      }
     });
+  }
+
+  private String getTrimmedPassword() {
+    return nakedPasswordField.isVisible()
+        ? nakedPasswordField.getText().trim()
+        : passwordField.getText().trim();
   }
 
   private void setupSignUpButton(VBox card) {
