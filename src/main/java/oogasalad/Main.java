@@ -3,6 +3,7 @@ package oogasalad;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import oogasalad.view.scene.MainViewManager;
+import oogasalad.view.scene.LogInScene;
 
 /**
  * This is the main class of the OOGASalad Platformer Game Sandbox. Run the start method to open the
@@ -27,7 +28,10 @@ public class Main extends Application {
   @Override
   public void start(Stage stage) {
     MainViewManager viewManager = new MainViewManager(stage);
-    viewManager.switchToMainMenu();
+//    viewManager.switchToMainMenu();
+    LogInScene splashScene = new LogInScene(viewManager);
+    stage.setScene(splashScene.getScene());
+    stage.show();
   }
 
 }
