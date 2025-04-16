@@ -11,6 +11,7 @@ import oogasalad.model.config.GameConfig;
 import oogasalad.model.config.PasswordHashingException;
 import oogasalad.view.scene.MainViewManager;
 import oogasalad.view.scene.ViewScene;
+
 import static oogasalad.model.config.GameConfig.LOGGER;
 
 /**
@@ -53,6 +54,7 @@ public class SignUpScene extends ViewScene {
     handleUsernameField(card);
     handlePasswordField(card);
     handleSignUpButton(card);
+    handleLoginButton(card);
 
     gameController = new GameController(manager);
 
@@ -127,6 +129,13 @@ public class SignUpScene extends ViewScene {
       LOGGER.error("Error storing user in database:{}", ex.getMessage());
       //show on front
     }
+  }
+
+  private void handleLoginButton(VBox card) {
+    Button logInButton = new Button("Log In");
+    logInButton.setId("LoginButton");
+    logInButton.setOnAction(e -> MainViewManager.getInstance().switchTo("LogInScene"));
+    card.getChildren().add(logInButton);
   }
 
 }

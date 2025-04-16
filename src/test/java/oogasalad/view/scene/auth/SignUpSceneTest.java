@@ -40,4 +40,9 @@ class SignUpSceneTest extends ApplicationTest {
 
     assertTrue(PlayerService.deletePlayer(username));
   }
+
+  @Test
+  void handleLogInButton_correctLogin_changeInScene() {
+    clickOn("#LoginButton");
+  }
 }
