@@ -25,7 +25,6 @@ public abstract class ViewScene {
   protected ViewScene(Parent root, double width, double height) {
     myScene = new Scene(root, width, height);
     StyleConfig.setStylesheet(myScene, StyleConfig.getCurrentTheme());
-    StyleConfig.setStylesheet(myScene, StyleConfig.getCurrentTheme());
     mySceneRenderer = new GameSceneRenderer(myScene);
   }
 
