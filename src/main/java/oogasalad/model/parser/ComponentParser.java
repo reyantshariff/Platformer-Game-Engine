@@ -35,11 +35,13 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
 
   static {
     SERIALIZERS.put(String.class, (field, config) -> config.put(field.getFieldName(), (String) field.getValue()));
+    SERIALIZERS.put(Boolean.class, (field, config) -> config.put(field.getFieldName(), (Boolean) field.getValue()));
+    SERIALIZERS.put(boolean.class, (field, config) -> config.put(field.getFieldName(), (Boolean) field.getValue()));
     SERIALIZERS.put(Integer.class, (field, config) -> config.put(field.getFieldName(), (Integer) field.getValue()));
     SERIALIZERS.put(int.class, (field, config) -> config.put(field.getFieldName(), (Integer) field.getValue()));
     SERIALIZERS.put(Double.class, (field, config) -> config.put(field.getFieldName(), (Double) field.getValue()));
     SERIALIZERS.put(double.class, (field, config) -> config.put(field.getFieldName(), (Double) field.getValue()));
-    SERIALIZERS.put(List.class, (field, config) -> serializeListField(field, config));  // Use a separate list serializer
+    SERIALIZERS.put(List.class, (field, config) -> serializeListField(field, config));
   }
 
   static {
