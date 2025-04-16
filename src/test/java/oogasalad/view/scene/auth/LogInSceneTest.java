@@ -55,6 +55,11 @@ class LogInSceneTest extends ApplicationTest {
   void loginButtons_correctLogin_changeInScene() {
     clickOn("#socialEmailPrompt").write("justin1");
     clickOn("#socialPasswordPrompt").write("justin1");
+
+    clickOn("#togglePasswordButton");
+    clickOn("#togglePasswordButton");
+
+
     clickOn("#socialLoginButton");
   }
 
