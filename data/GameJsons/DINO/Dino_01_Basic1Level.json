@@ -507,6 +507,10 @@
                 "Configurations": {
                   "followObjectName": "Dino"
                 }
+              },
+              {
+                "Name": "SmoothMovement",
+                "Configurations": {}
               }
             ]
           }
