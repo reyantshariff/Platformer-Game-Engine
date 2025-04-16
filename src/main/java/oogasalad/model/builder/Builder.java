@@ -2,6 +2,7 @@ package oogasalad.model.builder;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
 import java.io.IOException;
 import java.util.Deque;
 import java.util.ArrayDeque;
@@ -248,8 +249,12 @@ public class Builder {
    * @param filepath location of JSON file
    */
   public JsonNode saveGameAs(String filepath) {
-    // TODO: Need to create a new file if it doesn't exist
-    JsonParser parser = new JsonParser(filepath);
+    if (game == null) {
+      throw new SaveGameException("No game loaded to save.");
+    }
+    String fileName = new File(filepath).getName();
+    JsonParser parser = new JsonParser(fileName);
+
     try {
       return parser.write(game);
     } catch (IOException e) {

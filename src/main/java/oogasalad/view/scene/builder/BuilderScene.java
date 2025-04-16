@@ -100,7 +100,9 @@ public class BuilderScene extends ViewScene {
       viewManager.switchTo(GAME_PREVIEW);
     });
 
-    topBar.getChildren().addAll(mainMenuButton, previewLevelButton);
+    Button saveButton = getSaveButton();
+
+    topBar.getChildren().addAll(mainMenuButton, previewLevelButton, saveButton);
     myWindow.setTop(topBar);
 
     // Add SplitPane for sprite button options and object control panel
@@ -121,6 +123,21 @@ public class BuilderScene extends ViewScene {
 
     // Add split pane to the center of the window
     myWindow.setCenter(viewComponentSplitPane);
+  }
+
+  private Button getSaveButton() {
+    Button saveButton = new Button("Save");
+    saveButton.setOnAction(e -> {javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+      fileChooser.setTitle("Save Game File");
+      fileChooser.setInitialDirectory(new File("src/main/gameFiles"));
+      fileChooser.getExtensionFilters().add(
+          new javafx.stage.FileChooser.ExtensionFilter("JSON Files", "*.json")
+      );
+      File selectedFile = fileChooser.showSaveDialog(getScene().getWindow());
+      if (selectedFile != null) {
+        builder.saveGameAs(selectedFile.getPath());
+      }});
+    return saveButton;
   }
 
   @SuppressWarnings("unchecked")
