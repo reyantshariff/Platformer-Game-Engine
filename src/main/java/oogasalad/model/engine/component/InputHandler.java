@@ -15,6 +15,9 @@ public final class InputHandler extends GameComponent {
   private final Set<Integer> currentKeys = new HashSet<>();
   private final Set<Integer> previousKeys = new HashSet<>();
 
+  private boolean mouseClicked = false;
+  private double mouseX, mouseY;
+
   @Override
   public ComponentTag componentTag() {
     return ComponentTag.INPUT;
@@ -26,6 +29,8 @@ public final class InputHandler extends GameComponent {
     previousKeys.addAll(currentKeys);
     currentKeys.clear();
     currentKeys.addAll(getParent().getScene().getGame().getCurrentInputKeys());
+
+    mouseClicked = false;
   }
 
   /**
@@ -76,5 +81,38 @@ public final class InputHandler extends GameComponent {
   public void resetInputState() {
     currentKeys.clear();
     previousKeys.clear();
+  }
+
+  /**
+   * Method to register mouse click and location
+   *
+   * @param x - X position of click
+   * @param y - Y position of click
+   */
+  public void registerMouseClick(double x, double y) {
+    mouseClicked = true;
+    mouseX = x;
+    mouseY = y;
+  }
+
+  /**
+   * @return - Checks if mouse is currently clicked
+   */
+  public boolean isMouseClicked() {
+    return mouseClicked;
+  }
+
+  /**
+   * @return - X position of mouse click
+   */
+  public double getMouseX() {
+    return mouseX;
+  }
+
+  /**
+   * @return - Y position of mouse click
+   */
+  public double getMouseY() {
+    return mouseY;
   }
 }

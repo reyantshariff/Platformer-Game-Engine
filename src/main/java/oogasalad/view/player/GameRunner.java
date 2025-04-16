@@ -10,6 +10,7 @@ import oogasalad.model.config.GameConfig;
 import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.engine.base.enumerate.KeyCode;
+import oogasalad.model.engine.component.InputHandler;
 import oogasalad.view.renderer.GameSceneRenderer;
 
 /**
@@ -37,11 +38,25 @@ public class GameRunner {
     canvas.setFocusTraversable(true);
     canvas.setOnKeyPressed(this::handleKeyPressed);
     canvas.setOnKeyReleased(this::handleKeyReleased);
+
+    canvas.setOnMouseClicked(e -> handleMouseClick(e.getX(), e.getY()));
+
     canvas.requestFocus();
     gc = canvas.getGraphicsContext2D();
     objectRenderer = new GameSceneRenderer(null);
 
     setUpGameLoop();
+  }
+
+  private void handleMouseClick(double x, double y) {
+      var scene = game.getCurrentScene();
+      if (scene == null) return;
+
+      for (var obj : scene.getAllObjects()) {
+        if (obj.hasComponent(InputHandler.class)) {
+          obj.getComponent(InputHandler.class).registerMouseClick(x,y);
+        }
+    }
   }
 
   /**
