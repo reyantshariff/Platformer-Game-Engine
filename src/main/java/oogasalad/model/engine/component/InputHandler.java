@@ -16,6 +16,7 @@ public final class InputHandler extends GameComponent {
   private final Set<Integer> previousKeys = new HashSet<>();
 
   private boolean mouseClicked = false;
+  private boolean previousMouseClicked = false;
   private double mouseX, mouseY;
 
   @Override
@@ -30,6 +31,7 @@ public final class InputHandler extends GameComponent {
     currentKeys.clear();
     currentKeys.addAll(getParent().getScene().getGame().getCurrentInputKeys());
 
+    previousMouseClicked = mouseClicked;
     mouseClicked = false;
   }
 
@@ -99,7 +101,15 @@ public final class InputHandler extends GameComponent {
    * @return - Checks if mouse is currently clicked
    */
   public boolean isMouseClicked() {
-    return mouseClicked;
+    Transform transform = getParent().getComponent(Transform.class);
+    return (previousMouseClicked || mouseClicked) && isClickInObject(transform);
+  }
+
+  private boolean isClickInObject(Transform transform) {
+    return transform.getX() < mouseX &&
+        transform.getX() + transform.getScaleX() > mouseX &&
+        transform.getY() < mouseY &&
+        transform.getY() + transform.getScaleY() > mouseY;
   }
 
   /**
