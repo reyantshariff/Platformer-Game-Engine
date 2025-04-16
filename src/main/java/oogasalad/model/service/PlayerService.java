@@ -117,7 +117,7 @@ public class PlayerService {
       LOGGER.error("Error, no user in the database", e);
       // show on the frontend
     } catch (IOException e) {
-      throw new IOException("Failed to store autologin:" + e);
+      throw new IOException("Failed to store autologin:", e);
     }
   }
 

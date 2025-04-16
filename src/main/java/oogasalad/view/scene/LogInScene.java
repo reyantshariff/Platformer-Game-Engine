@@ -14,7 +14,11 @@ import oogasalad.controller.GameController;
 import oogasalad.model.config.GameConfig;
 import static oogasalad.model.config.GameConfig.LOGGER;
 
-
+/**
+ * This is the scene that visualizes the login process which also initializes the logged in user within the Session Management
+ *
+ * @author Daniel Rodriguez-Florido, Justin Aronwald
+ */
 public class LogInScene extends ViewScene {
 
   private static final String SOCIAL_CARD_ID = "socialCard";
@@ -35,6 +39,8 @@ public class LogInScene extends ViewScene {
 
   /**
    * Template for a program JavaFX window using a GameObjectRenderer
+   *
+   * @param manager - the view switcher that handles the various scenes
    */
   public LogInScene(MainViewManager manager) {
     super(new StackPane(), GameConfig.getNumber("windowWidth"), GameConfig.getNumber("windowHeight"));
@@ -118,6 +124,11 @@ public class LogInScene extends ViewScene {
     Button loginButton = new Button(GameConfig.getText(SOCIAL_LOGIN_BUTTON_ID));
     loginButton.setId(SOCIAL_LOGIN_BUTTON_ID);
 
+    setButtonOnClick(loginButton);
+    card.getChildren().add(loginButton);
+  }
+
+  private void setButtonOnClick(Button loginButton) {
     loginButton.setOnMouseClicked(event -> {
         String username = usernameField.getText().trim();
         String password = nakedPasswordField.isVisible()
@@ -135,7 +146,6 @@ public class LogInScene extends ViewScene {
         // Show to user
       }
     });
-    card.getChildren().add(loginButton);
   }
 
   private void setupSignUpButton(VBox card) {

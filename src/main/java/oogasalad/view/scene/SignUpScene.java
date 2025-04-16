@@ -1,6 +1,5 @@
 package oogasalad.view.scene;
 
-import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
@@ -8,6 +7,13 @@ import javafx.scene.layout.VBox;
 import oogasalad.controller.GameController;
 import oogasalad.model.config.GameConfig;
 
+/**
+ * This is the scene
+ * that visualizes the sign-up process
+ * so that users can put their information in the Firebase database.
+ *
+ * @author Daniel Rodriguez-Florido, Justin Aronwald
+ */
 public class SignUpScene extends ViewScene {
 
   private static final String SIGNUP_CARD_ID = "signUpCard";
@@ -18,7 +24,7 @@ public class SignUpScene extends ViewScene {
   private static final String SOCIAL_EMAIL_PROMPT_ID = "socialEmailPrompt";
   private static final String SOCIAL_PASSWORD_PROMPT_ID = "socialPasswordPrompt";
 
-  private GameController gameController;
+  private final GameController gameController;
   private TextField usernameField;
   private TextField passwordField;
 
@@ -38,8 +44,8 @@ public class SignUpScene extends ViewScene {
     setUpSignUpPrompt(card);
     setUpFirstNameField(card);
     setUpLastNameField(card);
-    setUsernameField(card);
-    setPasswordField(card);
+    handleUsernameField(card);
+    handlePasswordField(card);
 
     gameController = new GameController(manager);
 
@@ -72,14 +78,14 @@ public class SignUpScene extends ViewScene {
     card.getChildren().add(lastNameField);
   }
 
-  private void setUsernameField(VBox card) {
+  private void handleUsernameField(VBox card) {
     usernameField = new TextField();
     usernameField.setPromptText(GameConfig.getText(SOCIAL_EMAIL_PROMPT_ID));
     usernameField.setId(SOCIAL_EMAIL_PROMPT_ID);
     card.getChildren().add(usernameField);
   }
 
-  private void setPasswordField(VBox card) {
+  private void handlePasswordField(VBox card) {
     passwordField = new TextField();
     passwordField.setPromptText(GameConfig.getText(SOCIAL_PASSWORD_PROMPT_ID));
     passwordField.setId(SOCIAL_EMAIL_PROMPT_ID);
