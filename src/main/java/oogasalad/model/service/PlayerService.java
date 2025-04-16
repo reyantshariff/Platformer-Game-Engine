@@ -8,6 +8,7 @@ import static oogasalad.model.config.ProfileServiceConfig.documentExists;
 import static oogasalad.model.config.ProfileServiceConfig.getDocument;
 
 import com.google.cloud.firestore.*;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import oogasalad.database.DatabaseException;
@@ -95,9 +96,10 @@ public class PlayerService {
    *
    * @param username - the inputted username
    * @param password - the inputted password
+   * @param rememberMe - true if rememberMe checkbox is selected
    */
-  public static void login(String username, String password)
-      throws PasswordHashingException {
+  public static void login(String username, String password, boolean rememberMe)
+      throws PasswordHashingException, IOException {
     PlayerData curUser;
     try {
       curUser = getPlayerByUsername(username);
@@ -107,13 +109,15 @@ public class PlayerService {
         throw new PasswordHashingException("Password is incorrect");
       }
 
-      SessionManagement.login(curUser);
+      SessionManagement.login(curUser, rememberMe);
       LOGGER.info("User: {} has successfully logged in", username);
       //switch screens
 
     } catch (DatabaseException e) {
       LOGGER.error("Error, no user in the database", e);
       // show on the frontend
+    } catch (IOException e) {
+      throw new IOException("Failed to store autologin:" + e);
     }
   }
 

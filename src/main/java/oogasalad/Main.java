@@ -4,6 +4,7 @@ import java.io.IOException;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import oogasalad.database.FirebaseManager;
+import oogasalad.model.profile.SessionManagement;
 import oogasalad.view.scene.MainViewManager;
 import oogasalad.view.scene.LogInScene;
 
@@ -32,9 +33,14 @@ public class Main extends Application {
     FirebaseManager.initializeFirebase();
     MainViewManager viewManager = new MainViewManager(stage);
 //    viewManager.switchToMainMenu();
-    LogInScene splashScene = new LogInScene(viewManager);
-    stage.setScene(splashScene.getScene());
-    stage.show();
+
+    if (SessionManagement.tryAutoLogin()) {
+      viewManager.switchToMainMenu();
+    } else {
+      LogInScene splashScene = new LogInScene(viewManager);
+      stage.setScene(splashScene.getScene());
+      stage.show();
+    }
   }
 
 }
