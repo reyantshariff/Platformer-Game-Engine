@@ -89,14 +89,6 @@ public class Builder {
   }
 
   /**
-   * Save the file
-   */
-  public void Save()
-  {
-    fileSaved = true;
-  }
-
-  /**
    * Checks if the file was saved
    */
   public boolean isSaved()
@@ -256,6 +248,7 @@ public class Builder {
     JsonParser parser = new JsonParser(fileName);
 
     try {
+      fileSaved = true;
       return parser.write(game);
     } catch (IOException e) {
       throw new SaveGameException("Error saving game to JSON: " + e.getMessage(), e);

@@ -134,6 +134,14 @@ public class MainViewManager {
     stage.show();
   }
 
+  /**
+   * @return Stage
+   */
+  public Stage getStage()
+  {
+    return stage;
+  }
+
 
   /**
    * Shortcut to go to the main menu

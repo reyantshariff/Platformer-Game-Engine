@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -18,7 +19,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.SplitPane;
@@ -88,7 +91,16 @@ public class BuilderScene extends ViewScene {
     HBox topBar = new HBox();
     Button mainMenuButton = new Button("Main Menu");
     MainViewManager viewManager = MainViewManager.getInstance();
-    mainMenuButton.setOnAction(e -> viewManager.switchToMainMenu());
+    viewManager.getStage().setOnCloseRequest(event -> {
+      if (!showAlert()) {
+        event.consume();
+      }
+    });
+    mainMenuButton.setOnAction(e -> {
+      if (showAlert()) {
+        viewManager.switchToMainMenu();
+      }
+    });
 
     Button previewLevelButton = new Button("Preview Level");
     GameDisplayScene preview = viewManager.addViewScene(GameDisplayScene.class, GAME_PREVIEW);
@@ -124,6 +136,27 @@ public class BuilderScene extends ViewScene {
     // Add split pane to the center of the window
     myWindow.setCenter(viewComponentSplitPane);
   }
+
+  private boolean showAlert() {
+    if (!builder.isSaved()) {
+      Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+      confirmAlert.setTitle("Confirm Exit");
+      confirmAlert.setHeaderText("Unsaved changes may be lost!");
+      confirmAlert.setContentText("Are you sure you want to quit?");
+
+      Optional<ButtonType> result = confirmAlert.showAndWait();
+
+      if (result.isPresent() && result.get() == ButtonType.OK) {
+        GameConfig.LOGGER.info("User confirmed exit.");
+        return true;
+      } else {
+        GameConfig.LOGGER.info("User canceled exit.");
+        return false;
+      }
+    }
+    return true; // It's safe to exit if the builder is already saved
+  }
+
 
   private Button getSaveButton() {
     Button saveButton = new Button("Save");
