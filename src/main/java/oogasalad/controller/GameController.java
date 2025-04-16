@@ -2,6 +2,7 @@ package oogasalad.controller;
 
 import java.io.IOException;
 import oogasalad.model.config.PasswordHashingException;
+import oogasalad.model.profile.SessionManagement;
 import oogasalad.model.service.PlayerService;
 import oogasalad.view.scene.MainViewManager;
 import static oogasalad.model.config.GameConfig.LOGGER;
@@ -26,17 +27,22 @@ public class GameController {
    *
    * @param username - the inputted username
    * @param password - the inputted password
+   * @return - true if login is successful
    */
-  public void handleLogin(String username, String password, boolean rememberMe) throws IOException {
+  public boolean handleLogin(String username, String password, boolean rememberMe) throws IOException {
     try {
       PlayerService.login(username, password, rememberMe);
-      mainViewManager.switchTo("MainMenuScene");
+      if (SessionManagement.isLoggedIn()) {
+        mainViewManager.switchTo("MainMenuScene");
+        return true;
+      }
     } catch (PasswordHashingException e) {
       LOGGER.warn("Error");
       //Show error on the frontend
     } catch (IOException e) {
       throw new IOException("Error with handling autologin:", e);
     }
+    return false;
   }
 
   /**

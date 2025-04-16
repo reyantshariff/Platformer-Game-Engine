@@ -33,6 +33,7 @@ public class LogInScene extends ViewScene {
   private static final String TOGGLE_PASSWORD_BUTTON_ID = "togglePasswordButton";
   private static final String SHOW_PASS_TEXT_ID = "showPassText";
   private static final String HIDE_PASS_TEXT_ID = "hidePassText";
+  private static final String REMEMBER_ME_ID = "rememberMeCheckbox";
 
   private final GameController gameController;
   private TextField usernameField;
@@ -142,7 +143,11 @@ public class LogInScene extends ViewScene {
         }
 
         try {
-          gameController.handleLogin(username, password, rememberMe.isSelected());
+          if (gameController.handleLogin(username, password, rememberMe.isSelected())) {
+            LOGGER.info("Successfully logged in");
+          } else {
+            LOGGER.info("Failed to log in");
+          }
         } catch (IOException e) {
           LOGGER.warn("Error setting up autologin:", e);
         }
@@ -163,6 +168,7 @@ public class LogInScene extends ViewScene {
 
   private void setUpCheckbox(VBox card) {
     rememberMe = new CheckBox("Remember Me");
+    rememberMe.setId(REMEMBER_ME_ID);
     card.getChildren().add(rememberMe);
   }
 
