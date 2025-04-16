@@ -35,21 +35,23 @@ public class SmoothMovement extends GameComponent {
         double minSpeed = Math.sqrt(Math.pow(physicsHandler.getVelocityX(), 2) + Math.pow(physicsHandler.getVelocityY(), 2));
         double playerAcceleration = Math.sqrt(Math.pow(physicsHandler.getAccelerationX(), 2) + Math.pow(physicsHandler.getAccelerationY(), 2));
         double acceleration = Math.max(1, playerAcceleration);
+
         currentPosition = new Pair<>(transform.getX(), transform.getY());
         double distance = Math.sqrt(Math.pow(currentPosition.getKey() - previousPosition.getKey(), 2)
                 + Math.pow(currentPosition.getValue() - previousPosition.getValue(), 2));
         double maxDistance = speedLimit * deltaTime;
+
         if (distance > maxDistance) {
+            speedLimit = Math.max(minSpeed + acceleration * deltaTime, speedLimit + acceleration * deltaTime);
+            maxDistance = speedLimit * deltaTime;
             double ratio = maxDistance / distance;
             double newX = previousPosition.getKey() + (currentPosition.getKey() - previousPosition.getKey()) * ratio;
             double newY = previousPosition.getValue() + (currentPosition.getValue() - previousPosition.getValue()) * ratio;
             transform.setX(newX);
             transform.setY(newY);
-            speedLimit = Math.max(minSpeed + acceleration * deltaTime, speedLimit + acceleration * deltaTime);
         } else {
             speedLimit = Math.max(minSpeed, speedLimit - acceleration * deltaTime);
         }
         previousPosition = new Pair<>(transform.getX(), transform.getY());
     }
-
 }

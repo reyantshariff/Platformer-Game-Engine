@@ -18,7 +18,7 @@ public class Follower extends GameComponent {
 
   @Override
   public ComponentTag componentTag() {
-    return ComponentTag.TRANSFORM;
+    return ComponentTag.SMOOTH_MOVEMENT;
   }
 
   @SerializableField
