@@ -184,4 +184,22 @@ public class Follower extends GameComponent {
   public String getFollowObjectName() {
     return followObjectName;
   }
+
+  /**
+   * Sets the smooth movement flag.
+   *
+   * @param smoothMovement true if smooth movement is enabled, false otherwise
+   */
+  public void setSmoothMovement(boolean smoothMovement) {
+    this.smoothMovement = smoothMovement;
+  }
+
+  /**
+   * Gets the smooth movement flag.
+   *
+   * @return true if smooth movement is enabled, false otherwise
+   */
+  public boolean isSmoothMovement() {
+    return smoothMovement;
+  }
 }
