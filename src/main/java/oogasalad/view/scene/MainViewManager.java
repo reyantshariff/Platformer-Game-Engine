@@ -141,4 +141,15 @@ public class MainViewManager {
   public void switchToMainMenu() {
     switchTo(GameConfig.getText("defaultScene"));
   }
+
+  /**
+   * @return - Name of current scene
+   */
+  public String getCurrentSceneName() {
+    return viewScenes.entrySet().stream()
+        .filter(entry -> entry.getValue().equals(currentScene))
+        .map(Map.Entry::getKey)
+        .findFirst()
+        .orElse(null);
+  }
 }

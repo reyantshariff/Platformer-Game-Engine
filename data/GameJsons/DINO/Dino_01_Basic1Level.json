@@ -197,7 +197,7 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeSceneAction",
+                      "name": "ChangeViewSceneAction",
                       "parameter": "MainMenuScene",
                       "parameterType": "String"
                     }
@@ -263,7 +263,7 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeSceneAction",
+                      "name": "ChangeViewSceneAction",
                       "parameter": "MainMenuScene",
                       "parameterType": "String"
                     }
@@ -329,7 +329,7 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeSceneAction",
+                      "name": "ChangeViewSceneAction",
                       "parameter": "MainMenuScene",
                       "parameterType": "String"
                     }
@@ -395,7 +395,7 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeSceneAction",
+                      "name": "ChangeViewSceneAction",
                       "parameter": "MainMenuScene",
                       "parameterType": "String"
                     }
@@ -461,7 +461,7 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeSceneAction",
+                      "name": "ChangeViewSceneAction",
                       "parameter": "MainMenuScene",
                       "parameterType": "String"
                     }
