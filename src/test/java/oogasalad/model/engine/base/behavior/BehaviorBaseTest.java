@@ -2,11 +2,13 @@ package oogasalad.model.engine.base.behavior;
 
 import com.google.cloud.Timestamp;
 import java.io.IOException;
+import oogasalad.model.config.GameConfig;
 import oogasalad.model.config.PasswordConfig;
 import oogasalad.model.config.PasswordHashingException;
 import oogasalad.model.profile.Password;
 import oogasalad.model.profile.PlayerData;
 import oogasalad.model.profile.SessionManagement;
+import oogasalad.view.scene.menu.MainMenuScene;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.testfx.framework.junit5.ApplicationTest;
@@ -36,7 +38,8 @@ public abstract class BehaviorBaseTest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) throws PasswordHashingException, IOException {
-        MainViewManager viewManager = new MainViewManager(stage);
+        MainViewManager viewManager = MainViewManager.setInstance(stage);
+        viewManager.addViewScene(MainMenuScene.class, GameConfig.getText("defaultScene"));
 
         String username = "justin1";
         Password password = Password.fromPlaintext("justin1");
