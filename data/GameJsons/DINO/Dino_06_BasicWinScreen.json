@@ -11,10 +11,10 @@
   "Data": {
     "Scene": [
       {
-        "Name": "LossScene",
+        "Name": "WinScene",
         "GameObjects": [
           {
-            "Name": "LossTextTitle",
+            "Name": "WinTextTitle",
             "Tag": "UI",
             "Components": [
               {
@@ -28,7 +28,7 @@
               {
                 "Name": "TextRenderer",
                 "Configurations": {
-                  "text": "You Lost!",
+                  "text": "You Won!",
                   "styleClass": "splashText",
                   "isCentered": true,
                   "fontSize": 80
@@ -85,7 +85,7 @@
             }
           },
           {
-            "Name": "TryAgainText",
+            "Name": "PlayAgainText",
             "Tag": "UI",
             "Components": [
               {
@@ -99,7 +99,7 @@
               {
                 "Name": "TextRenderer",
                 "Configurations": {
-                  "text": "Try again",
+                  "text": "Play again!",
                   "styleClass": "splashButton",
                   "isCentered": true,
                   "fontSize": 30
@@ -113,7 +113,7 @@
             "BehaviorController": {
               "Behaviors": [
                 {
-                  "Name": "TryAgainBehavior",
+                  "Name": "PlayAgainBehavior",
                   "constraints": [
                     {
                       "name": "MouseClickConstraint",
@@ -153,7 +153,7 @@
               {
                 "Name": "Follower",
                 "Configurations": {
-                  "followObjectName": "LossTextTitle"
+                  "followObjectName": "WinTextTitle"
                 }
               }
             ]

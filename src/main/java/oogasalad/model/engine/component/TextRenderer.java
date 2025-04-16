@@ -23,6 +23,9 @@ public class TextRenderer extends GameComponent {
   @SerializableField
   private boolean isCentered = false;
 
+  @SerializableField
+  private int fontSize;
+
   /**
    * Identifies this component's category/tag.
    *
@@ -81,5 +84,19 @@ public class TextRenderer extends GameComponent {
    */
   public void setCentered(boolean centered) {
     this.isCentered = centered;
+  }
+
+  /**
+   * @return - Returns current font size of text renderer
+   */
+  public int getFontSize() {
+    return fontSize;
+  }
+
+  /**
+   * @param fontSize - New font size
+   */
+  public void setFontSize(int fontSize) {
+    this.fontSize = fontSize;
   }
 }
