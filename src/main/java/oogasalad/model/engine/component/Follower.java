@@ -1,7 +1,9 @@
 package oogasalad.model.engine.component;
 
+import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
+
 import static oogasalad.model.config.GameConfig.LOGGER;
-import javafx.util.Pair;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.enumerate.ComponentTag;
@@ -33,8 +35,8 @@ public class Follower extends GameComponent {
   private GameObject followObject;
 
 
-  private Pair<Double, Double> previousPosition;
-  private Pair<Double, Double> currentPosition;
+  private Point2D previousPosition;
+  private Point2D currentPosition;
   private PhysicsHandler physicsHandler;
   private double speedLimit;
 
@@ -56,8 +58,8 @@ public class Follower extends GameComponent {
     offsetX = myTransform.getX() - attachTransform.getX();
     offsetY = myTransform.getY() - attachTransform.getY();
     if(smoothMovement) {
-      currentPosition = new Pair<Double, Double>(myTransform.getX(), myTransform.getY());
-      previousPosition = new Pair<>(currentPosition.getKey(), currentPosition.getValue());
+      currentPosition = new Point2D.Double(myTransform.getX(), myTransform.getY());
+      previousPosition = new Point2D.Double(currentPosition.getX(), currentPosition.getY());
       physicsHandler = followObject.getComponent(PhysicsHandler.class);
       speedLimit = 0;
     }
@@ -82,23 +84,23 @@ public class Follower extends GameComponent {
     double playerAcceleration = Math.sqrt(Math.pow(physicsHandler.getAccelerationX(), 2) + Math.pow(physicsHandler.getAccelerationY(), 2));
     double acceleration = Math.max(1, playerAcceleration);
 
-    currentPosition = new Pair<>(myTransform.getX(), myTransform.getY());
-    double distance = Math.sqrt(Math.pow(currentPosition.getKey() - previousPosition.getKey(), 2)
-            + Math.pow(currentPosition.getValue() - previousPosition.getValue(), 2));
+    currentPosition = new Point2D.Double(myTransform.getX(), myTransform.getY());
+    double distance = Math.sqrt(Math.pow(currentPosition.getX() - previousPosition.getX(), 2)
+            + Math.pow(currentPosition.getY() - previousPosition.getY(), 2));
     double maxDistance = speedLimit * deltaTime;
 
     if (distance > maxDistance) {
         speedLimit = Math.max(minSpeed + acceleration * deltaTime, speedLimit + acceleration * deltaTime);
         maxDistance = speedLimit * deltaTime;
         double ratio = maxDistance / distance;
-        double newX = previousPosition.getKey() + (currentPosition.getKey() - previousPosition.getKey()) * ratio;
-        double newY = previousPosition.getValue() + (currentPosition.getValue() - previousPosition.getValue()) * ratio;
+        double newX = previousPosition.getX() + (currentPosition.getX() - previousPosition.getX()) * ratio;
+        double newY = previousPosition.getY() + (currentPosition.getY() - previousPosition.getY()) * ratio;
         myTransform.setX(newX);
         myTransform.setY(newY);
     } else {
         speedLimit = Math.max(minSpeed, speedLimit - acceleration * deltaTime);
     }
-    previousPosition = new Pair<>(myTransform.getX(), myTransform.getY());
+    previousPosition = new Point2D.Double(myTransform.getX(), myTransform.getY());
   }
 
   /**
