@@ -2,7 +2,7 @@
   "Information": {
     "Name": "DinoRunner",
     "Description": "A playable dino runner game",
-    "Author": "Justin Aronwald",
+    "Author": "Logan Dracos",
     "Resolution": {
       "Width": 1280,
       "Height": 720
@@ -197,7 +197,7 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeSceneAction",
+                      "name": "ChangeViewSceneAction",
                       "parameter": "nextLevel",
                       "parameterType": "String"
                     }
