@@ -1,10 +1,12 @@
 package oogasalad;
 
+import java.io.IOException;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import oogasalad.model.config.GameConfig;
+import oogasalad.database.FirebaseManager;
+import oogasalad.model.profile.SessionManagement;
 import oogasalad.view.scene.MainViewManager;
-import oogasalad.view.scene.menu.MainMenuScene;
+import oogasalad.view.scene.LogInScene;
 
 /**
  * This is the main class of the OOGASalad Platformer Game Sandbox. Run the start method to open the
@@ -27,10 +29,18 @@ public class Main extends Application {
    *              stages.
    */
   @Override
-  public void start(Stage stage) {
-    MainViewManager viewManager = MainViewManager.setInstance(stage);
-    viewManager.addViewScene(MainMenuScene.class, GameConfig.getText("defaultScene"));
-    MainViewManager.getInstance().switchToMainMenu();
+  public void start(Stage stage) throws IOException {
+    FirebaseManager.initializeFirebase();
+    MainViewManager viewManager = new MainViewManager(stage);
+//    viewManager.switchToMainMenu();
+
+    if (SessionManagement.tryAutoLogin()) {
+      viewManager.switchToMainMenu();
+    } else {
+      LogInScene splashScene = new LogInScene(viewManager);
+      stage.setScene(splashScene.getScene());
+      stage.show();
+    }
   }
 
 }

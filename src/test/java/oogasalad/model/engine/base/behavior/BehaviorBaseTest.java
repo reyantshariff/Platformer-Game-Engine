@@ -1,7 +1,13 @@
 package oogasalad.model.engine.base.behavior;
 
-import oogasalad.model.config.GameConfig;
-import oogasalad.view.scene.menu.MainMenuScene;
+import com.google.cloud.Timestamp;
+import java.io.IOException;
+import oogasalad.model.config.PasswordConfig;
+import oogasalad.model.config.PasswordHashingException;
+import oogasalad.model.profile.Password;
+import oogasalad.model.profile.PlayerData;
+import oogasalad.model.profile.SessionManagement;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.testfx.framework.junit5.ApplicationTest;
 import javafx.stage.Stage;
@@ -29,9 +35,15 @@ public abstract class BehaviorBaseTest extends ApplicationTest {
     private Behavior behavior2;
 
     @Override
-    public void start(Stage stage) {
-        MainViewManager viewManager = MainViewManager.setInstance(stage);
-        viewManager.addViewScene(MainMenuScene.class, GameConfig.getText("defaultScene"));
+    public void start(Stage stage) throws PasswordHashingException, IOException {
+        MainViewManager viewManager = new MainViewManager(stage);
+
+        String username = "justin1";
+        Password password = Password.fromPlaintext("justin1");
+        String fullName = "justin";
+
+        SessionManagement.login((new PlayerData(username, fullName, password, Timestamp.now())), false);
+        SessionManagement.tryAutoLogin();
         viewManager.switchToMainMenu();
     }
 
@@ -72,6 +84,11 @@ public abstract class BehaviorBaseTest extends ApplicationTest {
         behavior2.setBehaviorController(obj2.getComponent(BehaviorController.class));
         behavior1.awake();
         behavior2.awake();
+    }
+
+    @AfterEach
+    public void cleanUp() {
+        SessionManagement.logout();
     }
 
     public abstract void customSetUp();
