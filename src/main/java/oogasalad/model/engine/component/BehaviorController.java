@@ -65,4 +65,20 @@ public final class BehaviorController extends GameComponent {
     return behaviors;
   }
 
+  /**
+   * Remove a behavior from the controller. This method is used to remove a behavior from the
+   * controller.
+   */
+  public void removeBehavior(Behavior behavior) {
+    behaviors.remove(behavior);
+  }
+
+  /**
+   * Remove all behaviors from the controller. This method is used to remove all behaviors from the
+   * controller.
+   */
+  public void removeAllBehaviors() {
+    behaviors.clear();
+  }
+
 }
