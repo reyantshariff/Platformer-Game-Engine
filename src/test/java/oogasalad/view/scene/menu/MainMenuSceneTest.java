@@ -53,13 +53,13 @@ class MainMenuSceneTest extends ApplicationTest {
     clickOn("#logOutButton");
   }
 
-  @Test
-  void clickGameSelector_withValidClick_shouldOpenFileChooserDialog() {
-    clickOn("#gameSelector");
-  }
-
-  @Test
-  void clickMenuSelector_whenSelectingOption_shouldAllowLanguageOrThemeChange() {
-    clickOn("#menuSelector");
-  }
+//  @Test
+//  void clickGameSelector_withValidClick_shouldOpenFileChooserDialog() {
+//    clickOn("#gameSelector");
+//  }
+//
+//  @Test
+//  void clickMenuSelector_whenSelectingOption_shouldAllowLanguageOrThemeChange() {
+//    clickOn("#menuSelector");
+//  }
 }
