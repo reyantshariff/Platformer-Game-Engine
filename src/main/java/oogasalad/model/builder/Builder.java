@@ -54,6 +54,7 @@ public class Builder {
       throw new IllegalStateException("Failed to parse game JSON file: " + e.getMessage(), e);
     }
 
+    System.out.println(game.getLevelOrder());
     game.goToScene(game.getLevelOrder().getFirst());
     game.step(0);
     currentScene = game.getCurrentScene();

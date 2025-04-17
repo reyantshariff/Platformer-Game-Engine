@@ -11,7 +11,7 @@ import oogasalad.model.engine.base.architecture.KeyCode;
 public enum BehaviorParamType {
   VOID(Void.class),
   STRING(String.class),
-  INT(Integer.class),
+  INTEGER(Integer.class),
   DOUBLE(Double.class),
   BOOLEAN(Boolean.class),
   KEYCODE(KeyCode.class);

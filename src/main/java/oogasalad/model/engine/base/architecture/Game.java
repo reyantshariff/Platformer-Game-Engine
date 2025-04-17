@@ -24,6 +24,7 @@ public class Game {
 
   private final Map<UUID, GameScene> allScenes = new HashMap<>();
   private final Set<Integer> inputKeys = new HashSet<>();
+  private final double[] inputMouses = new double[3];
   private Map<String, JsonNode> originalSceneJsonMap = new HashMap<>();
 
   private GameScene currentScene;
@@ -134,8 +135,8 @@ public class Game {
   }
 
   /**
-   * Called externally when a key is pressed. Note: This method need to be subscribed to the outer
-   * input event bus.
+   * Called externally when a key is pressed.
+   * Note: This method need to be subscribed to the outer input event bus.
    *
    * @param keyCode the key code of the pressed key
    */
@@ -144,8 +145,8 @@ public class Game {
   }
 
   /**
-   * Called externally when a key is released. Note: This method need to be subscribed to the outer
-   * input event bus.
+   * Called externally when a key is released.
+   * Note: This method need to be subscribed to the outer input event bus.
    *
    * @param keyCode the key code of the released key
    */
@@ -154,12 +155,45 @@ public class Game {
   }
 
   /**
+   * Called externally for the mouse click state.
+   * Note: This method need to be subscribed to the outer input event bus.
+   *
+   * @param clicked the click state.
+   */
+  public void mouseClicked(boolean clicked) {
+    inputMouses[0] = clicked ? 1 : -1;
+  }
+
+  /**
+   * Called externally for the mouse position.
+   * Note: This method need to be subscribed to the outer input event bus.
+   *
+   * @param x the cursor position x in the canvas
+   * @param y the cursor position y in the canvas
+   */
+  public void mouseMoved(double x, double y) {
+    inputMouses[1] = x;
+    inputMouses[2] = y;
+  }
+
+  /**
    * Returns a set of all the input keys currently pressed.
    *
-   * @return a unmodifiable set of all the input keys currently pressed
+   * @return an unmodifiable set of all the input keys currently pressed
    */
   public Set<Integer> getCurrentInputKeys() {
     return Collections.unmodifiableSet(inputKeys);
+  }
+
+  /**
+   * Returns the input mouses information in the canvas.
+   *
+   * @return a double array
+   * @apiNote the first element is clicked state, 1: clicked, -1: unclicked; the second and the
+   *          third element are the x and y coordinates.
+   */
+  public double[] getInputMouses() {
+    return inputMouses;
   }
 
   /**
@@ -212,7 +246,7 @@ public class Game {
   /**
    * Method to go to a new scene based on scene name
    *
-   * @param sceneName - the name of the scene that will be switched too
+   * @param sceneName - the name of the scene that will be switched to
    */
   public void goToScene(String sceneName) {
     int index = levelOrder.indexOf(sceneName);

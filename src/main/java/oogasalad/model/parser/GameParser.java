@@ -60,9 +60,12 @@ public class GameParser implements Parser<Game> {
 
     // Data
     JsonNode data = node.get(DATA);
+    levelOrder.clear();
+    sceneJsonMap.clear();
     handleResourceParsing(data);
     handleSceneParsing(data, newGame);
 
+    // Game JsonStorage
     newGame.setLevelOrder(levelOrder);
     newGame.setOriginalSceneJsonMap(sceneJsonMap);
 

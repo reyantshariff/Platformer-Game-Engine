@@ -1,6 +1,6 @@
 {
   "Information": {
-    "Name": "DinoRunner",
+    "Name": "DinoRunner2",
     "Description": "A playable dino runner game",
     "Author": "Justin Aronwald",
     "Resolution": {
@@ -197,9 +197,9 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeSceneAction",
-                      "parameter": "nextLevel",
-                      "parameterType": "String"
+                      "name": "ChangeGameSceneAction",
+                      "parameter": -1,
+                      "parameterType": "Integer"
                     }
                   ]
                 }
@@ -263,7 +263,7 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeSceneAction",
+                      "name": "ChangeGameSceneAction",
                       "parameter": "MainMenuScene",
                       "parameterType": "String"
                     }

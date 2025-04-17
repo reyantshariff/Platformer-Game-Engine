@@ -70,8 +70,6 @@ public class MainViewManager {
       constructor.setAccessible(true);
       T instance = constructor.newInstance();
       viewScenes.put(name, instance);
-
-      System.out.println(instance);
       return instance;
     } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
       GameConfig.LOGGER.error("Failed to instantiate view scene: {}", viewSceneClass.getName(), e);

@@ -30,6 +30,7 @@ public class GameRunner {
   private final GameSceneRenderer objectRenderer;
   private Timeline gameLoop;
   private Game game;
+  private boolean mouseClicked;
 
   /**
    * Constructs a new GUI instance for the given game.
@@ -40,25 +41,14 @@ public class GameRunner {
     canvas.setFocusTraversable(true);
     canvas.setOnKeyPressed(this::handleKeyPressed);
     canvas.setOnKeyReleased(this::handleKeyReleased);
-    canvas.setOnMouseClicked(e -> handleMouseClick(e.getX(), e.getY()));
+    canvas.setOnMousePressed(e -> handleMouseClick(true));
+    canvas.setOnMouseReleased(e -> handleMouseClick(false));
+    canvas.setOnMouseMoved(e -> handleMouseMove(e.getX(), e.getY()));
     canvas.requestFocus();
     gc = canvas.getGraphicsContext2D();
     objectRenderer = new GameSceneRenderer(null);
 
     setUpGameLoop();
-  }
-
-  private void handleMouseClick(double x, double y) {
-    GameScene scene = game.getCurrentScene();
-    if (scene == null) {
-      return;
-    }
-
-    for (GameObject obj : scene.getAllObjects()) {
-      if (obj.hasComponent(InputHandler.class)) {
-        obj.getComponent(InputHandler.class).registerMouseClick(x, y);
-      }
-    }
   }
 
   /**
@@ -155,17 +145,19 @@ public class GameRunner {
     }
   }
 
-  /**
-   * Maps a JavaFX KeyCode to an engine KeyCode.
-   *
-   * @param code The JavaFX KeyCode.
-   * @return The engine KeyCode, or null if the mapping fails.
-   */
   private KeyCode mapToEngineKeyCode(javafx.scene.input.KeyCode code) {
     try {
       return KeyCode.valueOf(code.name());
     } catch (IllegalArgumentException e) {
       return null;
     }
+  }
+
+  private void handleMouseClick(boolean isClicked) {
+    game.mouseClicked(isClicked);
+  }
+
+  private void handleMouseMove(double x, double y) {
+    game.mouseMoved(x, y);
   }
 }

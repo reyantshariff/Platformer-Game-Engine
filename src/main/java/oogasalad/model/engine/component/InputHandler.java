@@ -15,9 +15,13 @@ public final class InputHandler extends GameComponent {
   private final Set<Integer> currentKeys = new HashSet<>();
   private final Set<Integer> previousKeys = new HashSet<>();
 
-  private boolean mouseClicked = false;
-  private boolean previousMouseClicked = false;
-  private double mouseX, mouseY;
+  private boolean currentClicked = false;
+  private boolean previousClicked = false;
+
+  private double mouseX;
+  private double mouseY;
+
+  private Transform transform;
 
   @Override
   public ComponentTag componentTag() {
@@ -25,14 +29,22 @@ public final class InputHandler extends GameComponent {
   }
 
   @Override
-  public void update(double deltaTime) {
+  protected void awake() {
+    transform = getComponent(Transform.class);
+  }
+
+  @Override
+  protected void update(double deltaTime) {
     previousKeys.clear();
     previousKeys.addAll(currentKeys);
     currentKeys.clear();
     currentKeys.addAll(getParent().getScene().getGame().getCurrentInputKeys());
 
-    previousMouseClicked = mouseClicked;
-    mouseClicked = false;
+    double[] mouseInputs = getParent().getScene().getGame().getInputMouses();
+    previousClicked = currentClicked;
+    currentClicked = mouseInputs[0] > 0;
+    mouseX = mouseInputs[1];
+    mouseY = mouseInputs[2];
   }
 
   /**
@@ -43,13 +55,21 @@ public final class InputHandler extends GameComponent {
   }
 
   /**
-   * Method for testing functinoality of inputHandler without having to set up an entire game
+   * Manually set the inputHandler's inputs.
    *
    * @param pressedKeys - Keys to be pressed
    */
-  void setPressedKeys(Set<Integer> pressedKeys) {
+  public void setPressedKeys(Set<Integer> pressedKeys) {
     this.currentKeys.clear();
     this.currentKeys.addAll(pressedKeys);
+  }
+
+  /**
+   * Manually clear all previous and current keys (inputs)
+   */
+  public void resetInputState() {
+    currentKeys.clear();
+    previousKeys.clear();
   }
 
   /**
@@ -83,38 +103,36 @@ public final class InputHandler extends GameComponent {
   }
 
   /**
-   * Method to clear all previous and current keys (inputs)
+   * @return - Checks if mouse is clicked on this frame.
    */
-  public void resetInputState() {
-    currentKeys.clear();
-    previousKeys.clear();
+  public boolean isMouseClicked() {
+    return !previousClicked && currentClicked && isClickInObject();
   }
 
   /**
-   * Method to register mouse click and location
+   * Manually to register mouse click and location
    *
    * @param x - X position of click
    * @param y - Y position of click
    */
   public void registerMouseClick(double x, double y) {
-    mouseClicked = true;
+    currentClicked = true;
     mouseX = x;
     mouseY = y;
   }
 
   /**
-   * @return - Checks if mouse is currently clicked
+   * @return - Checks if the mouse is under clicking.
    */
-  public boolean isMouseClicked() {
-    Transform transform = getParent().getComponent(Transform.class);
-    return (previousMouseClicked || mouseClicked) && isClickInObject(transform);
+  public boolean isMouseHold() {
+    return previousClicked && currentClicked && isClickInObject();
   }
 
-  private boolean isClickInObject(Transform transform) {
-    return transform.getX() < mouseX &&
-        transform.getX() + transform.getScaleX() > mouseX &&
-        transform.getY() < mouseY &&
-        transform.getY() + transform.getScaleY() > mouseY;
+  /**
+   * @return - Checks if the mouse is released on this frame
+   */
+  public boolean isMouseReleased() {
+    return previousClicked && !currentClicked && isClickInObject();
   }
 
   /**
@@ -129,5 +147,13 @@ public final class InputHandler extends GameComponent {
    */
   public double getMouseY() {
     return mouseY;
+  }
+
+  // TODO: Handles Rotation
+  private boolean isClickInObject() {
+    return transform.getX() < mouseX &&
+        transform.getX() + transform.getScaleX() > mouseX &&
+        transform.getY() < mouseY &&
+        transform.getY() + transform.getScaleY() > mouseY;
   }
 }

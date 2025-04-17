@@ -16,6 +16,8 @@ import oogasalad.view.scene.menu.MainMenuScene;
  */
 public class Main extends Application {
 
+  private static final boolean DEBUG = true;
+
   /**
    * Start of the program
    */
@@ -36,9 +38,8 @@ public class Main extends Application {
 
     MainViewManager viewManager = MainViewManager.setInstance(stage);
     viewManager.addViewScene(MainMenuScene.class, GameConfig.getText("defaultScene"));
-    //MainViewManager.getInstance().switchToMainMenu();
 
-    if (SessionManagement.tryAutoLogin()) {
+    if (DEBUG || SessionManagement.tryAutoLogin()) {
       viewManager.switchToMainMenu();
     } else {
       LogInScene splashScene = new LogInScene(viewManager);
