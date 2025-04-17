@@ -9,10 +9,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.util.Duration;
 import oogasalad.model.config.GameConfig;
 import oogasalad.model.engine.base.architecture.Game;
-import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.engine.base.architecture.KeyCode;
-import oogasalad.model.engine.component.InputHandler;
 import oogasalad.view.renderer.GameSceneRenderer;
 
 /**
