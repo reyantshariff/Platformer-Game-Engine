@@ -1,10 +1,13 @@
 package oogasalad.view.gui.deserializedFieldInput;
 
+import java.util.Map;
+import java.util.function.Function;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import oogasalad.model.engine.base.behavior.BehaviorAction;
 import oogasalad.model.engine.base.behavior.BehaviorComponent;
 import oogasalad.model.engine.base.behavior.BehaviorConstraint;
+import oogasalad.model.engine.base.serialization.SerializableFieldType;
 import oogasalad.model.engine.base.serialization.SerializedField;
 
 /**
@@ -33,7 +36,16 @@ public class DeserializedFieldUIFactory {
 
   private static final String BEHAVIOR_ACTION_PACKAGE = "oogasalad.model.engine.action";
   private static final String BEHAVIOR_CONSTRAINT_PACKAGE = "oogasalad.model.engine.constraint";
-
+  private static final Map<SerializableFieldType, Function<SerializedField, HBox>> FIELD_UI_CREATORS = Map.of(
+      SerializableFieldType.STRING, f -> new StringFieldInput(),
+      SerializableFieldType.DOUBLE, f -> new DoubleFieldInput(),
+      SerializableFieldType.BOOLEAN, f -> new BooleanFieldInput(),
+      SerializableFieldType.LIST_STRING, f -> new StringListFieldInput(),
+      SerializableFieldType.LIST_BEHAVIOR, f -> new BehaviorListFieldInput(),
+      SerializableFieldType.LIST_BEHAVIOR_ACTION, f -> new BehaviorComponentListFieldInput<>(BEHAVIOR_ACTION_PACKAGE, BehaviorAction.class),
+      SerializableFieldType.LIST_BEHAVIOR_CONSTRAINT, f -> new BehaviorComponentListFieldInput<>(BEHAVIOR_CONSTRAINT_PACKAGE, BehaviorConstraint.class)
+  );
+  
   /**
    * Creates a UI component (HBox) for a given SerializedField based on its type.
    *
@@ -42,20 +54,14 @@ public class DeserializedFieldUIFactory {
    * @throws IllegalStateException if the field type is unsupported
    */
   public static HBox createDeserializedFieldUI(SerializedField field) {
-    HBox box = switch (field.getFieldType()) {
-      case STRING -> new StringFieldInput();
-      case DOUBLE -> new DoubleFieldInput();
-      case BOOLEAN -> new BooleanFieldInput();
-      case LIST_STRING -> new StringListFieldInput();
-      case LIST_BEHAVIOR -> new BehaviorListFieldInput();
-      case LIST_BEHAVIOR_ACTION -> new BehaviorComponentListFieldInput<>(BEHAVIOR_ACTION_PACKAGE, BehaviorAction.class);
-      case LIST_BEHAVIOR_CONSTRAINT -> new BehaviorComponentListFieldInput<>(BEHAVIOR_CONSTRAINT_PACKAGE, BehaviorConstraint.class);
-      default -> new HBox();
-    };
+    Function<SerializedField, HBox> creator = FIELD_UI_CREATORS.get(field.getFieldType());
+    HBox box = (creator != null) ? creator.apply(field) : new HBox();
 
     if (box instanceof DeserializedFieldUI<?> dBox) {
       dBox.initGUI(field);
     }
+
     return box;
   }
+
 }
