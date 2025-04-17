@@ -13,6 +13,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import java.util.ArrayList;
 import oogasalad.model.config.GameConfig;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
@@ -21,6 +22,7 @@ import oogasalad.model.engine.component.SpriteRenderer;
 import oogasalad.model.engine.component.TextRenderer;
 import oogasalad.model.engine.component.Transform;
 import oogasalad.model.engine.component.Camera;
+import oogasalad.model.engine.component.Renderer;
 import oogasalad.view.config.StyleConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,7 +52,7 @@ public class GameSceneRenderer {
   /**
    * For scenes that have a camera: renders the game objects in the given scene onto the canvas
    *
-   * @param gc    The graphics context of the canvas.
+   * @param gc The graphics context of the canvas.
    * @param scene The game scene to render.
    */
   public void renderWithCamera(GraphicsContext gc, GameScene scene) {
@@ -71,7 +73,8 @@ public class GameSceneRenderer {
     renderScene(gc);
 
     Collection<GameObject> objects = scene.getAllObjectsInView();
-    for (GameObject obj : objects) {
+    Collection<GameObject> renderOrder = getRenderOrder(objects);
+    for (GameObject obj : renderOrder) {
       renderGameObject(gc, obj);
     }
   }
@@ -79,8 +82,8 @@ public class GameSceneRenderer {
   /**
    * For scenes WITHOUT a camera: renders all game objects in the given scene onto the canvas.
    *
-   * @param gc                 The graphics context of the canvas.
-   * @param scene              The game scene to render.
+   * @param gc The graphics context of the canvas.
+   * @param scene The game scene to render.
    * @param selectedGameObject The game object to highlight (if any)
    */
   public void renderWithoutCamera(GraphicsContext gc, GameScene scene,
@@ -88,13 +91,31 @@ public class GameSceneRenderer {
     renderScene(gc);
 
     Collection<GameObject> objects = scene.getAllObjects();
-    for (GameObject obj : objects) {
+    Collection<GameObject> renderOrder = getRenderOrder(objects);
+    for (GameObject obj : renderOrder) {
       renderGameObject(gc, obj);
     }
 
     if (selectedGameObject != null) {
       renderSelectionOverlay(gc, selectedGameObject);
     }
+  }
+
+  private Collection<GameObject> getRenderOrder(Collection<GameObject> objects) {
+    Collection<GameObject> renderObjects = objects.stream()
+        .flatMap(obj -> obj.getAllComponents().values().stream())
+        .filter(
+            component -> component instanceof SpriteRenderer || component instanceof TextRenderer)
+        .sorted((c1, c2) -> {
+          Renderer r1 = (Renderer) c1;
+          Renderer r2 = (Renderer) c2;
+          return Integer.compare(r1.getZIndex(), r2.getZIndex());
+        }).map(GameComponent::getParent).toList();
+    Collection<GameObject> nonRenderObjects =
+        objects.stream().filter(obj -> !renderObjects.contains(obj)).toList();
+    Collection<GameObject> allObjects = new ArrayList<>(nonRenderObjects);
+    allObjects.addAll(renderObjects);
+    return allObjects;
   }
 
   private void renderScene(GraphicsContext gc) {
@@ -113,9 +134,7 @@ public class GameSceneRenderer {
     boolean hasSprite = obj.hasComponent(SpriteRenderer.class);
     boolean hasText = obj.hasComponent(TextRenderer.class);
 
-    obj.getAllComponents()
-        .entrySet()
-        .stream()
+    obj.getAllComponents().entrySet().stream()
         .filter(entry -> shouldRenderComponent(entry.getKey(), hasSprite, hasText))
         .forEach(entry -> invokeRenderMethod(entry.getKey(), entry.getValue(), gc));
   }
@@ -252,11 +271,8 @@ public class GameSceneRenderer {
     gc.strokeRect(x, y, w, h);
 
     double handleSize = 8;
-    double[][] positions = {
-        {x, y}, {x + w / 2, y}, {x + w, y},
-        {x + w, y + h / 2}, {x + w, y + h},
-        {x + w / 2, y + h}, {x, y + h}, {x, y + h / 2}
-    };
+    double[][] positions = {{x, y}, {x + w / 2, y}, {x + w, y}, {x + w, y + h / 2}, {x + w, y + h},
+        {x + w / 2, y + h}, {x, y + h}, {x, y + h / 2}};
 
     gc.setFill(Color.LIGHTBLUE);
     for (double[] pos : positions) {
