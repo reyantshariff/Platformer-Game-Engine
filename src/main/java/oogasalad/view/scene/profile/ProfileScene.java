@@ -18,9 +18,8 @@ public class ProfileScene extends ViewScene {
   /**
    * Constructs a new ProfileScene to display the player's profile
    *
-   * @param manager The MainViewManager used to switch scenes.
    */
-  public ProfileScene(MainViewManager manager) {
+  public ProfileScene() {
     super(new VBox(), GameConfig.getNumber("windowWidth"), GameConfig.getNumber("windowHeight"));
 
     VBox root = (VBox) getScene().getRoot();
