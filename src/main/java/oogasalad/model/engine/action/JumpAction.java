@@ -5,8 +5,11 @@ import oogasalad.model.engine.component.PhysicsHandler;
 
 /**
  * The JumpAction class is used to make a game object jump by setting its vertical velocity.
+ * 
+ * Deprecated: Use VelocityYSetAction instead.
  */
 
+@Deprecated
 public class JumpAction extends BehaviorAction<Double> {
 
   private PhysicsHandler physicsHandler;

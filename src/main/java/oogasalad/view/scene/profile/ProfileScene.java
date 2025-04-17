@@ -3,6 +3,7 @@ package oogasalad.view.scene;
 import static oogasalad.model.config.GameConfig.LOGGER;
 
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import oogasalad.model.config.GameConfig;
@@ -18,8 +19,9 @@ public class ProfileScene extends ViewScene {
   /**
    * Constructs a new ProfileScene to display the player's profile
    *
+   * @param manager The MainViewManager used to switch scenes.
    */
-  public ProfileScene() {
+  public ProfileScene(MainViewManager manager) {
     super(new VBox(), GameConfig.getNumber("windowWidth"), GameConfig.getNumber("windowHeight"));
 
     VBox root = (VBox) getScene().getRoot();
@@ -32,21 +34,26 @@ public class ProfileScene extends ViewScene {
 
   private VBox setUpLabels() {
     VBox playerInfo = new VBox();
+    PlayerData currentPlayer = null;
     try {
-      PlayerData currentPlayer = SessionManagement.getCurrentUser();
-      Label fullName = new Label(currentPlayer.getFullName());
-      fullName.setId("fullName");
-      Label userName = new Label("Username: " + currentPlayer.getUsername());
-      userName.setId("username");
-      Label dateCreated = new Label("Date Joined: " + currentPlayer.getCreatedAt());
-      dateCreated.setId("date-created");
-      playerInfo.getChildren().addAll(fullName, userName, dateCreated);
+      currentPlayer = SessionManagement.getCurrentUser();
     } catch (SessionException e) {
       LOGGER.error("There is no current session.");
       return new VBox();
       // TODO: direct player to sign in screen
     }
+    Label fullName = new Label(currentPlayer.getFullName());
+    fullName.setId("fullName");
+    Label userName = new Label("Username: " + currentPlayer.getUsername());
+    userName.setId("username");
+    Label dateCreated = new Label("Date Joined: " + currentPlayer.getCreatedAt());
+    dateCreated.setId("dateCreated");
 
+    Button editProfile = new Button("Edit Profile");
+    editProfile.setId("editProfileButton");
+    // TODO: create profile edit scene
+    // editProfile.setOnAction(e -> {})
+    playerInfo.getChildren().addAll(fullName, userName, dateCreated, editProfile);
     return playerInfo;
   }
 }
