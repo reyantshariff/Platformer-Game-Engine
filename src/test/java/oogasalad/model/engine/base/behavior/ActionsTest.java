@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 import oogasalad.model.engine.component.Transform;
 
-public abstract class ActionsTest<T extends BehaviorAction> extends BehaviorBaseTest {
+public abstract class ActionsTest<T extends BehaviorAction<?>> extends BehaviorBaseTest {
 
     private T action;
 

@@ -17,7 +17,7 @@ public class PhysicsHandler extends GameComponent {
   }
 
   @SerializableField
-  private double mass;
+  private double mass = 1.0;
   @SerializableField
   private double velocityX;
   @SerializableField
@@ -32,11 +32,6 @@ public class PhysicsHandler extends GameComponent {
   @Override
   public void awake() {
     transform = getComponent(Transform.class);
-  }
-
-  @Override
-  public void start() {
-    mass = 1.0;
   }
 
   @Override
@@ -107,10 +102,9 @@ public class PhysicsHandler extends GameComponent {
   }
 
 
-
   /**
    * Applies an impulse to the object, changing its velocityX.
-   * 
+   *
    * @param impulseX the impulse in the X direction
    */
   public void applyImpulseX(double impulseX) {
@@ -119,7 +113,7 @@ public class PhysicsHandler extends GameComponent {
 
   /**
    * Applies an impulse to the object, changing its velocityY.
-   * 
+   *
    * @param impulseY the impulse in the Y direction
    */
   public void applyImpulseY(double impulseY) {

@@ -61,7 +61,7 @@ public class BehaviorTest extends BehaviorBaseTest {
     KeyPressConstraint constraint = getBehavior1().addConstraint(KeyPressConstraint.class);
     assertNotNull(constraint);
     assertEquals(getBehavior1().getConstraints().size(), 1);
-    getBehavior1().removeConstraint(KeyPressConstraint.class);
+    getBehavior1().removeConstraint(constraint);
     assertEquals(getBehavior1().getConstraints().size(), 0);
   }
 
@@ -87,7 +87,7 @@ public class BehaviorTest extends BehaviorBaseTest {
     VelocityXSetAction action = getBehavior1().addAction(VelocityXSetAction.class);
     assertNotNull(action);
     assertEquals(getBehavior1().getActions().size(), 1);
-    getBehavior1().removeAction(VelocityXSetAction.class);
+    getBehavior1().removeAction(action);
     assertEquals(getBehavior1().getActions().size(), 0);
   }
 }

@@ -4,13 +4,17 @@ import static oogasalad.model.config.GameConfig.LOGGER;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.serialization.Serializable;
@@ -45,7 +49,8 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
       List<String> list = new ArrayList<>();
       for (JsonNode element : node) {
         if (!element.isTextual()) {
-          throw new IllegalArgumentException("Expected string in List<String>, but found: " + element);
+          throw new IllegalArgumentException(
+              "Expected string in List<String>, but found: " + element);
         }
         list.add(element.asText());
       }
@@ -165,18 +170,52 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
 
     ObjectNode configurations = root.putObject("Configurations");
 
-    //Note: I tried my hardest to use reflection and something dynamic but Jackson library does not allow it.
     List<SerializedField<?>> serializableFields = data.getSerializedFields();
     for (SerializedField<?> serializedField : serializableFields) {
-      if (serializedField.getFieldType() == String.class) {
-        configurations.put(serializedField.getFieldName(), (String) (serializedField.getValue()));
-      } else if (serializedField.getFieldType() == int.class) {
-        configurations.put(serializedField.getFieldName(), (Integer) serializedField.getValue());
-      } else if (serializedField.getFieldType() == double.class) {
-        configurations.put(serializedField.getFieldName(), (Double) serializedField.getValue());
-      }
+      serializeField(serializedField, configurations);
     }
 
     return root;
+  }
+
+  private static final Map<Class<?>, BiConsumer<SerializedField<?>, ObjectNode>> SERIALIZERS = new HashMap<>();
+
+  static {
+    SERIALIZERS.put(String.class,
+        (field, config) -> config.put(field.getFieldName(), (String) field.getValue()));
+    SERIALIZERS.put(Integer.class,
+        (field, config) -> config.put(field.getFieldName(), (Integer) field.getValue()));
+    SERIALIZERS.put(int.class,
+        (field, config) -> config.put(field.getFieldName(), (Integer) field.getValue()));
+    SERIALIZERS.put(Double.class,
+        (field, config) -> config.put(field.getFieldName(), (Double) field.getValue()));
+    SERIALIZERS.put(double.class,
+        (field, config) -> config.put(field.getFieldName(), (Double) field.getValue()));
+    SERIALIZERS.put(List.class,
+        (field, config) -> serializeListField(field, config));  // Use a separate list serializer
+  }
+
+  private void serializeField(SerializedField<?> serializedField, ObjectNode configurations) {
+    Class<?> fieldType = serializedField.getFieldType();
+    BiConsumer<SerializedField<?>, ObjectNode> serializer = SERIALIZERS.get(fieldType);
+
+    if (serializer != null) {
+      serializer.accept(serializedField, configurations);
+    } else {
+      throw new IllegalArgumentException("Unsupported field type: " + fieldType);
+    }
+  }
+
+  private static void serializeListField(SerializedField<?> serializedField,
+      ObjectNode configurations) {
+    ParameterizedType pt = (ParameterizedType) serializedField.getFieldGenericType();
+    Type argType = pt.getActualTypeArguments()[0];
+
+    if (argType == String.class) {
+      ArrayNode arrayNode = new ObjectMapper().valueToTree(serializedField.getValue());
+      configurations.set(serializedField.getFieldName(), arrayNode);
+    } else {
+      throw new IllegalArgumentException("Unsupported List type: " + argType);
+    }
   }
 }

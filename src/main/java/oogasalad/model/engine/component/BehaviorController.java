@@ -11,10 +11,10 @@ import oogasalad.model.engine.base.serialization.SerializableField;
  * The BehaviorController class is a component that manages the behaviors of a game object. It is
  * responsible for executing the behaviors and managing the constraints and actions associated with
  * each behavior.
- *
  */
 
 public final class BehaviorController extends GameComponent {
+
   @Override
   public ComponentTag componentTag() {
     return ComponentTag.BEHAVIOR;
@@ -24,7 +24,15 @@ public final class BehaviorController extends GameComponent {
   private List<Behavior> behaviors = new ArrayList<>();
 
   @Override
-  public void update(double deltaTime) {
+  protected void awake() {
+    for (Behavior behavior : behaviors) {
+      behavior.setBehaviorController(this);
+      behavior.awake();
+    }
+  }
+
+  @Override
+  protected void update(double deltaTime) {
     for (Behavior behavior : behaviors) {
       behavior.execute();
     }
@@ -35,25 +43,17 @@ public final class BehaviorController extends GameComponent {
    */
   public Behavior addBehavior() {
     Behavior behavior = new Behavior();
-    behavior.setBehaviorController(this);
     behaviors.add(behavior);
     return behavior;
   }
 
   /**
    * Overloaded behavior method to add
+   *
    * @param behavior is the fully qualified behavior that is to be added to the behaviors list
    */
   public void addBehavior(Behavior behavior) {
     behaviors.add(behavior);
-  }
-
-  @Override
-  public void awake() {
-    for (Behavior behavior : behaviors) {
-      behavior.setBehaviorController(this);
-      behavior.awake();
-    }
   }
 
   /**

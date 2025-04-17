@@ -1,28 +1,14 @@
 {
+  "Information": {
+    "Name": "DinoRunner",
+    "Description": "A playable dino runner game",
+    "Author": "Justin Aronwald",
+    "Resolution": {
+      "Width": 1280,
+      "Height": 720
+    }
+  },
   "Data": {
-    "Information": {
-      "Name": "DinoRunner",
-      "Description": "A playable dino runner game",
-      "Author": "Justin Aronwald",
-      "Resolution": {
-        "Width": 1280,
-        "Height": 720
-      }
-    },
-    "Resources": [
-      {
-        "Name": "DinoSprite",
-        "Path": "oogasalad/dinosaur/DinoRun1.png"
-      },
-      {
-        "Name": "GroundSprite",
-        "Path": "oogasalad/dinosaur/Track.png"
-      },
-      {
-        "Name": "CactusSprite",
-        "Path": "oogasalad/dinosaur/Bird1.png"
-      }
-    ],
     "Scene": [
       {
         "Name": "MainGame",
@@ -146,8 +132,8 @@
                   "actions": [
                     {
                       "name": "CrouchAction",
-                      "parameter": 50,
-                      "parameterType": "Double"
+                      "parameter": "",
+                      "parameterType": "Void"
                     }
                   ]
                 }
@@ -211,9 +197,9 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeSceneAction",
-                      "parameter": "MainMenuScene",
-                      "parameterType": "String"
+                      "name": "ChangeGameSceneAction",
+                      "parameter": -2,
+                      "parameterType": "Integer"
                     }
                   ]
                 }
@@ -277,9 +263,9 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeSceneAction",
-                      "parameter": "MainMenuScene",
-                      "parameterType": "String"
+                      "name": "ChangeGameSceneAction",
+                      "parameter": -2,
+                      "parameterType": "Integer"
                     }
                   ]
                 }
@@ -343,9 +329,9 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeSceneAction",
-                      "parameter": "MainMenuScene",
-                      "parameterType": "String"
+                      "name": "ChangeGameSceneAction",
+                      "parameter": -2,
+                      "parameterType": "Integer"
                     }
                   ]
                 }
@@ -409,9 +395,9 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeSceneAction",
-                      "parameter": "MainMenuScene",
-                      "parameterType": "String"
+                      "name": "ChangeGameSceneAction",
+                      "parameter": -2,
+                      "parameterType": "Integer"
                     }
                   ]
                 }
@@ -475,9 +461,9 @@
                   ],
                   "actions": [
                     {
-                      "name": "ChangeSceneAction",
-                      "parameter": "MainMenuScene",
-                      "parameterType": "String"
+                      "name": "ChangeGameSceneAction",
+                      "parameter": -2,
+                      "parameterType": "Integer"
                     }
                   ]
                 }
@@ -505,7 +491,308 @@
               {
                 "Name": "Follower",
                 "Configurations": {
-                  "followObjectName": "Dino"
+                  "followObjectName": "Dino",
+                  "smoothMovement": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "WinScene",
+        "GameObjects": [
+          {
+            "Name": "WinTextTitle",
+            "Tag": "UI",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 460,
+                  "y": 200,
+                  "rotation": 0
+                }
+              },
+              {
+                "Name": "TextRenderer",
+                "Configurations": {
+                  "text": "You Won!",
+                  "styleClass": "splashText",
+                  "isCentered": true,
+                  "fontSize": 80
+                }
+              }
+            ]
+          },
+          {
+            "Name": "ReturnToMenuText",
+            "Tag": "UI",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 400,
+                  "y": 400,
+                  "rotation": 0
+                }
+              },
+              {
+                "Name": "TextRenderer",
+                "Configurations": {
+                  "text": "Click to return to main menu",
+                  "styleClass": "splashButton",
+                  "isCentered": true,
+                  "fontSize": 30
+                }
+              },
+              {
+                "Name": "InputHandler",
+                "Configurations": {}
+              }
+            ],
+            "BehaviorController": {
+              "Behaviors": [
+                {
+                  "Name": "ClickToMenu",
+                  "constraints": [
+                    {
+                      "name": "MouseClickConstraint",
+                      "parameter": null,
+                      "parameterType": "Void"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "ChangeGameSceneAction",
+                      "parameter": -2,
+                      "parameterType": "Integer"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "Name": "PlayAgainText",
+            "Tag": "UI",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 520,
+                  "y": 480,
+                  "rotation": 0
+                }
+              },
+              {
+                "Name": "TextRenderer",
+                "Configurations": {
+                  "text": "Play again!",
+                  "styleClass": "splashButton",
+                  "isCentered": true,
+                  "fontSize": 30
+                }
+              },
+              {
+                "Name": "InputHandler",
+                "Configurations": {}
+              }
+            ],
+            "BehaviorController": {
+              "Behaviors": [
+                {
+                  "Name": "PlayAgainBehavior",
+                  "constraints": [
+                    {
+                      "name": "MouseClickConstraint",
+                      "parameter": null,
+                      "parameterType": "Void"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "ChangeGameSceneAction",
+                      "parameter": 0,
+                      "parameterType": "Integer"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "Name": "Camera",
+            "Tag": "Camera",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 0,
+                  "y": 0,
+                  "rotation": 0,
+                  "scaleX": 1300,
+                  "scaleY": 1000
+                }
+              },
+              {
+                "Name": "Camera",
+                "Configurations": {}
+              },
+              {
+                "Name": "Follower",
+                "Configurations": {
+                  "followObjectName": "WinTextTitle"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LossScene",
+        "GameObjects": [
+          {
+            "Name": "LossTextTitle",
+            "Tag": "UI",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 460,
+                  "y": 200,
+                  "rotation": 0
+                }
+              },
+              {
+                "Name": "TextRenderer",
+                "Configurations": {
+                  "text": "You Lost!",
+                  "styleClass": "splashText",
+                  "isCentered": true,
+                  "fontSize": 80
+                }
+              }
+            ]
+          },
+          {
+            "Name": "ReturnToMenuText",
+            "Tag": "UI",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 400,
+                  "y": 400,
+                  "rotation": 0
+                }
+              },
+              {
+                "Name": "TextRenderer",
+                "Configurations": {
+                  "text": "Click to return to main menu",
+                  "styleClass": "splashButton",
+                  "isCentered": true,
+                  "fontSize": 30
+                }
+              },
+              {
+                "Name": "InputHandler",
+                "Configurations": {}
+              }
+            ],
+            "BehaviorController": {
+              "Behaviors": [
+                {
+                  "Name": "ClickToMenu",
+                  "constraints": [
+                    {
+                      "name": "MouseClickConstraint",
+                      "parameter": null,
+                      "parameterType": "Void"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "ChangeViewSceneAction",
+                      "parameter": "MainMenuScene",
+                      "parameterType": "String"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "Name": "TryAgainText",
+            "Tag": "UI",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 520,
+                  "y": 480,
+                  "rotation": 0
+                }
+              },
+              {
+                "Name": "TextRenderer",
+                "Configurations": {
+                  "text": "Try again",
+                  "styleClass": "splashButton",
+                  "isCentered": true,
+                  "fontSize": 30
+                }
+              },
+              {
+                "Name": "InputHandler",
+                "Configurations": {}
+              }
+            ],
+            "BehaviorController": {
+              "Behaviors": [
+                {
+                  "Name": "TryAgainBehavior",
+                  "constraints": [
+                    {
+                      "name": "MouseClickConstraint",
+                      "parameter": null,
+                      "parameterType": "Void"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "ChangeGameSceneAction",
+                      "parameter": 0,
+                      "parameterType": "Integer"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "Name": "Camera",
+            "Tag": "Camera",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 0,
+                  "y": 0,
+                  "rotation": 0,
+                  "scaleX": 1300,
+                  "scaleY": 1000
+                }
+              },
+              {
+                "Name": "Camera",
+                "Configurations": {}
+              },
+              {
+                "Name": "Follower",
+                "Configurations": {
+                  "followObjectName": "LossTextTitle"
                 }
               }
             ]

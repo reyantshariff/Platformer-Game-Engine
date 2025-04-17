@@ -1,29 +1,33 @@
 package oogasalad.model.engine.component;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.enumerate.ComponentTag;
+import oogasalad.model.engine.base.serialization.SerializableField;
 
 /**
  * A physics component responsible for detecting collisions and executing behaviors based on object
  * type.
  */
 public class Collider extends GameComponent {
-  private static final double COLLISION_OFFSET =0.1;
-  private static final double OVERLAP_TOLERANCE =2;
+
+  private static final double COLLISION_OFFSET = 0.1;
+  private static final double OVERLAP_TOLERANCE = 2;
 
   @Override
   public ComponentTag componentTag() {
     return ComponentTag.COLLISION;
   }
 
+  @SerializableField
+  private List<String> collidableTags = new ArrayList<>();
 
   private final Set<Collider> collidedColliders = new HashSet<>();
   private Transform transform;
-
-
 
   @Override
   protected void awake() {
@@ -33,12 +37,13 @@ public class Collider extends GameComponent {
   @Override
   protected void update(double deltaTime) {
     collidedColliders.clear();
-    for (GameObject obj : getParent().getScene().getAllObjects()) {
-      if(obj.hasComponent(Collider.class)){
-        processCollision(obj);
+    for (GameComponent collider : getParent().getScene().getAllComponents()
+        .get(ComponentTag.COLLISION)) {
+      if (collidableTags.contains(collider.getParent().getTag())) {
+        processCollision(collider.getParent());
       }
     }
-    if(getParent().hasComponent(PhysicsHandler.class)){
+    if (getParent().hasComponent(PhysicsHandler.class)) {
       resolveCollisions();
     }
   }
@@ -89,7 +94,8 @@ public class Collider extends GameComponent {
     return Math.min(thisBottom, otherBottom) - Math.max(thisTop, otherTop);
   }
 
-  private void resolveCollisionX(Transform thisTransform, Transform otherTransform, double overlapX) {
+  private void resolveCollisionX(Transform thisTransform, Transform otherTransform,
+      double overlapX) {
     double thisRight = thisTransform.getX() + thisTransform.getScaleX();
     double thisLeft = thisTransform.getX();
     double otherLeft = otherTransform.getX();
@@ -125,6 +131,7 @@ public class Collider extends GameComponent {
 
   /**
    * Check if the collider has collided with another collider.
+   *
    * @param tag the gameobject tag of the collider to check for collision
    * @return true if the collider has collided with another collider, false otherwise
    */
@@ -139,8 +146,10 @@ public class Collider extends GameComponent {
 
   /**
    * Check if the collider is touching another collider from above, within a tolerance.
-   * @param tag the gameobject tag of the collider to check for collision
-   * @param tolerance the allowable difference between the bottom of this collider and the top of the other collider.
+   *
+   * @param tag       the gameobject tag of the collider to check for collision
+   * @param tolerance the allowable difference between the bottom of this collider and the top of
+   *                  the other collider.
    * @return true if the collider is touching another collider from above, false otherwise
    */
   public boolean touchingFromAbove(String tag, double tolerance) {
@@ -183,6 +192,7 @@ public class Collider extends GameComponent {
 
   /**
    * Check if the collider is horizontally aligned with another collider.
+   *
    * @param tag the gameobject tag of the collider to check for alignment
    * @return true if the collider is horizontally aligned with another collider, false otherwise
    */

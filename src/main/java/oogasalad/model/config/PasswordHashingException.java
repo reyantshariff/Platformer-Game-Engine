@@ -9,7 +9,7 @@ public class PasswordHashingException extends Exception {
    * Create an instance of the exception with a message and a cause
    *
    * @param message - a message indicating failure
-   * @param cause - the throwable cause for the failure
+   * @param cause   - the throwable cause for the failure
    */
   public PasswordHashingException(String message, Throwable cause) {
     super(message, cause);

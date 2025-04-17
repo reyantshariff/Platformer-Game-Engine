@@ -1,6 +1,7 @@
 package oogasalad.model.engine.base.architecture;
 
 import static oogasalad.model.config.GameConfig.LOGGER;
+
 import java.text.MessageFormat;
 import java.util.*;
 import oogasalad.model.config.GameConfig;
@@ -15,11 +16,12 @@ import oogasalad.model.engine.component.Camera;
  * @author Hsuan-Kai Liao, Christian Bepler
  */
 public class GameScene {
+
   private final UUID id;
   private final Map<UUID, GameObject> allObjects;
   private final Map<ComponentTag, List<GameComponent>> allComponents;
   private final Queue<Runnable> subscribedEvents;
-  private Set<GameObject> awakeList;
+  private final Set<GameObject> awakeList;
 
   private String name;
   private Game game;
@@ -48,7 +50,7 @@ public class GameScene {
 
   /**
    * Set the game that this scene belongs to.
-   * 
+   *
    * @param game the game that this scene belongs to
    */
   final void setGame(Game game) {
@@ -85,7 +87,7 @@ public class GameScene {
 
   /**
    * Get the Object based on the UUID
-   * 
+   *
    * @param id the UUID of the object
    */
   public final GameObject getObject(UUID id) {
@@ -94,7 +96,7 @@ public class GameScene {
 
   /**
    * Get the Object based on the name
-   * 
+   *
    * @param name the name of the object
    */
   public final GameObject getObject(String name) {
@@ -117,7 +119,7 @@ public class GameScene {
 
   /**
    * Get all the objects in the view of the camera
-   * 
+   *
    * @return a collection of all the objects in the view of the camera
    */
   public final Collection<GameObject> getAllObjectsInView() {
@@ -131,7 +133,7 @@ public class GameScene {
 
   /**
    * Get the camera in the scene
-   * 
+   *
    * @return the camera in the scene
    */
   public final Camera getCamera() {
@@ -170,7 +172,7 @@ public class GameScene {
 
   /**
    * This will be called every frame.
-   * 
+   *
    * @param deltaTime the elapsed time between two frames
    */
   public final void step(double deltaTime) {
@@ -199,13 +201,15 @@ public class GameScene {
 
   private void updateComponents(Collection<GameObject> objectsInView, double deltaTime) {
     for (ComponentTag order : ComponentTag.values()) {
-      if (order == ComponentTag.NONE)
+      if (order == ComponentTag.NONE) {
         continue;
-        updateObjects(order, objectsInView, deltaTime);
+      }
+      updateObjects(order, objectsInView, deltaTime);
     }
   }
 
-  private void updateObjects(ComponentTag order, Collection<GameObject> objectsInView, double deltaTime) {
+  private void updateObjects(ComponentTag order, Collection<GameObject> objectsInView,
+      double deltaTime) {
     for (GameObject object : objectsInView) {
       wakeObject(object);
       for (GameComponent component : object.getComponents(order)) {
@@ -224,7 +228,7 @@ public class GameScene {
   /**
    * Subscribe the runnable event to the next frame to execute. Events will only be called once and
    * then removed from the subscribed list.
-   * 
+   *
    * @param event the event to be subscribed
    */
   public final void subscribeEvent(Runnable event) {
@@ -233,7 +237,7 @@ public class GameScene {
 
   /**
    * Register the component from the gameObject onto the scene
-   * 
+   *
    * @param gameComponent the component to be registered
    */
   final void registerComponent(GameComponent gameComponent) {
@@ -242,7 +246,7 @@ public class GameScene {
 
   /**
    * Unregister the component from the scene.
-   * 
+   *
    * @param gameComponent the gameComponent to be unregistered
    */
   final void unregisterComponent(GameComponent gameComponent) {
@@ -251,7 +255,7 @@ public class GameScene {
 
   /**
    * Register the existing gameObject to the scene.
-   * 
+   *
    * @param gameObject the gameObject to be registered.
    */
   public final void registerObject(GameObject gameObject) {
@@ -273,18 +277,20 @@ public class GameScene {
 
   /**
    * unregister the gameObject specified.
-   * 
+   *
    * @param gameObject the gameObject to be destroyed
    */
   public final void unregisterObject(GameObject gameObject) {
     // Unregister components
+    List<GameComponent> componentsToDelete = new ArrayList<>();
     for (ComponentTag order : ComponentTag.values()) {
       for (GameComponent component : allComponents.get(order)) {
         if (component.getParent().equals(gameObject)) {
-          unregisterComponent(component);
+          componentsToDelete.add(component);
         }
       }
     }
+    componentsToDelete.forEach(this::unregisterComponent);
 
     gameObject.setScene(null);
     allObjects.remove(gameObject.getId());
@@ -292,7 +298,7 @@ public class GameScene {
 
   /**
    * Change the scene to the specified scene name.
-   * 
+   *
    * @param sceneName the name of the scene to be changed to
    */
   final void changeScene(String sceneName) {

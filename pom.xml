@@ -66,6 +66,27 @@
       <artifactId>log4j-core</artifactId>
       <version>2.24.3</version>
     </dependency>
+    <!-- use Reflections to get all the subclass of a specific class -->
+    <dependency>
+      <groupId>org.reflections</groupId>
+      <artifactId>reflections</artifactId>
+      <version>0.10.2</version>
+    </dependency>
+
+    <!-- provide mocking framework to simplify writing tests -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>5.11.0</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <version>5.11.0</version> <!-- Match this to your Mockito core version -->
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>

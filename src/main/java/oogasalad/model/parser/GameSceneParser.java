@@ -31,6 +31,7 @@ public class GameSceneParser implements Parser<GameScene> {
     handleGameObjectParsing(node, scene);
     return scene;
   }
+
   private static void validateGameSceneName(JsonNode node) throws ParsingException {
     if (node == null || !node.has(NAME)) {
       throw new ParsingException("No name found");

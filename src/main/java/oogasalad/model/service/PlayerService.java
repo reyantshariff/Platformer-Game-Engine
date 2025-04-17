@@ -8,6 +8,7 @@ import static oogasalad.model.config.ProfileServiceConfig.documentExists;
 import static oogasalad.model.config.ProfileServiceConfig.getDocument;
 
 import com.google.cloud.firestore.*;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import oogasalad.database.DatabaseException;
@@ -17,8 +18,8 @@ import oogasalad.model.profile.PlayerData;
 import oogasalad.model.profile.SessionManagement;
 
 /**
- * PlayerService methods for creating, retrieving, and deleting player profiles
- * from the Firestore database
+ * PlayerService methods for creating, retrieving, and deleting player profiles from the Firestore
+ * database
  *
  * @author Justin Aronwald
  */
@@ -66,7 +67,8 @@ public class PlayerService {
   public static boolean deletePlayer(String username) throws DatabaseException {
     if (!documentExists(username, COLLECTION_NAME)) {
       LOGGER.warn(getText(PLAYER_NOT_EXIST_ERROR_MESSAGE), username, COLLECTION_NAME);
-      throw new DatabaseException(getText(PLAYER_NOT_EXIST_ERROR_MESSAGE, username, COLLECTION_NAME));
+      throw new DatabaseException(
+          getText(PLAYER_NOT_EXIST_ERROR_MESSAGE, username, COLLECTION_NAME));
     }
 
     deleteFromDatabase(username, COLLECTION_NAME);
@@ -79,13 +81,14 @@ public class PlayerService {
    *
    * @param username - the unique username of the player
    * @return - the PlayerData object, if it exists
-   * @throws DatabaseException   if the player does not exist or a database error occurs
+   * @throws DatabaseException if the player does not exist or a database error occurs
    */
   public static PlayerData getPlayerByUsername(String username) throws DatabaseException {
     DocumentSnapshot snapshot = getDocument(username, COLLECTION_NAME);
     if (!snapshot.exists()) {
       LOGGER.warn(getText(PLAYER_NOT_EXIST_ERROR_MESSAGE, username, COLLECTION_NAME));
-      throw new DatabaseException(getText(PLAYER_NOT_EXIST_ERROR_MESSAGE, username, COLLECTION_NAME));
+      throw new DatabaseException(
+          getText(PLAYER_NOT_EXIST_ERROR_MESSAGE, username, COLLECTION_NAME));
     }
     return snapshot.toObject(PlayerData.class);
   }
@@ -93,26 +96,30 @@ public class PlayerService {
   /**
    * Endpoint to authenticate and login a user -- adds user to sessionManagement
    *
-   * @param username - the inputted username
-   * @param password - the inputted password
+   * @param username   - the inputted username
+   * @param password   - the inputted password
+   * @param rememberMe - true if rememberMe checkbox is selected
    */
-  public static void login(String username, String password)
-      throws PasswordHashingException {
+  public static void login(String username, String password, boolean rememberMe)
+      throws PasswordHashingException, IOException {
     PlayerData curUser;
     try {
       curUser = getPlayerByUsername(username);
 
-      if (!curUser.verifyPassword(password)){
+      if (!curUser.verifyPassword(password)) {
         LOGGER.warn("Invalid password");
+        throw new PasswordHashingException("Password is incorrect");
       }
 
-      SessionManagement.login(curUser);
+      SessionManagement.login(curUser, rememberMe);
       LOGGER.info("User: {} has successfully logged in", username);
       //switch screens
 
     } catch (DatabaseException e) {
       LOGGER.error("Error, no user in the database", e);
       // show on the frontend
+    } catch (IOException e) {
+      throw new IOException("Failed to store autologin:", e);
     }
   }
 

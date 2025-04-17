@@ -27,6 +27,7 @@ public class GameParser implements Parser<Game> {
   private final GameSceneParser sceneParser = new GameSceneParser();
   private final ResourceParser resourceParser = new ResourceParser();
   private final InformationParser informationParser = new InformationParser();
+  private final Map<String, JsonNode> sceneJsonMap = new HashMap<>();
 
   private static final String DATA = "Data";
   private static final String INFORMATION = "Information";
@@ -52,22 +53,25 @@ public class GameParser implements Parser<Game> {
     }
 
     Game newGame = new Game();
-    JsonNode data = node.get(DATA);
 
-    handleInformationParsing(data, newGame);
+    // Information
+    JsonNode info = node.get(INFORMATION);
+    handleInformationParsing(info, newGame);
+
+    // Data
+    JsonNode data = node.get(DATA);
     handleResourceParsing(data);
     handleSceneParsing(data, newGame);
 
     newGame.setLevelOrder(levelOrder);
+    newGame.setOriginalSceneJsonMap(sceneJsonMap);
 
     return newGame;
   }
 
-  private void handleInformationParsing(JsonNode data, Game newGame) throws ParsingException {
-    if (data.has(INFORMATION)) {
-      GameInfo gameInfo = informationParser.parse(data.get(INFORMATION));
-      newGame.setGameInfo(gameInfo);
-    }
+  private void handleInformationParsing(JsonNode info, Game newGame) throws ParsingException {
+    GameInfo gameInfo = informationParser.parse(info);
+    newGame.setGameInfo(gameInfo);
   }
 
   private void handleResourceParsing(JsonNode data) throws ParsingException {
@@ -94,6 +98,8 @@ public class GameParser implements Parser<Game> {
       newGame.addScene(gameScene);
       String sceneName = sceneNode.get(NAME).asText();
       levelOrder.add(sceneName);
+
+      sceneJsonMap.put(sceneName, sceneNode.deepCopy());
     } else {
       LOGGER.error("Scene with name {} not found and therefore will not be added "
           + "to Game.", sceneNode.get(NAME));
@@ -131,6 +137,15 @@ public class GameParser implements Parser<Game> {
       sceneArray.add(sceneParser.write(scene));
     }
     dataNode.set(SCENE, sceneArray);
+  }
+
+  /**
+   * Returns the map of string to jsonNodes for scene resetting
+   *
+   * @return - The scene Json map
+   */
+  public Map<String, JsonNode> getSceneJsonMap() {
+    return sceneJsonMap;
   }
 
 //  private void handleResourceWriting(Game data, ObjectNode dataNode) throws IOException {

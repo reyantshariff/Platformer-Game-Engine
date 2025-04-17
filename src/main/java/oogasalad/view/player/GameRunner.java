@@ -1,6 +1,7 @@
-package oogasalad.view.gui;
+package oogasalad.view.player;
 
 import static oogasalad.model.config.GameConfig.LOGGER;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
@@ -8,46 +9,58 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.util.Duration;
 import oogasalad.model.config.GameConfig;
 import oogasalad.model.engine.base.architecture.Game;
+import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
 import oogasalad.model.engine.base.enumerate.KeyCode;
+import oogasalad.model.engine.component.InputHandler;
+import oogasalad.view.renderer.GameSceneRenderer;
 
 /**
- * The GUI class manages the canvas-based graphical rendering of the OOGASalad game engine.
- * It is meant to be embedded inside a larger JavaFX UI layout, allowing game rendering to happen
- * alongside JavaFX UI controls.
- * This class handles rendering game scenes, processing input, and running the game loop.
+ * The GUI class manages the canvas-based graphical rendering of the OOGASalad game engine. It is
+ * meant to be embedded inside a larger JavaFX UI layout, allowing game rendering to happen
+ * alongside JavaFX UI controls. This class handles rendering game scenes, processing input, and
+ * running the game loop.
  *
  * @author Jack F. Regan and Logan Dracos
  */
-public class Gui {
+public class GameRunner {
 
-  private final Game game;
   private final Canvas canvas;
   private final GraphicsContext gc;
-  private final GameObjectRenderer objectRenderer;
+  private final GameSceneRenderer objectRenderer;
   private Timeline gameLoop;
+  private Game game;
 
   /**
    * Constructs a new GUI instance for the given game.
-   *
-   * @param game The game instance to be displayed.
    */
-  public Gui(Game game) {
-    this.game = game;
+  public GameRunner() {
 
-    canvas = new Canvas(GameConfig.getNumber("windowWidth"),
-        GameConfig.getNumber("windowHeight"));
-
-
+    canvas = new Canvas(GameConfig.getNumber("windowWidth"), GameConfig.getNumber("windowHeight"));
     canvas.setFocusTraversable(true);
     canvas.setOnKeyPressed(this::handleKeyPressed);
     canvas.setOnKeyReleased(this::handleKeyReleased);
 
+    canvas.setOnMouseClicked(e -> handleMouseClick(e.getX(), e.getY()));
+
     canvas.requestFocus();
     gc = canvas.getGraphicsContext2D();
-    objectRenderer = new GameObjectRenderer(null);
+    objectRenderer = new GameSceneRenderer(null);
 
-    startGameLoop();
+    setUpGameLoop();
+  }
+
+  private void handleMouseClick(double x, double y) {
+    GameScene scene = game.getCurrentScene();
+    if (scene == null) {
+      return;
+    }
+
+    for (GameObject obj : scene.getAllObjects()) {
+      if (obj.hasComponent(InputHandler.class)) {
+        obj.getComponent(InputHandler.class).registerMouseClick(x, y);
+      }
+    }
   }
 
   /**
@@ -63,38 +76,56 @@ public class Gui {
   /**
    * Starts the game loop, which updates and renders the game at a fixed frame rate.
    */
-  private void startGameLoop() {
+  private void setUpGameLoop() {
     if (gameLoop == null) {
       gameLoop = new Timeline();
       gameLoop.setCycleCount(Timeline.INDEFINITE);
       gameLoop.getKeyFrames().add(new KeyFrame(
           Duration.seconds(1.0 / GameConfig.getNumber("framesPerSecond")),
-          event -> step()));
-      gameLoop.play();
+          event -> step())
+      );
     }
+  }
+
+  /**
+   * Set the Game instance for the game runner.
+   *
+   * @param game The given game instance
+   */
+  public void setGame(Game game) {
+    this.game = game;
   }
 
   /**
    * Stops an existing game loop
    */
-  public void stop() {
+  public void pause() {
     if (gameLoop != null) {
-      gameLoop.stop();
-      gameLoop = null;
+      gameLoop.pause();
+    }
+  }
+
+  /**
+   * Resumes an existing game loop.
+   */
+  public void play() {
+    if (gameLoop != null) {
+      gameLoop.play();
     }
   }
 
   /**
    * Executes a single step of the game loop, updating the game state and rendering the scene.
    */
-  private void step() {
+  public void step() {
     GameScene current = game.getCurrentScene();
     if (current != null) {
       game.step(1.0 / GameConfig.getNumber("framesPerSecond"));
+
       if (current.hasCamera()) {
         objectRenderer.renderWithCamera(gc, current);
       } else {
-        objectRenderer.renderWithoutCamera(gc, current);
+        objectRenderer.renderWithoutCamera(gc, current, null);
       }
 
     } else {
@@ -109,7 +140,9 @@ public class Gui {
    */
   public void handleKeyPressed(javafx.scene.input.KeyEvent e) {
     KeyCode key = mapToEngineKeyCode(e.getCode());
-    if (key != null) game.keyPressed(key.getValue());
+    if (key != null) {
+      game.keyPressed(key.getValue());
+    }
   }
 
   /**
@@ -119,7 +152,9 @@ public class Gui {
    */
   public void handleKeyReleased(javafx.scene.input.KeyEvent e) {
     KeyCode key = mapToEngineKeyCode(e.getCode());
-    if (key != null) game.keyReleased(key.getValue());
+    if (key != null) {
+      game.keyReleased(key.getValue());
+    }
   }
 
   /**

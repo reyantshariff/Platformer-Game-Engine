@@ -45,7 +45,7 @@ class PasswordTest {
   @Test
   void verify_KnownSaltAndHash_ShouldMatch() throws PasswordHashingException {
     String rawPassword = "randomPassword";
-    String salt = "123justin";
+    String salt = PasswordConfig.generateSalt();
     String hash = PasswordConfig.hashPassword(rawPassword, salt);
 
     Password saved = new Password(hash, salt);

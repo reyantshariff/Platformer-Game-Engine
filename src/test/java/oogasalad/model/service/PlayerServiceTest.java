@@ -1,5 +1,6 @@
 package oogasalad.model.service;
 
+import java.io.IOException;
 import oogasalad.database.DatabaseException;
 import oogasalad.database.FirebaseManager;
 import oogasalad.model.config.PasswordHashingException;
@@ -89,7 +90,7 @@ public class PlayerServiceTest {
     boolean result = PlayerService.createNewPlayer(username, password, fullName);
     assertTrue(result);
 
-    assertDoesNotThrow(() -> PlayerService.login(username, password));
+    assertDoesNotThrow(() -> PlayerService.login(username, password, false));
     assertEquals(username, SessionManagement.getCurrentUser().getUsername());
 
     boolean deleteResult = PlayerService.deletePlayer(username);
@@ -99,7 +100,9 @@ public class PlayerServiceTest {
   }
 
   @Test
-  public void login_notRealUser_ThrowsError() throws PasswordHashingException, DatabaseException {
+  public void login_notRealUser_ThrowsError()
+      throws PasswordHashingException, DatabaseException, IOException {
+    SessionManagement.logout();
     String username = "testuser_" + System.currentTimeMillis();
     String password = "testpassworddsadasdas";
 
@@ -107,7 +110,7 @@ public class PlayerServiceTest {
       PlayerService.deletePlayer(username);
     }
 
-    PlayerService.login(username, password);
+    PlayerService.login(username, password, false);
     assertFalse(SessionManagement.isLoggedIn());
   }
 
@@ -119,10 +122,11 @@ public class PlayerServiceTest {
     boolean result = PlayerService.createNewPlayer(username, password, fullName);
     assertTrue(result);
 
-    assertDoesNotThrow(() -> PlayerService.login(username, password));
+    assertDoesNotThrow(() -> PlayerService.login(username, password, false));
     assertDoesNotThrow(PlayerService::logout);
     assertTrue(PlayerService.deletePlayer(username));
     assertFalse(SessionManagement.isLoggedIn());
   }
+
 
 }

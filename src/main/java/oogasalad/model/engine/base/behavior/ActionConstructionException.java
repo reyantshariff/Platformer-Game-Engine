@@ -6,21 +6,23 @@ package oogasalad.model.engine.base.behavior;
 
 public class ActionConstructionException extends RuntimeException {
 
-    /**
-     * Constructor for ActionConstructionException.
-     * @param message the error message
-     */
-    public ActionConstructionException(String message) {
-        super(message);
-    }
+  /**
+   * Constructor for ActionConstructionException.
+   *
+   * @param message the error message
+   */
+  public ActionConstructionException(String message) {
+    super(message);
+  }
 
-    /**
-     * Constructor for ActionConstructionException with a cause.
-     * @param message the error message
-     * @param cause the cause of the exception
-     */
-    public ActionConstructionException(String message, Throwable cause) {
-        super(message, cause);
-    }
-    
+  /**
+   * Constructor for ActionConstructionException with a cause.
+   *
+   * @param message the error message
+   * @param cause   the cause of the exception
+   */
+  public ActionConstructionException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
 }
