@@ -19,9 +19,6 @@ public class SetBehaviorsAction extends BehaviorAction<Collection<Behavior>> {
     }
 
     @Override
-    public void awake() {}
-
-    @Override
     protected void perform(Collection<Behavior> behaviors) {
         getBehavior().getController().removeAllBehaviors();
         for (Behavior behavior : behaviors) {
