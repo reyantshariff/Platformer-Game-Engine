@@ -33,21 +33,20 @@ public class ProfileScene extends ViewScene {
 
   private VBox setUpLabels() {
     VBox playerInfo = new VBox();
-    PlayerData currentPlayer = null;
     try {
-      currentPlayer = SessionManagement.getCurrentUser();
+      PlayerData currentPlayer = SessionManagement.getCurrentUser();
+      Label fullName = new Label(currentPlayer.getFullName());
+      fullName.setId("fullName");
+      Label userName = new Label("Username: " + currentPlayer.getUsername());
+      userName.setId("username");
+      Label dateCreated = new Label("Date Joined: " + currentPlayer.getCreatedAt());
+      dateCreated.setId("date-created");
+      playerInfo.getChildren().addAll(fullName, userName, dateCreated);
     } catch (SessionException e) {
       LOGGER.error("There is no current session.");
       return new VBox();
       // TODO: direct player to sign in screen
     }
-    Label fullName = new Label(currentPlayer.getFullName());
-    fullName.setId("fullName");
-    Label userName = new Label("Username: " + currentPlayer.getUsername());
-    userName.setId("username");
-    Label dateCreated = new Label("Date Joined: " + currentPlayer.getCreatedAt());
-    dateCreated.setId("date-created");
-    playerInfo.getChildren().addAll(fullName, userName, dateCreated);
 
     return playerInfo;
   }
