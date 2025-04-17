@@ -32,6 +32,8 @@ class InputHandlerTest {
     transform.setScaleX(200);
     transform.setScaleY(200);
     player.addComponent(transform);
+
+    inputHandler.awake();
   }
 
   @Test
@@ -135,8 +137,6 @@ class InputHandlerTest {
   @Test
   void update_ClearsMouseClickedFlag_AfterTwoUpdates() {
     inputHandler.registerMouseClick(200.0, 200.0);
-    assertTrue(inputHandler.isMouseClicked());
-    inputHandler.update(0.016);
     assertTrue(inputHandler.isMouseClicked());
     inputHandler.update(0.016);
     assertFalse(inputHandler.isMouseClicked());

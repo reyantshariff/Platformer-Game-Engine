@@ -2,8 +2,8 @@ package oogasalad.model.engine.base.behavior;
 
 import com.google.cloud.Timestamp;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import oogasalad.model.config.GameConfig;
-import oogasalad.model.config.PasswordConfig;
 import oogasalad.model.config.PasswordHashingException;
 import oogasalad.model.profile.Password;
 import oogasalad.model.profile.PlayerData;
@@ -52,7 +52,8 @@ public abstract class BehaviorBaseTest extends ApplicationTest {
     }
 
     @BeforeEach
-    public void generalSetUp() {
+    public void generalSetUp()
+        throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         obj1 = new GameObject("Object1");
         obj2 = new GameObject("Object2");
         Transform transform1 = obj1.addComponent(Transform.class);

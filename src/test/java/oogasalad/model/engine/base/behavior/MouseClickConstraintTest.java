@@ -2,6 +2,9 @@ package oogasalad.model.engine.base.behavior;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.component.Transform;
 import org.junit.jupiter.api.Test;
 import oogasalad.model.engine.component.InputHandler;
@@ -17,6 +20,17 @@ public class MouseClickConstraintTest extends ConstraintsTest<MouseClickConstrai
     getObj1().getComponent(Transform.class).setScaleX(100);
     getObj1().getComponent(Transform.class).setScaleY(100);
 
+    Field field = null;
+    try {
+      field = InputHandler.class.getDeclaredField("transform");
+    } catch (NoSuchFieldException ignore) {
+    }
+    field.setAccessible(true);
+    try {
+      field.set(getObj1().getComponent(InputHandler.class), getObj1().getComponent(Transform.class));
+    } catch (IllegalAccessException ignore) {
+    }
+
     MouseClickConstraint constraint = getBehavior1().addConstraint(MouseClickConstraint.class);
     setConstraint(constraint);
   }
@@ -26,7 +40,6 @@ public class MouseClickConstraintTest extends ConstraintsTest<MouseClickConstrai
   public void check_checkPositive_returnsTrue() {
     getObj1().getComponent(InputHandler.class).registerMouseClick(250.0, 300.0);
     assertTrue(getConstraint().onCheck(null), "Expected mouse click to register within object's bounds");
-
   }
 
   @Override

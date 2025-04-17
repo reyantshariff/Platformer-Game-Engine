@@ -59,7 +59,7 @@ class GameObjectParserTest {
                     ],
                     "actions": [
                       {
-                        "name": "ChangeSceneAction",
+                        "name": "ChangeViewSceneAction",
                         "parameter": "Example Main Scene",
                         "parameterType": "String"
                       }
