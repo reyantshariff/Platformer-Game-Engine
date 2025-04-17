@@ -1,6 +1,5 @@
 package oogasalad.model.engine.component;
 
-import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.serialization.SerializableField;
 
 /**
@@ -8,7 +7,7 @@ import oogasalad.model.engine.base.serialization.SerializableField;
  * styling and snapshotting to draw styled text to the canvas. Example uses: - Game over messages -
  * HUD elements like scores or instructions - Button labels or static screen prompts
  */
-public class TextRenderer extends GameComponent {
+public class TextRenderer extends Renderer {
 
   @SerializableField
   private String text;
@@ -21,16 +20,6 @@ public class TextRenderer extends GameComponent {
 
   @SerializableField
   private int fontSize;
-
-  /**
-   * Identifies this component's category/tag.
-   *
-   * @return ComponentTag.RENDER — used by the engine to classify this as a visual component
-   */
-  @Override
-  public ComponentTag componentTag() {
-    return ComponentTag.RENDER;
-  }
 
   /**
    * Gets the text currently displayed by this component.
