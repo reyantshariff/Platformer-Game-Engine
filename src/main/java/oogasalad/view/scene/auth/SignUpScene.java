@@ -25,6 +25,7 @@ public class SignUpScene extends ViewScene {
 
   private static final String SIGNUP_CARD_ID = "signUpCard";
   private static final String SIGNUP_LABEL_ID = "signUpLabel";
+  private static final String SOCIAL_SIGNUP_BUTTON = "socialSignUpButton";
   private static final String SIGNUP_PROMPT_ID = "signUpPrompt";
   private static final String SIGNUP_FIRST_NAME_FIELD_ID = "signUpFirstNameField";
   private static final String SIGNUP_LAST_NAME_FIELD_ID = "signUpLastNameField";
@@ -46,7 +47,7 @@ public class SignUpScene extends ViewScene {
         GameConfig.getNumber("windowHeight"));
 
     VBox card = new VBox(20);
-    card.setId(SIGNUP_CARD_ID);
+    card.setId("socialCard");
 
     setUpSignUpLabel(card);
     setUpSignUpPrompt(card);
@@ -78,6 +79,7 @@ public class SignUpScene extends ViewScene {
     TextField firstNameField = new TextField();
     firstNameField.setPromptText(GameConfig.getText(SIGNUP_FIRST_NAME_FIELD_ID));
     firstNameField.setId(SIGNUP_FIRST_NAME_FIELD_ID);
+    firstNameField.getStyleClass().add("nameTextBox");
     card.getChildren().add(firstNameField);
   }
 
@@ -85,6 +87,7 @@ public class SignUpScene extends ViewScene {
     TextField lastNameField = new TextField();
     lastNameField.setPromptText(GameConfig.getText(SIGNUP_LAST_NAME_FIELD_ID));
     lastNameField.setId(SIGNUP_LAST_NAME_FIELD_ID);
+    lastNameField.getStyleClass().add("nameTextBox");
     card.getChildren().add(lastNameField);
   }
 
@@ -103,7 +106,7 @@ public class SignUpScene extends ViewScene {
   }
 
   private void handleSignUpButton(VBox card) {
-    Button signUpButton = new Button(GameConfig.getText(SIGNUP_LABEL_ID));
+    Button signUpButton = new Button(GameConfig.getText(SOCIAL_SIGNUP_BUTTON));
     signUpButton.setId("SignUpButton");
     signUpButton.setOnAction(e -> {
       String username = usernameField.getText().trim();
