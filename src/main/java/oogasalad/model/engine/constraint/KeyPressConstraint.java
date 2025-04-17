@@ -1,7 +1,7 @@
 package oogasalad.model.engine.constraint;
 
 import oogasalad.model.engine.base.behavior.BehaviorConstraint;
-import oogasalad.model.engine.base.enumerate.KeyCode;
+import oogasalad.model.engine.base.architecture.KeyCode;
 import oogasalad.model.engine.component.InputHandler;
 
 /**

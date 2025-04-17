@@ -3,7 +3,6 @@ package oogasalad.model.engine.component;
 import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
-import oogasalad.model.engine.base.enumerate.ComponentTag;
 import oogasalad.model.engine.base.behavior.Behavior;
 import oogasalad.model.engine.base.behavior.BehaviorAction;
 import oogasalad.model.engine.base.behavior.BehaviorConstraint;

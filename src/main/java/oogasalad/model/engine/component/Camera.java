@@ -8,7 +8,6 @@ import java.awt.Dimension;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.architecture.GameScene;
-import oogasalad.model.engine.base.enumerate.ComponentTag;
 
 /**
  * The CameraComponent class is used to represent a camera in the game. It is responsible for

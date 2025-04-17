@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import oogasalad.model.engine.base.architecture.GameComponent;
+import oogasalad.model.engine.base.serialization.SerializableFieldType;
 import oogasalad.model.engine.base.serialization.SerializedField;
 import oogasalad.model.engine.component.Transform;
 import oogasalad.model.parser.ComponentParser;
@@ -59,8 +60,8 @@ class ComponentParserTest {
     JsonNode node = myMapper.readTree(goodJsonString);
     GameComponent myComponent = myComponentParser.parse(node);
     assertNotNull(myComponent);
-    for (SerializedField<?> serializedField : myComponent.getSerializedFields()) {
-      if (serializedField.getFieldType() == double.class) {
+    for (SerializedField serializedField : myComponent.getSerializedFields()) {
+      if (serializedField.getFieldType() == SerializableFieldType.DOUBLE) {
         assertEquals(1.0, (double) serializedField.getValue());
       }
     }

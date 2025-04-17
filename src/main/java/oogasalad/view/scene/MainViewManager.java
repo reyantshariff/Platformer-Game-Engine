@@ -61,24 +61,23 @@ public class MainViewManager {
    * Creates and stores a ViewScene instance with the given class and constructor args.
    *
    * @param viewSceneClass The class of the ViewScene
-   * @param args           Arguments for the constructor
    * @return The created instance
    */
-  public <T extends ViewScene> T addViewScene(Class<T> viewSceneClass, String name, Object... args) {
+  public <T extends ViewScene> T addViewScene(Class<T> viewSceneClass, String name) {
     try {
-      Class<?>[] argTypes = Arrays.stream(args).map(Object::getClass).toArray(Class[]::new);
-      Constructor<T> constructor = viewSceneClass.getDeclaredConstructor(argTypes);
+      Constructor<T> constructor = viewSceneClass.getDeclaredConstructor();
       constructor.setAccessible(true);
-      T instance = constructor.newInstance(args);
+      T instance = constructor.newInstance();
       viewScenes.put(name, instance);
+
+      System.out.println(instance);
       return instance;
     } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-      GameConfig.LOGGER.error(e);
-      // TODO: Add statement that is not a raw exception
+      GameConfig.LOGGER.error("Failed to instantiate view scene: {}", viewSceneClass.getName(), e);
+      // TODO: handle exception here
     }
     return null;
   }
-
 
   /**
    * Gets the viewScene instance with the given name.

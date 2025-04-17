@@ -16,14 +16,14 @@ import oogasalad.view.gui.textField.DoubleTextField;
 public class DoubleFieldInput extends DeserializedFieldUI<Double> {
 
   @Override
-  protected Node showGUI(SerializedField<Double> field) {
+  protected Node showGUI(SerializedField field) {
     // Make a label for the field
     String name = field.getFieldName().replaceAll("([a-z])([A-Z])", "$1 $2");
     name = name.substring(0, 1).toUpperCase() + name.substring(1);
     Label label = new Label(name);
 
     // Make a text field for the field that only accepts double values
-    DoubleTextField textField = new DoubleTextField(field.getValue(), "Enter a double value");
+    DoubleTextField textField = new DoubleTextField((Double) field.getValue(), "Enter a double value");
     textField.setChangeListener(newVal -> {
       field.setValue(newVal);
       return true;

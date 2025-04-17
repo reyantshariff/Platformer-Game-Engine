@@ -3,8 +3,7 @@ package oogasalad.model.engine.component;
 import java.util.HashSet;
 import java.util.Set;
 import oogasalad.model.engine.base.architecture.GameComponent;
-import oogasalad.model.engine.base.enumerate.ComponentTag;
-import oogasalad.model.engine.base.enumerate.KeyCode;
+import oogasalad.model.engine.base.architecture.KeyCode;
 
 /**
  * Handles raw keyboard input with custom key codes.

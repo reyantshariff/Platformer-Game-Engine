@@ -10,6 +10,7 @@ import java.util.List;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.behavior.Behavior;
+import oogasalad.model.engine.base.serialization.SerializedField;
 import oogasalad.model.engine.component.BehaviorController;
 import oogasalad.model.engine.component.Transform;
 
@@ -101,8 +102,7 @@ public class GameObjectParser implements Parser<GameObject> {
     gameObject.addComponent(component);
   }
 
-  private void parseBehaviors(GameObject gameObject, JsonNode behaviorsNode)
-      throws ParsingException {
+  private void parseBehaviors(GameObject gameObject, JsonNode behaviorsNode) throws ParsingException {
     JsonNode behaviorsArrayNode = behaviorsNode.get("Behaviors");
     if (behaviorsArrayNode != null && behaviorsArrayNode.isArray()) {
       BehaviorController behaviorController = new BehaviorController();

@@ -26,16 +26,31 @@ class GameSceneParserTest {
               {
                 "Name": "Transform",
                 "Configurations": {
-                  "position": { "X": 0, "Y": 0 },
-                  "rotation": { "X": 0, "Y": 0 },
-                  "scale": { "X": 1, "Y": 1 }
+                  "x": 100,
+                  "y": 420,
+                  "rotation": 0,
+                  "scaleX": 40,
+                  "scaleY": 40
                 }
               }
             ],
-            "Behaviours": [
+            "Behaviors": [
               {
-                "Name": "TestBehaviour",
-                "Configurations": {}
+                "Name": "ResetOnHit",
+                "constraints": [
+                  {
+                    "name": "CollidesWithConstraint",
+                    "parameter": "player",
+                    "parameterType": "String"
+                  }
+                ],
+                "actions": [
+                  {
+                    "name": "ChangeSceneAction",
+                    "parameter": "MainMenuScene",
+                    "parameterType": "String"
+                  }
+                ]
               }
             ]
           }
@@ -53,16 +68,31 @@ class GameSceneParserTest {
               {
                 "Name": "Transform",
                 "Configurations": {
-                  "position": { "X": 0, "Y": 0 },
-                  "rotation": { "X": 0, "Y": 0 },
-                  "scale": { "X": 1, "Y": 1 }
+                  "x": 100,
+                  "y": 420,
+                  "rotation": 0,
+                  "scaleX": 40,
+                  "scaleY": 40
                 }
               }
             ],
-            "Behaviours": [
+            "Behaviors": [
               {
-                "Name": "TestBehaviour",
-                "Configurations": {}
+                "Name": "ResetOnHit",
+                "constraints": [
+                  {
+                    "name": "CollidesWithConstraint",
+                    "parameter": "player",
+                    "parameterType": "String"
+                  }
+                ],
+                "actions": [
+                  {
+                    "name": "ChangeSceneAction",
+                    "parameter": "MainMenuScene",
+                    "parameterType": "String"
+                  }
+                ]
               }
             ]
           }

@@ -1,11 +1,11 @@
-package oogasalad.model.engine.base.enumerate;
+package oogasalad.model.engine.base.serialization;
 
 import java.lang.reflect.Type;
 import java.util.List;
 import oogasalad.model.engine.base.behavior.Behavior;
 import oogasalad.model.engine.base.behavior.BehaviorAction;
 import oogasalad.model.engine.base.behavior.BehaviorConstraint;
-import oogasalad.model.engine.base.serialization.TypeRef;
+import oogasalad.model.engine.base.architecture.KeyCode;
 
 /**
  * The enum that holds all the valid serializableType. This is used to defined parser and UI element.
@@ -15,7 +15,7 @@ import oogasalad.model.engine.base.serialization.TypeRef;
 public enum SerializableFieldType {
   VOID(new TypeRef<Void>() {}),
   STRING(new TypeRef<String>() {}),
-  INT(new TypeRef<Integer>() {}),
+  INTEGER(new TypeRef<Integer>() {}),
   DOUBLE(new TypeRef<Double>() {}),
   BOOLEAN(new TypeRef<Boolean>() {}),
   KEYCODE(new TypeRef<KeyCode>() {}),

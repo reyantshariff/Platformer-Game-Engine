@@ -53,13 +53,15 @@ class GameObjectParserTest {
                     "constraints": [
                       {
                         "name": "KeyPressConstraint",
-                        "parameter": "SPACE"
+                        "parameter": "SPACE",
+                        "parameterType": "KeyCode"
                       }
                     ],
                     "actions": [
                       {
                         "name": "ChangeSceneAction",
-                        "parameter": "Example Main Scene"
+                        "parameter": "Example Main Scene",
+                        "parameterType": "String"
                       }
                     ]
                   }

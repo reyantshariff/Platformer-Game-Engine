@@ -7,8 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import oogasalad.model.config.GameConfig;
 import oogasalad.model.engine.base.behavior.BehaviorComponent;
-import oogasalad.model.engine.base.enumerate.KeyCode;
-import oogasalad.model.engine.base.serialization.Serializable;
+import oogasalad.model.engine.base.architecture.KeyCode;
 import oogasalad.model.engine.base.serialization.SerializedField;
 import oogasalad.model.engine.base.serialization.SetSerializedFieldException;
 import oogasalad.view.gui.dropDown.ClassSelectionDropDownList;
@@ -23,13 +22,13 @@ import java.util.stream.Collectors;
  *
  * @author Hsuan-Kai Liao
  */
-public class BehaviorComponentListFieldInput<T extends BehaviorComponent<T>> extends DeserializedFieldUI<List<T>> {
+public class BehaviorComponentListFieldInput<T extends BehaviorComponent<?>> extends DeserializedFieldUI<List<T>> {
 
   private final String componentPackage;
   private final Class<T> componentClass;
 
   private VBox listContainer;
-  private SerializedField<List<T>> field;
+  private SerializedField field;
 
   /**
    * Class constructor
@@ -42,15 +41,15 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent<T>> ext
   }
 
   @Override
-  protected Node showGUI(SerializedField<List<T>> field) {
+  protected Node showGUI(SerializedField field) {
     this.field = field;
 
     Label label = new Label(formatFieldName(field.getFieldName()));
     listContainer = new VBox(5);
     listContainer.setPadding(new Insets(5));
 
-    Optional.ofNullable(field.getValue()).orElseGet(ArrayList::new)
-        .forEach(component -> listContainer.getChildren().add(createComponentRow(component)));
+    Optional.ofNullable((List<?>)field.getValue()).orElseGet(ArrayList::new)
+        .forEach(component -> listContainer.getChildren().add(createComponentRow((T) component)));
 
     Button addButton = new Button("+");
     addButton.setOnAction(e -> listContainer.getChildren().add(createComponentRow(null)));
@@ -89,7 +88,7 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent<T>> ext
     if (getGenericTypeName(component).equals(Void.class.getSimpleName())) {
       hide(paramField);
     } else {
-      SerializedField<?> param = component.getSerializedFields().getFirst();
+      SerializedField param = component.getSerializedFields().getFirst();
       paramField.setText(Optional.ofNullable(param.getValue()).map(Object::toString).orElse(""));
     }
   }
@@ -100,7 +99,7 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent<T>> ext
       T newComponent = instantiateComponent(className);
       componentRef[0] = newComponent;
 
-      SerializedField<?> param = newComponent.getSerializedFields().getFirst();
+      SerializedField param = newComponent.getSerializedFields().getFirst();
       if (getGenericTypeName(newComponent).equals(Void.class.getSimpleName())) {
         hide(paramField);
       } else {
@@ -118,7 +117,7 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent<T>> ext
 
   private boolean updateParamField(T[] componentRef, StringTextField paramField) {
     return Optional.ofNullable(componentRef[0]).map(component -> {
-      SerializedField<?> param = component.getSerializedFields().getFirst();
+      SerializedField param = component.getSerializedFields().getFirst();
       return updateParameter(component, param, paramField.getText());
     }).orElse(false);
   }
@@ -156,16 +155,14 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent<T>> ext
     return null;
   }
 
-
-  @SuppressWarnings("unchecked")
-  private boolean updateParameter(T component, SerializedField<?> param, String newVal) {
+  private boolean updateParameter(T component, SerializedField param, String newVal) {
     String typeName = getGenericTypeName(component);
 
     try {
       switch (typeName) {
-        case "String" -> ((SerializedField<String>) param).setValue(newVal);
-        case "Double" -> ((SerializedField<Double>) param).setValue(Double.parseDouble(newVal));
-        case "KeyCode" -> ((SerializedField<KeyCode>) param).setValue(KeyCode.valueOf(newVal));
+        case "String" -> param.setValue(newVal);
+        case "Double" -> param.setValue(Double.parseDouble(newVal));
+        case "KeyCode" -> param.setValue(KeyCode.valueOf(newVal));
         default -> throw new IllegalArgumentException("Unsupported type: " + typeName);
       };
       return true;

@@ -73,6 +73,6 @@ class TransformTest {
   @Test
   void componentTag_Always_ReturnsTransformTag() {
     Transform t = new Transform();
-    assertEquals(oogasalad.model.engine.base.enumerate.ComponentTag.TRANSFORM, t.componentTag());
+    assertEquals(ComponentTag.TRANSFORM, t.componentTag());
   }
 }

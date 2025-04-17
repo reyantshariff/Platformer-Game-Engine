@@ -418,10 +418,10 @@ public class BuilderScene extends ViewScene {
 
     // Load the prefab GameObjects
     // TODO: remove hardcoded game type
-    List<GameObject> prefabObjects = PrefabLoader.loadAvailablePrefabs("dinosaur");
-    for (GameObject prefab : prefabObjects) {
-     createObject(prefab, tilePane);
-    }
+//    List<GameObject> prefabObjects = PrefabLoader.loadAvailablePrefabs("dinosaur");
+//    for (GameObject prefab : prefabObjects) {
+//     createObject(prefab, tilePane);
+//    }
 
     // Briefly animate the sprite tile options into their correct positions
     Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1), event -> {

@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import oogasalad.model.engine.base.enumerate.ComponentTag;
+import oogasalad.model.engine.component.ComponentTag;
 import oogasalad.model.engine.component.Transform;
 import org.junit.jupiter.api.Test;
 

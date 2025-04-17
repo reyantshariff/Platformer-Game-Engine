@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.behavior.Behavior;
-import oogasalad.model.engine.base.enumerate.ComponentTag;
 import oogasalad.model.engine.base.serialization.SerializableField;
 
 /**

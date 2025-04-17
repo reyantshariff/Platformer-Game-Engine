@@ -78,7 +78,7 @@ public class ComponentPanel extends VBox {
   }
 
   private List<HBox> getDeserializedComponents(GameComponent component) {
-    List<SerializedField<?>> fields = component.getSerializedFields();
+    List<SerializedField> fields = component.getSerializedFields();
     return fields.stream().map(DeserializedFieldUIFactory::createDeserializedFieldUI).toList();
   }
 

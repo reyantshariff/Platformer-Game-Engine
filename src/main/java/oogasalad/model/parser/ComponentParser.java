@@ -2,20 +2,12 @@ package oogasalad.model.parser;
 
 import static oogasalad.model.config.GameConfig.LOGGER;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.serialization.Serializable;
 import oogasalad.model.engine.base.serialization.SerializedField;
@@ -28,46 +20,10 @@ import oogasalad.model.engine.base.serialization.SerializedField;
 public class ComponentParser implements Parser<GameComponent>, Serializable {
 
   private static final String NAME = "Name";
+  private static final String CONFIG = "Configurations";
   private static final String CLASS_PATH = "oogasalad.model.engine.component.";
 
-  private static final Map<Class<?>, Function<JsonNode, Object>> EXTRACTORS = new HashMap<>();
-  private static final Map<Class<?>, BiConsumer<SerializedField<?>, ObjectNode>> SERIALIZERS = new HashMap<>();
-
-  static {
-    SERIALIZERS.put(String.class, (field, config) -> config.put(field.getFieldName(), (String) field.getValue()));
-    SERIALIZERS.put(Boolean.class, (field, config) -> config.put(field.getFieldName(), (Boolean) field.getValue()));
-    SERIALIZERS.put(boolean.class, (field, config) -> config.put(field.getFieldName(), (Boolean) field.getValue()));
-    SERIALIZERS.put(Integer.class, (field, config) -> config.put(field.getFieldName(), (Integer) field.getValue()));
-    SERIALIZERS.put(int.class, (field, config) -> config.put(field.getFieldName(), (Integer) field.getValue()));
-    SERIALIZERS.put(Double.class, (field, config) -> config.put(field.getFieldName(), (Double) field.getValue()));
-    SERIALIZERS.put(double.class, (field, config) -> config.put(field.getFieldName(), (Double) field.getValue()));
-    SERIALIZERS.put(List.class, (field, config) -> serializeListField(field, config));
-  }
-
-  static {
-    EXTRACTORS.put(int.class, JsonNode::asInt);
-    EXTRACTORS.put(Integer.class, JsonNode::asInt);
-    EXTRACTORS.put(double.class, JsonNode::asDouble);
-    EXTRACTORS.put(Double.class, JsonNode::asDouble);
-    EXTRACTORS.put(boolean.class, JsonNode::asBoolean);
-    EXTRACTORS.put(Boolean.class, JsonNode::asBoolean);
-    EXTRACTORS.put(String.class, JsonNode::asText);
-
-    // Handle List<String>
-    EXTRACTORS.put(List.class, node -> {
-      if (!node.isArray()) {
-        throw new IllegalArgumentException("Expected JSON array for List<String> but got: " + node);
-      }
-      List<String> list = new ArrayList<>();
-      for (JsonNode element : node) {
-        if (!element.isTextual()) {
-          throw new IllegalArgumentException("Expected string in List<String>, but found: " + element);
-        }
-        list.add(element.asText());
-      }
-      return list;
-    });
-  }
+  private final ObjectMapper mapper = new ObjectMapper();
 
   /**
    * Parses a JSON node into a GameComponent instance
@@ -84,37 +40,42 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
     try {
       String fullClassName = CLASS_PATH + name;
 
-      Class<?> rawClass = getRawClass(fullClassName);
+      Class<?> rawClass = Class.forName(fullClassName);
+      if (!GameComponent.class.isAssignableFrom(rawClass)) {
+        throw new ParsingException("Class does not extend GameComponent: " + fullClassName);
+      }
 
       Class<? extends GameComponent> componentClass = (Class<? extends GameComponent>) rawClass;
-
       GameComponent myComponent = componentClass.getDeclaredConstructor().newInstance();
-      JsonNode configNode = componentNode.get("Configurations");
+      JsonNode configNode = componentNode.get(CONFIG);
 
-      myComponent
-          .getSerializedFields()
-          .forEach(field -> setFieldFromConfig(configNode, field));
+      myComponent.getSerializedFields().forEach(field -> setFieldFromConfig(configNode, field));
 
       return myComponent;
-
-    } catch (ClassNotFoundException e) {
-      throw new ParsingException("Component class not found: " + componentNode, e);
-    } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-             NoSuchMethodException e) {
-      LOGGER.error("Error instantiating component: {}", name);
-      throw new ParsingException("Error instantiating component", e);
+    } catch (Exception e) {
+      LOGGER.error("Error instantiating component: {}", name, e);
+      throw new ParsingException("Failed to parse component", e);
     }
   }
 
-  private Class<?> getRawClass(String fullClassName)
-      throws ClassNotFoundException, ParsingException {
-    //had chatGpt help with the following three lines
-    Class<?> rawClass = Class.forName(fullClassName);
-    if (!GameComponent.class.isAssignableFrom(rawClass)) {
-      throw new ParsingException("Class does not extend GameComponent: " + fullClassName);
-    }
-    return rawClass;
+  private void setFieldFromConfig(JsonNode config, SerializedField field) {
+    String name = field.getFieldName();
+    if (!config.has(name)) return;
+
+    JsonNode valueNode = config.get(name);
+    Object value = parseJsonToType(field.getFieldType().getType(), valueNode);
+    field.setValue(value);
   }
+
+  private Object parseJsonToType(Type type, JsonNode node) {
+    try {
+      JavaType javaType = mapper.getTypeFactory().constructType(type);
+      return mapper.convertValue(node, javaType);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Failed to parse value from JSON: " + node + " to type: " + type, e);
+    }
+  }
+
 
   private void validateComponentName(JsonNode componentNode) throws ParsingException {
     if (!componentNode.has(NAME)) {
@@ -122,48 +83,6 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
       throw new ParsingException("Component did not have name.");
     }
   }
-
-  private void setFieldFromConfig(JsonNode config, SerializedField<?> serializedField) {
-    String fieldName = serializedField.getFieldName();
-
-    if (!config.has(fieldName)) {
-      return;
-    }
-    JsonNode valueNode = config.get(fieldName);
-    Class<?> fieldType = serializedField.getFieldType();
-
-    try {
-      Object value = extractFieldValue(fieldType, valueNode);
-
-      SerializedField<Object> typedField = (SerializedField<Object>) serializedField;
-      typedField.setValue(value);
-
-    } catch (IllegalArgumentException | ClassCastException e) {
-      throw new IllegalStateException(
-          "Failed to set field '" + fieldName + "' with value: " + valueNode, e);
-    }
-  }
-
-  private Object extractFieldValue(Class<?> fieldType, JsonNode valueNode) {
-    // Check if the field is a List (for example, a List<String>)
-    if (List.class.isAssignableFrom(fieldType)) {
-      // Create a list and populate it by iterating over the array node.
-      List<String> list = new ArrayList<>();
-      if (valueNode.isArray()) {
-        for (JsonNode element : valueNode) {
-          list.add(element.asText());
-        }
-      }
-      return list;
-    }
-
-    Function<JsonNode, Object> extractor = EXTRACTORS.get(fieldType);
-    if (extractor == null) {
-      throw new IllegalArgumentException("Unsupported field type: " + fieldType);
-    }
-    return extractor.apply(valueNode);
-  }
-
 
   /**
    * Serializes a gameComponent into a JSON node
@@ -173,42 +92,23 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
    */
   @Override
   public JsonNode write(GameComponent data) throws IOException {
-    ObjectMapper mapper = new ObjectMapper();
-
-    String componentName = data.getClass().getSimpleName();
     ObjectNode root = mapper.createObjectNode();
-    root.put(NAME, componentName);
+    root.put(NAME, data.getClass().getSimpleName());
 
-    ObjectNode configurations = root.putObject("Configurations");
-
-    List<SerializedField<?>> serializableFields = data.getSerializedFields();
-    for (SerializedField<?> serializedField : serializableFields) {
-      serializeField(serializedField, configurations);
+    ObjectNode config = root.putObject(CONFIG);
+    for (SerializedField field : data.getSerializedFields()) {
+      serializeField(field, config);
     }
 
     return root;
   }
 
-  private void serializeField(SerializedField<?> serializedField, ObjectNode configurations) {
-    Class<?> fieldType = serializedField.getFieldType();
-    BiConsumer<SerializedField<?>, ObjectNode> serializer = SERIALIZERS.get(fieldType);
-
-    if (serializer != null) {
-      serializer.accept(serializedField, configurations);
-    } else {
-      throw new IllegalArgumentException("Unsupported field type: " + fieldType);
-    }
-  }
-
-  private static void serializeListField(SerializedField<?> serializedField, ObjectNode configurations) {
-    ParameterizedType pt = (ParameterizedType) serializedField.getFieldGenericType();
-    Type argType = pt.getActualTypeArguments()[0];
-
-    if (argType == String.class) {
-      ArrayNode arrayNode = new ObjectMapper().valueToTree(serializedField.getValue());
-      configurations.set(serializedField.getFieldName(), arrayNode);
-    } else {
-      throw new IllegalArgumentException("Unsupported List type: " + argType);
+  private void serializeField(SerializedField field, ObjectNode config) {
+    try {
+      JsonNode valueNode = mapper.valueToTree(field.getValue());
+      config.set(field.getFieldName(), valueNode);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Failed to serialize field: " + field.getFieldName(), e);
     }
   }
 }

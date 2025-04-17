@@ -7,8 +7,8 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import oogasalad.model.config.GameConfig;
-import oogasalad.model.engine.base.enumerate.SerializableFieldType;
 
 /**
  * This is the interface indicating that its field can be annotated as @SerializableField. And all
@@ -21,15 +21,15 @@ public interface Serializable {
   /**
    * Get all the field annotated @SerializableField, including fields from parent classes.
    */
-  default List<SerializedField<?>> getSerializedFields() {
-    List<SerializedField<?>> serializedFields = new ArrayList<>();
+  default List<SerializedField> getSerializedFields() {
+    List<SerializedField> serializedFields = new ArrayList<>();
     Class<?> clazz = this.getClass();
 
     // Traverse class hierarchy to include parent classes
     while (clazz != null) {
       for (Field field : clazz.getDeclaredFields()) {
         if (field.isAnnotationPresent(SerializableField.class)) {
-          SerializedField<?> serializedField = createSerializedField(clazz, field);
+          SerializedField serializedField = createSerializedField(clazz, field);
           if (serializedField != null) {  // Ensure only valid fields are added
             serializedFields.add(serializedField);
           }
@@ -41,13 +41,14 @@ public interface Serializable {
     return serializedFields;
   }
 
-  private SerializedField<?> createSerializedField(Class<?> clazz, Field field) {
+  private SerializedField createSerializedField(Class<?> clazz, Field field) {
     Type fieldGenericType = field.getGenericType();
 
     // Check if field's type matches supported types (including primitive/wrapper matching)
-    if (!isIsValid(fieldGenericType)) {
+    SerializableFieldType fieldType = getValidType(fieldGenericType);
+    if (fieldType == null) {
       GameConfig.LOGGER.warn("Unsupported @SerializableField type: {} in {}#{}",
-          (fieldGenericType instanceof TypeVariable<?> typeVar ? resolveTypeVariable(this.getClass(), typeVar).getTypeName() : fieldGenericType.getTypeName()),
+          (fieldGenericType instanceof TypeVariable<?> typeVar ? Objects.requireNonNull(resolveTypeVariable(this.getClass(), typeVar)).getTypeName() : fieldGenericType.getTypeName()),
           clazz.getSimpleName(),
           field.getName());
 
@@ -69,22 +70,24 @@ public interface Serializable {
       setter = clazz.getMethod("set" + capitalized, field.getType());
     } catch (NoSuchMethodException ignored) {}
 
-    return new SerializedField<>(this, field, getter, setter);
+    return new SerializedField(this, field, fieldType, getter, setter);
   }
 
-  private boolean isIsValid(Type fieldGenericType) {
+  private SerializableFieldType getValidType(Type fieldGenericType) {
     for (SerializableFieldType type : SerializableFieldType.values()) {
       Type supportedType = type.getType();
 
       // Check if both types are the same, considering primitive and wrapper types
-      if (supportedType instanceof Class<?> supportedClass && fieldGenericType instanceof Class<?> fieldClass) {
-        if (wrapperForPrimitive(supportedClass).equals(wrapperForPrimitive(fieldClass))) {
-          return true;
+      if (supportedType instanceof Class<?> supportedClass
+          && fieldGenericType instanceof Class<?> fieldClass) {
+        if (TypeRef.wrapperForPrimitive(supportedClass).equals(TypeRef.wrapperForPrimitive(fieldClass))) {
+          return type;
         }
       }
 
       // Handle parameterized types (e.g., List<String>)
-      else if (supportedType instanceof ParameterizedType supportedParameterizedType && fieldGenericType instanceof ParameterizedType fieldParameterizedType) {
+      else if (supportedType instanceof ParameterizedType supportedParameterizedType
+          && fieldGenericType instanceof ParameterizedType fieldParameterizedType) {
         if (supportedParameterizedType.getRawType().equals(fieldParameterizedType.getRawType())) {
           Type[] supportedArgs = supportedParameterizedType.getActualTypeArguments();
           Type[] fieldArgs = fieldParameterizedType.getActualTypeArguments();
@@ -98,7 +101,7 @@ public interface Serializable {
               }
             }
             if (allMatch) {
-              return true;
+              return type;
             }
           }
         }
@@ -107,24 +110,12 @@ public interface Serializable {
       // Handle Generic Type
       else if (fieldGenericType instanceof TypeVariable<?> typeVar) {
         Type resolved = resolveTypeVariable(this.getClass(), typeVar);
-        if (resolved != null && isIsValid(resolved)) {
-          return true;
+        if (resolved != null && getValidType(resolved) != null) {
+          return type;
         }
       }
     }
-    return false;
-  }
-
-  private static Class<?> wrapperForPrimitive(Class<?> primitiveClass) {
-    if (primitiveClass == int.class) return Integer.class;
-    if (primitiveClass == boolean.class) return Boolean.class;
-    if (primitiveClass == char.class) return Character.class;
-    if (primitiveClass == byte.class) return Byte.class;
-    if (primitiveClass == short.class) return Short.class;
-    if (primitiveClass == long.class) return Long.class;
-    if (primitiveClass == float.class) return Float.class;
-    if (primitiveClass == double.class) return Double.class;
-    return primitiveClass;
+    return null;
   }
 
   private static Type resolveTypeVariable(Class<?> clazz, TypeVariable<?> typeVar) {

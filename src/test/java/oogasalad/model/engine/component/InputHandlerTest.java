@@ -2,8 +2,7 @@ package oogasalad.model.engine.component;
 
 import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.base.architecture.GameScene;
-import oogasalad.model.engine.base.enumerate.ComponentTag;
-import oogasalad.model.engine.base.enumerate.KeyCode;
+import oogasalad.model.engine.base.architecture.KeyCode;
 import oogasalad.model.engine.prefab.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

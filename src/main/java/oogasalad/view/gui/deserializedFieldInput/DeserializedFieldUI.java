@@ -21,8 +21,14 @@ public abstract class DeserializedFieldUI<T> extends HBox {
   }
 
   @SuppressWarnings("unchecked")
-  void initGUI(SerializedField<?> field) {
-    getChildren().add(showGUI((SerializedField<T>) field));
+  void initGUI(SerializedField field) {
+    try {
+      T cast = (T) field.getValue();
+      assert cast != null;
+      getChildren().add(showGUI(field));
+    } catch (ClassCastException e) {
+      throw new IllegalArgumentException(e);
+    }
   }
 
   /**
@@ -30,5 +36,5 @@ public abstract class DeserializedFieldUI<T> extends HBox {
    * @param field the SerializedField to create a GUI element for
    * @return a Node representing the GUI element
    */
-  protected abstract Node showGUI(SerializedField<T> field);
+  protected abstract Node showGUI(SerializedField field);
 }

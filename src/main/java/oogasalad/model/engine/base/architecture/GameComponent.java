@@ -3,7 +3,7 @@ package oogasalad.model.engine.base.architecture;
 import static oogasalad.model.config.GameConfig.LOGGER;
 import java.lang.reflect.InvocationTargetException;
 
-import oogasalad.model.engine.base.enumerate.ComponentTag;
+import oogasalad.model.engine.component.ComponentTag;
 import oogasalad.model.engine.base.serialization.Serializable;
 import oogasalad.model.engine.base.serialization.SerializedField;
 /**
@@ -52,7 +52,7 @@ public abstract class GameComponent implements Serializable {
       GameComponent copy = this.getClass().getDeclaredConstructor().newInstance();
 
       // Iterate over each serialized field in the original.
-      for (SerializedField<?> field : this.getSerializedFields()) {
+      for (SerializedField field : this.getSerializedFields()) {
         setCopyField(copy, field);
       }
       return copy;
@@ -62,16 +62,12 @@ public abstract class GameComponent implements Serializable {
     }
   }
 
-  private void setCopyField(GameComponent copy, SerializedField<?> field) {
+  private void setCopyField(GameComponent copy, SerializedField field) {
     String fieldName = field.getFieldName();
     Object value = field.getValue();
-    for (SerializedField<?> copyField : copy.getSerializedFields()) {
-      if (copyField.getFieldName().equals(fieldName) &&
-          copyField.getFieldType().equals(field.getFieldType())) {
-        // For immutable types (e.g. primitives, Strings) a simple assignment is enough.
-        // If the field value is mutable and requires further deep copying,
-        // you'll need to handle that separately.
-        ((SerializedField<Object>) copyField).setValue(value);
+    for (SerializedField copyField : copy.getSerializedFields()) {
+      if (copyField.getFieldName().equals(fieldName) && copyField.getFieldType().equals(field.getFieldType())) {
+        copyField.setValue(value);
         break;
       }
     }

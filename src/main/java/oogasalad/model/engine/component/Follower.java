@@ -5,7 +5,6 @@ import java.awt.geom.Point2D;
 import static oogasalad.model.config.GameConfig.LOGGER;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
-import oogasalad.model.engine.base.enumerate.ComponentTag;
 import oogasalad.model.engine.base.serialization.SerializableField;
 
 /**

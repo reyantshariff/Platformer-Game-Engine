@@ -2,7 +2,7 @@ package oogasalad.model.engine.base.architecture;
 
 import java.util.*;
 import oogasalad.model.engine.component.Transform;
-import oogasalad.model.engine.base.enumerate.ComponentTag;
+import oogasalad.model.engine.component.ComponentTag;
 import java.lang.reflect.InvocationTargetException;
 
 import static oogasalad.model.config.GameConfig.LOGGER;

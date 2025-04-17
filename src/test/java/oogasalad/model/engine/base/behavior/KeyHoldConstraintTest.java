@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import oogasalad.model.engine.component.InputHandler;
 import oogasalad.model.engine.constraint.KeyHoldConstraint;
-import oogasalad.model.engine.base.enumerate.KeyCode;
+import oogasalad.model.engine.base.architecture.KeyCode;
 
 public class KeyHoldConstraintTest extends ConstraintsTest<KeyHoldConstraint> {
     

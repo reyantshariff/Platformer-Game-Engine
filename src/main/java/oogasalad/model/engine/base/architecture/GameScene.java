@@ -4,7 +4,7 @@ import static oogasalad.model.config.GameConfig.LOGGER;
 import java.text.MessageFormat;
 import java.util.*;
 import oogasalad.model.config.GameConfig;
-import oogasalad.model.engine.base.enumerate.ComponentTag;
+import oogasalad.model.engine.component.ComponentTag;
 import oogasalad.model.engine.component.Camera;
 
 /**
