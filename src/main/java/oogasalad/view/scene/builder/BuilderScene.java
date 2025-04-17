@@ -37,8 +37,6 @@ import oogasalad.model.config.GameConfig;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.component.Transform;
-import oogasalad.model.parser.PrefabLoader;
-import oogasalad.view.gui.button.BuilderSpriteOptionButton;
 import oogasalad.view.gui.dropDown.ClassSelectionDropDownMenu;
 import oogasalad.view.gui.panel.ComponentPanel;
 import oogasalad.view.scene.MainViewManager;
@@ -451,40 +449,40 @@ public class BuilderScene extends ViewScene {
     t.setY(centerInCanvas.getY());
   }
 
-
-  private void createObject(GameObject prefab, TilePane tilePane) {
-    // Assume the prefab has a SpriteRenderer component.
-    String previewImagePath = getPreviewImagePath(prefab);
-    // Convert the preview image path to a JavaFX Image
-    try {
-      assert previewImagePath != null;
-      Image previewImage = new Image(new File(previewImagePath).toURI().toURL().toString());
-      Button newSpriteButton = new BuilderSpriteOptionButton(
-          previewImage,
-          tilePane.getPrefWidth() * 0.25,
-          tilePane.getPrefHeight() * 0.25,
-          prefab);
-      newSpriteButton.setOnAction(event -> {
-        GameObject newObject = prefab.clone();  // or a deep copy via serialization
-
-        // Retrieve the Transform component
-        Transform t = newObject.getComponent(Transform.class);
-        if (t == null) {
-          logger.error("Error getting Transform component from prefab " + prefab.getName());
-        } else {
-          alignObject(t, myGameViewPane);
-        }
-
-        // Register new object to the scene
-        builder.getCurrentScene().registerObject(newObject);
-        // Update the game preview so the new object appears
-        updateGamePreview();
-      });
-      tilePane.getChildren().add(newSpriteButton);
-    } catch (IllegalArgumentException | MalformedURLException e) {
-      logger.error("Error loading preview image from: " + previewImagePath);
-    }
-  }
+//
+//  private void createObject(GameObject prefab, TilePane tilePane) {
+//    // Assume the prefab has a SpriteRenderer component.
+//    String previewImagePath = getPreviewImagePath(prefab);
+//    // Convert the preview image path to a JavaFX Image
+//    try {
+//      assert previewImagePath != null;
+//      Image previewImage = new Image(new File(previewImagePath).toURI().toURL().toString());
+//      Button newSpriteButton = new BuilderSpriteOptionButton(
+//          previewImage,
+//          tilePane.getPrefWidth() * 0.25,
+//          tilePane.getPrefHeight() * 0.25,
+//          prefab);
+//      newSpriteButton.setOnAction(event -> {
+//        GameObject newObject = prefab.clone();  // or a deep copy via serialization
+//
+//        // Retrieve the Transform component
+//        Transform t = newObject.getComponent(Transform.class);
+//        if (t == null) {
+//          logger.error("Error getting Transform component from prefab " + prefab.getName());
+//        } else {
+//          alignObject(t, myGameViewPane);
+//        }
+//
+//        // Register new object to the scene
+//        builder.getCurrentScene().registerObject(newObject);
+//        // Update the game preview so the new object appears
+//        updateGamePreview();
+//      });
+//      tilePane.getChildren().add(newSpriteButton);
+//    } catch (IllegalArgumentException | MalformedURLException e) {
+//      logger.error("Error loading preview image from: " + previewImagePath);
+//    }
+//  }
 
   private ScrollPane createSpriteButtonScrollPane(double width, Pane contents) {
     ScrollPane spriteScrollPane = new ScrollPane(contents);
