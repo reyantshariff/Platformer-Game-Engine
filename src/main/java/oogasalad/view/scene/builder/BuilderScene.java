@@ -1,7 +1,6 @@
 package oogasalad.view.scene.builder;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -25,7 +24,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.SplitPane;
-import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -36,7 +34,6 @@ import oogasalad.model.builder.Builder;
 import oogasalad.model.config.GameConfig;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
-import oogasalad.model.engine.component.Transform;
 import oogasalad.view.gui.dropDown.ClassSelectionDropDownMenu;
 import oogasalad.view.gui.panel.ComponentPanel;
 import oogasalad.view.scene.MainViewManager;
@@ -439,15 +436,15 @@ public class BuilderScene extends ViewScene {
   /**
    * Align a newly-placed object into the center of the visible level preview
    */
-  private void alignObject(Transform t, Pane container) {
-    double containerCenterX = container.getWidth() / 2;
-    double containerCenterY = container.getHeight() / 2;
-    Point2D viewportCenter = new Point2D(containerCenterX, containerCenterY);
-    Point2D centerInCanvas = canvasHolder.parentToLocal(viewportCenter);
-
-    t.setX(centerInCanvas.getX());
-    t.setY(centerInCanvas.getY());
-  }
+//  private void alignObject(Transform t, Pane container) {
+//    double containerCenterX = container.getWidth() / 2;
+//    double containerCenterY = container.getHeight() / 2;
+//    Point2D viewportCenter = new Point2D(containerCenterX, containerCenterY);
+//    Point2D centerInCanvas = canvasHolder.parentToLocal(viewportCenter);
+//
+//    t.setX(centerInCanvas.getX());
+//    t.setY(centerInCanvas.getY());
+//  }
 
 //
 //  private void createObject(GameObject prefab, TilePane tilePane) {
