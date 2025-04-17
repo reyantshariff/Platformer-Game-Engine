@@ -34,7 +34,8 @@
                   "offsetY": 0,
                   "imagePaths": [
                     "oogasalad/dinosaur/Track.png"
-                  ]
+                  ],
+                  "zIndex": 0
                 }
               },
               {
@@ -69,7 +70,8 @@
                   "offsetY": 0,
                   "imagePaths": [
                     "oogasalad/dinosaur/DinoRun1.png"
-                  ]
+                  ],
+                  "zIndex": 0
                 }
               },
               {
@@ -114,8 +116,8 @@
                   ],
                   "actions": [
                     {
-                      "name": "JumpAction",
-                      "parameter": 500,
+                      "name": "VelocityYSetAction",
+                      "parameter": -500,
                       "parameterType": "Double"
                     }
                   ]
@@ -161,7 +163,8 @@
                   "offsetY": 0,
                   "imagePaths": [
                     "oogasalad/dinosaur/Bird1.png"
-                  ]
+                  ],
+                  "zIndex": 0
                 }
               },
               {
@@ -227,7 +230,8 @@
                   "offsetY": 0,
                   "imagePaths": [
                     "oogasalad/dinosaur/Bird1.png"
-                  ]
+                  ],
+                  "zIndex": 0
                 }
               },
               {
@@ -293,7 +297,8 @@
                   "offsetY": 0,
                   "imagePaths": [
                     "oogasalad/dinosaur/Bird1.png"
-                  ]
+                  ],
+                  "zIndex": 0
                 }
               },
               {
@@ -359,7 +364,8 @@
                   "offsetY": 0,
                   "imagePaths": [
                     "oogasalad/dinosaur/Bird1.png"
-                  ]
+                  ],
+                  "zIndex": 0
                 }
               },
               {
@@ -425,7 +431,8 @@
                   "offsetY": 0,
                   "imagePaths": [
                     "oogasalad/dinosaur/Bird1.png"
-                  ]
+                  ],
+                  "zIndex": 0
                 }
               },
               {
@@ -520,7 +527,8 @@
                   "text": "You Won!",
                   "styleClass": "splashText",
                   "isCentered": true,
-                  "fontSize": 80
+                  "fontSize": 80,
+                  "zIndex": 0
                 }
               }
             ]
@@ -543,7 +551,8 @@
                   "text": "Click to return to main menu",
                   "styleClass": "splashButton",
                   "isCentered": true,
-                  "fontSize": 30
+                  "fontSize": 30,
+                  "zIndex": 0
                 }
               },
               {
@@ -591,7 +600,8 @@
                   "text": "Play again!",
                   "styleClass": "splashButton",
                   "isCentered": true,
-                  "fontSize": 30
+                  "fontSize": 30,
+                  "zIndex": 0
                 }
               },
               {
@@ -670,7 +680,8 @@
                   "text": "You Lost!",
                   "styleClass": "splashText",
                   "isCentered": true,
-                  "fontSize": 80
+                  "fontSize": 80,
+                  "zIndex": 0
                 }
               }
             ]
@@ -693,7 +704,8 @@
                   "text": "Click to return to main menu",
                   "styleClass": "splashButton",
                   "isCentered": true,
-                  "fontSize": 30
+                  "fontSize": 30,
+                  "zIndex": 0
                 }
               },
               {
@@ -741,7 +753,8 @@
                   "text": "Try again",
                   "styleClass": "splashButton",
                   "isCentered": true,
-                  "fontSize": 30
+                  "fontSize": 30,
+                  "zIndex": 0
                 }
               },
               {
