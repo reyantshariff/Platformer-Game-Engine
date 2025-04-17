@@ -27,17 +27,13 @@ public class StyleConfig {
     currentTheme = theme.toLowerCase();
     String path = STYLE_FILE_PREFIX + currentTheme + STYLE_FILE_TYPE;
     scene.getStylesheets().clear();
-    try {
-      scene.getStylesheets().add(
-          Objects.requireNonNull(StyleConfig.class.getResource(path)).toExternalForm());
-    } catch (NullPointerException e) {
-      LOGGER.warn("Stylesheet '{}' not found. Falling back to default.", path);
-      scene.getStylesheets().add(
-          Objects.requireNonNull(
-              StyleConfig.class.getResource(STYLE_FILE_PREFIX + DEFAULT_STYLE + STYLE_FILE_TYPE)
-          ).toExternalForm());
-      currentTheme = DEFAULT_STYLE;
-    }
+    scene.getStylesheets().add(Objects.requireNonNull(StyleConfig.class.getResource(path)).toExternalForm());
+    LOGGER.warn("Stylesheet '{}' not found. Falling back to default.", path);
+    scene.getStylesheets().add(
+        Objects.requireNonNull(
+            StyleConfig.class.getResource(STYLE_FILE_PREFIX + DEFAULT_STYLE + STYLE_FILE_TYPE)
+        ).toExternalForm());
+    currentTheme = DEFAULT_STYLE;
   }
 
 
