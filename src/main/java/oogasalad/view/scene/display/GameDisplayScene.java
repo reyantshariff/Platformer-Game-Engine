@@ -38,6 +38,7 @@ public class GameDisplayScene extends ViewScene {
     root = (StackPane) getScene().getRoot();
 
     returnButton = new Button(GameConfig.getText("returnButton"));
+    returnButton.setId("returnButton");
     returnButton.setOnAction(e -> {
       deactivate();
       MainViewManager.getInstance().switchTo(returnSceneName);
