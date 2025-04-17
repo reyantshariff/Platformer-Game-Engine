@@ -1,7 +1,6 @@
 package oogasalad.view.scene.builder;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -25,7 +24,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.SplitPane;
-import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -36,8 +34,6 @@ import oogasalad.model.builder.Builder;
 import oogasalad.model.config.GameConfig;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
-import oogasalad.model.engine.component.Transform;
-import oogasalad.view.gui.button.BuilderSpriteOptionButton;
 import oogasalad.view.gui.dropDown.ClassSelectionDropDownMenu;
 import oogasalad.view.gui.panel.ComponentPanel;
 import oogasalad.view.scene.MainViewManager;
@@ -420,10 +416,9 @@ public class BuilderScene extends ViewScene {
     // Load the prefab GameObjects
     // TODO: remove hardcoded game type
 //    List<GameObject> prefabObjects = PrefabLoader.loadAvailablePrefabs("dinosaur");
-    List<GameObject> prefabObjects = new ArrayList<>();
-    for (GameObject prefab : prefabObjects) {
-      createObject(prefab, tilePane);
-    }
+//    for (GameObject prefab : prefabObjects) {
+//      createObject(prefab, tilePane);
+//    }
 
     // Briefly animate the sprite tile options into their correct positions
     Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1), event -> {
@@ -441,50 +436,50 @@ public class BuilderScene extends ViewScene {
   /**
    * Align a newly-placed object into the center of the visible level preview
    */
-  private void alignObject(Transform t, Pane container) {
-    double containerCenterX = container.getWidth() / 2;
-    double containerCenterY = container.getHeight() / 2;
-    Point2D viewportCenter = new Point2D(containerCenterX, containerCenterY);
-    Point2D centerInCanvas = canvasHolder.parentToLocal(viewportCenter);
+//  private void alignObject(Transform t, Pane container) {
+//    double containerCenterX = container.getWidth() / 2;
+//    double containerCenterY = container.getHeight() / 2;
+//    Point2D viewportCenter = new Point2D(containerCenterX, containerCenterY);
+//    Point2D centerInCanvas = canvasHolder.parentToLocal(viewportCenter);
+//
+//    t.setX(centerInCanvas.getX());
+//    t.setY(centerInCanvas.getY());
+//  }
 
-    t.setX(centerInCanvas.getX());
-    t.setY(centerInCanvas.getY());
-  }
-
-
-  private void createObject(GameObject prefab, TilePane tilePane) {
-    // Assume the prefab has a SpriteRenderer component.
-    String previewImagePath = getPreviewImagePath(prefab);
-    // Convert the preview image path to a JavaFX Image
-    try {
-      assert previewImagePath != null;
-      Image previewImage = new Image(new File(previewImagePath).toURI().toURL().toString());
-      Button newSpriteButton = new BuilderSpriteOptionButton(
-          previewImage,
-          tilePane.getPrefWidth() * 0.25,
-          tilePane.getPrefHeight() * 0.25,
-          prefab);
-      newSpriteButton.setOnAction(event -> {
-        GameObject newObject = prefab.clone();  // or a deep copy via serialization
-
-        // Retrieve the Transform component
-        Transform t = newObject.getComponent(Transform.class);
-        if (t == null) {
-          logger.error("Error getting Transform component from prefab " + prefab.getName());
-        } else {
-          alignObject(t, myGameViewPane);
-        }
-
-        // Register new object to the scene
-        builder.getCurrentScene().registerObject(newObject);
-        // Update the game preview so the new object appears
-        updateGamePreview();
-      });
-      tilePane.getChildren().add(newSpriteButton);
-    } catch (IllegalArgumentException | MalformedURLException e) {
-      logger.error("Error loading preview image from: " + previewImagePath);
-    }
-  }
+//
+//  private void createObject(GameObject prefab, TilePane tilePane) {
+//    // Assume the prefab has a SpriteRenderer component.
+//    String previewImagePath = getPreviewImagePath(prefab);
+//    // Convert the preview image path to a JavaFX Image
+//    try {
+//      assert previewImagePath != null;
+//      Image previewImage = new Image(new File(previewImagePath).toURI().toURL().toString());
+//      Button newSpriteButton = new BuilderSpriteOptionButton(
+//          previewImage,
+//          tilePane.getPrefWidth() * 0.25,
+//          tilePane.getPrefHeight() * 0.25,
+//          prefab);
+//      newSpriteButton.setOnAction(event -> {
+//        GameObject newObject = prefab.clone();  // or a deep copy via serialization
+//
+//        // Retrieve the Transform component
+//        Transform t = newObject.getComponent(Transform.class);
+//        if (t == null) {
+//          logger.error("Error getting Transform component from prefab " + prefab.getName());
+//        } else {
+//          alignObject(t, myGameViewPane);
+//        }
+//
+//        // Register new object to the scene
+//        builder.getCurrentScene().registerObject(newObject);
+//        // Update the game preview so the new object appears
+//        updateGamePreview();
+//      });
+//      tilePane.getChildren().add(newSpriteButton);
+//    } catch (IllegalArgumentException | MalformedURLException e) {
+//      logger.error("Error loading preview image from: " + previewImagePath);
+//    }
+//  }
 
   private ScrollPane createSpriteButtonScrollPane(double width, Pane contents) {
     ScrollPane spriteScrollPane = new ScrollPane(contents);
@@ -510,15 +505,15 @@ public class BuilderScene extends ViewScene {
     return tilePane;
   }
 
-  private String getPreviewImagePath(GameObject prefab) {
-    var spriteRenderer = prefab.getComponent(
-        oogasalad.model.engine.component.SpriteRenderer.class);
-    String imagePath = spriteRenderer.getImagePath();
-    if (imagePath != null && !imagePath.isEmpty()) {
-      return "src/main/resources/" + imagePath;
-    }
-    logger.error("Error getting preview image from prefab {}", prefab.getName());
-    return null;
-  }
+//  private String getPreviewImagePath(GameObject prefab) {
+//    var spriteRenderer = prefab.getComponent(
+//        oogasalad.model.engine.component.SpriteRenderer.class);
+//    String imagePath = spriteRenderer.getImagePath();
+//    if (imagePath != null && !imagePath.isEmpty()) {
+//      return "src/main/resources/" + imagePath;
+//    }
+//    logger.error("Error getting preview image from prefab {}", prefab.getName());
+//    return null;
+//  }
 
 }

@@ -1,5 +1,6 @@
 package oogasalad.view.config;
 
+import java.net.URL;
 import java.util.Objects;
 import javafx.scene.Scene;
 import org.apache.logging.log4j.LogManager;
@@ -21,20 +22,29 @@ public class StyleConfig {
   /**
    * A method to switch the stylesheet to a new theme.
    *
-   * @param theme = the new theme that is being swapped
+   * @param theme the new theme that is being swapped
    */
   public static void setStylesheet(Scene scene, String theme) {
     currentTheme = theme.toLowerCase();
     String path = STYLE_FILE_PREFIX + currentTheme + STYLE_FILE_TYPE;
-    scene.getStylesheets().clear();
-    scene.getStylesheets().add(Objects.requireNonNull(StyleConfig.class.getResource(path)).toExternalForm());
-    LOGGER.warn("Stylesheet '{}' not found. Falling back to default.", path);
-    scene.getStylesheets().add(
-        Objects.requireNonNull(
-            StyleConfig.class.getResource(STYLE_FILE_PREFIX + DEFAULT_STYLE + STYLE_FILE_TYPE)
-        ).toExternalForm());
-    currentTheme = DEFAULT_STYLE;
+    URL stylesheetURL = StyleConfig.class.getResource(path);
+
+    if (stylesheetURL != null) {
+      scene.getStylesheets().clear();
+      scene.getStylesheets().add(stylesheetURL.toExternalForm());
+    } else {
+      LOGGER.warn("Stylesheet '{}' not found. Falling back to default.", path);
+      URL defaultStylesheetURL = StyleConfig.class.getResource(STYLE_FILE_PREFIX + DEFAULT_STYLE + STYLE_FILE_TYPE);
+      if (defaultStylesheetURL != null) {
+        scene.getStylesheets().clear();
+        scene.getStylesheets().add(defaultStylesheetURL.toExternalForm());
+        currentTheme = DEFAULT_STYLE;
+      } else {
+        LOGGER.error("Default stylesheet also not found. No stylesheet applied.");
+      }
+    }
   }
+
 
 
   /**

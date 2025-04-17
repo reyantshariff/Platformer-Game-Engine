@@ -4,7 +4,6 @@ import static oogasalad.model.config.GameConfig.LOGGER;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
