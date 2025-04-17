@@ -37,8 +37,6 @@ import oogasalad.model.config.GameConfig;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.component.Transform;
-import oogasalad.model.parser.PrefabLoader;
-import oogasalad.view.gui.button.BuilderSpriteOptionButton;
 import oogasalad.view.gui.dropDown.ClassSelectionDropDownMenu;
 import oogasalad.view.gui.panel.ComponentPanel;
 import oogasalad.view.scene.MainViewManager;
