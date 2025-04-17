@@ -9,7 +9,6 @@ import oogasalad.model.engine.component.Transform;
 public class ScaleYSetActionTest extends ActionsTest<ScaleYSetAction> {
 
     @Override
-    @Test
     public void customSetUp() {
         ScaleYSetAction action = getBehavior1().addAction(ScaleYSetAction.class);
         setAction(action);
