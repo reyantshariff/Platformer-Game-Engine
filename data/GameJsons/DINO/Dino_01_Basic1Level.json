@@ -114,8 +114,8 @@
                   ],
                   "actions": [
                     {
-                      "name": "JumpAction",
-                      "parameter": 500,
+                      "name": "VelocityYSetAction",
+                      "parameter": -500,
                       "parameterType": "Double"
                     }
                   ]
