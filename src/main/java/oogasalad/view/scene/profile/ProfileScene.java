@@ -3,6 +3,7 @@ package oogasalad.view.scene;
 import static oogasalad.model.config.GameConfig.LOGGER;
 
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import oogasalad.model.config.GameConfig;
@@ -46,9 +47,13 @@ public class ProfileScene extends ViewScene {
     Label userName = new Label("Username: " + currentPlayer.getUsername());
     userName.setId("username");
     Label dateCreated = new Label("Date Joined: " + currentPlayer.getCreatedAt());
-    dateCreated.setId("date-created");
-    playerInfo.getChildren().addAll(fullName, userName, dateCreated);
+    dateCreated.setId("dateCreated");
 
+    Button editProfile = new Button("Edit Profile");
+    editProfile.setId("editProfileButton");
+    // TODO: create profile edit scene
+    // editProfile.setOnAction(e -> {})
+    playerInfo.getChildren().addAll(fullName, userName, dateCreated, editProfile);
     return playerInfo;
   }
 }
