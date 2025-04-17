@@ -17,9 +17,6 @@ public class AddBehaviorAction extends BehaviorAction<Behavior> {
     }
 
     @Override
-    public void awake() {}
-
-    @Override
     protected void perform(Behavior behavior) {
         getBehavior().getController().addBehavior(behavior);
     }

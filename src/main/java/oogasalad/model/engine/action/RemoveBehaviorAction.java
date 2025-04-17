@@ -17,8 +17,6 @@ public class RemoveBehaviorAction extends BehaviorAction<Behavior> {
         return new Behavior();
     }
 
-    @Override
-    public void awake() {}
 
     @Override
     protected void perform(Behavior behavior) {
