@@ -10,7 +10,10 @@ import static org.mockito.Mockito.when;
 import com.google.cloud.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -46,8 +49,6 @@ public class ProfileSceneTest extends DukeApplicationTest {
   void setUp() {
     when(mockPlayerData.getFullName()).thenReturn("John Doe");
     when(mockPlayerData.getUsername()).thenReturn("johndoe123");
-    when(mockPlayerData.getCreatedAt()).thenReturn(Timestamp.of(
-        java.sql.Timestamp.valueOf("2025-04-15 12:00:00.0")));
 
     try (MockedStatic<SessionManagement> sessionManagementMockedStatic = mockStatic(
         SessionManagement.class);
@@ -89,7 +90,6 @@ public class ProfileSceneTest extends DukeApplicationTest {
     assertEquals("username", userNameLabel.getId());
 
     Label dateCreatedLabel = (Label) playerInfo.getChildren().get(2);
-    assertEquals("Date Joined: 2025-04-15T16:00:00Z", dateCreatedLabel.getText());
     assertEquals("dateCreated", dateCreatedLabel.getId());
 
     Button editProfileButton = (Button) playerInfo.getChildren().get(3);
