@@ -164,7 +164,7 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent<?>> ext
         case "Double" -> param.setValue(Double.parseDouble(newVal));
         case "KeyCode" -> param.setValue(KeyCode.valueOf(newVal));
         default -> throw new IllegalArgumentException("Unsupported type: " + typeName);
-      };
+      }
       return true;
     } catch (SetSerializedFieldException | IllegalArgumentException e) {
       return false;
