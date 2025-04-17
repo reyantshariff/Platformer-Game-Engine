@@ -36,10 +36,6 @@ public class StringListFieldInput extends DeserializedFieldUI<List<String>> {
   protected Node showGUI(SerializedField field) {
     this.field = field;
 
-    String name = field.getFieldName().replaceAll("([a-z])([A-Z])", "$1 $2");
-    name = name.substring(0, 1).toUpperCase() + name.substring(1);
-    Label label = new Label(name);
-
     listContainer = new VBox(5);
     listContainer.setPadding(new Insets(5));
     List<String> values = field.getValue() != null ? (List<String>) field.getValue() : new ArrayList<>();
@@ -50,7 +46,7 @@ public class StringListFieldInput extends DeserializedFieldUI<List<String>> {
     Button addButton = new Button("+");
     addButton.setOnAction(e -> listContainer.getChildren().add(createItemField("")));
 
-    VBox root = new VBox(5, label, listContainer, addButton);
+    VBox root = new VBox(5, createLabel(field), listContainer, addButton);
     HBox.setHgrow(root, Priority.ALWAYS);
     root.setAlignment(Pos.TOP_LEFT);
     return root;

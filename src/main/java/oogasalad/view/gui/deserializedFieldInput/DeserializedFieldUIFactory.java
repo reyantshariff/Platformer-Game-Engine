@@ -37,6 +37,7 @@ public class DeserializedFieldUIFactory {
   private static final Map<SerializableFieldType, Function<SerializedField, HBox>> FIELD_UI_CREATORS = Map.of(
       SerializableFieldType.STRING, f -> new StringFieldInput(),
       SerializableFieldType.DOUBLE, f -> new DoubleFieldInput(),
+      SerializableFieldType.INTEGER, f -> new IntegerFieldInput(),
       SerializableFieldType.BOOLEAN, f -> new BooleanFieldInput(),
       SerializableFieldType.LIST_STRING, f -> new StringListFieldInput(),
       SerializableFieldType.LIST_BEHAVIOR, f -> new BehaviorListFieldInput(),

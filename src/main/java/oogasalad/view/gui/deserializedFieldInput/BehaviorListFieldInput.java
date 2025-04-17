@@ -22,6 +22,7 @@ import java.util.List;
  */
 public class BehaviorListFieldInput extends DeserializedFieldUI<List<Behavior>> {
 
+  // TODO: make this outside in the css
   private static final String BEHAVIOR_ROW_STYLE = """
       -fx-background-color: #AcAcAc;
       -fx-background-radius: 6;

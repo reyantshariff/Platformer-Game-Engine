@@ -42,6 +42,6 @@ public class DoubleTextField extends TypedTextField<Double> {
 
   @Override
   protected Double parseText(String text) {
-    return 0.0;
+    return Double.parseDouble(text);
   }
 }
