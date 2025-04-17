@@ -28,7 +28,6 @@ public class GameRunner {
   private final GameSceneRenderer objectRenderer;
   private Timeline gameLoop;
   private Game game;
-  //private boolean mouseClicked;
 
   /**
    * Constructs a new GUI instance for the given game.

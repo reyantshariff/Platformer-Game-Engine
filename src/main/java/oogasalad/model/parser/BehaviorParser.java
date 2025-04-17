@@ -188,7 +188,7 @@ public class BehaviorParser implements Parser<Behavior> {
       assert typeClass != null;
       return typeClass;
     } catch (IllegalArgumentException | AssertionError e) {
-      throw new ParsingException(getText("unknownParameterError", typeName));
+      throw new ParsingException(getText("unknownParameterError", typeName), e);
     }
   }
 

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.serialization.Serializable;
@@ -52,7 +53,7 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
       myComponent.getSerializedFields().forEach(field -> setFieldFromConfig(configNode, field));
 
       return myComponent;
-    } catch (Exception e) {
+    } catch (ClassNotFoundException | InvocationTargetException | InstantiationException | IllegalAccessException |NoSuchMethodException e) {
       LOGGER.error("Error instantiating component: {}", name, e);
       throw new ParsingException("Failed to parse component", e);
     }
@@ -68,14 +69,9 @@ public class ComponentParser implements Parser<GameComponent>, Serializable {
   }
 
   private Object parseJsonToType(Type type, JsonNode node) {
-    try {
-      JavaType javaType = mapper.getTypeFactory().constructType(type);
-      return mapper.convertValue(node, javaType);
-    } catch (Exception e) {
-      throw new IllegalArgumentException("Failed to parse value from JSON: " + node + " to type: " + type, e);
-    }
+    JavaType javaType = mapper.getTypeFactory().constructType(type);
+    return mapper.convertValue(node, javaType);
   }
-
 
   private void validateComponentName(JsonNode componentNode) throws ParsingException {
     if (!componentNode.has(NAME)) {

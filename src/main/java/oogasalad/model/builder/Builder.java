@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.Deque;
 import java.util.ArrayDeque;
 import oogasalad.model.builder.actions.DeleteObjectAction;
-import oogasalad.model.builder.actions.CreateObjectAction;
 import oogasalad.model.builder.actions.MoveObjectAction;
 import oogasalad.model.builder.actions.ResizeObjectAction;
 import oogasalad.model.engine.base.architecture.Game;
@@ -57,6 +56,10 @@ public class Builder {
     currentScene = game.getCurrentScene();
   }
 
+  /**
+   * Constructor for loading a Game, but with real Game input
+   * @param game - the game instance
+   */
   public Builder(Game game)
   {
     this.game = game;

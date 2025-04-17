@@ -1,6 +1,7 @@
 package oogasalad.model.engine.component;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.KeyCode;
@@ -40,11 +41,11 @@ public final class InputHandler extends GameComponent {
     currentKeys.clear();
     currentKeys.addAll(getParent().getScene().getGame().getCurrentInputKeys());
 
-    double[] mouseInputs = getParent().getScene().getGame().getInputMouses();
+    List<Double> mouseInputs = getParent().getScene().getGame().getInputMouses();
     previousClicked = currentClicked;
-    currentClicked = mouseInputs[0] > 0;
-    mouseX = mouseInputs[1];
-    mouseY = mouseInputs[2];
+    currentClicked = mouseInputs.get(0) > 0;
+    mouseX = mouseInputs.get(1);
+    mouseY = mouseInputs.get(2);
   }
 
   /**
