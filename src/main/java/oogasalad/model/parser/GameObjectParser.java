@@ -10,7 +10,6 @@ import java.util.List;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.base.behavior.Behavior;
-import oogasalad.model.engine.base.serialization.SerializedField;
 import oogasalad.model.engine.component.BehaviorController;
 import oogasalad.model.engine.component.Transform;
 

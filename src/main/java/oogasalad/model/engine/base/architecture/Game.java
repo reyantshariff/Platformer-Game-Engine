@@ -4,6 +4,7 @@ import static oogasalad.model.config.GameConfig.LOGGER;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -188,12 +189,16 @@ public class Game {
   /**
    * Returns the input mouses information in the canvas.
    *
-   * @return a double array
+   * @return an unmodifiable double list of mouse information
    * @apiNote the first element is clicked state, 1: clicked, -1: unclicked; the second and the
    *          third element are the x and y coordinates.
    */
-  public double[] getInputMouses() {
-    return inputMouses;
+  public List<Double> getInputMouses() {
+    List<Double> mouseInfo = new ArrayList<>();
+    for (double value : inputMouses) {
+      mouseInfo.add(value);
+    }
+    return Collections.unmodifiableList(mouseInfo);
   }
 
   /**

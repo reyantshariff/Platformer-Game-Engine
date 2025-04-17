@@ -43,7 +43,7 @@ public class DeserializedFieldUIFactory {
       SerializableFieldType.LIST_BEHAVIOR_ACTION, f -> new BehaviorComponentListFieldInput<>(BEHAVIOR_ACTION_PACKAGE, BehaviorAction.class),
       SerializableFieldType.LIST_BEHAVIOR_CONSTRAINT, f -> new BehaviorComponentListFieldInput<>(BEHAVIOR_CONSTRAINT_PACKAGE, BehaviorConstraint.class)
   );
-  
+
   /**
    * Creates a UI component (HBox) for a given SerializedField based on its type.
    *
