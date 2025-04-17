@@ -4,8 +4,8 @@ import oogasalad.model.config.PasswordConfig;
 import oogasalad.model.config.PasswordHashingException;
 
 /**
- * Specific class for handling the password of a user
- * Note: This class uses PBKDF2-based hashing with per-user salt.
+ * Specific class for handling the password of a user Note: This class uses PBKDF2-based hashing
+ * with per-user salt.
  *
  * @author Justin Aronwald
  */
@@ -33,8 +33,8 @@ public class Password {
   }
 
   /**
-   * Creates a new Password object from a plaintext password.
-   * Generates a new salt and hashes the password securely.
+   * Creates a new Password object from a plaintext password. Generates a new salt and hashes the
+   * password securely.
    *
    * @param plainText the raw password input
    * @return a new Password object containing the hash and salt

@@ -1,0 +1,395 @@
+{
+  "Information": {
+    "Name": "DinoRunner4",
+    "Description": "A playable dino runner game",
+    "Author": "Logan Dracos",
+    "Resolution": {
+      "Width": 1280,
+      "Height": 720
+    }
+  },
+  "Data": {
+    "Scene": [
+      {
+        "Name": "Level2",
+        "GameObjects": [
+          {
+            "Name": "Ground",
+            "Tag": "Ground",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 0,
+                  "y": 500,
+                  "rotation": 0,
+                  "scaleX": 2560,
+                  "scaleY": 20
+                }
+              },
+              {
+                "Name": "SpriteRenderer",
+                "Configurations": {
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "imagePaths": [
+                    "oogasalad/dinosaur/Track.png"
+                  ],
+                  "zIndex": 0
+                }
+              },
+              {
+                "Name": "Collider",
+                "Configurations": {
+                  "collidableTags": [
+                    "player",
+                    "Obstacle"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "Name": "Dino",
+            "Tag": "player",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 100,
+                  "y": 420,
+                  "rotation": 0,
+                  "scaleX": 40,
+                  "scaleY": 40
+                }
+              },
+              {
+                "Name": "SpriteRenderer",
+                "Configurations": {
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "imagePaths": [
+                    "oogasalad/dinosaur/DinoRun1.png"
+                  ],
+                  "zIndex": 0
+                }
+              },
+              {
+                "Name": "Collider",
+                "Configurations": {
+                  "collidableTags": [
+                    "Ground",
+                    "Obstacle"
+                  ]
+                }
+              },
+              {
+                "Name": "PhysicsHandler",
+                "Configurations": {
+                  "mass": 1,
+                  "velocityX": 150,
+                  "velocityY": 0,
+                  "accelerationX": 0,
+                  "accelerationY": 980
+                }
+              },
+              {
+                "Name": "InputHandler",
+                "Configurations": {}
+              }
+            ],
+            "BehaviorController": {
+              "Behaviors": [
+                {
+                  "Name": "JumpWhenPressed",
+                  "constraints": [
+                    {
+                      "name": "KeyPressConstraint",
+                      "parameter": "SPACE",
+                      "parameterType": "KeyCode"
+                    },
+                    {
+                      "name": "TouchingFromAboveConstraint",
+                      "parameter": "Ground",
+                      "parameterType": "String"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "JumpAction",
+                      "parameter": 500,
+                      "parameterType": "Double"
+                    }
+                  ]
+                },
+                {
+                  "Name": "CrouchWhenPressed",
+                  "constraints": [
+                    {
+                      "name": "KeyPressConstraint",
+                      "parameter": "DOWN",
+                      "parameterType": "KeyCode"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "CrouchAction",
+                      "parameter": 50,
+                      "parameterType": "Double"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "Name": "Flagpole2",
+            "Tag": "Obstacle",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 900,
+                  "y": 460,
+                  "rotation": 0,
+                  "scaleX": 100,
+                  "scaleY": 180
+                }
+              },
+              {
+                "Name": "SpriteRenderer",
+                "Configurations": {
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "imagePaths": [
+                    "oogasalad/dinosaur/MarioFlagpole.png"
+                  ],
+                  "zIndex": 0
+                }
+              },
+              {
+                "Name": "Collider",
+                "Configurations": {
+                  "collidableTags": [
+                    "player",
+                    "Ground"
+                  ]
+                }
+              },
+              {
+                "Name": "PhysicsHandler",
+                "Configurations": {
+                  "mass": 1,
+                  "velocityX": 0,
+                  "velocityY": 0,
+                  "accelerationX": 0,
+                  "accelerationY": 0
+                }
+              }
+            ],
+            "BehaviorController": {
+              "Behaviors": [
+                {
+                  "Name": "ResetOnHit",
+                  "constraints": [
+                    {
+                      "name": "CollidesWithConstraint",
+                      "parameter": "player",
+                      "parameterType": "String"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "ChangeGameSceneAction",
+                      "parameter": -1,
+                      "parameterType": "Integer"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "Name": "Camera",
+            "Tag": "Camera",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 0,
+                  "y": 0,
+                  "rotation": 0,
+                  "scaleX": 1300,
+                  "scaleY": 1000
+                }
+              },
+              {
+                "Name": "Camera",
+                "Configurations": {}
+              },
+              {
+                "Name": "Follower",
+                "Configurations": {
+                  "followObjectName": "Dino"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "LossScene",
+        "GameObjects": [
+          {
+            "Name": "LossTextTitle",
+            "Tag": "UI",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 460,
+                  "y": 200,
+                  "rotation": 0
+                }
+              },
+              {
+                "Name": "TextRenderer",
+                "Configurations": {
+                  "text": "You Lost!",
+                  "styleClass": "splashText",
+                  "isCentered": true,
+                  "fontSize": 80,
+                  "zIndex": 0
+                }
+              }
+            ]
+          },
+          {
+            "Name": "ReturnToMenuText",
+            "Tag": "UI",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 400,
+                  "y": 400,
+                  "rotation": 0
+                }
+              },
+              {
+                "Name": "TextRenderer",
+                "Configurations": {
+                  "text": "Click to return to main menu",
+                  "styleClass": "splashButton",
+                  "isCentered": true,
+                  "fontSize": 30,
+                  "zIndex": 0
+                }
+              },
+              {
+                "Name": "InputHandler",
+                "Configurations": {}
+              }
+            ],
+            "BehaviorController": {
+              "Behaviors": [
+                {
+                  "Name": "ClickToMenu",
+                  "constraints": [
+                    {
+                      "name": "MouseClickConstraint",
+                      "parameter": null,
+                      "parameterType": "Void"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "ChangeViewSceneAction",
+                      "parameter": "MainMenuScene",
+                      "parameterType": "String"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "Name": "TryAgainText",
+            "Tag": "UI",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 520,
+                  "y": 480,
+                  "rotation": 0
+                }
+              },
+              {
+                "Name": "TextRenderer",
+                "Configurations": {
+                  "text": "Try again",
+                  "styleClass": "splashButton",
+                  "isCentered": true,
+                  "fontSize": 30,
+                  "zIndex": 0
+                }
+              },
+              {
+                "Name": "InputHandler",
+                "Configurations": {}
+              }
+            ],
+            "BehaviorController": {
+              "Behaviors": [
+                {
+                  "Name": "TryAgainBehavior",
+                  "constraints": [
+                    {
+                      "name": "MouseClickConstraint",
+                      "parameter": null,
+                      "parameterType": "Void"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "name": "ChangeGameSceneAction",
+                      "parameter": 0,
+                      "parameterType": "Integer"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "Name": "Camera",
+            "Tag": "Camera",
+            "Components": [
+              {
+                "Name": "Transform",
+                "Configurations": {
+                  "x": 0,
+                  "y": 0,
+                  "rotation": 0,
+                  "scaleX": 1300,
+                  "scaleY": 1000
+                }
+              },
+              {
+                "Name": "Camera",
+                "Configurations": {}
+              },
+              {
+                "Name": "Follower",
+                "Configurations": {
+                  "followObjectName": "LossTextTitle"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

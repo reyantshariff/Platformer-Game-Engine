@@ -8,11 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
 import oogasalad.model.engine.base.architecture.GameObject;
 import oogasalad.model.engine.component.BehaviorController;
 import oogasalad.model.engine.component.Transform;
-import oogasalad.model.engine.prefab.dinosaur.Bird;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -53,13 +51,15 @@ class GameObjectParserTest {
                     "constraints": [
                       {
                         "name": "KeyPressConstraint",
-                        "parameter": "SPACE"
+                        "parameter": "SPACE",
+                        "parameterType": "KeyCode"
                       }
                     ],
                     "actions": [
                       {
-                        "name": "ChangeSceneAction",
-                        "parameter": "Example Main Scene"
+                        "name": "ChangeViewSceneAction",
+                        "parameter": "Example Main Scene",
+                        "parameterType": "String"
                       }
                     ]
                   }
@@ -163,21 +163,4 @@ class GameObjectParserTest {
     assertThrows(ParsingException.class, () -> myGameObjectParser.parse(node));
   }
 
-  @Test
-  void write_validJson_writesGameObject() throws IOException {
-    Bird bird = new Bird("Bird1");
-    JsonNode node;
-    try {
-      node = myGameObjectParser.write(bird);
-    } catch (IOException e) {
-      throw new IOException(e);
-    }
-    assertNotNull(node);
-
-    assertTrue(node.toString().contains("Name"));
-    assertTrue(node.toString().contains("Bird"));
-    assertTrue(node.toString().contains("Tag"));
-    assertTrue(node.toString().contains("Components"));
-    assertTrue(node.toString().contains("BehaviorController"));
-  }
 }

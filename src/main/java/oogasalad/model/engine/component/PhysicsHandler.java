@@ -1,7 +1,6 @@
 package oogasalad.model.engine.component;
 
 import oogasalad.model.engine.base.architecture.GameComponent;
-import oogasalad.model.engine.base.enumerate.ComponentTag;
 import oogasalad.model.engine.base.serialization.SerializableField;
 
 /**
@@ -102,10 +101,9 @@ public class PhysicsHandler extends GameComponent {
   }
 
 
-
   /**
    * Applies an impulse to the object, changing its velocityX.
-   * 
+   *
    * @param impulseX the impulse in the X direction
    */
   public void applyImpulseX(double impulseX) {
@@ -114,7 +112,7 @@ public class PhysicsHandler extends GameComponent {
 
   /**
    * Applies an impulse to the object, changing its velocityY.
-   * 
+   *
    * @param impulseY the impulse in the Y direction
    */
   public void applyImpulseY(double impulseY) {

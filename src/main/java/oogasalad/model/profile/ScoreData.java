@@ -3,12 +3,13 @@ package oogasalad.model.profile;
 import com.google.cloud.Timestamp;
 
 /**
- * This class represents the data of an individual score.
- * This would be a record, but the firebase deserialization doesn't work well with records.
+ * This class represents the data of an individual score. This would be a record, but the firebase
+ * deserialization doesn't work well with records.
  *
  * @author Justin Aronwald
  */
 public class ScoreData {
+
   private String username;
   private String game;
   private int score;
@@ -24,9 +25,9 @@ public class ScoreData {
   /**
    * Constructor to create a new instance of a score object
    *
-   * @param username - the username of the player who got the score
-   * @param game - the name of the game the score is registered to
-   * @param score - the value of the score
+   * @param username  - the username of the player who got the score
+   * @param game      - the name of the game the score is registered to
+   * @param score     - the value of the score
    * @param createdAt - the time the score is registered
    */
   public ScoreData(String username, String game, int score, Timestamp createdAt) {

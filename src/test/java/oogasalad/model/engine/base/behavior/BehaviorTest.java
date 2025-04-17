@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import oogasalad.model.engine.action.VelocityXSetAction;
-import oogasalad.model.engine.base.enumerate.KeyCode;
+import oogasalad.model.engine.base.architecture.KeyCode;
 import oogasalad.model.engine.component.InputHandler;
 import oogasalad.model.engine.component.PhysicsHandler;
 import oogasalad.model.engine.constraint.KeyPressConstraint;

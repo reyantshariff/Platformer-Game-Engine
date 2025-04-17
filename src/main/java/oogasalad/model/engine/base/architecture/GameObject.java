@@ -2,7 +2,7 @@ package oogasalad.model.engine.base.architecture;
 
 import java.util.*;
 import oogasalad.model.engine.component.Transform;
-import oogasalad.model.engine.base.enumerate.ComponentTag;
+import oogasalad.model.engine.component.ComponentTag;
 import java.lang.reflect.InvocationTargetException;
 
 import static oogasalad.model.config.GameConfig.LOGGER;
@@ -16,6 +16,7 @@ import static oogasalad.model.config.GameConfig.LOGGER;
  */
 
 public class GameObject {
+
   private final UUID id;
   private final Map<Class<? extends GameComponent>, GameComponent> allComponents;
   private final List<Runnable> componentAwakeInitializer;
@@ -41,7 +42,7 @@ public class GameObject {
    * Constructor for GameObject
    *
    * @param name the name of the object
-   * @param tag the tag of the object
+   * @param tag  the tag of the object
    */
   public GameObject(String name, String tag) {
     this(tag);
@@ -56,9 +57,9 @@ public class GameObject {
   /**
    * Add the component to the gameObject based on its class.
    *
-   * @apiNote Every component class should only have one instance per object.
    * @param componentClass the component class specified
    * @return the added component instance
+   * @apiNote Every component class should only have one instance per object.
    */
   public final <T extends GameComponent> T addComponent(Class<T> componentClass) {
     if (allComponents.containsKey(componentClass)) {
@@ -68,7 +69,7 @@ public class GameObject {
       T component = componentClass.getDeclaredConstructor().newInstance();
       return configureParentAndPutComponent(component);
     } catch (InstantiationException | IllegalAccessException |
-        NoSuchMethodException | InvocationTargetException e) {
+             NoSuchMethodException | InvocationTargetException e) {
       LOGGER.error("Could not add component {}", componentClass.getName());
       throw new ComponentAddException("Failed to add component", e);
     }
@@ -77,9 +78,9 @@ public class GameObject {
   /**
    * Add a component to the gameObject that was parsed
    *
-   * @apiNote Every component class should only have one instance per object.
    * @param component the instantiated GameComponent you wish to add (with configured values)
    * @return the added component instance
+   * @apiNote Every component class should only have one instance per object.
    */
 
   public final <T extends GameComponent> T addComponent(T component) {
@@ -148,7 +149,7 @@ public class GameObject {
    * Returns all the components
    *
    * @return - a Map of some extended gameComponent to the GameComponent, representing all
-   *         components
+   * components
    */
   public final Map<Class<? extends GameComponent>, GameComponent> getAllComponents() {
     return allComponents;
@@ -156,7 +157,7 @@ public class GameObject {
 
   /**
    * Remove the component based on its class.
-   * 
+   *
    * @param componentClass the component class specified
    */
   public final <T extends GameComponent> void removeComponent(Class<T> componentClass) {
@@ -211,7 +212,7 @@ public class GameObject {
 
   /**
    * Returns the name of the object.
-   * 
+   *
    * @return the name of the object
    */
   public final String getName() {
@@ -220,7 +221,7 @@ public class GameObject {
 
   /**
    * Returns the ID of the object.
-   * 
+   *
    * @return the ID of the object
    */
   public final UUID getId() {
@@ -229,7 +230,7 @@ public class GameObject {
 
   /**
    * Returns the parent scene of the object.
-   * 
+   *
    * @return the parent scene of the object
    */
   public final GameScene getScene() {
@@ -245,7 +246,7 @@ public class GameObject {
 
   /**
    * Sets the name of the object.
-   * 
+   *
    * @param name the name of the object
    */
   public final void setName(String name) {

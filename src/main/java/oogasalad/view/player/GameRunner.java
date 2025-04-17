@@ -1,6 +1,7 @@
 package oogasalad.view.player;
 
 import static oogasalad.model.config.GameConfig.LOGGER;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
@@ -9,14 +10,14 @@ import javafx.util.Duration;
 import oogasalad.model.config.GameConfig;
 import oogasalad.model.engine.base.architecture.Game;
 import oogasalad.model.engine.base.architecture.GameScene;
-import oogasalad.model.engine.base.enumerate.KeyCode;
+import oogasalad.model.engine.base.architecture.KeyCode;
 import oogasalad.view.renderer.GameSceneRenderer;
 
 /**
- * The GUI class manages the canvas-based graphical rendering of the OOGASalad game engine.
- * It is meant to be embedded inside a larger JavaFX UI layout, allowing game rendering to happen
- * alongside JavaFX UI controls.
- * This class handles rendering game scenes, processing input, and running the game loop.
+ * The GUI class manages the canvas-based graphical rendering of the OOGASalad game engine. It is
+ * meant to be embedded inside a larger JavaFX UI layout, allowing game rendering to happen
+ * alongside JavaFX UI controls. This class handles rendering game scenes, processing input, and
+ * running the game loop.
  *
  * @author Jack F. Regan and Logan Dracos
  */
@@ -37,6 +38,9 @@ public class GameRunner {
     canvas.setFocusTraversable(true);
     canvas.setOnKeyPressed(this::handleKeyPressed);
     canvas.setOnKeyReleased(this::handleKeyReleased);
+    canvas.setOnMousePressed(e -> handleMouseClick(true));
+    canvas.setOnMouseReleased(e -> handleMouseClick(false));
+    canvas.setOnMouseMoved(e -> handleMouseMove(e.getX(), e.getY()));
     canvas.requestFocus();
     gc = canvas.getGraphicsContext2D();
     objectRenderer = new GameSceneRenderer(null);
@@ -70,6 +74,7 @@ public class GameRunner {
 
   /**
    * Set the Game instance for the game runner.
+   *
    * @param game The given game instance
    */
   public void setGame(Game game) {
@@ -120,7 +125,9 @@ public class GameRunner {
    */
   public void handleKeyPressed(javafx.scene.input.KeyEvent e) {
     KeyCode key = mapToEngineKeyCode(e.getCode());
-    if (key != null) game.keyPressed(key.getValue());
+    if (key != null) {
+      game.keyPressed(key.getValue());
+    }
   }
 
   /**
@@ -130,20 +137,24 @@ public class GameRunner {
    */
   public void handleKeyReleased(javafx.scene.input.KeyEvent e) {
     KeyCode key = mapToEngineKeyCode(e.getCode());
-    if (key != null) game.keyReleased(key.getValue());
+    if (key != null) {
+      game.keyReleased(key.getValue());
+    }
   }
 
-  /**
-   * Maps a JavaFX KeyCode to an engine KeyCode.
-   *
-   * @param code The JavaFX KeyCode.
-   * @return The engine KeyCode, or null if the mapping fails.
-   */
   private KeyCode mapToEngineKeyCode(javafx.scene.input.KeyCode code) {
     try {
       return KeyCode.valueOf(code.name());
     } catch (IllegalArgumentException e) {
       return null;
     }
+  }
+
+  private void handleMouseClick(boolean isClicked) {
+    game.mouseClicked(isClicked);
+  }
+
+  private void handleMouseMove(double x, double y) {
+    game.mouseMoved(x, y);
   }
 }

@@ -3,11 +3,11 @@ package oogasalad.view.scene;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.stage.Stage;
+import oogasalad.view.config.StyleConfig;
 import org.reflections.Reflections;
 import oogasalad.model.config.GameConfig;
 
@@ -18,6 +18,7 @@ import oogasalad.model.config.GameConfig;
  * @author Justin Aronwald
  */
 public class MainViewManager {
+
   private static final String SCENE_PACKAGE = "oogasalad.view.scene";
   private static final String GAME_PLAYER = "GamePlayerScene";
 
@@ -61,24 +62,21 @@ public class MainViewManager {
    * Creates and stores a ViewScene instance with the given class and constructor args.
    *
    * @param viewSceneClass The class of the ViewScene
-   * @param args           Arguments for the constructor
    * @return The created instance
    */
-  public <T extends ViewScene> T addViewScene(Class<T> viewSceneClass, String name, Object... args) {
+  public <T extends ViewScene> T addViewScene(Class<T> viewSceneClass, String name) {
     try {
-      Class<?>[] argTypes = Arrays.stream(args).map(Object::getClass).toArray(Class[]::new);
-      Constructor<T> constructor = viewSceneClass.getDeclaredConstructor(argTypes);
+      Constructor<T> constructor = viewSceneClass.getDeclaredConstructor();
       constructor.setAccessible(true);
-      T instance = constructor.newInstance(args);
+      T instance = constructor.newInstance();
       viewScenes.put(name, instance);
       return instance;
     } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-      GameConfig.LOGGER.error(e);
-      // TODO: Add statement that is not a raw exception
+      GameConfig.LOGGER.error("Failed to instantiate view scene: {}", viewSceneClass.getName(), e);
+      // TODO: handle exception here
     }
     return null;
   }
-
 
   /**
    * Gets the viewScene instance with the given name.
@@ -117,21 +115,24 @@ public class MainViewManager {
     }
   }
 
-  /**
-   * Switches to the given ViewScene
-   *
-   * @param viewScene the new scene to display
-   */
   private void switchTo(ViewScene viewScene) {
-    // Stop current scene, if applicable
+    StyleConfig.setStylesheet(viewScene.getScene(), StyleConfig.getCurrentTheme());
+
     if (currentScene != null) {
       currentScene.deactivate();
     }
 
-    // Set new scene
     stage.setScene(viewScene.getScene());
     currentScene = viewScene;
     stage.show();
+  }
+
+  /**
+   * @return Stage
+   */
+  public Stage getStage()
+  {
+    return stage;
   }
 
 
@@ -140,5 +141,16 @@ public class MainViewManager {
    */
   public void switchToMainMenu() {
     switchTo(GameConfig.getText("defaultScene"));
+  }
+
+  /**
+   * @return - Name of current scene
+   */
+  public String getCurrentSceneName() {
+    return viewScenes.entrySet().stream()
+        .filter(entry -> entry.getValue().equals(currentScene))
+        .map(Map.Entry::getKey)
+        .findFirst()
+        .orElse(null);
   }
 }

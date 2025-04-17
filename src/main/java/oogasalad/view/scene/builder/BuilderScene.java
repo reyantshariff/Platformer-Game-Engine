@@ -1,10 +1,10 @@
 package oogasalad.view.scene.builder;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -18,11 +18,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.SplitPane;
-import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -33,9 +34,6 @@ import oogasalad.model.builder.Builder;
 import oogasalad.model.config.GameConfig;
 import oogasalad.model.engine.base.architecture.GameComponent;
 import oogasalad.model.engine.base.architecture.GameObject;
-import oogasalad.model.engine.component.Transform;
-import oogasalad.model.parser.PrefabLoader;
-import oogasalad.view.gui.button.BuilderSpriteOptionButton;
 import oogasalad.view.gui.dropDown.ClassSelectionDropDownMenu;
 import oogasalad.view.gui.panel.ComponentPanel;
 import oogasalad.view.scene.MainViewManager;
@@ -88,7 +86,16 @@ public class BuilderScene extends ViewScene {
     HBox topBar = new HBox();
     Button mainMenuButton = new Button("Main Menu");
     MainViewManager viewManager = MainViewManager.getInstance();
-    mainMenuButton.setOnAction(e -> viewManager.switchToMainMenu());
+    viewManager.getStage().setOnCloseRequest(event -> {
+      if (!showAlert()) {
+        event.consume();
+      }
+    });
+    mainMenuButton.setOnAction(e -> {
+      if (showAlert()) {
+        viewManager.switchToMainMenu();
+      }
+    });
 
     Button previewLevelButton = new Button("Preview Level");
     GameDisplayScene preview = viewManager.addViewScene(GameDisplayScene.class, GAME_PREVIEW);
@@ -100,7 +107,8 @@ public class BuilderScene extends ViewScene {
       viewManager.switchTo(GAME_PREVIEW);
     });
 
-    topBar.getChildren().addAll(mainMenuButton, previewLevelButton);
+    Button saveButton = getSaveButton();
+    topBar.getChildren().addAll(mainMenuButton, previewLevelButton, saveButton);
     myWindow.setTop(topBar);
 
     // Add SplitPane for sprite button options and object control panel
@@ -121,6 +129,41 @@ public class BuilderScene extends ViewScene {
 
     // Add split pane to the center of the window
     myWindow.setCenter(viewComponentSplitPane);
+  }
+
+  private boolean showAlert() {
+    if (!builder.isSaved()) {
+      Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+      confirmAlert.setTitle("Confirm Exit");
+      confirmAlert.setHeaderText("Unsaved changes may be lost!");
+      confirmAlert.setContentText("Are you sure you want to quit?");
+
+      Optional<ButtonType> result = confirmAlert.showAndWait();
+
+      if (result.isPresent() && result.get() == ButtonType.OK) {
+        GameConfig.LOGGER.info("User confirmed exit.");
+        return true;
+      } else {
+        GameConfig.LOGGER.info("User canceled exit.");
+        return false;
+      }
+    }
+    return true; // It's safe to exit if the builder is already saved
+  }
+
+  private Button getSaveButton() {
+    Button saveButton = new Button("Save");
+    saveButton.setOnAction(e -> {javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+      fileChooser.setTitle("Save Game File");
+      fileChooser.setInitialDirectory(new File("src/main/gameFiles"));
+      fileChooser.getExtensionFilters().add(
+          new javafx.stage.FileChooser.ExtensionFilter("JSON Files", "*.json")
+      );
+      File selectedFile = fileChooser.showSaveDialog(getScene().getWindow());
+      if (selectedFile != null) {
+        builder.saveGameAs(selectedFile.getPath());
+      }});
+    return saveButton;
   }
 
   @SuppressWarnings("unchecked")
@@ -155,8 +198,9 @@ public class BuilderScene extends ViewScene {
   }
 
   /**
-   * Set up the builder for the given game filepath.
-   * This should be called when the new game file is to be edited.
+   * Set up the builder for the given game filepath. This should be called when the new game file is
+   * to be edited.
+   *
    * @param gameFilepath the given game filepath
    */
   public void setUpBuilder(String gameFilepath) {
@@ -256,12 +300,16 @@ public class BuilderScene extends ViewScene {
 
     // handle mouse pressed and dragged events
     container.setOnMousePressed(event -> {
-      if (builder.objectIsSelected()) return;
+      if (builder.objectIsSelected()) {
+        return;
+      }
       lastMousePosition.set(new Point2D(event.getSceneX(), event.getSceneY()));
       container.requestFocus();
     });
     container.setOnMouseDragged(event -> {
-      if (builder.objectIsSelected()) return;
+      if (builder.objectIsSelected()) {
+        return;
+      }
 
       Point2D currentMousePosition = new Point2D(event.getSceneX(), event.getSceneY());
       Point2D delta = currentMousePosition.subtract(lastMousePosition.get());
@@ -339,7 +387,6 @@ public class BuilderScene extends ViewScene {
       updateGamePreview();
     });
 
-
     Button deleteButton = new Button("Delete");
     deleteButton.setOnAction(event -> {
       builder.deleteSelectedObject();
@@ -368,10 +415,10 @@ public class BuilderScene extends ViewScene {
 
     // Load the prefab GameObjects
     // TODO: remove hardcoded game type
-    List<GameObject> prefabObjects = PrefabLoader.loadAvailablePrefabs("dinosaur");
-    for (GameObject prefab : prefabObjects) {
-     createObject(prefab, tilePane);
-    }
+//    List<GameObject> prefabObjects = PrefabLoader.loadAvailablePrefabs("dinosaur");
+//    for (GameObject prefab : prefabObjects) {
+//      createObject(prefab, tilePane);
+//    }
 
     // Briefly animate the sprite tile options into their correct positions
     Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1), event -> {
@@ -389,50 +436,50 @@ public class BuilderScene extends ViewScene {
   /**
    * Align a newly-placed object into the center of the visible level preview
    */
-  private void alignObject(Transform t, Pane container) {
-    double containerCenterX = container.getWidth() / 2;
-    double containerCenterY = container.getHeight() / 2;
-    Point2D viewportCenter = new Point2D(containerCenterX, containerCenterY);
-    Point2D centerInCanvas = canvasHolder.parentToLocal(viewportCenter);
+//  private void alignObject(Transform t, Pane container) {
+//    double containerCenterX = container.getWidth() / 2;
+//    double containerCenterY = container.getHeight() / 2;
+//    Point2D viewportCenter = new Point2D(containerCenterX, containerCenterY);
+//    Point2D centerInCanvas = canvasHolder.parentToLocal(viewportCenter);
+//
+//    t.setX(centerInCanvas.getX());
+//    t.setY(centerInCanvas.getY());
+//  }
 
-    t.setX(centerInCanvas.getX());
-    t.setY(centerInCanvas.getY());
-  }
-
-
-  private void createObject(GameObject prefab, TilePane tilePane) {
-    // Assume the prefab has a SpriteRenderer component.
-    String previewImagePath = getPreviewImagePath(prefab);
-    // Convert the preview image path to a JavaFX Image
-    try {
-      assert previewImagePath != null;
-      Image previewImage = new Image(new File(previewImagePath).toURI().toURL().toString());
-      Button newSpriteButton = new BuilderSpriteOptionButton(
-          previewImage,
-          tilePane.getPrefWidth() * 0.25,
-          tilePane.getPrefHeight() * 0.25,
-          prefab);
-      newSpriteButton.setOnAction(event -> {
-        GameObject newObject = prefab.clone();  // or a deep copy via serialization
-
-        // Retrieve the Transform component
-        Transform t = newObject.getComponent(Transform.class);
-        if (t == null) {
-          logger.error("Error getting Transform component from prefab " + prefab.getName());
-        } else {
-          alignObject(t, myGameViewPane);
-        }
-
-        // Register new object to the scene
-        builder.getCurrentScene().registerObject(newObject);
-        // Update the game preview so the new object appears
-        updateGamePreview();
-      });
-      tilePane.getChildren().add(newSpriteButton);
-    } catch (IllegalArgumentException | MalformedURLException e) {
-      logger.error("Error loading preview image from: " + previewImagePath);
-    }
-  }
+//
+//  private void createObject(GameObject prefab, TilePane tilePane) {
+//    // Assume the prefab has a SpriteRenderer component.
+//    String previewImagePath = getPreviewImagePath(prefab);
+//    // Convert the preview image path to a JavaFX Image
+//    try {
+//      assert previewImagePath != null;
+//      Image previewImage = new Image(new File(previewImagePath).toURI().toURL().toString());
+//      Button newSpriteButton = new BuilderSpriteOptionButton(
+//          previewImage,
+//          tilePane.getPrefWidth() * 0.25,
+//          tilePane.getPrefHeight() * 0.25,
+//          prefab);
+//      newSpriteButton.setOnAction(event -> {
+//        GameObject newObject = prefab.clone();  // or a deep copy via serialization
+//
+//        // Retrieve the Transform component
+//        Transform t = newObject.getComponent(Transform.class);
+//        if (t == null) {
+//          logger.error("Error getting Transform component from prefab " + prefab.getName());
+//        } else {
+//          alignObject(t, myGameViewPane);
+//        }
+//
+//        // Register new object to the scene
+//        builder.getCurrentScene().registerObject(newObject);
+//        // Update the game preview so the new object appears
+//        updateGamePreview();
+//      });
+//      tilePane.getChildren().add(newSpriteButton);
+//    } catch (IllegalArgumentException | MalformedURLException e) {
+//      logger.error("Error loading preview image from: " + previewImagePath);
+//    }
+//  }
 
   private ScrollPane createSpriteButtonScrollPane(double width, Pane contents) {
     ScrollPane spriteScrollPane = new ScrollPane(contents);
@@ -458,15 +505,15 @@ public class BuilderScene extends ViewScene {
     return tilePane;
   }
 
-  private String getPreviewImagePath(GameObject prefab) {
-    var spriteRenderer = prefab.getComponent(
-        oogasalad.model.engine.component.SpriteRenderer.class);
-    String imagePath = spriteRenderer.getImagePath();
-    if (imagePath != null && !imagePath.isEmpty()) {
-      return "src/main/resources/" + imagePath;
-    }
-    logger.error("Error getting preview image from prefab {}", prefab.getName());
-    return null;
-  }
+//  private String getPreviewImagePath(GameObject prefab) {
+//    var spriteRenderer = prefab.getComponent(
+//        oogasalad.model.engine.component.SpriteRenderer.class);
+//    String imagePath = spriteRenderer.getImagePath();
+//    if (imagePath != null && !imagePath.isEmpty()) {
+//      return "src/main/resources/" + imagePath;
+//    }
+//    logger.error("Error getting preview image from prefab {}", prefab.getName());
+//    return null;
+//  }
 
 }

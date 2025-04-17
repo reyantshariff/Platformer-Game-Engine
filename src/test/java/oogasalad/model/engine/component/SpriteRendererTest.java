@@ -1,6 +1,5 @@
 package oogasalad.model.engine.component;
 
-import oogasalad.model.engine.base.enumerate.ComponentTag;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

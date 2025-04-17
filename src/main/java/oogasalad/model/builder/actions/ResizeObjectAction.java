@@ -7,7 +7,8 @@ import oogasalad.model.engine.component.Transform;
 
 /**
  * Class that tracks when GameObjects are resized
- *@author Reyan Shariff
+ *
+ * @author Reyan Shariff
  */
 
 public class ResizeObjectAction implements EditorAction {
@@ -18,9 +19,10 @@ public class ResizeObjectAction implements EditorAction {
 
   /**
    * Construct the action for resizing the Action.
-   * @param object the selected object.
+   *
+   * @param object    the selected object.
    * @param fromState the old transform state
-   * @param toState the new transform state
+   * @param toState   the new transform state
    */
   public ResizeObjectAction(GameObject object, TransformState fromState, TransformState toState) {
     this.object = object;

@@ -21,7 +21,7 @@ public class CollidesWithConstraintTest extends ConstraintsTest<CollidesWithCons
         setConstraint(constraint);
 
         Collider collider1 = getObj1().getComponent(Collider.class);
-        ((SerializedField<List<String>>) collider1.getSerializedFields().getFirst()).setValue(List.of(getObj2().getTag()));
+        collider1.getSerializedFields().getFirst().setValue(List.of(getObj2().getTag()));
 
         transform1 = getObj1().getComponent(Transform.class);
         transform2 = getObj2().getComponent(Transform.class);
@@ -36,7 +36,7 @@ public class CollidesWithConstraintTest extends ConstraintsTest<CollidesWithCons
         assertTrue(getConstraint().onCheck(getObj2().getTag()));
 
         Collider collider1 = getObj1().getComponent(Collider.class);
-        ((SerializedField<List<String>>) collider1.getSerializedFields().getFirst()).setValue(new ArrayList<>());
+        collider1.getSerializedFields().getFirst().setValue(new ArrayList<>());
     }
 
     @Override

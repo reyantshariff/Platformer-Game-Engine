@@ -27,7 +27,9 @@ public class DoubleTextField extends TypedTextField<Double> {
         initialValue,
         change -> {
           String newText = change.getControlNewText();
-          if (newText.isEmpty() || newText.equals(DASH) || newText.equals(DOT)) return change;
+          if (newText.isEmpty() || newText.equals(DASH) || newText.equals(DOT)) {
+            return change;
+          }
           try {
             Double.parseDouble(newText);
             return change;
@@ -40,6 +42,6 @@ public class DoubleTextField extends TypedTextField<Double> {
 
   @Override
   protected Double parseText(String text) {
-    return 0.0;
+    return Double.parseDouble(text);
   }
 }

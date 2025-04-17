@@ -16,6 +16,7 @@ import oogasalad.view.scene.ViewScene;
 
 /**
  * Superclass for GamePlayerScene and GamePreview Scene
+ *
  * @author Hsuan-Kai Liao, Reyan Shariff
  */
 public class GameDisplayScene extends ViewScene {
@@ -28,14 +29,16 @@ public class GameDisplayScene extends ViewScene {
 
   /**
    * Class constructor
-   * */
+   */
   public GameDisplayScene() {
-    super(new StackPane(), GameConfig.getNumber("windowWidth"), GameConfig.getNumber("windowHeight"));
+    super(new StackPane(), GameConfig.getNumber("windowWidth"),
+        GameConfig.getNumber("windowHeight"));
     gameRunner = new GameRunner();
 
     root = (StackPane) getScene().getRoot();
 
     returnButton = new Button(GameConfig.getText("returnButton"));
+    returnButton.setId("returnButton");
     returnButton.setOnAction(e -> {
       deactivate();
       MainViewManager.getInstance().switchTo(returnSceneName);
@@ -100,5 +103,6 @@ public class GameDisplayScene extends ViewScene {
   @Override
   public void deactivate() {
     gameRunner.pause();
+    gameRunner.setGame(null);
   }
 }

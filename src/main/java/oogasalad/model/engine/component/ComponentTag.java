@@ -1,4 +1,4 @@
-package oogasalad.model.engine.base.enumerate;
+package oogasalad.model.engine.component;
 
 /**
  * The type that specifies the order of the update of the component. The more the Component is in

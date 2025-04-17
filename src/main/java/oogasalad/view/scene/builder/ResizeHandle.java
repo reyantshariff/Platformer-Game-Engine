@@ -1,9 +1,8 @@
 package oogasalad.view.scene.builder;
 
 /**
- * @author Reyan Shariff
- * enums to show handles on selected image.
- * */
+ * @author Reyan Shariff enums to show handles on selected image.
+ */
 public enum ResizeHandle {
   TOP_LEFT,
   TOP_CENTER,

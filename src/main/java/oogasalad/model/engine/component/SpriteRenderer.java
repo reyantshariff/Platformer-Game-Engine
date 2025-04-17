@@ -1,19 +1,13 @@
 package oogasalad.model.engine.component;
 
 import java.util.List;
-import oogasalad.model.engine.base.architecture.GameComponent;
-import oogasalad.model.engine.base.enumerate.ComponentTag;
 import oogasalad.model.engine.base.serialization.SerializableField;
 
 /**
  * A visual component that represents an image to be rendered at a specific position. This component
  * stores the image path and its intended render coordinates (x, y).
  */
-public class SpriteRenderer extends GameComponent {
-  @Override
-  public ComponentTag componentTag() {
-    return ComponentTag.RENDER;
-  }
+public class SpriteRenderer extends Renderer {
 
   @SerializableField
   private List<String> imagePaths;

@@ -101,8 +101,7 @@ public class GameObjectParser implements Parser<GameObject> {
     gameObject.addComponent(component);
   }
 
-  private void parseBehaviors(GameObject gameObject, JsonNode behaviorsNode)
-      throws ParsingException {
+  private void parseBehaviors(GameObject gameObject, JsonNode behaviorsNode) throws ParsingException {
     JsonNode behaviorsArrayNode = behaviorsNode.get("Behaviors");
     if (behaviorsArrayNode != null && behaviorsArrayNode.isArray()) {
       BehaviorController behaviorController = new BehaviorController();

@@ -15,13 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * GUI component for editing a List<Behavior> field.
- * Each Behavior can be dynamically added, removed, and edited.
+ * GUI component for editing a List<Behavior> field. Each Behavior can be dynamically added,
+ * removed, and edited.
  *
  * @author Hsuan-Kai Liao
  */
 public class BehaviorListFieldInput extends DeserializedFieldUI<List<Behavior>> {
 
+  // TODO: make this outside in the css
   private static final String BEHAVIOR_ROW_STYLE = """
       -fx-background-color: #AcAcAc;
       -fx-background-radius: 6;
@@ -29,10 +30,10 @@ public class BehaviorListFieldInput extends DeserializedFieldUI<List<Behavior>> 
       """;
 
   private VBox listContainer;
-  private SerializedField<List<Behavior>> field;
+  private SerializedField field;
 
   @Override
-  protected Node showGUI(SerializedField<List<Behavior>> field) {
+  protected Node showGUI(SerializedField field) {
     this.field = field;
 
     listContainer = createListContainer();
@@ -51,8 +52,9 @@ public class BehaviorListFieldInput extends DeserializedFieldUI<List<Behavior>> 
     return box;
   }
 
+  @SuppressWarnings("unchecked")
   private void populateExistingBehaviors() {
-    List<Behavior> values = field.getValue() != null ? field.getValue() : new ArrayList<>();
+    List<Behavior> values = field.getValue() != null ? (List<Behavior>) field.getValue() : new ArrayList<>();
     values.forEach(behavior -> listContainer.getChildren().add(createBehaviorRow(behavior)));
   }
 
@@ -67,7 +69,7 @@ public class BehaviorListFieldInput extends DeserializedFieldUI<List<Behavior>> 
   }
 
   private HBox createBehaviorRow(Behavior behavior) {
-    List<SerializedField<?>> paramList = behavior.getSerializedFields();
+    List<SerializedField> paramList = behavior.getSerializedFields();
     Label nameLabel = new Label("Behavior" + paramList.getFirst().getFieldName());
     HBox constraintList = DeserializedFieldUIFactory.createDeserializedFieldUI(paramList.get(1));
     HBox actionList = DeserializedFieldUIFactory.createDeserializedFieldUI(paramList.get(2));
@@ -92,10 +94,11 @@ public class BehaviorListFieldInput extends DeserializedFieldUI<List<Behavior>> 
     return removeButton;
   }
 
+  @SuppressWarnings("unchecked")
   private List<Behavior> getBehaviorList() {
     if (field.getValue() == null) {
       field.setValue(new ArrayList<>());
     }
-    return field.getValue();
+    return (List<Behavior>) field.getValue();
   }
 }

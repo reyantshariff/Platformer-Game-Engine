@@ -1,7 +1,7 @@
 package oogasalad.model.engine.constraint;
 
 import oogasalad.model.engine.base.behavior.BehaviorConstraint;
-import oogasalad.model.engine.base.enumerate.KeyCode;
+import oogasalad.model.engine.base.architecture.KeyCode;
 import oogasalad.model.engine.component.InputHandler;
 
 /**
@@ -18,7 +18,7 @@ public class KeyHoldConstraint extends BehaviorConstraint<KeyCode> {
   protected KeyCode defaultParameter() {
     return KeyCode.NONE;
   }
-  
+
   @Override
   protected void awake() {
     inputHandler = getComponent(InputHandler.class);
@@ -26,6 +26,6 @@ public class KeyHoldConstraint extends BehaviorConstraint<KeyCode> {
 
   @Override
   public boolean check(KeyCode parameter) {
-    return inputHandler!= null && inputHandler.isKeyHold(parameter);
+    return inputHandler != null && inputHandler.isKeyHold(parameter);
   }
 }

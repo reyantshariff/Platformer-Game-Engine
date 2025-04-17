@@ -1,6 +1,7 @@
 package oogasalad.view.scene.menu;
 
 import java.io.File;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -8,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import oogasalad.controller.GameController;
 import oogasalad.model.config.GameConfig;
 import oogasalad.view.config.StyleConfig;
 import oogasalad.view.scene.MainViewManager;
@@ -20,23 +22,25 @@ import oogasalad.view.scene.display.GameDisplayScene;
  */
 @SuppressWarnings("unused")
 public class MainMenuScene extends ViewScene {
-  
+
   private static final String GAME_PLAYER_SCENE_NAME = "GamePlayer";
   private static final String BUILDER_SCENE_NAME = "Builder";
 
   private String selectedFilePath = "";
+  private final GameController gameController;
 
   /**
-   * Constructs a new MainMenuScene to display the main menu with game selection and builder options.
+   * Constructs a new MainMenuScene to display the main menu with game selection and builder
+   * options.
    */
   private MainMenuScene() {
     super(new VBox(), GameConfig.getNumber("windowWidth"), GameConfig.getNumber("windowHeight"));
-
+    gameController = new GameController(MainViewManager.getInstance());
     VBox root = (VBox) getScene().getRoot();
     root.setAlignment(Pos.CENTER);
 
     Label title = new Label(GameConfig.getText("mainMenuTitle"));
-    title.setId("mainMenuTitle");
+    title.getStyleClass().add("title");
 
     Button gameSelector = setupGameSelector();
 
@@ -44,27 +48,31 @@ public class MainMenuScene extends ViewScene {
     Button playButton = (Button) buttonBox.lookup("#playButton");
     Button buildButton = (Button) buttonBox.lookup("#buildButton");
 
-    GameDisplayScene playScene = MainViewManager.getInstance().addViewScene(GameDisplayScene.class, GAME_PLAYER_SCENE_NAME);
+    GameDisplayScene playScene = MainViewManager.getInstance()
+        .addViewScene(GameDisplayScene.class, GAME_PLAYER_SCENE_NAME);
     playScene.setReturnSceneName(GameConfig.getText("defaultScene"));
     playButton.setOnAction(e -> {
-      ((GameDisplayScene) MainViewManager.getInstance().getViewScene(GAME_PLAYER_SCENE_NAME)).play(selectedFilePath);
+      ((GameDisplayScene) MainViewManager.getInstance().getViewScene(GAME_PLAYER_SCENE_NAME)).play(
+          selectedFilePath);
       MainViewManager.getInstance().switchTo(GAME_PLAYER_SCENE_NAME);
     });
 
     MainViewManager.getInstance().addViewScene(BuilderScene.class, BUILDER_SCENE_NAME);
     buildButton.setOnAction(e -> {
-      ((BuilderScene) MainViewManager.getInstance().getViewScene(BUILDER_SCENE_NAME)).setUpBuilder(selectedFilePath);
+      ((BuilderScene) MainViewManager.getInstance().getViewScene(BUILDER_SCENE_NAME)).setUpBuilder(
+          selectedFilePath);
       MainViewManager.getInstance().switchTo(BUILDER_SCENE_NAME);
     });
 
     // Language and Theme Selections
     HBox selectorBox = setupSelectorBox();
+    HBox logOutBox = setUpLogOutBox();
 
     // Add to root
-    root.getChildren().addAll(title, gameSelector, buttonBox, selectorBox);
+    root.getChildren().addAll(title, gameSelector, buttonBox, selectorBox, logOutBox);
 
     // Set default styles
-    StyleConfig.setStylesheet(getScene(), "");
+    StyleConfig.setStylesheet(getScene(), StyleConfig.getCurrentTheme());
   }
 
   private HBox setupButtonBox() {
@@ -86,7 +94,8 @@ public class MainMenuScene extends ViewScene {
     gameSelector.setOnAction(e -> {
       FileChooser fileChooser = new FileChooser();
       fileChooser.setTitle("Select a Game JSON File");
-      fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON Files", "*.json"));
+      fileChooser.getExtensionFilters()
+          .add(new FileChooser.ExtensionFilter("JSON Files", "*.json"));
       fileChooser.setInitialDirectory(new File("data/GameJsons"));
 
       File selectedFile = fileChooser.showOpenDialog(getScene().getWindow());
@@ -112,7 +121,8 @@ public class MainMenuScene extends ViewScene {
     languageSelector.setId("menuSelector");
     languageSelector.getItems().addAll(GameConfig.getTextList("languageSelector"));
     languageSelector.setOnAction(e -> {
-      GameConfig.setLanguage(languageSelector.getValue());});
+      GameConfig.setLanguage(languageSelector.getValue());
+    });
     return languageSelector;
   }
 
@@ -126,4 +136,23 @@ public class MainMenuScene extends ViewScene {
     });
     return themeSelector;
   }
+
+  private HBox setUpLogOutBox() {
+    HBox logOutBox = new HBox();
+    logOutBox.setAlignment(Pos.CENTER);
+    logOutBox.setSpacing(10);
+    logOutBox.setPadding(new Insets(20, 0, 0, 0));
+
+    Button logOutButton = new Button(GameConfig.getText("logOutButton"));
+    logOutButton.setOnMouseClicked((event) -> {
+      gameController.handleLogout();
+    });
+    logOutButton.setId("logOutButton");
+    logOutBox.getChildren().add(logOutButton);
+    logOutBox.setId("logOutBox");
+
+    return logOutBox;
+  }
+
 }
+

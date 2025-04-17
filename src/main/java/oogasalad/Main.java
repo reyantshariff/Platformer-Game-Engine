@@ -1,9 +1,13 @@
 package oogasalad;
 
+import java.io.IOException;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import oogasalad.database.FirebaseManager;
 import oogasalad.model.config.GameConfig;
+import oogasalad.model.profile.SessionManagement;
 import oogasalad.view.scene.MainViewManager;
+import oogasalad.view.scene.auth.LogInScene;
 import oogasalad.view.scene.menu.MainMenuScene;
 
 /**
@@ -11,6 +15,8 @@ import oogasalad.view.scene.menu.MainMenuScene;
  * program.
  */
 public class Main extends Application {
+
+  private static final boolean DEBUG = true;
 
   /**
    * Start of the program
@@ -27,10 +33,19 @@ public class Main extends Application {
    *              stages.
    */
   @Override
-  public void start(Stage stage) {
+  public void start(Stage stage) throws IOException {
+    FirebaseManager.initializeFirebase();
+
     MainViewManager viewManager = MainViewManager.setInstance(stage);
     viewManager.addViewScene(MainMenuScene.class, GameConfig.getText("defaultScene"));
-    MainViewManager.getInstance().switchToMainMenu();
+
+    if (DEBUG || SessionManagement.tryAutoLogin()) {
+      viewManager.switchToMainMenu();
+    } else {
+      LogInScene splashScene = new LogInScene(viewManager);
+      stage.setScene(splashScene.getScene());
+      stage.show();
+    }
   }
 
 }

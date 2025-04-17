@@ -7,7 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import oogasalad.model.config.GameConfig;
 import oogasalad.model.engine.base.behavior.BehaviorComponent;
-import oogasalad.model.engine.base.serialization.Serializable;
+import oogasalad.model.engine.base.architecture.KeyCode;
 import oogasalad.model.engine.base.serialization.SerializedField;
 import oogasalad.model.engine.base.serialization.SetSerializedFieldException;
 import oogasalad.view.gui.dropDown.ClassSelectionDropDownList;
@@ -22,13 +22,13 @@ import java.util.stream.Collectors;
  *
  * @author Hsuan-Kai Liao
  */
-public class BehaviorComponentListFieldInput<T extends BehaviorComponent> extends DeserializedFieldUI<List<T>> {
+public class BehaviorComponentListFieldInput<T extends BehaviorComponent<?>> extends DeserializedFieldUI<List<T>> {
 
   private final String componentPackage;
   private final Class<T> componentClass;
 
   private VBox listContainer;
-  private SerializedField<List<T>> field;
+  private SerializedField field;
 
   /**
    * Class constructor
@@ -41,15 +41,15 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent> extend
   }
 
   @Override
-  protected Node showGUI(SerializedField<List<T>> field) {
+  protected Node showGUI(SerializedField field) {
     this.field = field;
 
     Label label = new Label(formatFieldName(field.getFieldName()));
     listContainer = new VBox(5);
     listContainer.setPadding(new Insets(5));
 
-    Optional.ofNullable(field.getValue()).orElseGet(ArrayList::new)
-        .forEach(component -> listContainer.getChildren().add(createComponentRow(component)));
+    Optional.ofNullable((List<?>)field.getValue()).orElseGet(ArrayList::new)
+        .forEach(component -> listContainer.getChildren().add(createComponentRow((T) component)));
 
     Button addButton = new Button("+");
     addButton.setOnAction(e -> listContainer.getChildren().add(createComponentRow(null)));
@@ -59,6 +59,7 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent> extend
     return root;
   }
 
+  @SuppressWarnings("unchecked")
   private HBox createComponentRow(T initialComponent) {
     T[] componentRef = (T[]) Array.newInstance(componentClass, 1);
     componentRef[0] = initialComponent;
@@ -87,7 +88,7 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent> extend
     if (getGenericTypeName(component).equals(Void.class.getSimpleName())) {
       hide(paramField);
     } else {
-      SerializedField<?> param = ((Serializable) component).getSerializedFields().getFirst();
+      SerializedField param = component.getSerializedFields().getFirst();
       paramField.setText(Optional.ofNullable(param.getValue()).map(Object::toString).orElse(""));
     }
   }
@@ -98,7 +99,7 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent> extend
       T newComponent = instantiateComponent(className);
       componentRef[0] = newComponent;
 
-      SerializedField<?> param = ((Serializable) newComponent).getSerializedFields().getFirst();
+      SerializedField param = newComponent.getSerializedFields().getFirst();
       if (getGenericTypeName(newComponent).equals(Void.class.getSimpleName())) {
         hide(paramField);
       } else {
@@ -116,7 +117,7 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent> extend
 
   private boolean updateParamField(T[] componentRef, StringTextField paramField) {
     return Optional.ofNullable(componentRef[0]).map(component -> {
-      SerializedField<?> param = ((Serializable) component).getSerializedFields().getFirst();
+      SerializedField param = component.getSerializedFields().getFirst();
       return updateParameter(component, param, paramField.getText());
     }).orElse(false);
   }
@@ -128,6 +129,7 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent> extend
     });
   }
 
+  @SuppressWarnings("uncheck")
   private void updateFieldList() {
     List<T> updated = listContainer.getChildren().stream()
         .filter(HBox.class::isInstance)
@@ -148,22 +150,22 @@ public class BehaviorComponentListFieldInput<T extends BehaviorComponent> extend
       return componentClass.cast(clazz.getDeclaredConstructor().newInstance());
     } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
              | IllegalAccessException | InvocationTargetException e) {
-      GameConfig.LOGGER.error("Error instantiating component: " + className, e);
+      GameConfig.LOGGER.error("Error instantiating component: {}", className, e);
     }
     return null;
   }
 
-
-  @SuppressWarnings("unchecked")
-  private boolean updateParameter(T component, SerializedField<?> param, String newVal) {
+  private boolean updateParameter(T component, SerializedField param, String newVal) {
     String typeName = getGenericTypeName(component);
 
     try {
-      return switch (typeName) {
-        case "String" -> { ((SerializedField<String>) param).setValue(newVal); yield true; }
-        case "Double" -> { ((SerializedField<Double>) param).setValue(Double.parseDouble(newVal)); yield true; }
-        default -> false;
-      };
+      switch (typeName) {
+        case "String" -> param.setValue(newVal);
+        case "Double" -> param.setValue(Double.parseDouble(newVal));
+        case "KeyCode" -> param.setValue(KeyCode.valueOf(newVal));
+        default -> throw new IllegalArgumentException("Unsupported type: " + typeName);
+      }
+      return true;
     } catch (SetSerializedFieldException | IllegalArgumentException e) {
       return false;
     }

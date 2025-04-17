@@ -19,10 +19,10 @@ public class SetSerializedFieldException extends RuntimeException {
    * Constructor for SetSerializedFieldException with a cause.
    *
    * @param message the error message
-   * @param cause the cause of the exception
+   * @param cause   the cause of the exception
    */
   public SetSerializedFieldException(String message, Throwable cause) {
     super(message, cause);
   }
-    
+
 }

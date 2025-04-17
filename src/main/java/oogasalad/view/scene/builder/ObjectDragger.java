@@ -21,6 +21,7 @@ import java.util.List;
 
 /**
  * ObjectDragger manages mouse drag and drop for Builder pages
+ *
  * @author Reyan Shariff
  */
 public class ObjectDragger {
@@ -32,7 +33,7 @@ public class ObjectDragger {
   private final GameSceneRenderer renderer;
   private final DragContext dragContext = new DragContext();
   private final Map<ResizeHandle, BiConsumer<Double, Double>> enumMap;
-  private static final double RADIUS=HANDLE_SIZE/2;
+  private static final double RADIUS = HANDLE_SIZE / 2;
 
   private Builder builder;
   private GameScene gameScene;
@@ -45,9 +46,10 @@ public class ObjectDragger {
 
   /**
    * Constructor for ObjectDragger
-   * @param canvas is the canvas to draw on
+   *
+   * @param canvas       is the canvas to draw on
    * @param builderScene is the builder scene
-   * @param renderer is the renderer for the game scene
+   * @param renderer     is the renderer for the game scene
    */
   public ObjectDragger(Canvas canvas, BuilderScene builderScene, GameSceneRenderer renderer) {
     this.canvas = canvas;
@@ -78,17 +80,23 @@ public class ObjectDragger {
   }
 
   private void handlePressedIfInBounds(MouseEvent e) {
-    if (!isInCanvas(e)) return;
+    if (!isInCanvas(e)) {
+      return;
+    }
     handlePressed(e);
   }
 
   private void handleDraggedIfInBounds(MouseEvent e) {
-    if (!isInCanvas(e)) return;
+    if (!isInCanvas(e)) {
+      return;
+    }
     handleDragged(e);
   }
 
   private void handleReleasedIfInBounds(MouseEvent e) {
-    if (!isInCanvas(e)) return;
+    if (!isInCanvas(e)) {
+      return;
+    }
     handleReleased(e);
   }
 
@@ -101,8 +109,9 @@ public class ObjectDragger {
 
   /**
    * Checks if mouse is touching sprite and then records it as selected
+   *
    * @param e is the event click
-   * */
+   */
   private void handlePressed(MouseEvent e) {
     oldX = e.getX();
     oldY = e.getY();
@@ -114,7 +123,9 @@ public class ObjectDragger {
     boolean clickedObject = false;
 
     for (GameObject obj : objects) {
-      if (!obj.hasComponent(Transform.class)) continue;
+      if (!obj.hasComponent(Transform.class)) {
+        continue;
+      }
 
       Transform t = obj.getComponent(Transform.class);
 
@@ -134,11 +145,11 @@ public class ObjectDragger {
   }
 
   private boolean isSelectedAndResizing(GameObject obj) {
-    return builder.objectIsSelected() && builder.getSelectedObject().equals(obj) && isHoveringOverResizeHandle(oldX, oldY);
+    return builder.objectIsSelected() && builder.getSelectedObject().equals(obj)
+        && isHoveringOverResizeHandle(oldX, oldY);
   }
 
-  private void startMoving(GameObject obj, MouseEvent e, Transform t)
-  {
+  private void startMoving(GameObject obj, MouseEvent e, Transform t) {
     builder.selectExistingObject(obj);
     double offsetX = e.getX() - t.getX();
     double offsetY = e.getY() - t.getY();
@@ -177,7 +188,9 @@ public class ObjectDragger {
   }
 
   private void handleDragged(MouseEvent e) {
-    if (!builder.objectIsSelected() || !dragContext.isActive()) return;
+    if (!builder.objectIsSelected() || !dragContext.isActive()) {
+      return;
+    }
     if (dragContext.isResizing()) {
       double dx = dragContext.deltaX(e);
       double dy = dragContext.deltaY(e);
@@ -257,15 +270,21 @@ public class ObjectDragger {
     enumMap.clear(); // Ensure it's fresh each time
 
     enumMap.put(ResizeHandle.TOP_LEFT, (dx, dy) -> {
-      newX += dx; newY += dy; newW -= dx; newH -= dy;
+      newX += dx;
+      newY += dy;
+      newW -= dx;
+      newH -= dy;
     });
 
     enumMap.put(ResizeHandle.TOP_CENTER, (dx, dy) -> {
-      newY += dy; newH -= dy;
+      newY += dy;
+      newH -= dy;
     });
 
     enumMap.put(ResizeHandle.TOP_RIGHT, (dx, dy) -> {
-      newY += dy; newW += dx; newH -= dy;
+      newY += dy;
+      newW += dx;
+      newH -= dy;
     });
 
     enumMap.put(ResizeHandle.MID_RIGHT, (dx, dy) -> {
@@ -273,7 +292,8 @@ public class ObjectDragger {
     });
 
     enumMap.put(ResizeHandle.BOTTOM_RIGHT, (dx, dy) -> {
-      newH += dy; newW += dx;
+      newH += dy;
+      newW += dx;
     });
 
     enumMap.put(ResizeHandle.BOTTOM_CENTER, (dx, dy) -> {
@@ -281,24 +301,26 @@ public class ObjectDragger {
     });
 
     enumMap.put(ResizeHandle.BOTTOM_LEFT, (dx, dy) -> {
-      newX += dx; newW -= dx; newH += dy;
+      newX += dx;
+      newW -= dx;
+      newH += dy;
     });
 
     enumMap.put(ResizeHandle.MID_LEFT, (dx, dy) -> {
-      newX += dx; newW -= dx;
+      newX += dx;
+      newW -= dx;
     });
   }
 
 
   private void handleReleased(MouseEvent e) {
-    if (!isInCanvas(e) || !builder.objectIsSelected()) return;
+    if (!isInCanvas(e) || !builder.objectIsSelected()) {
+      return;
+    }
 
     if (dragContext.isDragging() && !dragContext.isResizing()) {
       builder.placeObject(dragContext.newX(e), dragContext.newY(e));
-    }
-
-    else if (dragContext.isResizing())
-    {
+    } else if (dragContext.isResizing()) {
       recordResizing();
     }
 
@@ -307,11 +329,11 @@ public class ObjectDragger {
     builderScene.updateGamePreview();
   }
 
-  private void recordResizing()
-  {
+  private void recordResizing() {
     Transform t = builder.getSelectedObject().getComponent(Transform.class);
     TransformState prev = new TransformState(t.getX(), t.getY(), t.getScaleX(), t.getScaleY());
-    TransformState next = new TransformState(resizeStartX, resizeStartY, resizeStartW, resizeStartH);
+    TransformState next = new TransformState(resizeStartX, resizeStartY, resizeStartW,
+        resizeStartH);
     ResizeObjectAction resizeAction = new ResizeObjectAction(
         builder.getSelectedObject(), prev, next
     );

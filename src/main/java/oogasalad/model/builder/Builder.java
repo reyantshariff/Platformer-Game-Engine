@@ -2,11 +2,11 @@ package oogasalad.model.builder;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
 import java.io.IOException;
 import java.util.Deque;
 import java.util.ArrayDeque;
 import oogasalad.model.builder.actions.DeleteObjectAction;
-import oogasalad.model.builder.actions.CreateObjectAction;
 import oogasalad.model.builder.actions.MoveObjectAction;
 import oogasalad.model.builder.actions.ResizeObjectAction;
 import oogasalad.model.engine.base.architecture.Game;
@@ -57,16 +57,26 @@ public class Builder {
   }
 
   /**
-   Allows for actions to be pushed into the undo deque outside of Builder.
-   * */
-  public void pushAction(EditorAction action)
+   * Constructor for loading a Game, but with real Game input
+   * @param game - the game instance
+   */
+  public Builder(Game game)
   {
+    this.game = game;
+    this.filepath = null;
+    currentScene = game.getCurrentScene();
+  }
+
+  /**
+   * Allows for actions to be pushed into the undo deque outside of Builder.
+   */
+  public void pushAction(EditorAction action) {
     undoStack.push(action);
   }
 
   /**
-   Undoes Last User Action
-   * */
+   * Undoes Last User Action
+   */
   public void undoLastAction() {
     if (!undoStack.isEmpty()) {
       EditorAction action = undoStack.pop();
@@ -76,10 +86,9 @@ public class Builder {
   }
 
   /**
-   Redoes Last User Action
-   * */
-  public void redoLastAction()
-  {
+   * Redoes Last User Action
+   */
+  public void redoLastAction() {
     if (!redoStack.isEmpty()) {
       EditorAction action = redoStack.pop();
       action.redo();
@@ -88,23 +97,14 @@ public class Builder {
   }
 
   /**
-   * Save the file
+   * Checks if the file was saved
    */
-  public void Save()
-  {
-    fileSaved = true;
+  public boolean isSaved() {
+    return fileSaved;
   }
 
   /**
-   * Checks if the file was saved
-   */
-  public boolean isSaved()
-    {
-      return fileSaved;
-    }
-
-  /**
-   *  Records when a game object has been selected to be dragged and dropped on the UI
+   * Records when a game object has been selected to be dragged and dropped on the UI
    */
   public void selectExistingObject(GameObject object)
   {
@@ -125,14 +125,15 @@ public class Builder {
   }
 
   /**
-   *  Records when two game objects overlap
+   * Records when two game objects overlap
    */
-  public boolean overlaps(GameObject currentObject)
-  {
-    for (GameObject object : game.getCurrentScene().getAllObjects())
-    {
-      if (!currentObject.equals(object) && object.hasComponent(Transform.class) && object.getComponent(Transform.class).getX() == currentObject.getComponent(Transform.class).getX() && object.getComponent(Transform.class).getY() == currentObject.getComponent(Transform.class).getY())
-      {
+  public boolean overlaps(GameObject currentObject) {
+    for (GameObject object : game.getCurrentScene().getAllObjects()) {
+      if (!currentObject.equals(object) && object.hasComponent(Transform.class)
+          && object.getComponent(Transform.class).getX() == currentObject.getComponent(
+          Transform.class).getX()
+          && object.getComponent(Transform.class).getY() == currentObject.getComponent(
+          Transform.class).getY()) {
         return true;
       }
     }
@@ -170,26 +171,6 @@ public class Builder {
     {
       selectedObject.getComponent(Transform.class).setX(x);
       selectedObject.getComponent(Transform.class).setY(y);
-    }
-  }
-
-  /**
-   * Loads new objects into the scene
-   * @param object prefabricated game object
-   * @param previewHorizontalMidpoint horizontal midpoint of the screen
-   * @param previewVerticalMidpoint vertical midpoint of the screen.
-   * */
-  public void addObject(GameObject object, double previewHorizontalMidpoint, double previewVerticalMidpoint)
-  {
-    Transform t = object.getComponent(Transform.class);
-    if (t != null)
-    {
-      double objectWidth = object.getComponent(Transform.class).getScaleX();
-      double objectHeight = object.getComponent(Transform.class).getScaleY();
-      object.getComponent(Transform.class).setX(previewHorizontalMidpoint - (objectWidth / 2));
-      object.getComponent(Transform.class).setY(previewVerticalMidpoint - (objectHeight / 2));
-      currentScene.registerObject(object);
-      undoStack.add(new CreateObjectAction(game, object));
     }
   }
 
@@ -248,9 +229,14 @@ public class Builder {
    * @param filepath location of JSON file
    */
   public JsonNode saveGameAs(String filepath) {
-    // TODO: Need to create a new file if it doesn't exist
-    JsonParser parser = new JsonParser(filepath);
+    if (game == null) {
+      throw new SaveGameException("No game loaded to save.");
+    }
+    String fileName = new File(filepath).getName();
+    JsonParser parser = new JsonParser(fileName);
+
     try {
+      fileSaved = true;
       return parser.write(game);
     } catch (IOException e) {
       throw new SaveGameException("Error saving game to JSON: " + e.getMessage(), e);
