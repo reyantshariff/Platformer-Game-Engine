@@ -33,14 +33,16 @@ public abstract class TypeRef<T> {
    * @return the wrapperType if the input is a primitive class; else return itself.
    */
   public static Class<?> wrapperForPrimitive(Class<?> primitiveClass) {
-    if (primitiveClass == int.class) return Integer.class;
-    if (primitiveClass == boolean.class) return Boolean.class;
-    if (primitiveClass == char.class) return Character.class;
-    if (primitiveClass == byte.class) return Byte.class;
-    if (primitiveClass == short.class) return Short.class;
-    if (primitiveClass == long.class) return Long.class;
-    if (primitiveClass == float.class) return Float.class;
-    if (primitiveClass == double.class) return Double.class;
-    return primitiveClass;
+    return switch (primitiveClass.getName()) {
+      case "int" -> Integer.class;
+      case "boolean" -> Boolean.class;
+      case "char" -> Character.class;
+      case "byte" -> Byte.class;
+      case "short" -> Short.class;
+      case "long" -> Long.class;
+      case "float" -> Float.class;
+      case "double" -> Double.class;
+      default -> primitiveClass;
+    };
   }
 }
