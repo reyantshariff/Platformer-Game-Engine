@@ -103,5 +103,6 @@ public class GameDisplayScene extends ViewScene {
   @Override
   public void deactivate() {
     gameRunner.pause();
+    gameRunner.setGame(null);
   }
 }

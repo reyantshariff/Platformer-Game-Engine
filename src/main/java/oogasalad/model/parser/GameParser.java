@@ -122,7 +122,6 @@ public class GameParser implements Parser<Game> {
     ObjectNode dataNode = mapper.createObjectNode();
 
     handleInformationWriting(data, root);
-    //handleResourceWriting(data, dataNode);
     handleSceneWriting(data, dataNode);
 
     root.set(DATA, dataNode);
@@ -136,8 +135,11 @@ public class GameParser implements Parser<Game> {
 
   private void handleSceneWriting(Game data, ObjectNode dataNode) throws IOException {
     ArrayNode sceneArray = mapper.createArrayNode();
-    for (GameScene scene : data.getAllScenes().values()) {
-      sceneArray.add(sceneParser.write(scene));
+    for (String scene : data.getLevelOrder()) {
+      GameScene gameScene = data.getAllScenes().values().stream().filter(s -> s.getName().equals(scene)).findFirst().orElse(null);
+      if (gameScene != null) {
+        sceneArray.add(sceneParser.write(gameScene));
+      }
     }
     dataNode.set(SCENE, sceneArray);
   }
@@ -150,12 +152,4 @@ public class GameParser implements Parser<Game> {
   public Map<String, JsonNode> getSceneJsonMap() {
     return sceneJsonMap;
   }
-
-//  private void handleResourceWriting(Game data, ObjectNode dataNode) throws IOException {
-////    ArrayNode resourceArray = mapper.createArrayNode();
-////    for (Map.Entry<String, String> entry : data.getAllResources.entrySet()) {
-////      resourceArray.add(resourceParser.write(entry));
-////    }
-////    dataNode.set("Resources", resourceArray);
-//  }
 }

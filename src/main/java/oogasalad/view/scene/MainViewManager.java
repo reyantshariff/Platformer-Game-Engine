@@ -115,11 +115,6 @@ public class MainViewManager {
     }
   }
 
-  /**
-   * Switches to the given ViewScene
-   *
-   * @param viewScene the new scene to display
-   */
   private void switchTo(ViewScene viewScene) {
     StyleConfig.setStylesheet(viewScene.getScene(), StyleConfig.getCurrentTheme());
 
