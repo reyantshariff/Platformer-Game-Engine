@@ -47,11 +47,11 @@ class DoubleFieldInputTest extends ApplicationTest {
   @Test
   void typeInTextField_NewValidDouble_ShouldUpdateSerializedField() {
     TextField tf = lookup(".text-field").query();
-    clickOn(tf).eraseText(4).write("12.5");
+    clickOn(tf).eraseText(3).write("125");
     clickOn(".label");
     waitForFxEvents();
 
-    assertEquals(9.99, (Double) testField.getValue(), 0.001);
+    assertEquals(9125, (Double) testField.getValue(), 0.001);
   }
 
   // Dummy target object
