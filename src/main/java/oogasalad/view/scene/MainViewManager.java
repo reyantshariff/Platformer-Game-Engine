@@ -3,11 +3,11 @@ package oogasalad.view.scene;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.stage.Stage;
+import oogasalad.view.config.StyleConfig;
 import org.reflections.Reflections;
 import oogasalad.model.config.GameConfig;
 
@@ -18,6 +18,7 @@ import oogasalad.model.config.GameConfig;
  * @author Justin Aronwald
  */
 public class MainViewManager {
+
   private static final String SCENE_PACKAGE = "oogasalad.view.scene";
   private static final String GAME_PLAYER = "GamePlayerScene";
 
@@ -122,12 +123,12 @@ public class MainViewManager {
    * @param viewScene the new scene to display
    */
   private void switchTo(ViewScene viewScene) {
-    // Stop current scene, if applicable
+    StyleConfig.setStylesheet(viewScene.getScene(), StyleConfig.getCurrentTheme());
+
     if (currentScene != null) {
       currentScene.deactivate();
     }
 
-    // Set new scene
     stage.setScene(viewScene.getScene());
     currentScene = viewScene;
     stage.show();
@@ -147,5 +148,16 @@ public class MainViewManager {
    */
   public void switchToMainMenu() {
     switchTo(GameConfig.getText("defaultScene"));
+  }
+
+  /**
+   * @return - Name of current scene
+   */
+  public String getCurrentSceneName() {
+    return viewScenes.entrySet().stream()
+        .filter(entry -> entry.getValue().equals(currentScene))
+        .map(Map.Entry::getKey)
+        .findFirst()
+        .orElse(null);
   }
 }

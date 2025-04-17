@@ -1,7 +1,15 @@
 package oogasalad.model.engine.base.behavior;
 
+import com.google.cloud.Timestamp;
+import java.io.IOException;
 import oogasalad.model.config.GameConfig;
+import oogasalad.model.config.PasswordConfig;
+import oogasalad.model.config.PasswordHashingException;
+import oogasalad.model.profile.Password;
+import oogasalad.model.profile.PlayerData;
+import oogasalad.model.profile.SessionManagement;
 import oogasalad.view.scene.menu.MainMenuScene;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.testfx.framework.junit5.ApplicationTest;
 import javafx.stage.Stage;
@@ -25,13 +33,21 @@ public abstract class BehaviorBaseTest extends ApplicationTest {
     private GameScene scene2;
     private GameObject obj1;
     private GameObject obj2;
+    private MainViewManager viewManager;
     private Behavior behavior1;
     private Behavior behavior2;
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws PasswordHashingException, IOException {
         MainViewManager viewManager = MainViewManager.setInstance(stage);
         viewManager.addViewScene(MainMenuScene.class, GameConfig.getText("defaultScene"));
+
+        String username = "justin1";
+        Password password = Password.fromPlaintext("justin1");
+        String fullName = "justin";
+
+        SessionManagement.login((new PlayerData(username, fullName, password, Timestamp.now())), false);
+        SessionManagement.tryAutoLogin();
         viewManager.switchToMainMenu();
     }
 
@@ -55,6 +71,7 @@ public abstract class BehaviorBaseTest extends ApplicationTest {
         scene2 = new GameScene("Scene2");
         scene1.registerObject(obj1);
         scene1.registerObject(obj2);
+        setupViewManager();
         GameObject camera = new GameObject("Camera");
         Transform cameraTransform = camera.addComponent(Transform.class);
         camera.addComponent(Camera.class);
@@ -72,6 +89,25 @@ public abstract class BehaviorBaseTest extends ApplicationTest {
         behavior2.setBehaviorController(obj2.getComponent(BehaviorController.class));
         behavior1.awake();
         behavior2.awake();
+    }
+
+    private void setupViewManager() {
+        CountDownLatch latch = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            viewManager = MainViewManager.setInstance(new Stage());
+            latch.countDown();
+        });
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+    }
+
+    @AfterEach
+    public void cleanUp() {
+        SessionManagement.logout();
     }
 
     public abstract void customSetUp();
@@ -102,6 +138,10 @@ public abstract class BehaviorBaseTest extends ApplicationTest {
 
     protected GameScene getScene2() {
         return scene2;
+    }
+
+    protected MainViewManager getViewManager() {
+        return viewManager;
     }
 
     protected void step() {

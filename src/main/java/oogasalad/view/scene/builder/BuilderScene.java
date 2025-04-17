@@ -113,7 +113,6 @@ public class BuilderScene extends ViewScene {
     });
 
     Button saveButton = getSaveButton();
-
     topBar.getChildren().addAll(mainMenuButton, previewLevelButton, saveButton);
     myWindow.setTop(topBar);
 
@@ -156,7 +155,6 @@ public class BuilderScene extends ViewScene {
     }
     return true; // It's safe to exit if the builder is already saved
   }
-
 
   private Button getSaveButton() {
     Button saveButton = new Button("Save");
@@ -205,8 +203,9 @@ public class BuilderScene extends ViewScene {
   }
 
   /**
-   * Set up the builder for the given game filepath.
-   * This should be called when the new game file is to be edited.
+   * Set up the builder for the given game filepath. This should be called when the new game file is
+   * to be edited.
+   *
    * @param gameFilepath the given game filepath
    */
   public void setUpBuilder(String gameFilepath) {
@@ -306,12 +305,16 @@ public class BuilderScene extends ViewScene {
 
     // handle mouse pressed and dragged events
     container.setOnMousePressed(event -> {
-      if (builder.objectIsSelected()) return;
+      if (builder.objectIsSelected()) {
+        return;
+      }
       lastMousePosition.set(new Point2D(event.getSceneX(), event.getSceneY()));
       container.requestFocus();
     });
     container.setOnMouseDragged(event -> {
-      if (builder.objectIsSelected()) return;
+      if (builder.objectIsSelected()) {
+        return;
+      }
 
       Point2D currentMousePosition = new Point2D(event.getSceneX(), event.getSceneY());
       Point2D delta = currentMousePosition.subtract(lastMousePosition.get());
@@ -389,7 +392,6 @@ public class BuilderScene extends ViewScene {
       updateGamePreview();
     });
 
-
     Button deleteButton = new Button("Delete");
     deleteButton.setOnAction(event -> {
       builder.deleteSelectedObject();
@@ -418,10 +420,10 @@ public class BuilderScene extends ViewScene {
 
     // Load the prefab GameObjects
     // TODO: remove hardcoded game type
-//    List<GameObject> prefabObjects = PrefabLoader.loadAvailablePrefabs("dinosaur");
-//    for (GameObject prefab : prefabObjects) {
-//     createObject(prefab, tilePane);
-//    }
+    List<GameObject> prefabObjects = PrefabLoader.loadAvailablePrefabs("dinosaur");
+    for (GameObject prefab : prefabObjects) {
+      createObject(prefab, tilePane);
+    }
 
     // Briefly animate the sprite tile options into their correct positions
     Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1), event -> {

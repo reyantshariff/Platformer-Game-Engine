@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 import java.util.function.Function;
 import java.text.MessageFormat;
 import oogasalad.model.config.GameConfig;
+
 import static oogasalad.model.config.GameConfig.LOGGER;
 
 /**

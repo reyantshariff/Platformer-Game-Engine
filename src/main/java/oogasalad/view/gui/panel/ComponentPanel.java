@@ -13,9 +13,9 @@ import oogasalad.model.engine.base.serialization.SerializedField;
 import oogasalad.view.gui.deserializedFieldInput.DeserializedFieldUIFactory;
 
 /**
- * ComponentPanel is a GUI component that displays a list of game components.
- * It is used in the BuilderScene to let the user select and configure components for the game.
- *
+ * ComponentPanel is a GUI component that displays a list of game components. It is used in the
+ * BuilderScene to let the user select and configure components for the game.
+ * <p>
  * Now includes expand/collapse feature with a toggle arrow.
  *
  * @author Hsuan-Kai Liao
@@ -55,7 +55,8 @@ public class ComponentPanel extends VBox {
 
     // Add delete button
     Button deleteButton = new Button(DELETE_BUTTON);
-    deleteButton.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-background-color: transparent;");
+    deleteButton.setStyle(
+        "-fx-font-size: 16px; -fx-font-weight: bold; -fx-background-color: transparent;");
     deleteButton.setOnAction(e -> {
       ((Pane) getParent()).getChildren().remove(this);
       component.getParent().removeComponent(component.getClass());
@@ -98,6 +99,6 @@ public class ComponentPanel extends VBox {
     isExpanded = expanded;
     contentBox.setVisible(isExpanded);
     contentBox.setManaged(isExpanded);
-    arrow.setText(isExpanded ? EXPANDED_ARROW: COLLAPSED_ARROW);
+    arrow.setText(isExpanded ? EXPANDED_ARROW : COLLAPSED_ARROW);
   }
 }
