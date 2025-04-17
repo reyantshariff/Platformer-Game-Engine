@@ -2,6 +2,9 @@ package oogasalad.model.engine.base.serialization;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is the class that hold a reference for the actual type of class.
@@ -9,6 +12,20 @@ import java.lang.reflect.Type;
  * @author Hsuan-Kai Liao
  */
 public abstract class TypeRef<T> {
+  private static final Map<Class<?>, Class<?>> PRIMITIVE_TO_WRAPPER;
+  static {
+    Map<Class<?>, Class<?>> map = new HashMap<>();
+    map.put(int.class, Integer.class);
+    map.put(boolean.class, Boolean.class);
+    map.put(char.class, Character.class);
+    map.put(byte.class, Byte.class);
+    map.put(short.class, Short.class);
+    map.put(long.class, Long.class);
+    map.put(float.class, Float.class);
+    map.put(double.class, Double.class);
+    PRIMITIVE_TO_WRAPPER = Collections.unmodifiableMap(map);
+  }
+
   private final Type type;
 
   protected TypeRef() {
@@ -30,19 +47,9 @@ public abstract class TypeRef<T> {
   /**
    * Change the primitive class into its wrapper class.
    * @param primitiveClass the input primitive class
-   * @return the wrapperType if the input is a primitive class; else return itself.
+   * @return the wrapper type if input is primitive; else return itself.
    */
   public static Class<?> wrapperForPrimitive(Class<?> primitiveClass) {
-    return switch (primitiveClass.getName()) {
-      case "int" -> Integer.class;
-      case "boolean" -> Boolean.class;
-      case "char" -> Character.class;
-      case "byte" -> Byte.class;
-      case "short" -> Short.class;
-      case "long" -> Long.class;
-      case "float" -> Float.class;
-      case "double" -> Double.class;
-      default -> primitiveClass;
-    };
+    return PRIMITIVE_TO_WRAPPER.getOrDefault(primitiveClass, primitiveClass);
   }
 }

@@ -78,25 +78,25 @@ public interface Serializable {
 
   private SerializableFieldType getValidType(Type fieldGenericType) {
     for (SerializableFieldType type : SerializableFieldType.values()) {
-      Type supportedType = type.getType();
-
-      if (isPrimitiveOrWrapperMatch(supportedType, fieldGenericType)) {
+      if (matchesFieldType(type, fieldGenericType)) {
         return type;
-      }
-
-      if (isParameterizedTypeMatch(supportedType, fieldGenericType)) {
-        return type;
-      }
-
-      if (fieldGenericType instanceof TypeVariable<?> typeVar) {
-        Type resolved = resolveTypeVariable(this.getClass(), typeVar);
-        if (resolved != null && getValidType(resolved) != null) {
-          return type;
-        }
       }
     }
 
+    // Handle unresolved TypeVariables after all types checked
+    if (fieldGenericType instanceof TypeVariable<?> typeVar) {
+      Type resolved = resolveTypeVariable(this.getClass(), typeVar);
+      return resolved != null ? getValidType(resolved) : null;
+    }
+
     return null;
+  }
+
+  private boolean matchesFieldType(SerializableFieldType type, Type fieldGenericType) {
+    Type supportedType = type.getType();
+
+    return isPrimitiveOrWrapperMatch(supportedType, fieldGenericType)
+        || isParameterizedTypeMatch(supportedType, fieldGenericType);
   }
 
   private boolean isPrimitiveOrWrapperMatch(Type supportedType, Type fieldType) {
@@ -109,28 +109,25 @@ public interface Serializable {
   }
 
   private boolean isParameterizedTypeMatch(Type supportedType, Type fieldType) {
-    if (supportedType instanceof ParameterizedType supportedParam &&
-        fieldType instanceof ParameterizedType fieldParam) {
-
-      if (!supportedParam.getRawType().equals(fieldParam.getRawType())) {
-        return false;
-      }
-
-      Type[] supportedArgs = supportedParam.getActualTypeArguments();
-      Type[] fieldArgs = fieldParam.getActualTypeArguments();
-
-      if (supportedArgs.length != fieldArgs.length) return false;
-
-      for (int i = 0; i < supportedArgs.length; i++) {
-        if (!supportedArgs[i].equals(fieldArgs[i])) {
-          return false;
-        }
-      }
-
-      return true;
+    if (!(supportedType instanceof ParameterizedType supportedParam) ||
+        !(fieldType instanceof ParameterizedType fieldParam)) {
+      return false;
     }
 
-    return false;
+    return rawTypesMatch(supportedParam, fieldParam) &&
+        typeArgumentsMatch(supportedParam.getActualTypeArguments(), fieldParam.getActualTypeArguments());
+  }
+
+  private boolean rawTypesMatch(ParameterizedType a, ParameterizedType b) {
+    return a.getRawType().equals(b.getRawType());
+  }
+
+  private boolean typeArgumentsMatch(Type[] aArgs, Type[] bArgs) {
+    if (aArgs.length != bArgs.length) return false;
+    for (int i = 0; i < aArgs.length; i++) {
+      if (!aArgs[i].equals(bArgs[i])) return false;
+    }
+    return true;
   }
 
   private static Type resolveTypeVariable(Class<?> clazz, TypeVariable<?> typeVar) {
