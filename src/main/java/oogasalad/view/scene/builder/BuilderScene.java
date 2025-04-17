@@ -508,15 +508,15 @@ public class BuilderScene extends ViewScene {
     return tilePane;
   }
 
-  private String getPreviewImagePath(GameObject prefab) {
-    var spriteRenderer = prefab.getComponent(
-        oogasalad.model.engine.component.SpriteRenderer.class);
-    String imagePath = spriteRenderer.getImagePath();
-    if (imagePath != null && !imagePath.isEmpty()) {
-      return "src/main/resources/" + imagePath;
-    }
-    logger.error("Error getting preview image from prefab {}", prefab.getName());
-    return null;
-  }
+//  private String getPreviewImagePath(GameObject prefab) {
+//    var spriteRenderer = prefab.getComponent(
+//        oogasalad.model.engine.component.SpriteRenderer.class);
+//    String imagePath = spriteRenderer.getImagePath();
+//    if (imagePath != null && !imagePath.isEmpty()) {
+//      return "src/main/resources/" + imagePath;
+//    }
+//    logger.error("Error getting preview image from prefab {}", prefab.getName());
+//    return null;
+//  }
 
 }
