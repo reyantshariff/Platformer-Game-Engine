@@ -2,10 +2,8 @@ package oogasalad.view.gui.deserializedFieldInput;
 
 import java.util.Map;
 import java.util.function.Function;
-import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import oogasalad.model.engine.base.behavior.BehaviorAction;
-import oogasalad.model.engine.base.behavior.BehaviorComponent;
 import oogasalad.model.engine.base.behavior.BehaviorConstraint;
 import oogasalad.model.engine.base.serialization.SerializableFieldType;
 import oogasalad.model.engine.base.serialization.SerializedField;
