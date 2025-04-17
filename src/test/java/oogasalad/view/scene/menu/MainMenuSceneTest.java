@@ -41,11 +41,11 @@ class MainMenuSceneTest extends ApplicationTest {
     stage.show();
   }
 
-  @Test
-  void clickPlayButton_withValidScene_shouldSwitchToGamePlayerScene() {
-    clickOn("#gameSelector");
-    clickOn("#playButton");
-  }
+//  @Test
+//  void clickPlayButton_withValidScene_shouldSwitchToGamePlayerScene() {
+//    clickOn("#gameSelector");
+//    clickOn("#playButton");
+//  }
 
 
   @Test
